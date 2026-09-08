@@ -1,0 +1,16 @@
+<?php
+// System configuration and constants
+
+define('BASE_URL', '/nti_intern_full/assignment-system-project');
+
+define('SITE_NAME', 'Assignment System');
+
+// Upload directory paths
+define('UPLOAD_SUBMISSIONS', dirname(dirname(__DIR__)) . '/uploads/submissions/');
+define('UPLOAD_CORRECTIONS', dirname(dirname(__DIR__)) . '/uploads/corrections/');
+
+// Max upload size 10MB
+define('MAX_UPLOAD_SIZE', 10 * 1024 * 1024);
+
+// Set default timezone
+date_default_timezone_set('Africa/Cairo');

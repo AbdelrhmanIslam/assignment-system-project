@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Student Dashboard - Assignment System</title>
+
+    <link
+        rel="stylesheet"
+        href="../assets/css/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../assets/css/dashboard.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../assets/css/responsive.css"
+    >
+</head>
+
+<body>
+
+    <div id="alert-container"></div>
+
+    <div class="dashboard-page">
+
+        <header class="dashboard-header">
+
+            <div class="dashboard-welcome">
+
+                <p class="dashboard-label">
+                    Student Dashboard
+                </p>
+
+                <h1>
+                    Welcome, <span id="student-name">Student</span>
+                </h1>
+
+                <p id="student-email">
+                    Loading...
+                </p>
+
+            </div>
+
+            <div class="header-actions">
+
+                <span class="user-role">
+                    Student
+                </span>
+
+                <a
+                    href="../../backend/auth/logout.php"
+                    class="logout-btn"
+                >
+                    Logout
+                </a>
+
+            </div>
+
+        </header>
+
+
+        <main>
+
+            <section class="stats-grid">
+
+                <div class="stat-card">
+
+                    <span class="stat-label">
+                        Total Assignments
+                    </span>
+
+                    <strong
+                        class="stat-number"
+                        id="total-assignments"
+                    >
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <span class="stat-label">
+                        Not Submitted
+                    </span>
+
+                    <strong
+                        class="stat-number"
+                        id="not-submitted"
+                    >
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <span class="stat-label">
+                        Under Review
+                    </span>
+
+                    <strong
+                        class="stat-number"
+                        id="under-review"
+                    >
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <span class="stat-label">
+                        Graded
+                    </span>
+
+                    <strong
+                        class="stat-number"
+                        id="graded"
+                    >
+                        0
+                    </strong>
+
+                </div>
+
+            </section>
+
+
+            <section class="assignments-section">
+
+                <div class="section-header" style="display: flex; justify-content: space-between; align-items: center;">
+
+                    <div>
+
+                        <h2>
+                            My Assignments
+                        </h2>
+
+                        <p>
+                            Assignments from your enrolled courses
+                        </p>
+
+                    </div>
+
+                    <a href="assignments.html" class="view-btn">
+                        View All Assignments &rarr;
+                    </a>
+
+                </div>
+
+
+                <div
+                    id="assignments-loading"
+                    class="loading-state"
+                >
+                    Loading assignments...
+                </div>
+
+
+                <div
+                    id="assignments-empty"
+                    class="empty-state"
+                    style="display: none;"
+                >
+
+                    <h3>
+                        No Assignments
+                    </h3>
+
+                    <p>
+                        There are currently no assignments available.
+                    </p>
+
+                </div>
+
+
+                <div
+                    id="assignments-container"
+                    class="table-container"
+                    style="display: none;"
+                >
+
+                    <table class="assignments-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Assignment
+                                </th>
+
+                                <th>
+                                    Course
+                                </th>
+
+                                <th>
+                                    Deadline
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th>
+                                    Grade
+                                </th>
+
+                                <th>
+                                    Action
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="assignments-table-body">
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/dashboard.js"></script>
+
+</body>
+
+</html>

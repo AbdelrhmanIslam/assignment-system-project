@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignment Details - Assignment System</title>
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+</head>
+<body>
+
+<div class="dashboard-page">
+
+    <!-- Back to dashboard link -->
+    <a href="dashboard.html" class="back-btn">
+        &larr; Back to Dashboard
+    </a>
+
+    <!-- Top header section -->
+    <header class="dashboard-header">
+        <div>
+            <h1 id="assignment-title">Loading Assignment...</h1>
+            <p>Course: <span id="course-name">—</span> | Instructor: <span id="teacher-name">—</span></p>
+        </div>
+
+        <div class="header-actions">
+            <span class="user-role">Student</span>
+            <!-- Logout link connected to backend -->
+            <a href="../../backend/auth/logout.php" class="logout-btn">Logout</a>
+        </div>
+    </header>
+
+    <!-- Alert box for success or error notices -->
+    <div id="alert-box" style="display: none;"></div>
+
+    <!-- Main assignment content layout -->
+    <div class="assignment-layout">
+
+        <!-- Left column: Assignment overview and description -->
+        <div class="assignment-main">
+            <section class="content-card">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h2>Assignment Details</h2>
+                    <span id="deadline-badge" class="status-badge" style="display: none;"></span>
+                </div>
+
+                <!-- Assignment metadata grid -->
+                <div class="meta-grid">
+                    <div class="meta-item">
+                        <span>Max Grade</span>
+                        <strong id="max-grade">—</strong>
+                    </div>
+
+                    <div class="meta-item">
+                        <span>Deadline</span>
+                        <strong id="deadline">—</strong>
+                    </div>
+
+                    <div class="meta-item">
+                        <span>Allowed Formats</span>
+                        <strong id="allowed-extensions">—</strong>
+                    </div>
+
+                    <div class="meta-item">
+                        <span>Max File Size</span>
+                        <strong id="max-file-size">—</strong>
+                    </div>
+
+                    <div class="meta-item">
+                        <span>Resubmission</span>
+                        <strong id="allow-resubmission">—</strong>
+                    </div>
+                </div>
+
+                <!-- Assignment description instructions -->
+                <h3>Instructions</h3>
+                <div id="description-text" class="description-box">
+                    Loading description...
+                </div>
+            </section>
+        </div>
+
+        <!-- Right column: Submission status and upload form -->
+        <div class="assignment-sidebar">
+
+            <!-- Previous submission details card -->
+            <section id="submission-details-card" class="content-card" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h2>Your Submission</h2>
+                    <span id="submission-status-badge" class="status-badge"></span>
+                </div>
+
+                <div class="submission-box">
+                    <div class="submission-item">
+                        <span>File Name:</span>
+                        <strong id="submission-file-name">—</strong>
+                    </div>
+
+                    <div class="submission-item">
+                        <span>Version:</span>
+                        <strong id="submission-version">—</strong>
+                    </div>
+
+                    <div class="submission-item">
+                        <span>File Size:</span>
+                        <strong id="submission-file-size">—</strong>
+                    </div>
+
+                    <div class="submission-item">
+                        <span>Submitted At:</span>
+                        <strong id="submission-date">—</strong>
+                    </div>
+                </div>
+
+                <!-- Grade and feedback box -->
+                <div id="grade-card" class="grade-box" style="display: none;">
+                    <h3>Grade & Feedback</h3>
+                    <div class="submission-item">
+                        <span>Grade Received:</span>
+                        <strong id="grade-score">—</strong>
+                    </div>
+                    <p style="margin: 8px 0 4px; font-size: 13px; color: #166534; font-weight: 600;">Feedback:</p>
+                    <p id="grade-feedback" style="margin: 0; font-size: 14px; color: #374151;">—</p>
+
+                    <!-- Correction file download section if available -->
+                    <div id="correction-file-box" style="display: none; margin-top: 10px; font-size: 13px;">
+                        <span>Correction File:</span>
+                        <strong id="correction-file-name">—</strong>
+                    </div>
+                </div>
+            </section>
+
+            <!-- File upload form card -->
+            <section id="upload-card" class="content-card" style="display: none;">
+                <h2 id="upload-card-title">Submit Assignment</h2>
+
+                <!-- Upload form connected to backend submit handler -->
+                <form method="POST" action="../../backend/student/submit.php" enctype="multipart/form-data">
+                    <input type="hidden" name="assignment_id" id="form-assignment-id" value="">
+
+                    <div class="upload-form-group">
+                        <label for="submission-file-input">Choose Submission File</label>
+                        <input
+                            type="file"
+                            id="submission-file-input"
+                            name="submission_file"
+                            required
+                        >
+                        <p class="upload-help">
+                            Ensure file matches allowed extensions and size limit.
+                        </p>
+                    </div>
+
+                    <button type="submit" class="btn-primary">
+                        Upload & Submit
+                    </button>
+                </form>
+            </section>
+
+            <!-- Closed or not allowed notice -->
+            <div id="submission-notice" class="notice-box" style="display: none;"></div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Main JavaScript for alerts and assignment loader -->
+<script src="../assets/js/main.js"></script>
+<script src="../assets/js/assignment.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,2 @@
+<?php
+// Backend handler placeholder

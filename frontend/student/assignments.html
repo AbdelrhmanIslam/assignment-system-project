@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Assignments - Assignment System</title>
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+</head>
+<body>
+
+<div class="dashboard-page">
+
+    <!-- Back to dashboard link -->
+    <a href="dashboard.html" class="back-btn">
+        &larr; Back to Dashboard
+    </a>
+
+    <!-- Top header section -->
+    <header class="dashboard-header">
+        <div>
+            <h1>All Assignments</h1>
+            <p>View, submit, and track assignments across all your enrolled courses</p>
+        </div>
+
+        <div class="header-actions">
+            <span class="user-role">Student</span>
+            <!-- Logout link connected to backend -->
+            <a href="../../backend/auth/logout.php" class="logout-btn">Logout</a>
+        </div>
+    </header>
+
+    <!-- Main content section -->
+    <section class="assignments-section">
+
+        <!-- Filter bar with tabs and search input -->
+        <div class="filter-bar">
+            <div class="filter-tabs">
+                <button class="filter-tab active" data-filter="all" id="tab-all">All</button>
+                <button class="filter-tab" data-filter="not_submitted" id="tab-not-submitted">Not Submitted</button>
+                <button class="filter-tab" data-filter="under_review" id="tab-under-review">Under Review</button>
+                <button class="filter-tab" data-filter="graded" id="tab-graded">Graded</button>
+            </div>
+
+            <!-- Search input box -->
+            <input
+                type="text"
+                id="search-input"
+                class="search-input"
+                placeholder="Search by title or course..."
+            >
+        </div>
+
+        <!-- Empty state notice when no assignments match -->
+        <div id="empty-state" class="empty-state" style="display: none;">
+            <h3>No assignments found</h3>
+            <p>No assignments match your selected filter criteria.</p>
+        </div>
+
+        <!-- Assignments table container -->
+        <div id="table-container" class="table-container" style="display: none;">
+            <table class="assignments-table">
+                <thead>
+                    <tr>
+                        <th>Assignment</th>
+                        <th>Course</th>
+                        <th>Deadline</th>
+                        <th>Status</th>
+                        <th>Grade</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="assignments-body">
+                    <!-- Loaded dynamically by assignments.js -->
+                </tbody>
+            </table>
+        </div>
+
+    </section>
+
+</div>
+
+<!-- JavaScript controller for assignments list and actions -->
+<script src="../assets/js/assignments.js"></script>
+
+</body>
+</html>
