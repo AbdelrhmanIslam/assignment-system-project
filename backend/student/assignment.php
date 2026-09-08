@@ -79,6 +79,13 @@ LIMIT 1";
 $submissionResult = mysqli_query($conn, $submissionSql);
 $submission = mysqli_fetch_assoc($submissionResult);
 
+// Only reveal grade and feedback to student if officially approved by teacher
+if ($submission && $submission['status'] !== 'graded') {
+    $submission['grade'] = null;
+    $submission['feedback'] = null;
+    $submission['correction_file_name'] = null;
+}
+
 // Determine if current time is past the deadline
 $isPastDeadline = strtotime($assignment['deadline']) < time();
 

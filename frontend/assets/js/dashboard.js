@@ -158,7 +158,11 @@ function updateAssignments(assignments) {
 
     var viewButton = document.createElement("a");
 
-    viewButton.href = "assignment.html?id=" + encodeURIComponent(assignment.id);
+    if (assignment.display_status === "graded") {
+      viewButton.href = "result.html?id=" + encodeURIComponent(assignment.id);
+    } else {
+      viewButton.href = "assignment.html?id=" + encodeURIComponent(assignment.id);
+    }
 
     viewButton.className = "action-btn " + getActionClass(assignment.display_status);
 

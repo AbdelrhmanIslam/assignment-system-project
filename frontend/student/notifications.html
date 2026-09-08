@@ -1,1 +1,51 @@
-<!-- HTML view placeholder -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications - Student Portal</title>
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+</head>
+<body>
+    <div class="dashboard-page">
+        <!-- Top Header -->
+        <header class="dashboard-header">
+            <div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <h1>Notifications</h1>
+                    <span id="unreadBadge" class="status-badge" style="background:#ef4444; color:#fff; display:none;">0 New</span>
+                </div>
+                <p>Updates on assignment evaluations, deadlines, and grades</p>
+            </div>
+            <div class="header-actions">
+                <a href="dashboard.html" class="back-btn" style="margin-bottom:0;">← Back to Dashboard</a>
+                <button id="markAllReadBtn" class="view-btn" style="background:#4b5563; font-size:13px; border:none; cursor:pointer;">Mark All Read</button>
+                <span class="user-role">Student</span>
+                <span id="userName" style="font-weight: 600; color: #374151;">Loading...</span>
+                <a href="../../backend/auth/logout.php" class="logout-btn">Logout</a>
+            </div>
+        </header>
+
+        <!-- Error Message Banner -->
+        <div id="errorMessage" class="alert-banner alert-error" style="display:none; margin-bottom: 20px;"></div>
+
+        <!-- Notifications Container -->
+        <div id="notificationsList">
+            <!-- Dynamically populated via student_notifications.js -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="empty-state content-card" style="display:none;">
+            <h3>No notifications yet</h3>
+            <p>You are all caught up! New updates regarding your submissions and grades will appear here.</p>
+        </div>
+    </div>
+
+    <!-- Client-side Scripts -->
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/student_notifications.js"></script>
+</body>
+</html>

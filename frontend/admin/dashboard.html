@@ -1,1 +1,133 @@
-<!-- HTML view placeholder -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Assignment System</title>
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+</head>
+<body>
+    <div class="dashboard-page">
+        <!-- Top header section -->
+        <header class="dashboard-header">
+            <div>
+                <h1>System Administration</h1>
+                <p>Welcome, <span id="admin-name">Administrator</span> (<span id="admin-email">admin@test.com</span>)</p>
+            </div>
+            <div class="header-actions">
+                <span class="user-role" style="background: #fef2f2; color: #991b1b;">Admin</span>
+                <a href="../../backend/auth/logout.php" class="logout-btn">Logout</a>
+            </div>
+        </header>
+
+        <!-- Quick actions navigation bar -->
+        <div style="display: flex; gap: 12px; margin-bottom: 25px; flex-wrap: wrap;">
+            <a href="users.html" class="action-btn action-submit" style="padding: 10px 18px; font-size: 14px; text-decoration: none;">
+                Manage Users
+            </a>
+            <a href="courses.html" class="action-btn action-view" style="padding: 10px 18px; font-size: 14px; text-decoration: none;">
+                Manage Courses
+            </a>
+            <a href="assignments.html" class="action-btn action-review" style="padding: 10px 18px; font-size: 14px; text-decoration: none;">
+                Assignments Overview
+            </a>
+            <a href="settings.html" class="action-btn" style="background: #4b5563; color: #fff; padding: 10px 18px; font-size: 14px; text-decoration: none;">
+                System Settings
+            </a>
+        </div>
+
+        <!-- Global statistics grid -->
+        <section class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-label">Total Users</span>
+                <strong class="stat-number" id="stat-users">0</strong>
+                <small id="stat-users-sub" style="display:block; color:#6b7280; font-size:12px; margin-top:6px;">Loading...</small>
+            </div>
+
+            <div class="stat-card">
+                <span class="stat-label">Total Courses</span>
+                <strong class="stat-number" id="stat-courses">0</strong>
+                <small id="stat-courses-sub" style="display:block; color:#6b7280; font-size:12px; margin-top:6px;">Loading...</small>
+            </div>
+
+            <div class="stat-card">
+                <span class="stat-label">Assignments</span>
+                <strong class="stat-number" id="stat-assignments">0</strong>
+                <small id="stat-assignments-sub" style="display:block; color:#6b7280; font-size:12px; margin-top:6px;">Loading...</small>
+            </div>
+
+            <div class="stat-card">
+                <span class="stat-label">Total Submissions</span>
+                <strong class="stat-number" id="stat-submissions">0</strong>
+                <small id="stat-submissions-sub" style="display:block; color:#6b7280; font-size:12px; margin-top:6px;">Loading...</small>
+            </div>
+        </section>
+
+        <!-- Two Column Content: Recent Registrations & Recent Submissions -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px;">
+            <!-- Recent Users Column -->
+            <section class="assignments-section">
+                <div class="section-header" style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h2>Recent Users</h2>
+                        <p>Latest registered accounts</p>
+                    </div>
+                    <a href="users.html" class="view-btn" style="background: #374151; font-size:12px;">View All</a>
+                </div>
+
+                <div class="table-container">
+                    <table class="assignments-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recent-users-body">
+                            <!-- Populated dynamically via admin_dashboard.js -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Recent Submissions Column -->
+            <section class="assignments-section">
+                <div class="section-header" style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h2>Recent Submissions</h2>
+                        <p>Latest student work received</p>
+                    </div>
+                    <a href="assignments.html" class="view-btn" style="background: #374151; font-size:12px;">View All</a>
+                </div>
+
+                <div class="table-container">
+                    <table class="assignments-table">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Assignment</th>
+                                <th>Course</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recent-submissions-body">
+                            <!-- Populated dynamically via admin_dashboard.js -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Client-side Scripts -->
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/admin_dashboard.js"></script>
+</body>
+</html>

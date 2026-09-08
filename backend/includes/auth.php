@@ -32,6 +32,18 @@ function currentUserRole()
     return isset($_SESSION['role']) ? $_SESSION['role'] : null;
 }
 
+// Get current logged-in user name
+function currentUserName()
+{
+    return isset($_SESSION['name']) ? $_SESSION['name'] : 'User';
+}
+
+// Get current logged-in user email
+function currentUserEmail()
+{
+    return isset($_SESSION['email']) ? $_SESSION['email'] : '';
+}
+
 // Require user to have a specific role
 function requireRole($role)
 {

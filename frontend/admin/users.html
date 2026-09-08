@@ -1,1 +1,126 @@
-<!-- HTML view placeholder -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Users - Admin</title>
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+</head>
+<body>
+    <div class="dashboard-page">
+        <!-- Back to dashboard link -->
+        <a href="dashboard.html" class="back-btn">&larr; Back to Dashboard</a>
+
+        <!-- Top Header -->
+        <header class="dashboard-header">
+            <div>
+                <h1>User Management</h1>
+                <p>Manage accounts, role assignments, and system access</p>
+            </div>
+            <div class="header-actions">
+                <span class="user-role" style="background: #fef2f2; color: #991b1b;">Admin</span>
+                <span id="admin-name" style="font-weight: 600; color: #374151;">Administrator</span>
+                <a href="../../backend/auth/logout.php" class="logout-btn">Logout</a>
+            </div>
+        </header>
+
+        <!-- Alert Notification Box -->
+        <div id="alert-box" style="display: none; margin-bottom: 20px;"></div>
+
+        <!-- Two Column Layout: Users Table & Add User Form -->
+        <div class="assignment-layout">
+            <!-- Left Column: Users List & Filters -->
+            <div class="assignment-main">
+                <section class="assignments-section">
+                    <!-- Filter and Search Bar -->
+                    <div class="filter-bar" style="display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
+                        <!-- Role Filter Tabs -->
+                        <div class="filter-tabs">
+                            <button class="filter-tab active" data-role="all">All</button>
+                            <button class="filter-tab" data-role="student">Students</button>
+                            <button class="filter-tab" data-role="teacher">Teachers</button>
+                            <button class="filter-tab" data-role="assistant">Assistants</button>
+                            <button class="filter-tab" data-role="admin">Admins</button>
+                        </div>
+
+                        <!-- Search Input -->
+                        <input type="text" id="search-input" placeholder="Search name or email..." style="padding: 8px 14px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; width: 220px;">
+                    </div>
+
+                    <!-- Users Table -->
+                    <div class="table-container" id="table-container">
+                        <table class="assignments-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Joined</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-table-body">
+                                <!-- Populated dynamically via admin_users.js -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Empty State -->
+                    <div id="empty-state" class="empty-state" style="display: none;">
+                        <h3>No Users Found</h3>
+                        <p>No user accounts match your current filter.</p>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Right Column: Add User Form -->
+            <div class="assignment-sidebar">
+                <section class="content-card">
+                    <h2>Add New User</h2>
+                    <p style="color: #6b7280; font-size: 13px; margin-bottom: 20px;">Create a new user account with specific privileges</p>
+
+                    <form id="create-user-form">
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <label for="input-name" style="display: block; font-weight: 600; margin-bottom: 5px;">Full Name *</label>
+                            <input type="text" id="input-name" name="name" required placeholder="e.g. Sara Mohamed" style="width: 100%; padding: 9px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <label for="input-email" style="display: block; font-weight: 600; margin-bottom: 5px;">Email Address *</label>
+                            <input type="email" id="input-email" name="email" required placeholder="name@domain.com" style="width: 100%; padding: 9px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <label for="input-role" style="display: block; font-weight: 600; margin-bottom: 5px;">System Role *</label>
+                            <select id="input-role" name="role" required style="width: 100%; padding: 9px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+                                <option value="student">Student</option>
+                                <option value="teacher">Teacher (Instructor)</option>
+                                <option value="assistant">Teaching Assistant</option>
+                                <option value="admin">Administrator</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label for="input-password" style="display: block; font-weight: 600; margin-bottom: 5px;">Password *</label>
+                            <input type="password" id="input-password" name="password" required minlength="8" placeholder="Minimum 8 characters" style="width: 100%; padding: 9px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+                            <p style="font-size: 12px; color: #6b7280; margin-top: 4px;">Must be at least 8 characters long</p>
+                        </div>
+
+                        <button type="submit" class="btn-primary" style="width: 100%; padding: 11px; font-size: 14px;">
+                            Create User Account
+                        </button>
+                    </form>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- Client-side Scripts -->
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/admin_users.js"></script>
+</body>
+</html>

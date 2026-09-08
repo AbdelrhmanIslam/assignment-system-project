@@ -1,1 +1,89 @@
-<!-- HTML view placeholder -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submissions Queue - Teacher</title>
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+</head>
+<body>
+
+<div class="dashboard-page">
+
+    <!-- Back navigation link -->
+    <a href="dashboard.html" class="back-btn">
+        &larr; Back to Dashboard
+    </a>
+
+    <!-- Top header section -->
+    <header class="dashboard-header">
+        <div>
+            <h1>Student Submissions Queue</h1>
+            <p>Review student submitted files, assign scores, and publish final evaluations</p>
+        </div>
+
+        <div class="header-actions">
+            <span class="user-role" style="background: #e0e7ff; color: #3730a3;">Teacher</span>
+            <!-- Logout link -->
+            <a href="../../backend/auth/logout.php" class="logout-btn">Logout</a>
+        </div>
+    </header>
+
+    <!-- Main submissions section -->
+    <section class="assignments-section">
+
+        <!-- Filter bar -->
+        <div class="filter-bar">
+            <div class="filter-tabs">
+                <button class="filter-tab active" data-filter="all" id="tab-all">All</button>
+                <button class="filter-tab" data-filter="pending" id="tab-pending">Pending Review</button>
+                <button class="filter-tab" data-filter="graded" id="tab-graded">Graded</button>
+            </div>
+
+            <!-- Search input -->
+            <input
+                type="text"
+                id="search-input"
+                class="search-input"
+                placeholder="Search by student, assignment, or course..."
+            >
+        </div>
+
+        <!-- Empty state notice -->
+        <div id="submissions-empty" class="empty-state" style="display: none;">
+            <h3>No Submissions Found</h3>
+            <p>No student submissions match your current filter selection.</p>
+        </div>
+
+        <!-- Table container -->
+        <div id="submissions-table-container" class="table-container" style="display: none;">
+            <table class="assignments-table">
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Assignment</th>
+                        <th>Course</th>
+                        <th>Submitted At</th>
+                        <th>Status</th>
+                        <th>Grade</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="submissions-table-body">
+                    <!-- Rendered by teacher_submissions.js -->
+                </tbody>
+            </table>
+        </div>
+
+    </section>
+
+</div>
+
+<!-- Controller script -->
+<script src="../assets/js/teacher_submissions.js"></script>
+
+</body>
+</html>

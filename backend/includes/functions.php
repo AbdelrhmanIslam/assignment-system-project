@@ -17,7 +17,16 @@ function redirect($url)
 // Check if current request method is POST
 function isPost()
 {
-    return $_SERVER['REQUEST_METHOD'] === 'POST';
+    return isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST';
+}
+
+// Sanitize input string safely
+function sanitize($value)
+{
+    if (is_array($value)) {
+        return array_map('sanitize', $value);
+    }
+    return trim(htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8'));
 }
 
 // Get trimmed POST value safely

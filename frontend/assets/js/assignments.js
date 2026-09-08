@@ -136,7 +136,11 @@ document.addEventListener('DOMContentLoaded', function () {
             // Action button cell
             var tdAction = document.createElement('td');
             var actionLink = document.createElement('a');
-            actionLink.href = 'assignment.html?id=' + item.id;
+            if (item.status_key === 'graded') {
+                actionLink.href = 'result.html?id=' + item.id;
+            } else {
+                actionLink.href = 'assignment.html?id=' + item.id;
+            }
             actionLink.className = 'action-btn ' + item.action_class;
             actionLink.textContent = item.action_label;
             tdAction.appendChild(actionLink);

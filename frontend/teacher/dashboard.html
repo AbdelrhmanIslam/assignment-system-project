@@ -1,1 +1,125 @@
-<!-- HTML view placeholder -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard - Assignment System</title>
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+</head>
+<body>
+
+<div class="dashboard-page">
+
+    <!-- Top header section -->
+    <header class="dashboard-header">
+        <div>
+            <h1>Teacher Dashboard</h1>
+            <p>Welcome, Dr. <span id="teacher-name">Loading...</span></p>
+        </div>
+
+        <div class="header-actions">
+            <span class="user-role" style="background: #e0e7ff; color: #3730a3;">Teacher</span>
+            <!-- Logout link -->
+            <a href="../../backend/auth/logout.php" class="logout-btn">Logout</a>
+        </div>
+    </header>
+
+    <!-- Quick action links bar -->
+    <div style="display: flex; gap: 12px; margin-bottom: 25px; flex-wrap: wrap;">
+        <a href="assignments.html#create-modal" class="action-btn action-submit" style="padding: 10px 18px; font-size: 14px;">
+            + Create New Assignment
+        </a>
+        <a href="assignments.html" class="action-btn action-view" style="padding: 10px 18px; font-size: 14px;">
+            Manage Assignments
+        </a>
+        <a href="submissions.html" class="action-btn action-review" style="padding: 10px 18px; font-size: 14px;">
+            View Submissions Queue
+        </a>
+        <a href="notifications.html" class="action-btn" style="background:#4b5563; color:#fff; padding: 10px 18px; font-size: 14px; text-decoration:none;">
+            Notifications
+        </a>
+    </div>
+
+    <!-- Statistics grid -->
+    <section class="stats-grid">
+        <div class="stat-card">
+            <span class="stat-label">Courses Managed</span>
+            <strong class="stat-number" id="stat-courses">0</strong>
+        </div>
+
+        <div class="stat-card">
+            <span class="stat-label">Total Assignments</span>
+            <strong class="stat-number" id="stat-assignments">0</strong>
+        </div>
+
+        <div class="stat-card">
+            <span class="stat-label">Pending Reviews</span>
+            <strong class="stat-number" id="stat-pending" style="color: #d97706;">0</strong>
+        </div>
+
+        <div class="stat-card">
+            <span class="stat-label">Graded Submissions</span>
+            <strong class="stat-number" id="stat-graded" style="color: #16a34a;">0</strong>
+        </div>
+    </section>
+
+    <!-- Courses managed overview -->
+    <section class="assignments-section" style="margin-bottom: 30px;">
+        <div class="section-header">
+            <div>
+                <h2>My Active Courses</h2>
+                <p>Courses assigned to your instruction</p>
+            </div>
+        </div>
+        <div id="courses-cards-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px;">
+            <!-- Rendered by teacher_dashboard.js -->
+        </div>
+    </section>
+
+    <!-- Recent submissions section -->
+    <section class="assignments-section">
+        <div class="section-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h2>Recent Student Submissions</h2>
+                <p>Latest submissions submitted across your courses</p>
+            </div>
+            <a href="submissions.html" class="view-btn">View All Submissions &rarr;</a>
+        </div>
+
+        <!-- Empty state notice -->
+        <div id="submissions-empty" class="empty-state" style="display: none;">
+            <h3>No Submissions Yet</h3>
+            <p>Students have not submitted any assignments for your courses yet.</p>
+        </div>
+
+        <!-- Table container -->
+        <div id="submissions-table-container" class="table-container" style="display: none;">
+            <table class="assignments-table">
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Assignment</th>
+                        <th>Course</th>
+                        <th>Submitted At</th>
+                        <th>Status</th>
+                        <th>Grade</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="recent-submissions-body">
+                    <!-- Rendered by teacher_dashboard.js -->
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+</div>
+
+<!-- Teacher Dashboard controller -->
+<script src="../assets/js/teacher_dashboard.js"></script>
+
+</body>
+</html>

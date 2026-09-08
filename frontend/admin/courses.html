@@ -1,1 +1,115 @@
-<!-- HTML view placeholder -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Courses - Admin</title>
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+</head>
+<body>
+    <div class="dashboard-page">
+        <!-- Back to dashboard link -->
+        <a href="dashboard.html" class="back-btn">&larr; Back to Dashboard</a>
+
+        <!-- Top Header -->
+        <header class="dashboard-header">
+            <div>
+                <h1>Course Management</h1>
+                <p>Manage curriculum subjects, faculty assignments, and enrollments</p>
+            </div>
+            <div class="header-actions">
+                <span class="user-role" style="background: #fef2f2; color: #991b1b;">Admin</span>
+                <span id="admin-name" style="font-weight: 600; color: #374151;">Administrator</span>
+                <a href="../../backend/auth/logout.php" class="logout-btn">Logout</a>
+            </div>
+        </header>
+
+        <!-- Alert Notification Box -->
+        <div id="alert-box" style="display: none; margin-bottom: 20px;"></div>
+
+        <!-- Two Column Layout: Courses Table & Create Course Form -->
+        <div class="assignment-layout">
+            <!-- Left Column: Courses List -->
+            <div class="assignment-main">
+                <section class="assignments-section">
+                    <div class="section-header">
+                        <h2>All Courses</h2>
+                        <p>Active and archived academic courses</p>
+                    </div>
+
+                    <!-- Courses Table -->
+                    <div class="table-container" id="table-container">
+                        <table class="assignments-table">
+                            <thead>
+                                <tr>
+                                    <th>Course Name</th>
+                                    <th>Teacher</th>
+                                    <th>Assistants</th>
+                                    <th>Students</th>
+                                    <th>Assignments</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="courses-table-body">
+                                <!-- Populated dynamically via admin_courses.js -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Empty State -->
+                    <div id="empty-state" class="empty-state" style="display: none;">
+                        <h3>No Courses Found</h3>
+                        <p>No courses have been created in the system yet.</p>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Right Column: Create Course Form -->
+            <div class="assignment-sidebar">
+                <section class="content-card">
+                    <h2>Create New Course</h2>
+                    <p style="color: #6b7280; font-size: 13px; margin-bottom: 20px;">Add a new course and assign academic staff</p>
+
+                    <form id="create-course-form">
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <label for="input-course-name" style="display: block; font-weight: 600; margin-bottom: 5px;">Course Title *</label>
+                            <input type="text" id="input-course-name" name="name" required placeholder="e.g. Mobile Application Development" style="width: 100%; padding: 9px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <label for="input-course-desc" style="display: block; font-weight: 600; margin-bottom: 5px;">Description</label>
+                            <textarea id="input-course-desc" name="description" rows="3" placeholder="Brief course syllabus and objectives..." style="width: 100%; padding: 9px; border: 1px solid #d1d5db; border-radius: 6px; font-family: inherit; font-size: 14px;"></textarea>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <label for="select-teacher" style="display: block; font-weight: 600; margin-bottom: 5px;">Lead Teacher *</label>
+                            <select id="select-teacher" name="teacher_id" required style="width: 100%; padding: 9px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+                                <option value="">Select Instructor...</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label for="select-assistant" style="display: block; font-weight: 600; margin-bottom: 5px;">Teaching Assistant</label>
+                            <select id="select-assistant" name="assistant_id" style="width: 100%; padding: 9px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+                                <option value="">None (Optional)</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn-primary" style="width: 100%; padding: 11px; font-size: 14px;">
+                            Create Course
+                        </button>
+                    </form>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- Client-side Scripts -->
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/admin_courses.js"></script>
+</body>
+</html>

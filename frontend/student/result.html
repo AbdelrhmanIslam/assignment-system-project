@@ -1,1 +1,134 @@
-<!-- HTML view placeholder -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignment Result - Student Portal</title>
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+</head>
+<body>
+    <div class="dashboard-page">
+        <!-- Top Header -->
+        <header class="dashboard-header">
+            <div>
+                <h1>Assignment Result & Evaluation</h1>
+                <p>Detailed performance report and instructor feedback</p>
+            </div>
+            <div class="header-actions">
+                <a href="assignments.html" class="back-btn" style="margin-bottom:0;">← Back to Assignments</a>
+                <span class="user-role">Student</span>
+                <span id="userName" style="font-weight: 600; color: #374151;">Loading...</span>
+                <a href="../../backend/auth/logout.php" class="logout-btn">Logout</a>
+            </div>
+        </header>
+
+        <!-- Loading / Error Alerts -->
+        <div id="errorMessage" class="alert-banner alert-error" style="display:none; margin-bottom: 20px;"></div>
+        <div id="loadingState" style="text-align:center; padding: 40px; color: #6b7280;">Loading assignment result...</div>
+
+        <!-- Main Content Area -->
+        <div id="mainContent" style="display:none;">
+            <!-- Assignment Top Info Card -->
+            <div class="content-card" style="margin-bottom: 25px;">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px;">
+                    <div>
+                        <span id="courseName" class="status-badge" style="background:#e0e7ff; color:#3730a3; margin-bottom:8px;">Course</span>
+                        <h2 id="assignmentTitle" style="margin: 6px 0 0; font-size: 22px;">Assignment Title</h2>
+                    </div>
+                    <div style="text-align:right;">
+                        <span style="font-size:13px; color:#6b7280; display:block;">Total Points Possible</span>
+                        <strong id="maxGrade" style="font-size:22px; color:#111827;">0</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Two Column Layout: Submission Info & Result Card -->
+            <div class="assignment-layout">
+                <!-- Left Column: Grade & Feedback Report -->
+                <div>
+                    <!-- Graded Details Card -->
+                    <div id="resultDetails" class="content-card" style="display:none; border-top: 4px solid #10b981;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px; flex-wrap:wrap; gap:10px;">
+                            <div>
+                                <span style="font-size: 13px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px;">Final Score</span>
+                                <div style="display:flex; align-items:baseline; gap:10px; margin-top:4px;">
+                                    <span id="gradeScore" style="font-size: 32px; font-weight: 800; color: #047857;">-- / --</span>
+                                    <span id="gradePercent" style="font-size: 18px; font-weight: 600; color: #6b7280;">--%</span>
+                                </div>
+                            </div>
+                            <div>
+                                <span id="gradeBadge" class="status-badge status-graded" style="font-size:14px; padding: 8px 16px;">Pass</span>
+                            </div>
+                        </div>
+
+                        <!-- Feedback Section -->
+                        <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 18px; margin-bottom: 20px;">
+                            <h4 style="margin: 0 0 10px; font-size: 15px; color: #111827;">Instructor Feedback</h4>
+                            <p id="gradeFeedback" style="margin: 0; line-height: 1.6; color: #374151; white-space: pre-line;">No feedback entered.</p>
+                        </div>
+
+                        <!-- Evaluator Meta -->
+                        <div style="display:flex; justify-content:space-between; font-size: 13px; color: #6b7280; border-top: 1px solid #f3f4f6; padding-top: 14px;">
+                            <span>Evaluated by: <strong id="gradedBy" style="color:#111827;">--</strong></span>
+                            <span>Date: <strong id="gradedAt" style="color:#111827;">--</strong></span>
+                        </div>
+
+                        <!-- Correction File Section -->
+                        <div id="correctionBox" style="display:none; margin-top: 20px; padding: 14px; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px;">
+                            <h4 style="margin: 0 0 8px; font-size: 14px; color: #065f46;">Annotated Correction File Attached</h4>
+                            <p style="margin: 0 0 10px; font-size: 13px; color: #047857;" id="correctionFileName">correction.pdf</p>
+                            <a id="downloadCorrectionBtn" href="#" class="view-btn" style="background:#059669;">Download Correction File</a>
+                        </div>
+                    </div>
+
+                    <!-- Pending Review Card (if not yet graded) -->
+                    <div id="pendingCard" class="content-card" style="display:none; border-top: 4px solid #f59e0b;">
+                        <h3 style="margin: 0 0 10px; color: #b45309;">Submission Under Review</h3>
+                        <p style="color: #4b5563; line-height: 1.5; margin-bottom: 15px;">
+                            Your submission has been received and is currently being evaluated by the instructor or assistant. Your grade and feedback will appear here as soon as evaluation is completed.
+                        </p>
+                        <span id="subStatusBadge" class="status-badge status-review">UNDER REVIEW</span>
+                    </div>
+                </div>
+
+                <!-- Right Column: Submission Overview -->
+                <div>
+                    <div class="content-card">
+                        <h2>Your Submission</h2>
+                        <div class="submission-box">
+                            <div class="submission-item">
+                                <span>Uploaded File:</span>
+                                <strong id="subFileName" style="word-break: break-all;">--</strong>
+                            </div>
+                            <div class="submission-item">
+                                <span>File Size:</span>
+                                <strong id="subFileSize">--</strong>
+                            </div>
+                            <div class="submission-item">
+                                <span>Submitted At:</span>
+                                <strong id="subDate">--</strong>
+                            </div>
+                            <div class="submission-item">
+                                <span>Submission Version:</span>
+                                <strong id="subVersion">v1</strong>
+                            </div>
+                        </div>
+
+                        <!-- Download Submission File Button -->
+                        <div style="margin-top: 15px;">
+                            <a id="downloadSubBtn" href="#" class="view-btn" style="display:block; text-align:center; padding: 10px;">Download Submitted File</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Client-side Scripts -->
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/result.js"></script>
+</body>
+</html>

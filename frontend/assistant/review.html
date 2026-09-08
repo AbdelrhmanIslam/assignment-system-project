@@ -1,1 +1,157 @@
-<!-- HTML view placeholder -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluate Submission - Assistant</title>
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+</head>
+<body>
+    <div class="dashboard-page">
+        <!-- Back to queue link -->
+        <a href="submissions.html" class="back-btn">&larr; Back to Submissions Queue</a>
+
+        <!-- Top Header -->
+        <header class="dashboard-header">
+            <div>
+                <h1>Submission Evaluation & Grading</h1>
+                <p>Evaluating student submission for <span id="assignment-title" style="font-weight: 600;">Loading...</span></p>
+            </div>
+            <div class="header-actions">
+                <span class="user-role" style="background: #e0f2fe; color: #0369a1;">Assistant</span>
+                <a href="../../backend/auth/logout.php" class="logout-btn">Logout</a>
+            </div>
+        </header>
+
+        <!-- Dynamic Alert Message -->
+        <div id="alert-box" style="display: none; margin-bottom: 20px;"></div>
+
+        <!-- Teacher Recheck Alert Box -->
+        <div id="recheck-alert-box" style="display: none; background: #fef2f2; border: 1px solid #f87171; border-radius: 8px; padding: 16px; margin-bottom: 25px;">
+            <h4 style="margin: 0 0 6px; color: #991b1b; font-size: 15px;">Teacher Recheck Requested</h4>
+            <p style="margin: 0; color: #7f1d1d; font-size: 14px;">Review Note from <strong id="teacher-reviewer-name">Teacher</strong>: "<span id="teacher-comment">--</span>"</p>
+        </div>
+
+        <!-- Review Layout -->
+        <div class="assignment-layout">
+            <!-- Left Column: Student Work & File -->
+            <div class="assignment-main">
+                <section class="content-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h2>Submission Details</h2>
+                        <span id="status-badge" class="status-badge">Submitted</span>
+                    </div>
+
+                    <!-- Meta Grid -->
+                    <div class="meta-grid">
+                        <div class="meta-item">
+                            <span>Student Name</span>
+                            <strong id="student-name">—</strong>
+                        </div>
+
+                        <div class="meta-item">
+                            <span>Student Email</span>
+                            <strong id="student-email">—</strong>
+                        </div>
+
+                        <div class="meta-item">
+                            <span>Course</span>
+                            <strong id="course-name">—</strong>
+                        </div>
+
+                        <div class="meta-item">
+                            <span>Maximum Points</span>
+                            <strong id="max-grade-display">—</strong>
+                        </div>
+
+                        <div class="meta-item">
+                            <span>Submitted At</span>
+                            <strong id="submitted-at">—</strong>
+                        </div>
+
+                        <div class="meta-item">
+                            <span>Version</span>
+                            <strong id="file-version">v1</strong>
+                        </div>
+                    </div>
+
+                    <!-- Download File Box -->
+                    <div style="background: #f9fafb; border: 1px dashed #d1d5db; border-radius: 8px; padding: 18px; margin: 20px 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                        <div>
+                            <span style="font-size: 12px; color: #6b7280; text-transform: uppercase;">Submitted File</span>
+                            <strong id="file-name" style="display: block; font-size: 15px; margin-top: 4px; color: #111827; word-break: break-all;">—</strong>
+                            <span id="file-size" style="font-size: 12px; color: #6b7280;">—</span>
+                        </div>
+
+                        <a id="download-file-btn" href="#" class="action-btn action-submit" style="padding: 10px 18px; text-decoration: none;">
+                            &darr; Download File
+                        </a>
+                    </div>
+
+                    <!-- Assignment Description -->
+                    <h3>Assignment Instructions</h3>
+                    <div id="assignment-description" class="description-box">
+                        Loading description...
+                    </div>
+                </section>
+            </div>
+
+            <!-- Right Column: Grading & Feedback Form -->
+            <div class="assignment-sidebar">
+                <section class="content-card">
+                    <h2>Grade & Feedback</h2>
+                    <p style="color: #6b7280; font-size: 14px; margin-bottom: 18px;">Score the submission and provide feedback to the student</p>
+
+                    <!-- Previous Grade Notice if existing -->
+                    <div id="existing-grade-notice" style="display: none; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 12px; margin-bottom: 18px; font-size: 13px; color: #166534;">
+                        <strong>Previously Graded:</strong> <span id="previous-grade-val">--</span> on <span id="previous-graded-at">--</span>.
+                    </div>
+
+                    <!-- Evaluation Form -->
+                    <form id="grade-form" enctype="multipart/form-data">
+                        <!-- Score Input -->
+                        <div class="form-group" style="margin-bottom: 16px;">
+                            <label for="input-grade" style="display: block; font-weight: 600; margin-bottom: 6px;">Score Points *</label>
+                            <input type="number" id="input-grade" name="grade" step="0.25" min="0" required placeholder="e.g. 24.5" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 15px;">
+                            <p id="max-grade-hint" style="font-size: 12px; color: #6b7280; margin-top: 4px;">Maximum allowed points</p>
+                        </div>
+
+                        <!-- Feedback Comments -->
+                        <div class="form-group" style="margin-bottom: 16px;">
+                            <label for="input-feedback" style="display: block; font-weight: 600; margin-bottom: 6px;">Constructive Feedback</label>
+                            <textarea id="input-feedback" name="feedback" rows="5" placeholder="Highlight strengths and areas for improvement..." style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-family: inherit; font-size: 14px;"></textarea>
+                        </div>
+
+                        <!-- Optional Correction File Upload -->
+                        <div class="form-group" style="margin-bottom: 16px;">
+                            <label for="correction-file" style="display: block; font-weight: 600; margin-bottom: 6px;">Attach Correction File (Optional)</label>
+                            <input type="file" id="correction-file" name="correction_file" style="font-size: 13px;">
+                            <p style="font-size: 12px; color: #6b7280; margin-top: 4px;">Allowed: pdf, doc, docx, zip, txt</p>
+                        </div>
+
+                        <!-- Workflow status choice -->
+                        <div class="form-group" style="margin-bottom: 22px;">
+                            <label for="status-choice" style="display: block; font-weight: 600; margin-bottom: 6px;">Next Workflow Step</label>
+                            <select id="status-choice" name="status_choice" style="width: 100%; padding: 9px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+                                <option value="pending_teacher" selected>Submit for Teacher Review & Approval</option>
+                            </select>
+                            <p style="font-size: 12px; color: #6b7280; margin-top: 4px;">Evaluation will be forwarded to course instructor for final approval & publishing.</p>
+                        </div>
+
+                        <button type="submit" class="btn-primary" style="width: 100%; padding: 12px; font-size: 15px;">
+                            Submit for Teacher Review &rarr;
+                        </button>
+                    </form>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- Client Scripts -->
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/assistant_review.js"></script>
+</body>
+</html>

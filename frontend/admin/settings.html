@@ -1,1 +1,111 @@
-<!-- HTML view placeholder -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Settings - Admin</title>
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+</head>
+<body>
+    <div class="dashboard-page">
+        <!-- Back to dashboard link -->
+        <a href="dashboard.html" class="back-btn">&larr; Back to Dashboard</a>
+
+        <!-- Top Header -->
+        <header class="dashboard-header">
+            <div>
+                <h1>System Settings & Diagnostics</h1>
+                <p>Environment configuration, storage status, and server runtime</p>
+            </div>
+            <div class="header-actions">
+                <span class="user-role" style="background: #fef2f2; color: #991b1b;">Admin</span>
+                <span id="admin-name" style="font-weight: 600; color: #374151;">Administrator</span>
+                <a href="../../backend/auth/logout.php" class="logout-btn">Logout</a>
+            </div>
+        </header>
+
+        <!-- Settings Cards Grid -->
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px;">
+            <!-- System Identity & Environment -->
+            <section class="content-card">
+                <h2>Application Environment</h2>
+                <div class="submission-box">
+                    <div class="submission-item">
+                        <span>Application Name:</span>
+                        <strong id="setting-site-name">Assignment System</strong>
+                    </div>
+                    <div class="submission-item">
+                        <span>Base URL:</span>
+                        <strong id="setting-base-url">/nti_intern_full/assignment-system-project</strong>
+                    </div>
+                    <div class="submission-item">
+                        <span>Configured Timezone:</span>
+                        <strong id="setting-timezone">Africa/Cairo</strong>
+                    </div>
+                    <div class="submission-item">
+                        <span>Server Time:</span>
+                        <strong id="setting-server-time">Loading...</strong>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Server & Database Runtime -->
+            <section class="content-card">
+                <h2>Server & Database Runtime</h2>
+                <div class="submission-box">
+                    <div class="submission-item">
+                        <span>PHP Version:</span>
+                        <strong id="setting-php-ver">Loading...</strong>
+                    </div>
+                    <div class="submission-item">
+                        <span>MySQL Server Version:</span>
+                        <strong id="setting-mysql-ver">Loading...</strong>
+                    </div>
+                    <div class="submission-item">
+                        <span>Active Database:</span>
+                        <strong id="setting-db-name">assignment_system</strong>
+                    </div>
+                    <div class="submission-item">
+                        <span>Database Status:</span>
+                        <strong style="color: #166534;">Connected (mysqli)</strong>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Storage & Upload Policies -->
+            <section class="content-card" style="grid-column: span 2;">
+                <h2>File Storage & Upload Configurations</h2>
+                <div class="submission-box">
+                    <div class="submission-item">
+                        <span>Max File Upload Limit:</span>
+                        <strong id="setting-max-upload">10 MB</strong>
+                    </div>
+                    <div class="submission-item">
+                        <span>Default Allowed Extensions:</span>
+                        <strong id="setting-allowed-exts">pdf, doc, docx, zip, txt</strong>
+                    </div>
+                    <div class="submission-item">
+                        <span>Submissions Storage Directory:</span>
+                        <strong id="setting-submissions-path" style="font-size: 13px; word-break: break-all;">Loading...</strong>
+                    </div>
+                    <div class="submission-item">
+                        <span>Corrections Storage Directory:</span>
+                        <strong id="setting-corrections-path" style="font-size: 13px; word-break: break-all;">Loading...</strong>
+                    </div>
+                    <div class="submission-item">
+                        <span>Total Uploaded Storage Consumed:</span>
+                        <strong id="setting-storage-used" style="color: #2563eb;">0 B</strong>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Client-side Scripts -->
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/admin_settings.js"></script>
+</body>
+</html>

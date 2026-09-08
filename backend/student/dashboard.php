@@ -218,6 +218,9 @@ while ($assignment = mysqli_fetch_assoc($assignmentsResult)) {
     }
 
     $assignment['display_status'] = $status;
+    if ($status !== 'graded') {
+        $assignment['grade'] = null;
+    }
 
     $assignments[] = $assignment;
 }

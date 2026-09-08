@@ -120,6 +120,22 @@ document.addEventListener('DOMContentLoaded', function () {
                     statusBadge.textContent = statusInfo.label;
                 }
 
+                // Render download submission link
+                var downloadSubLink = document.getElementById('download-submission-link');
+                if (downloadSubLink && submission.id) {
+                    downloadSubLink.href = '../../backend/student/download.php?type=submission&id=' + submission.id;
+                    downloadSubLink.style.display = 'inline-block';
+                }
+
+                // Render result report link if graded
+                var resultReportLink = document.getElementById('view-result-report-link');
+                if (resultReportLink && submission.status === 'graded') {
+                    resultReportLink.href = 'result.html?id=' + assignment.id;
+                    resultReportLink.style.display = 'inline-block';
+                } else if (resultReportLink) {
+                    resultReportLink.style.display = 'none';
+                }
+
                 // Render grade section if available
                 var gradeCard = document.getElementById('grade-card');
                 if (submission.status === 'graded' && submission.grade !== null) {
@@ -128,9 +144,13 @@ document.addEventListener('DOMContentLoaded', function () {
                     setElementText('grade-feedback', submission.feedback ? submission.feedback : 'No written feedback provided.');
 
                     var correctionBox = document.getElementById('correction-file-box');
+                    var downloadCorrLink = document.getElementById('download-correction-link');
                     if (submission.correction_file_name && correctionBox) {
                         correctionBox.style.display = 'block';
                         setElementText('correction-file-name', submission.correction_file_name);
+                        if (downloadCorrLink) {
+                            downloadCorrLink.href = '../../backend/student/download.php?type=correction&id=' + submission.id;
+                        }
                     }
                 } else if (gradeCard) {
                     gradeCard.style.display = 'none';

@@ -72,6 +72,7 @@ if ($result) {
             $statusClass = ($row['submission_status'] === 'submitted') ? 'status-submitted' : 'status-review';
             $actionLabel = 'View Submission';
             $actionClass = 'action-review';
+            $row['grade'] = null;
         }
 
         $row['status_key'] = $statusKey;
