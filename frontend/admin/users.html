@@ -4,17 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Users - Admin</title>
-    <!-- Stylesheets -->
+
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/dashboard.css">
     <link rel="stylesheet" href="../assets/css/responsive.css">
 </head>
 <body>
     <div class="dashboard-page">
-        <!-- Back to dashboard link -->
+
         <a href="dashboard.html" class="back-btn">&larr; Back to Dashboard</a>
 
-        <!-- Top Header -->
         <header class="dashboard-header">
             <div>
                 <h1>User Management</h1>
@@ -27,17 +26,15 @@
             </div>
         </header>
 
-        <!-- Alert Notification Box -->
         <div id="alert-box" style="display: none; margin-bottom: 20px;"></div>
 
-        <!-- Two Column Layout: Users Table & Add User Form -->
         <div class="assignment-layout">
-            <!-- Left Column: Users List & Filters -->
+
             <div class="assignment-main">
                 <section class="assignments-section">
-                    <!-- Filter and Search Bar -->
+
                     <div class="filter-bar" style="display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
-                        <!-- Role Filter Tabs -->
+
                         <div class="filter-tabs">
                             <button class="filter-tab active" data-role="all">All</button>
                             <button class="filter-tab" data-role="student">Students</button>
@@ -46,11 +43,9 @@
                             <button class="filter-tab" data-role="admin">Admins</button>
                         </div>
 
-                        <!-- Search Input -->
                         <input type="text" id="search-input" placeholder="Search name or email..." style="padding: 8px 14px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; width: 220px;">
                     </div>
 
-                    <!-- Users Table -->
                     <div class="table-container" id="table-container">
                         <table class="assignments-table">
                             <thead>
@@ -64,12 +59,11 @@
                                 </tr>
                             </thead>
                             <tbody id="users-table-body">
-                                <!-- Populated dynamically via admin_users.js -->
+
                             </tbody>
                         </table>
                     </div>
 
-                    <!-- Empty State -->
                     <div id="empty-state" class="empty-state" style="display: none;">
                         <h3>No Users Found</h3>
                         <p>No user accounts match your current filter.</p>
@@ -77,7 +71,6 @@
                 </section>
             </div>
 
-            <!-- Right Column: Add User Form -->
             <div class="assignment-sidebar">
                 <section class="content-card">
                     <h2>Add New User</h2>
@@ -119,7 +112,6 @@
         </div>
     </div>
 
-    <!-- Client-side Scripts -->
     <script src="../assets/js/main.js"></script>
     <script src="../assets/js/admin_users.js"></script>
 </body>

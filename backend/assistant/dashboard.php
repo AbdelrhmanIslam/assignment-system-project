@@ -1,5 +1,5 @@
 <?php
-// Backend JSON API for assistant dashboard
+// backend json api for assistant dashboard
 
 header('Content-Type: application/json');
 
@@ -8,7 +8,7 @@ require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
 
-// Verify assistant authentication
+// verify assistant authentication
 if (!isLoggedIn() || currentUserRole() !== 'assistant') {
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
     exit;
@@ -16,7 +16,7 @@ if (!isLoggedIn() || currentUserRole() !== 'assistant') {
 
 $assistantId = (int) currentUserId();
 
-// Fetch assistant's assigned courses
+// fetch assistant's assigned courses
 $coursesSql = "SELECT c.id, c.name
                FROM courses c
                INNER JOIN course_assistants ca ON ca.course_id = c.id
@@ -35,7 +35,7 @@ if ($coursesResult) {
     }
 }
 
-// If assistant has no assigned courses, return zeros
+// if assistant has no assigned courses, return zeros
 if (empty($assignedCourseIds)) {
     echo json_encode([
         'success' => true,
@@ -57,10 +57,10 @@ if (empty($assignedCourseIds)) {
 
 $courseIdsList = implode(',', $assignedCourseIds);
 
-// Total assigned courses count
+// total assigned courses count
 $totalCoursesCount = count($assignedCourseIds);
 
-// Query pending submissions count (submitted, under_review, recheck)
+// query pending submissions count (submitted, under_review, recheck)
 $pendingSql = "SELECT COUNT(s.id) AS total
                FROM submissions s
                INNER JOIN assignments a ON a.id = s.assignment_id
@@ -70,7 +70,7 @@ $pendingResult = mysqli_query($conn, $pendingSql);
 $pendingRow = mysqli_fetch_assoc($pendingResult);
 $pendingCount = $pendingRow ? (int) $pendingRow['total'] : 0;
 
-// Query graded submissions count
+// query graded submissions count
 $gradedSql = "SELECT COUNT(s.id) AS total
               FROM submissions s
               INNER JOIN assignments a ON a.id = s.assignment_id
@@ -80,7 +80,7 @@ $gradedResult = mysqli_query($conn, $gradedSql);
 $gradedRow = mysqli_fetch_assoc($gradedResult);
 $gradedCount = $gradedRow ? (int) $gradedRow['total'] : 0;
 
-// Query total submissions count
+// query total submissions count
 $totalSubSql = "SELECT COUNT(s.id) AS total
                 FROM submissions s
                 INNER JOIN assignments a ON a.id = s.assignment_id
@@ -89,7 +89,7 @@ $totalSubResult = mysqli_query($conn, $totalSubSql);
 $totalSubRow = mysqli_fetch_assoc($totalSubResult);
 $totalSubmissionsCount = $totalSubRow ? (int) $totalSubRow['total'] : 0;
 
-// Query 5 recent submissions across assistant's courses
+// query 5 recent submissions across assistant's courses
 $recentSql = "SELECT
                 s.id,
                 s.file_name,

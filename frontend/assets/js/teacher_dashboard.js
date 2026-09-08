@@ -1,7 +1,7 @@
-// Teacher Dashboard JavaScript Controller
+// teacher dashboard javascript controller
 
 document.addEventListener('DOMContentLoaded', function () {
-    // Fetch teacher dashboard data from backend API
+    // fetch teacher dashboard data from backend api
     fetch('../../backend/teacher/dashboard.php')
         .then(function (response) {
             if (response.status === 401) {
@@ -16,13 +16,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
-            // Populate teacher name
+            // populate teacher name
             var nameElem = document.getElementById('teacher-name');
             if (nameElem && data.teacher) {
                 nameElem.textContent = data.teacher.name;
             }
 
-            // Populate statistics cards
+            // populate statistics cards
             if (data.stats) {
                 setElementText('stat-courses', data.stats.courses || 0);
                 setElementText('stat-assignments', data.stats.assignments || 0);
@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 setElementText('stat-graded', data.stats.graded || 0);
             }
 
-            // Populate recent submissions table
+            // populate recent submissions table
             var tbody = document.getElementById('recent-submissions-body');
             var emptyNotice = document.getElementById('submissions-empty');
             var tableContainer = document.getElementById('submissions-table-container');
@@ -45,24 +45,20 @@ document.addEventListener('DOMContentLoaded', function () {
                         var item = data.recent_submissions[i];
                         var tr = document.createElement('tr');
 
-                        // Student name cell
                         var tdStudent = document.createElement('td');
                         var strongStudent = document.createElement('strong');
                         strongStudent.textContent = item.student_name;
                         tdStudent.appendChild(strongStudent);
                         tr.appendChild(tdStudent);
 
-                        // Assignment title cell
                         var tdAssignment = document.createElement('td');
                         tdAssignment.textContent = item.assignment_title;
                         tr.appendChild(tdAssignment);
 
-                        // Course cell
                         var tdCourse = document.createElement('td');
                         tdCourse.textContent = item.course_name;
                         tr.appendChild(tdCourse);
 
-                        // Submitted date cell
                         var tdDate = document.createElement('td');
                         var dateObj = new Date(item.submitted_at);
                         tdDate.textContent = dateObj.toLocaleDateString('en-US', {
@@ -73,7 +69,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         });
                         tr.appendChild(tdDate);
 
-                        // Status badge cell
                         var tdStatus = document.createElement('td');
                         var badge = document.createElement('span');
                         var statusInfo = getStatusInfo(item.status);
@@ -82,7 +77,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         tdStatus.appendChild(badge);
                         tr.appendChild(tdStatus);
 
-                        // Grade cell
                         var tdGrade = document.createElement('td');
                         if (item.status === 'graded' && item.grade !== null) {
                             tdGrade.textContent = item.grade + ' / ' + item.max_grade;
@@ -91,7 +85,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         }
                         tr.appendChild(tdGrade);
 
-                        // Action button cell
                         var tdAction = document.createElement('td');
                         var reviewLink = document.createElement('a');
                         reviewLink.href = 'review.html?id=' + item.id;
@@ -108,7 +101,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (emptyNotice) emptyNotice.style.display = 'block';
             }
 
-            // Populate courses cards
+            // populate courses cards
             var coursesContainer = document.getElementById('courses-cards-container');
             if (coursesContainer && data.courses) {
                 coursesContainer.innerHTML = '';
@@ -131,13 +124,13 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 });
 
-// Helper to set element text
+// helper to set element text
 function setElementText(id, text) {
     var el = document.getElementById(id);
     if (el) el.textContent = text;
 }
 
-// Helper to map status to label and css badge
+// helper to map status to label and css badge
 function getStatusInfo(status) {
     if (status === 'graded') {
         return { label: 'Graded', className: 'status-graded' };
@@ -148,7 +141,7 @@ function getStatusInfo(status) {
     }
 }
 
-// Escape html utility
+// escape html utility
 function escapeHtml(text) {
     var div = document.createElement('div');
     div.textContent = text;

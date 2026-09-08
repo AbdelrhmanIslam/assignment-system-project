@@ -1,5 +1,5 @@
 <?php
-// Backend JSON API for assistant notifications
+// backend json api for assistant notifications
 
 header('Content-Type: application/json');
 
@@ -8,7 +8,7 @@ require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
 
-// Verify assistant authentication
+// verify assistant authentication
 if (!isLoggedIn() || currentUserRole() !== 'assistant') {
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
     exit;
@@ -16,7 +16,7 @@ if (!isLoggedIn() || currentUserRole() !== 'assistant') {
 
 $assistantId = (int) currentUserId();
 
-// Handle POST actions: mark as read or mark all as read
+// handle post actions: mark as read or mark all as read
 if (isPost()) {
     $action = isset($_POST['action']) ? sanitize($_POST['action']) : '';
 
@@ -39,7 +39,7 @@ if (isPost()) {
     exit;
 }
 
-// Handle GET: fetch all assistant notifications
+// handle get: fetch all assistant notifications
 $sql = "SELECT id, title, message, type, reference_id, is_read, created_at
         FROM notifications
         WHERE user_id = $assistantId

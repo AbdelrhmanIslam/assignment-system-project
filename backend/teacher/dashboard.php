@@ -1,15 +1,14 @@
 <?php
-// Backend teacher dashboard data API
+// backend teacher dashboard data api
 
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
 
-// Set JSON response header
 header('Content-Type: application/json');
 
-// Check teacher authentication
+// check teacher authentication
 if (!isLoggedIn() || currentUserRole() !== 'teacher') {
     http_response_code(401);
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
@@ -18,7 +17,7 @@ if (!isLoggedIn() || currentUserRole() !== 'teacher') {
 
 $teacherId = (int) currentUserId();
 
-// Query teacher information
+// query teacher information
 $teacherSql = "SELECT id, name, email FROM users WHERE id = $teacherId AND role = 'teacher' LIMIT 1";
 $teacherResult = mysqli_query($conn, $teacherSql);
 $teacher = mysqli_fetch_assoc($teacherResult);
@@ -30,7 +29,7 @@ if (!$teacher) {
     exit;
 }
 
-// Query teacher statistics
+// query teacher statistics
 $stats = [
     'courses' => 0,
     'assignments' => 0,
@@ -39,7 +38,7 @@ $stats = [
     'graded' => 0
 ];
 
-// Courses count
+// courses count
 $cSql = "SELECT COUNT(*) AS total FROM courses WHERE teacher_id = $teacherId AND is_active = 1";
 $cRes = mysqli_query($conn, $cSql);
 if ($cRes) {
@@ -47,7 +46,7 @@ if ($cRes) {
     $stats['courses'] = (int) $r['total'];
 }
 
-// Assignments count
+// assignments count
 $aSql = "SELECT COUNT(a.id) AS total FROM assignments a
 INNER JOIN courses c ON c.id = a.course_id
 WHERE c.teacher_id = $teacherId AND a.is_active = 1";
@@ -57,7 +56,7 @@ if ($aRes) {
     $stats['assignments'] = (int) $r['total'];
 }
 
-// Submissions statistics
+// submissions statistics
 $subSql = "SELECT
     COUNT(s.id) AS total_submissions,
     SUM(CASE WHEN s.status IN ('submitted', 'under_review', 'pending_teacher', 'recheck') THEN 1 ELSE 0 END) AS pending_review,
@@ -75,7 +74,7 @@ if ($subRes) {
     $stats['graded'] = (int) ($r['graded'] ?? 0);
 }
 
-// Query recent submissions across teacher courses
+// query recent submissions across teacher courses
 $recentSql = "SELECT
     s.id,
     s.submitted_at,
@@ -103,7 +102,7 @@ if ($recentRes) {
     }
 }
 
-// Query teacher active courses list
+// query teacher active courses list
 $coursesSql = "SELECT
     c.id,
     c.name,
@@ -125,7 +124,6 @@ if ($coursesRes) {
     }
 }
 
-// Return JSON response
 echo json_encode([
     'success' => true,
     'teacher' => $teacher,

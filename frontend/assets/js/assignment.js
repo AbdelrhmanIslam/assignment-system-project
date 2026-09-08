@@ -1,7 +1,7 @@
-// Assignment JavaScript for loading details and submission status
+// assignment javascript for loading details and submission status
 
 document.addEventListener('DOMContentLoaded', function () {
-    // Read assignment id from URL query parameter
+    // read assignment id from url query parameter
     var urlParams = new URLSearchParams(window.location.search);
     var assignmentId = urlParams.get('id');
 
@@ -10,13 +10,13 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
     }
 
-    // Set hidden form assignment_id field
+    // set hidden form assignment_id field
     var formAssignmentId = document.getElementById('form-assignment-id');
     if (formAssignmentId) {
         formAssignmentId.value = assignmentId;
     }
 
-    // Fetch assignment and submission data from backend
+    // fetch assignment and submission data from backend
     fetch('../../backend/student/assignment.php?id=' + assignmentId)
         .then(function (response) {
             if (response.status === 401) {
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
             var assignment = data.assignment;
             var submission = data.submission;
 
-            // Render assignment header and general details
+            // render assignment header and general details
             document.title = assignment.title + ' - Assignment System';
 
             setElementText('assignment-title', assignment.title);
@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
             setElementText('allowed-extensions', assignment.allowed_extensions);
             setElementText('max-file-size', assignment.max_file_size_mb + ' MB');
 
-            // Format deadline date
+            // format deadline date
             var deadlineDate = new Date(assignment.deadline);
             var deadlineFormatted = deadlineDate.toLocaleString('en-US', {
                 month: 'short',
@@ -58,11 +58,11 @@ document.addEventListener('DOMContentLoaded', function () {
             });
             setElementText('deadline', deadlineFormatted);
 
-            // Resubmission rule text
+            // resubmission rule text
             var resubmissionText = (parseInt(assignment.allow_resubmission, 10) === 1) ? 'Allowed' : 'Not Allowed';
             setElementText('allow-resubmission', resubmissionText);
 
-            // Deadline badge indicator
+            // deadline badge indicator
             var deadlineBadge = document.getElementById('deadline-badge');
             if (deadlineBadge) {
                 if (data.is_past_deadline) {
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
 
-            // Set file input accept attribute based on allowed extensions
+            // set file input accept attribute based on allowed extensions
             var fileInput = document.getElementById('submission-file-input');
             if (fileInput && assignment.allowed_extensions) {
                 var extList = assignment.allowed_extensions.split(',');
@@ -87,13 +87,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 fileInput.setAttribute('accept', acceptList.join(','));
             }
 
-            // Render submission status section
+            // render submission status section
             var submissionCard = document.getElementById('submission-details-card');
             var uploadCard = document.getElementById('upload-card');
             var submissionNotice = document.getElementById('submission-notice');
 
             if (submission) {
-                // Show existing submission info
+                // show existing submission info
                 if (submissionCard) {
                     submissionCard.style.display = 'block';
                 }
@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     hour12: true
                 }));
 
-                // Render submission status badge
+                // render submission status badge
                 var statusBadge = document.getElementById('submission-status-badge');
                 if (statusBadge) {
                     var statusInfo = getAssignmentStatusInfo(submission);
@@ -120,14 +120,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     statusBadge.textContent = statusInfo.label;
                 }
 
-                // Render download submission link
+                // render download submission link
                 var downloadSubLink = document.getElementById('download-submission-link');
                 if (downloadSubLink && submission.id) {
                     downloadSubLink.href = '../../backend/student/download.php?type=submission&id=' + submission.id;
                     downloadSubLink.style.display = 'inline-block';
                 }
 
-                // Render result report link if graded
+                // render result report link if graded
                 var resultReportLink = document.getElementById('view-result-report-link');
                 if (resultReportLink && submission.status === 'graded') {
                     resultReportLink.href = 'result.html?id=' + assignment.id;
@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     resultReportLink.style.display = 'none';
                 }
 
-                // Render grade section if available
+                // render grade section if available
                 var gradeCard = document.getElementById('grade-card');
                 if (submission.status === 'graded' && submission.grade !== null) {
                     if (gradeCard) gradeCard.style.display = 'block';
@@ -156,7 +156,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     gradeCard.style.display = 'none';
                 }
 
-                // Update upload card title to indicate resubmission
+                // update upload card title to indicate resubmission
                 var uploadTitle = document.getElementById('upload-card-title');
                 if (uploadTitle) {
                     uploadTitle.textContent = 'Submit New Version (Replace)';
@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 submissionCard.style.display = 'none';
             }
 
-            // Display or hide upload form based on can_submit flag
+            // display or hide upload form based on can_submit flag
             if (data.can_submit) {
                 if (uploadCard) uploadCard.style.display = 'block';
                 if (submissionNotice) submissionNotice.style.display = 'none';
@@ -187,7 +187,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 });
 
-// Helper function to set inner text safely
+// helper function to set inner text safely
 function setElementText(id, text) {
     var elem = document.getElementById(id);
     if (elem) {
@@ -195,7 +195,7 @@ function setElementText(id, text) {
     }
 }
 
-// Display error message banner
+// display error message banner
 function showErrorMessage(msg) {
     var alertBox = document.getElementById('alert-box');
     if (alertBox) {
@@ -205,7 +205,7 @@ function showErrorMessage(msg) {
     }
 }
 
-// Format bytes into human readable format
+// format bytes into human readable format
 function formatBytes(bytes) {
     if (!bytes || bytes === 0) return '0 B';
     var k = 1024;
@@ -214,7 +214,7 @@ function formatBytes(bytes) {
     return (bytes / Math.pow(k, i)).toFixed(1) + ' ' + sizes[i];
 }
 
-// Helper function to resolve assignment status info
+// helper function to resolve assignment status info
 function getAssignmentStatusInfo(submission) {
     var status = submission.status;
     if (status === 'submitted') {

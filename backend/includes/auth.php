@@ -1,17 +1,17 @@
 <?php
-// Authentication and session management functions
+// authentication and session management functions
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Check if user is logged in
+// check if user is logged in
 function isLoggedIn()
 {
     return isset($_SESSION['user_id']);
 }
 
-// Require user to be logged in
+// require user to be logged in
 function requireLogin()
 {
     if (!isLoggedIn()) {
@@ -20,31 +20,31 @@ function requireLogin()
     }
 }
 
-// Get current logged-in user id
+// get current logged-in user id
 function currentUserId()
 {
     return isset($_SESSION['user_id']) ? (int) $_SESSION['user_id'] : null;
 }
 
-// Get current logged-in user role
+// get current logged-in user role
 function currentUserRole()
 {
     return isset($_SESSION['role']) ? $_SESSION['role'] : null;
 }
 
-// Get current logged-in user name
+// get current logged-in user name
 function currentUserName()
 {
     return isset($_SESSION['name']) ? $_SESSION['name'] : 'User';
 }
 
-// Get current logged-in user email
+// get current logged-in user email
 function currentUserEmail()
 {
     return isset($_SESSION['email']) ? $_SESSION['email'] : '';
 }
 
-// Require user to have a specific role
+// require user to have a specific role
 function requireRole($role)
 {
     requireLogin();
@@ -55,7 +55,7 @@ function requireRole($role)
     }
 }
 
-// Store user data in session on login
+// store user data in session on login
 function loginUser($user)
 {
     session_regenerate_id(true);
@@ -66,7 +66,7 @@ function loginUser($user)
     $_SESSION['role'] = $user['role'];
 }
 
-// Logout current user and clear session
+// logout current user and clear session
 function logoutUser()
 {
     $_SESSION = [];

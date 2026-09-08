@@ -1,17 +1,17 @@
 <?php
-// Backend student assignment submission processor
+// backend student assignment submission processor
 
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
 
-// Check student authentication
+// check student authentication
 if (!isLoggedIn() || currentUserRole() !== 'student') {
     redirect(BASE_URL . '/frontend/auth/login.html');
 }
 
-// Ensure request method is POST
+// ensure request method is post
 if (!isPost()) {
     redirect(BASE_URL . '/frontend/student/dashboard.html');
 }
@@ -19,12 +19,12 @@ if (!isPost()) {
 $assignmentId = isset($_POST['assignment_id']) ? (int) $_POST['assignment_id'] : 0;
 $studentId = (int) currentUserId();
 
-// Validate assignment id parameter
+// validate assignment id parameter
 if ($assignmentId <= 0) {
     redirect(BASE_URL . '/frontend/student/dashboard.html');
 }
 
-// Verify assignment exists and student is enrolled in the course
+// verify assignment exists and student is enrolled in the course
 $assignmentSql = "SELECT
     a.id,
     a.title,
@@ -47,13 +47,13 @@ if (!$assignment) {
     redirect(BASE_URL . '/frontend/student/dashboard.html');
 }
 
-// Check if deadline has passed
+// check if deadline has passed
 $isPastDeadline = strtotime($assignment['deadline']) < time();
 if ($isPastDeadline) {
     redirect(BASE_URL . '/frontend/student/assignment.html?id=' . $assignmentId . '&error=' . urlencode('Submissions are closed because the deadline has passed.'));
 }
 
-// Check previous submissions for this student and assignment
+// check previous submissions for this student and assignment
 $checkSubSql = "SELECT id, version FROM submissions
 WHERE assignment_id = $assignmentId AND student_id = $studentId
 ORDER BY version DESC, id DESC
@@ -62,7 +62,7 @@ LIMIT 1";
 $checkSubResult = mysqli_query($conn, $checkSubSql);
 $lastSubmission = mysqli_fetch_assoc($checkSubResult);
 
-// Determine version number and verify resubmission policy
+// determine version number and verify resubmission policy
 $version = 1;
 if ($lastSubmission) {
     if ((int) $assignment['allow_resubmission'] !== 1) {
@@ -71,7 +71,7 @@ if ($lastSubmission) {
     $version = (int) $lastSubmission['version'] + 1;
 }
 
-// Validate file upload existence and check for upload errors
+// validate file upload existence and check for upload errors
 if (!isset($_FILES['submission_file']) || $_FILES['submission_file']['error'] !== UPLOAD_ERR_OK) {
     redirect(BASE_URL . '/frontend/student/assignment.html?id=' . $assignmentId . '&error=' . urlencode('Please select a valid file to upload.'));
 }
@@ -80,13 +80,13 @@ $fileSize = (int) $_FILES['submission_file']['size'];
 $originalFileName = basename($_FILES['submission_file']['name']);
 $tmpFilePath = $_FILES['submission_file']['tmp_name'];
 
-// Validate file size limit
+// validate file size limit
 $maxBytes = (int) $assignment['max_file_size_mb'] * 1024 * 1024;
 if ($fileSize <= 0 || $fileSize > $maxBytes) {
     redirect(BASE_URL . '/frontend/student/assignment.html?id=' . $assignmentId . '&error=' . urlencode('File exceeds the allowed size of ' . $assignment['max_file_size_mb'] . ' MB.'));
 }
 
-// Validate file extension against allowed extensions list
+// validate file extension against allowed extensions list
 $fileExt = strtolower(pathinfo($originalFileName, PATHINFO_EXTENSION));
 $allowedList = array_map('trim', explode(',', strtolower($assignment['allowed_extensions'])));
 
@@ -94,22 +94,22 @@ if (!in_array($fileExt, $allowedList)) {
     redirect(BASE_URL . '/frontend/student/assignment.html?id=' . $assignmentId . '&error=' . urlencode('Invalid file format. Allowed formats: ' . $assignment['allowed_extensions']));
 }
 
-// Ensure submissions directory exists
+// ensure submissions directory exists
 if (!is_dir(UPLOAD_SUBMISSIONS)) {
     mkdir(UPLOAD_SUBMISSIONS, 0777, true);
 }
 
-// Generate unique stored file name
+// generate unique stored file name
 $storedFileName = 'sub_' . $assignmentId . '_' . $studentId . '_v' . $version . '_' . time() . '.' . $fileExt;
 $destinationPath = UPLOAD_SUBMISSIONS . $storedFileName;
 $relativeFilePath = 'uploads/submissions/' . $storedFileName;
 
-// Move uploaded file from temp to storage directory
+// move uploaded file from temp to storage directory
 if (!move_uploaded_file($tmpFilePath, $destinationPath)) {
     redirect(BASE_URL . '/frontend/student/assignment.html?id=' . $assignmentId . '&error=' . urlencode('Failed to save the uploaded file on the server.'));
 }
 
-// Resolve file mime type safely
+// resolve file mime type safely
 $fileType = 'application/octet-stream';
 if (function_exists('mime_content_type') && file_exists($destinationPath)) {
     $detectedMime = mime_content_type($destinationPath);
@@ -118,13 +118,13 @@ if (function_exists('mime_content_type') && file_exists($destinationPath)) {
     }
 }
 
-// Escape strings for SQL insertion
+// escape strings for sql insertion
 $escapedOriginalName = mysqli_real_escape_string($conn, $originalFileName);
 $escapedStoredName = mysqli_real_escape_string($conn, $storedFileName);
 $escapedFilePath = mysqli_real_escape_string($conn, $relativeFilePath);
 $escapedFileType = mysqli_real_escape_string($conn, $fileType);
 
-// Insert submission record into database
+// insert submission record into database
 $insertSql = "INSERT INTO submissions (
     assignment_id,
     student_id,
@@ -161,7 +161,7 @@ if ($insertResult) {
     $notifTitle = mysqli_real_escape_string($conn, 'New Submission Received');
     $notifMsg = mysqli_real_escape_string($conn, "Student {$studentName} has submitted assignment '{$assignTitle}'.");
 
-    // Notify assigned assistants
+    // notify assigned assistants
     $asstRes = mysqli_query($conn, "SELECT assistant_id FROM course_assistants WHERE course_id = $courseId");
     if ($asstRes) {
         while ($aRow = mysqli_fetch_assoc($asstRes)) {
@@ -171,7 +171,7 @@ if ($insertResult) {
         }
     }
 
-    // Notify course teacher
+    // notify course teacher
     $teachRes = mysqli_query($conn, "SELECT teacher_id FROM courses WHERE id = $courseId LIMIT 1");
     if ($teachRes) {
         $tRow = mysqli_fetch_assoc($teachRes);

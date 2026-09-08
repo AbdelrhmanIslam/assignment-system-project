@@ -1,5 +1,5 @@
 <?php
-// Backend JSON API for fetching submission review details for assistant
+// backend json api for fetching submission review details for assistant
 
 header('Content-Type: application/json');
 
@@ -8,7 +8,7 @@ require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
 
-// Verify assistant authentication
+// verify assistant authentication
 if (!isLoggedIn() || currentUserRole() !== 'assistant') {
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
     exit;
@@ -22,7 +22,7 @@ if ($submissionId <= 0) {
     exit;
 }
 
-// Fetch submission details with assignment and course info
+// fetch submission details with assignment and course info
 $sql = "SELECT
             s.id AS submission_id,
             s.file_name,
@@ -59,7 +59,7 @@ if (!$data) {
     exit;
 }
 
-// Fetch existing grade if already evaluated
+// fetch existing grade if already evaluated
 $gradeSql = "SELECT grade, feedback, correction_file_name, graded_at
              FROM grades
              WHERE submission_id = $submissionId
@@ -67,7 +67,7 @@ $gradeSql = "SELECT grade, feedback, correction_file_name, graded_at
 $gradeResult = mysqli_query($conn, $gradeSql);
 $gradeRow = mysqli_fetch_assoc($gradeResult);
 
-// Fetch teacher review / recheck comment if any
+// fetch teacher review / recheck comment if any
 $teacherRevSql = "SELECT decision, comment, reviewed_at, u.name AS teacher_name
                   FROM teacher_reviews tr
                   INNER JOIN users u ON u.id = tr.teacher_id

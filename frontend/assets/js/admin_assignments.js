@@ -1,7 +1,7 @@
-// Admin assignments oversight client-side controller
+// admin assignments oversight client-side controller
 
-let allAssignments = [];
-let searchQuery = '';
+var allAssignments = [];
+var searchQuery = '';
 
 document.addEventListener('DOMContentLoaded', function () {
     loadAssignments();
@@ -35,11 +35,11 @@ function loadAssignments() {
 }
 
 function setupSearch() {
-    const searchInput = document.getElementById('search-input');
+    var searchInput = document.getElementById('search-input');
     if (searchInput) {
         searchInput.addEventListener('input', function () {
             searchQuery = searchInput.value.toLowerCase().trim();
-            const filtered = allAssignments.filter(function (a) {
+            var filtered = allAssignments.filter(function (a) {
                 return a.title.toLowerCase().includes(searchQuery) ||
                        a.course_name.toLowerCase().includes(searchQuery) ||
                        a.teacher_name.toLowerCase().includes(searchQuery);
@@ -50,9 +50,9 @@ function setupSearch() {
 }
 
 function renderTable(assignments) {
-    const tbody = document.getElementById('assignments-table-body');
-    const emptyState = document.getElementById('empty-state');
-    const tableContainer = document.getElementById('table-container');
+    var tbody = document.getElementById('assignments-table-body');
+    var emptyState = document.getElementById('empty-state');
+    var tableContainer = document.getElementById('table-container');
 
     if (!assignments || assignments.length === 0) {
         if (emptyState) emptyState.style.display = 'block';
@@ -67,16 +67,16 @@ function renderTable(assignments) {
     tbody.innerHTML = '';
 
     assignments.forEach(function (a) {
-        const row = document.createElement('tr');
+        var row = document.createElement('tr');
 
-        const statusBadge = a.is_active ?
+        var statusBadge = a.is_active ?
             '<span class="status-badge status-graded">Active</span>' :
             '<span class="status-badge status-closed">Archived</span>';
 
-        const toggleLabel = a.is_active ? 'Archive' : 'Activate';
-        const toggleClass = a.is_active ? 'background:#ef4444;' : 'background:#10b981;';
+        var toggleLabel = a.is_active ? 'Archive' : 'Activate';
+        var toggleClass = a.is_active ? 'background:#ef4444;' : 'background:#10b981;';
 
-        const subInfo =
+        var subInfo =
             '<strong>' + a.total_submissions + '</strong> ' +
             '<small style="color:#6b7280;">(' + a.graded_submissions + ' graded, ' + a.pending_submissions + ' pending)</small>';
 
@@ -101,7 +101,7 @@ function renderTable(assignments) {
 function toggleAssignmentStatus(assignId) {
     if (!confirm('Are you sure you want to change this assignment status?')) return;
 
-    const formData = new FormData();
+    var formData = new FormData();
     formData.append('action', 'toggle_status');
     formData.append('assignment_id', assignId);
 
@@ -124,7 +124,7 @@ function toggleAssignmentStatus(assignId) {
 
 function formatDate(dateStr) {
     if (!dateStr) return '—';
-    const d = new Date(dateStr);
+    var d = new Date(dateStr);
     return d.toLocaleDateString('en-US', {
         month: 'short',
         day: 'numeric',

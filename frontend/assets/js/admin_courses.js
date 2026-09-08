@@ -1,6 +1,6 @@
-// Admin course management client-side controller
+// admin course management client-side controller
 
-let allCourses = [];
+var allCourses = [];
 
 document.addEventListener('DOMContentLoaded', function () {
     loadCourses();
@@ -25,7 +25,7 @@ function loadCourses() {
             document.getElementById('admin-name').textContent = data.user.name;
         }
 
-        // Populate dropdown options
+        // populate dropdown options
         populateDropdowns(data.teachers, data.assistants);
 
         allCourses = data.courses || [];
@@ -37,20 +37,20 @@ function loadCourses() {
 }
 
 function populateDropdowns(teachers, assistants) {
-    const teacherSelect = document.getElementById('select-teacher');
+    var teacherSelect = document.getElementById('select-teacher');
     if (teacherSelect && teacherSelect.children.length <= 1) {
         teachers.forEach(function (t) {
-            const opt = document.createElement('option');
+            var opt = document.createElement('option');
             opt.value = t.id;
             opt.textContent = t.name;
             teacherSelect.appendChild(opt);
         });
     }
 
-    const assistantSelect = document.getElementById('select-assistant');
+    var assistantSelect = document.getElementById('select-assistant');
     if (assistantSelect && assistantSelect.children.length <= 1) {
         assistants.forEach(function (a) {
-            const opt = document.createElement('option');
+            var opt = document.createElement('option');
             opt.value = a.id;
             opt.textContent = a.name;
             assistantSelect.appendChild(opt);
@@ -59,9 +59,9 @@ function populateDropdowns(teachers, assistants) {
 }
 
 function renderCoursesTable(courses) {
-    const tbody = document.getElementById('courses-table-body');
-    const emptyState = document.getElementById('empty-state');
-    const tableContainer = document.getElementById('table-container');
+    var tbody = document.getElementById('courses-table-body');
+    var emptyState = document.getElementById('empty-state');
+    var tableContainer = document.getElementById('table-container');
 
     if (!courses || courses.length === 0) {
         if (emptyState) emptyState.style.display = 'block';
@@ -76,14 +76,14 @@ function renderCoursesTable(courses) {
     tbody.innerHTML = '';
 
     courses.forEach(function (c) {
-        const row = document.createElement('tr');
+        var row = document.createElement('tr');
 
-        const statusBadge = c.is_active ?
+        var statusBadge = c.is_active ?
             '<span class="status-badge status-graded">Active</span>' :
             '<span class="status-badge status-closed">Archived</span>';
 
-        const toggleLabel = c.is_active ? 'Archive' : 'Activate';
-        const toggleClass = c.is_active ? 'background:#ef4444;' : 'background:#10b981;';
+        var toggleLabel = c.is_active ? 'Archive' : 'Activate';
+        var toggleClass = c.is_active ? 'background:#ef4444;' : 'background:#10b981;';
 
         row.innerHTML =
             '<td><strong>' + escapeHtml(c.name) + '</strong><br><small style="color:#6b7280;">' + escapeHtml(c.description || 'No description') + '</small></td>' +
@@ -105,7 +105,7 @@ function renderCoursesTable(courses) {
 function toggleCourseStatus(courseId) {
     if (!confirm('Are you sure you want to change this course status?')) return;
 
-    const formData = new FormData();
+    var formData = new FormData();
     formData.append('action', 'toggle_status');
     formData.append('course_id', courseId);
 
@@ -127,16 +127,16 @@ function toggleCourseStatus(courseId) {
 }
 
 function setupCreateCourseForm() {
-    const form = document.getElementById('create-course-form');
+    var form = document.getElementById('create-course-form');
     if (!form) return;
 
     form.addEventListener('submit', function (e) {
         e.preventDefault();
 
-        const formData = new FormData(form);
+        var formData = new FormData(form);
         formData.append('action', 'create');
 
-        const submitBtn = form.querySelector('button[type="submit"]');
+        var submitBtn = form.querySelector('button[type="submit"]');
         if (submitBtn) {
             submitBtn.disabled = true;
             submitBtn.textContent = 'Creating...';
@@ -179,7 +179,7 @@ function escapeHtml(str) {
 }
 
 function showAlert(msg, type) {
-    const box = document.getElementById('alert-box');
+    var box = document.getElementById('alert-box');
     if (!box) return;
     box.className = 'alert-banner ' + (type === 'success' ? 'alert-success' : 'alert-error');
     box.textContent = msg;

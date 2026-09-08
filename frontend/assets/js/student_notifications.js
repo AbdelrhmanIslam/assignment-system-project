@@ -1,9 +1,9 @@
-// Student notifications dynamic loader
+// student notifications dynamic loader
 
 document.addEventListener('DOMContentLoaded', function () {
     loadNotifications();
 
-    const markAllBtn = document.getElementById('markAllReadBtn');
+    var markAllBtn = document.getElementById('markAllReadBtn');
     if (markAllBtn) {
         markAllBtn.addEventListener('click', function () {
             markAllAsRead();
@@ -38,9 +38,9 @@ function loadNotifications() {
 }
 
 function renderNotifications(notifications, unreadCount) {
-    const listEl = document.getElementById('notificationsList');
-    const emptyEl = document.getElementById('emptyState');
-    const badgeEl = document.getElementById('unreadBadge');
+    var listEl = document.getElementById('notificationsList');
+    var emptyEl = document.getElementById('emptyState');
+    var badgeEl = document.getElementById('unreadBadge');
 
     if (badgeEl) {
         if (unreadCount > 0) {
@@ -63,19 +63,19 @@ function renderNotifications(notifications, unreadCount) {
         listEl.innerHTML = '';
 
         notifications.forEach(function (n) {
-            const card = document.createElement('div');
+            var card = document.createElement('div');
             card.className = 'content-card';
             card.style.marginBottom = '14px';
             card.style.padding = '18px 22px';
             card.style.borderLeft = n.is_read ? '4px solid #e5e7eb' : '4px solid #3b82f6';
             card.style.background = n.is_read ? '#ffffff' : '#f8faff';
 
-            let actionHtml = '';
+            var actionHtml = '';
             if (n.reference_id) {
                 actionHtml = '<a href="result.html?id=' + n.reference_id + '" class="view-btn" style="font-size:12px; padding:6px 12px;">View Details</a>';
             }
 
-            let markBtnHtml = '';
+            var markBtnHtml = '';
             if (!n.is_read) {
                 markBtnHtml = '<button onclick="markAsRead(' + n.id + ')" style="background:none; border:none; color:#2563eb; font-size:12px; font-weight:600; cursor:pointer; text-decoration:underline;">Mark as read</button>';
             }
@@ -102,7 +102,7 @@ function renderNotifications(notifications, unreadCount) {
 }
 
 function markAsRead(id) {
-    const formData = new FormData();
+    var formData = new FormData();
     formData.append('action', 'mark_read');
     formData.append('id', id);
 
@@ -122,7 +122,7 @@ function markAsRead(id) {
 }
 
 function markAllAsRead() {
-    const formData = new FormData();
+    var formData = new FormData();
     formData.append('action', 'mark_all_read');
 
     fetch('../../backend/student/notifications.php', {
@@ -142,7 +142,7 @@ function markAllAsRead() {
 
 function formatDate(dateStr) {
     if (!dateStr) return '—';
-    const d = new Date(dateStr);
+    var d = new Date(dateStr);
     return d.toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'short',
@@ -158,7 +158,7 @@ function escapeHtml(str) {
 }
 
 function showError(msg) {
-    const errorBox = document.getElementById('errorMessage');
+    var errorBox = document.getElementById('errorMessage');
     if (errorBox) {
         errorBox.textContent = msg;
         errorBox.style.display = 'block';

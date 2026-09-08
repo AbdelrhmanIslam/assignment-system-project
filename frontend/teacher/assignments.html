@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Assignments - Teacher</title>
-    <!-- Stylesheets -->
+
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/dashboard.css">
     <link rel="stylesheet" href="../assets/css/responsive.css">
@@ -13,12 +13,10 @@
 
 <div class="dashboard-page">
 
-    <!-- Back navigation link -->
     <a href="dashboard.html" class="back-btn">
         &larr; Back to Dashboard
     </a>
 
-    <!-- Top header section -->
     <header class="dashboard-header">
         <div>
             <h1>Manage Assignments</h1>
@@ -27,23 +25,20 @@
 
         <div class="header-actions">
             <span class="user-role" style="background: #e0e7ff; color: #3730a3;">Teacher</span>
-            <!-- Logout link -->
+
             <a href="../../backend/auth/logout.php" class="logout-btn">Logout</a>
         </div>
     </header>
 
-    <!-- Alert container for form feedback -->
     <div id="alert-box" style="display: none;"></div>
 
-    <!-- Create assignment section card -->
     <section class="content-card" id="create-modal" style="margin-bottom: 30px;">
         <h2>Create New Assignment</h2>
         <p style="color: #6b7280; margin-bottom: 20px; font-size: 14px;">Fill in the details to publish a new assignment for enrolled students</p>
 
-        <!-- Assignment creation form -->
         <form id="create-assignment-form">
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; margin-bottom: 18px;">
-                <!-- Course selection -->
+
                 <div class="form-group">
                     <label for="assignment-course">Course *</label>
                     <select id="assignment-course" name="course_id" required style="width: 100%; padding: 11px; border: 1px solid #d1d5db; border-radius: 8px;">
@@ -51,45 +46,39 @@
                     </select>
                 </div>
 
-                <!-- Assignment title -->
                 <div class="form-group">
                     <label for="assignment-title">Assignment Title *</label>
                     <input type="text" id="assignment-title" name="title" placeholder="e.g. JavaScript Interactive App" required>
                 </div>
 
-                <!-- Maximum grade -->
                 <div class="form-group">
                     <label for="assignment-max-grade">Max Grade Points *</label>
                     <input type="number" id="assignment-max-grade" name="max_grade" value="20" min="1" step="0.5" required>
                 </div>
 
-                <!-- Deadline datetime -->
                 <div class="form-group">
                     <label for="assignment-deadline">Deadline Date & Time *</label>
                     <input type="datetime-local" id="assignment-deadline" name="deadline" required>
                 </div>
             </div>
 
-            <!-- Description instructions -->
             <div class="form-group" style="margin-bottom: 18px;">
                 <label for="assignment-description">Instructions & Description *</label>
                 <textarea id="assignment-description" name="description" rows="4" style="width: 100%; padding: 11px; border: 1px solid #d1d5db; border-radius: 8px; font-family: inherit;" placeholder="Detailed requirements and grading criteria..." required></textarea>
             </div>
 
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; margin-bottom: 22px;">
-                <!-- Allowed extensions -->
+
                 <div class="form-group">
                     <label for="assignment-ext">Allowed Extensions</label>
                     <input type="text" id="assignment-ext" name="allowed_extensions" value="pdf,doc,docx,zip" placeholder="e.g. pdf,zip,docx">
                 </div>
 
-                <!-- Max file size in MB -->
                 <div class="form-group">
                     <label for="assignment-size">Max File Size (MB)</label>
                     <input type="number" id="assignment-size" name="max_file_size_mb" value="10" min="1" max="100">
                 </div>
 
-                <!-- Allow resubmission selection -->
                 <div class="form-group">
                     <label for="assignment-resub">Allow Resubmission?</label>
                     <select id="assignment-resub" name="allow_resubmission" style="width: 100%; padding: 11px; border: 1px solid #d1d5db; border-radius: 8px;">
@@ -105,7 +94,6 @@
         </form>
     </section>
 
-    <!-- Published assignments list table -->
     <section class="assignments-section">
         <div class="section-header">
             <div>
@@ -114,13 +102,11 @@
             </div>
         </div>
 
-        <!-- Empty state notice -->
         <div id="assignments-empty" class="empty-state" style="display: none;">
             <h3>No Assignments Created</h3>
             <p>You have not created any assignments yet. Use the form above to add your first assignment.</p>
         </div>
 
-        <!-- Table container -->
         <div id="assignments-table-container" class="table-container" style="display: none;">
             <table class="assignments-table">
                 <thead>
@@ -135,7 +121,7 @@
                     </tr>
                 </thead>
                 <tbody id="assignments-table-body">
-                    <!-- Rendered by teacher_assignments.js -->
+
                 </tbody>
             </table>
         </div>
@@ -143,7 +129,6 @@
 
 </div>
 
-<!-- Controller script -->
 <script src="../assets/js/teacher_assignments.js"></script>
 
 </body>

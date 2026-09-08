@@ -1,15 +1,14 @@
 <?php
-// Backend teacher submissions list API
+// backend teacher submissions list api
 
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
 
-// Set JSON response header
 header('Content-Type: application/json');
 
-// Check teacher authentication
+// check teacher authentication
 if (!isLoggedIn() || currentUserRole() !== 'teacher') {
     http_response_code(401);
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
@@ -18,12 +17,12 @@ if (!isLoggedIn() || currentUserRole() !== 'teacher') {
 
 $teacherId = (int) currentUserId();
 
-// Read optional query filter parameters
+// read optional query filter parameters
 $filterCourseId = isset($_GET['course_id']) ? (int) $_GET['course_id'] : 0;
 $filterAssignmentId = isset($_GET['assignment_id']) ? (int) $_GET['assignment_id'] : 0;
 $filterStatus = isset($_GET['status']) ? trim($_GET['status']) : '';
 
-// Build dynamic WHERE clause
+// build dynamic where clause
 $whereClause = "WHERE c.teacher_id = $teacherId";
 
 if ($filterCourseId > 0) {
@@ -43,7 +42,7 @@ if ($filterStatus !== '' && $filterStatus !== 'all') {
     }
 }
 
-// Query submissions matching filters
+// query submissions matching filters
 $sql = "SELECT
     s.id,
     s.assignment_id,
@@ -84,7 +83,6 @@ if ($result) {
     }
 }
 
-// Return JSON response
 echo json_encode([
     'success' => true,
     'submissions' => $submissions

@@ -1,1 +1,1 @@
-// Countdown JavaScript
+// countdown javascript

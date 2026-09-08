@@ -1,4 +1,4 @@
-// Admin settings client-side loader
+// admin settings client-side loader
 
 document.addEventListener('DOMContentLoaded', function () {
     loadSettings();
@@ -23,7 +23,7 @@ function loadSettings() {
         }
 
         if (data.settings) {
-            const s = data.settings;
+            var s = data.settings;
             setElementText('setting-site-name', s.site_name);
             setElementText('setting-base-url', s.base_url);
             setElementText('setting-timezone', s.timezone);
@@ -44,14 +44,14 @@ function loadSettings() {
 }
 
 function setElementText(id, text) {
-    const el = document.getElementById(id);
+    var el = document.getElementById(id);
     if (el) el.textContent = text;
 }
 
 function formatBytes(bytes) {
     if (!bytes || bytes === 0) return '0 B';
-    const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    var k = 1024;
+    var sizes = ['B', 'KB', 'MB', 'GB'];
+    var i = Math.floor(Math.log(bytes) / Math.log(k));
     return (bytes / Math.pow(k, i)).toFixed(2) + ' ' + sizes[i];
 }

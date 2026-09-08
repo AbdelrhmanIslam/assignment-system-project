@@ -1,12 +1,12 @@
-// Main JavaScript helper for frontend pages
+// main javascript helper for frontend pages
 
 document.addEventListener('DOMContentLoaded', function () {
-    // Read URL query parameters
+    // read url query parameters
     var urlParams = new URLSearchParams(window.location.search);
     var error = urlParams.get('error');
     var success = urlParams.get('success');
 
-    // Display error alert if error param is present
+    // display error alert if error param is present
     var alertBox = document.getElementById('alert-box');
     if (alertBox) {
         if (error) {

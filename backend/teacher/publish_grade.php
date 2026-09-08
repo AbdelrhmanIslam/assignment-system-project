@@ -1,15 +1,14 @@
 <?php
-// Backend teacher submission review decision API (Approve & Publish Grade or Request Recheck)
+// backend teacher submission review decision api (approve & publish grade or request recheck)
 
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
 
-// Set JSON response header
 header('Content-Type: application/json');
 
-// Check teacher authentication
+// check teacher authentication
 if (!isLoggedIn() || currentUserRole() !== 'teacher') {
     http_response_code(401);
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
@@ -18,7 +17,7 @@ if (!isLoggedIn() || currentUserRole() !== 'teacher') {
 
 $teacherId = (int) currentUserId();
 
-// Ensure request method is POST
+// ensure request method is post
 if (!isPost()) {
     http_response_code(405);
     echo json_encode(['success' => false, 'message' => 'Method not allowed']);
@@ -35,7 +34,7 @@ if ($submissionId <= 0) {
     exit;
 }
 
-// Verify submission belongs to this teacher's course
+// verify submission belongs to this teacher's course
 $verifySql = "SELECT
     s.id,
     s.student_id,
@@ -67,7 +66,7 @@ $studentName = $submissionData['student_name'];
 $assignmentTitle = $submissionData['assignment_title'];
 $teacherName = currentUserName();
 
-// Branch 1: Teacher requests Recheck from Assistant
+// branch 1: teacher requests recheck from assistant
 if ($decision === 'recheck') {
     if (empty($comment)) {
         http_response_code(400);
@@ -77,14 +76,14 @@ if ($decision === 'recheck') {
 
     $escapedComment = mysqli_real_escape_string($conn, $comment);
 
-    // Record decision in teacher_reviews table
+    // record decision in teacher_reviews table
     mysqli_query($conn, "INSERT INTO teacher_reviews (submission_id, teacher_id, decision, comment, reviewed_at)
                          VALUES ($submissionId, $teacherId, 'recheck', '$escapedComment', NOW())");
 
-    // Update submission status to 'recheck'
+    // update submission status to 'recheck'
     mysqli_query($conn, "UPDATE submissions SET status = 'recheck' WHERE id = $submissionId");
 
-    // Notify assigned assistant(s)
+    // notify assigned assistant(s)
     $asstRes = mysqli_query($conn, "SELECT assistant_id FROM course_assistants WHERE course_id = $courseId");
     $notifTitle = mysqli_real_escape_string($conn, "Recheck Requested");
     $notifMsg = mysqli_real_escape_string($conn, "Dr. {$teacherName} requested a recheck on {$studentName}'s submission for '{$assignmentTitle}': \"{$comment}\"");
@@ -104,11 +103,11 @@ if ($decision === 'recheck') {
     exit;
 }
 
-// Branch 2: Teacher approves & publishes grade
+// branch 2: teacher approves & publishes grade
 $grade = isset($_POST['grade']) ? (float) $_POST['grade'] : -1;
 $feedback = isset($_POST['feedback']) ? sanitize($_POST['feedback']) : $comment;
 
-// Validate grade range
+// validate grade range
 $maxGrade = (float) $submissionData['max_grade'];
 if ($grade < 0 || $grade > $maxGrade) {
     http_response_code(400);
@@ -118,7 +117,7 @@ if ($grade < 0 || $grade > $maxGrade) {
 
 $escapedFeedback = mysqli_real_escape_string($conn, $feedback);
 
-// Check if grade record already exists in grades table
+// check if grade record already exists in grades table
 $checkGradeSql = "SELECT id FROM grades WHERE submission_id = $submissionId LIMIT 1";
 $checkGradeRes = mysqli_query($conn, $checkGradeSql);
 $existingGrade = mysqli_fetch_assoc($checkGradeRes);
@@ -154,15 +153,15 @@ if (!$gradeResult) {
     exit;
 }
 
-// Record teacher review decision as approved
+// record teacher review decision as approved
 $escapedApproveComment = mysqli_real_escape_string($conn, !empty($comment) ? $comment : 'Approved by Instructor');
 mysqli_query($conn, "INSERT INTO teacher_reviews (submission_id, teacher_id, decision, comment, reviewed_at)
                      VALUES ($submissionId, $teacherId, 'approved', '$escapedApproveComment', NOW())");
 
-// Update submission status to 'graded' (final published grade)
+// update submission status to 'graded' (final published grade)
 mysqli_query($conn, "UPDATE submissions SET status = 'graded' WHERE id = $submissionId");
 
-// Insert notification for student
+// insert notification for student
 $assignId = (int) $submissionData['assignment_id'];
 $notifTitle = mysqli_real_escape_string($conn, "Assignment Graded & Published");
 $notifMsg = mysqli_real_escape_string($conn, "Your grade for '{$assignmentTitle}' has been published: {$grade} / {$maxGrade}.");

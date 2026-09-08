@@ -1,7 +1,7 @@
-// Admin user management client-side controller
+// admin user management client-side controller
 
-let currentRoleFilter = 'all';
-let searchQuery = '';
+var currentRoleFilter = 'all';
+var searchQuery = '';
 
 document.addEventListener('DOMContentLoaded', function () {
     loadUsers();
@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function loadUsers() {
-    let url = '../../backend/admin/users.php?role=' + encodeURIComponent(currentRoleFilter);
+    var url = '../../backend/admin/users.php?role=' + encodeURIComponent(currentRoleFilter);
     if (searchQuery !== '') {
         url += '&search=' + encodeURIComponent(searchQuery);
     }
@@ -40,7 +40,7 @@ function loadUsers() {
 }
 
 function setupFilters() {
-    const tabs = document.querySelectorAll('.filter-tab');
+    var tabs = document.querySelectorAll('.filter-tab');
     tabs.forEach(function (tab) {
         tab.addEventListener('click', function () {
             tabs.forEach(function (t) { t.classList.remove('active'); });
@@ -50,9 +50,9 @@ function setupFilters() {
         });
     });
 
-    const searchInput = document.getElementById('search-input');
+    var searchInput = document.getElementById('search-input');
     if (searchInput) {
-        let debounceTimer;
+        var debounceTimer;
         searchInput.addEventListener('input', function () {
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(function () {
@@ -64,9 +64,9 @@ function setupFilters() {
 }
 
 function renderUsersTable(users) {
-    const tbody = document.getElementById('users-table-body');
-    const emptyState = document.getElementById('empty-state');
-    const tableContainer = document.getElementById('table-container');
+    var tbody = document.getElementById('users-table-body');
+    var emptyState = document.getElementById('empty-state');
+    var tableContainer = document.getElementById('table-container');
 
     if (!users || users.length === 0) {
         if (emptyState) emptyState.style.display = 'block';
@@ -81,20 +81,20 @@ function renderUsersTable(users) {
     tbody.innerHTML = '';
 
     users.forEach(function (u) {
-        const row = document.createElement('tr');
+        var row = document.createElement('tr');
 
-        let roleBadge = 'status-not-submitted';
+        var roleBadge = 'status-not-submitted';
         if (u.role === 'admin') roleBadge = 'status-closed';
         else if (u.role === 'teacher') roleBadge = 'status-review';
         else if (u.role === 'assistant') roleBadge = 'status-submitted';
         else if (u.role === 'student') roleBadge = 'status-graded';
 
-        const statusBadge = u.is_active ?
+        var statusBadge = u.is_active ?
             '<span class="status-badge status-graded">Active</span>' :
             '<span class="status-badge status-closed">Inactive</span>';
 
-        const toggleBtnLabel = u.is_active ? 'Deactivate' : 'Activate';
-        const toggleBtnClass = u.is_active ? 'background:#ef4444;' : 'background:#10b981;';
+        var toggleBtnLabel = u.is_active ? 'Deactivate' : 'Activate';
+        var toggleBtnClass = u.is_active ? 'background:#ef4444;' : 'background:#10b981;';
 
         row.innerHTML =
             '<td><strong>' + escapeHtml(u.name) + '</strong></td>' +
@@ -117,7 +117,7 @@ function toggleUserStatus(userId) {
         return;
     }
 
-    const formData = new FormData();
+    var formData = new FormData();
     formData.append('action', 'toggle_status');
     formData.append('user_id', userId);
 
@@ -139,22 +139,22 @@ function toggleUserStatus(userId) {
 }
 
 function setupCreateUserForm() {
-    const form = document.getElementById('create-user-form');
+    var form = document.getElementById('create-user-form');
     if (!form) return;
 
     form.addEventListener('submit', function (e) {
         e.preventDefault();
 
-        const pass = document.getElementById('input-password').value;
+        var pass = document.getElementById('input-password').value;
         if (pass.length < 8) {
             showAlert('Password must be at least 8 characters long.', 'error');
             return;
         }
 
-        const formData = new FormData(form);
+        var formData = new FormData(form);
         formData.append('action', 'create');
 
-        const submitBtn = form.querySelector('button[type="submit"]');
+        var submitBtn = form.querySelector('button[type="submit"]');
         if (submitBtn) {
             submitBtn.disabled = true;
             submitBtn.textContent = 'Creating...';
@@ -193,7 +193,7 @@ function setupCreateUserForm() {
 
 function formatDate(dateStr) {
     if (!dateStr) return '—';
-    const d = new Date(dateStr);
+    var d = new Date(dateStr);
     return d.toLocaleDateString('en-US', {
         month: 'short',
         day: 'numeric',
@@ -207,7 +207,7 @@ function escapeHtml(str) {
 }
 
 function showAlert(msg, type) {
-    const box = document.getElementById('alert-box');
+    var box = document.getElementById('alert-box');
     if (!box) return;
     box.className = 'alert-banner ' + (type === 'success' ? 'alert-success' : 'alert-error');
     box.textContent = msg;

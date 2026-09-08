@@ -1,4 +1,4 @@
-// Teacher Submissions Queue JavaScript Controller
+// teacher submissions queue javascript controller
 
 document.addEventListener('DOMContentLoaded', function () {
     var allSubmissions = [];
@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var searchInput = document.getElementById('search-input');
     var filterTabs = document.querySelectorAll('.filter-tab');
 
-    // Read optional assignment_id parameter from URL
+    // read optional assignment_id parameter from url
     var urlParams = new URLSearchParams(window.location.search);
     var assignmentFilterId = urlParams.get('assignment_id');
 
@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function () {
         apiUrl += '?assignment_id=' + encodeURIComponent(assignmentFilterId);
     }
 
-    // Fetch submissions from backend API
+    // fetch submissions from backend api
     fetch(apiUrl)
         .then(function (response) {
             if (response.status === 401) {
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error('Error loading submissions:', err);
         });
 
-    // Tab filter click handlers
+    // tab filter click handlers
     for (var i = 0; i < filterTabs.length; i++) {
         filterTabs[i].addEventListener('click', function () {
             for (var j = 0; j < filterTabs.length; j++) {
@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Live search input
+    // live search input
     if (searchInput) {
         searchInput.addEventListener('input', function () {
             searchQuery = this.value.trim().toLowerCase();
@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Render table rows
+    // render table rows
     function renderTable() {
         if (!tbody) return;
 
@@ -98,22 +98,20 @@ document.addEventListener('DOMContentLoaded', function () {
             var sub = filtered[k];
             var tr = document.createElement('tr');
 
-            // Student name cell
             var tdStudent = document.createElement('td');
             tdStudent.innerHTML = '<strong>' + escapeHtml(sub.student_name) + '</strong><br><small style="color: #6b7280;">' + escapeHtml(sub.student_email) + '</small>';
             tr.appendChild(tdStudent);
 
-            // Assignment title cell
             var tdAssignment = document.createElement('td');
             tdAssignment.textContent = sub.assignment_title;
             tr.appendChild(tdAssignment);
 
-            // Course name cell
+            // course name cell
             var tdCourse = document.createElement('td');
             tdCourse.textContent = sub.course_name;
             tr.appendChild(tdCourse);
 
-            // Submitted date & version cell
+            // submitted date & version cell
             var tdDate = document.createElement('td');
             var subDate = new Date(sub.submitted_at);
             var dateStr = subDate.toLocaleDateString('en-US', {
@@ -125,7 +123,6 @@ document.addEventListener('DOMContentLoaded', function () {
             tdDate.innerHTML = dateStr + ' <span class="status-badge" style="background: #f3f4f6; font-size: 11px;">v' + sub.version + '</span>';
             tr.appendChild(tdDate);
 
-            // Status badge cell
             var tdStatus = document.createElement('td');
             var badge = document.createElement('span');
             var statusInfo = getStatusInfo(sub.status);
@@ -134,7 +131,6 @@ document.addEventListener('DOMContentLoaded', function () {
             tdStatus.appendChild(badge);
             tr.appendChild(tdStatus);
 
-            // Grade cell
             var tdGrade = document.createElement('td');
             if (sub.status === 'graded' && sub.grade !== null) {
                 tdGrade.innerHTML = '<strong style="color: #16a34a;">' + sub.grade + ' / ' + sub.max_grade + '</strong>';
@@ -143,7 +139,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             tr.appendChild(tdGrade);
 
-            // Action button cell
             var tdAction = document.createElement('td');
             var actionBtn = document.createElement('a');
             actionBtn.href = 'review.html?id=' + sub.id;
@@ -156,7 +151,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Update count labels on tabs
+    // update count labels on tabs
     function updateTabCounts() {
         var total = allSubmissions.length;
         var pending = 0;

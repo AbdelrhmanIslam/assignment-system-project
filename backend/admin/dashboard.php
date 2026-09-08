@@ -1,5 +1,5 @@
 <?php
-// Backend JSON API for admin dashboard
+// backend json api for admin dashboard
 
 header('Content-Type: application/json');
 
@@ -8,13 +8,13 @@ require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
 
-// Verify admin authentication
+// verify admin authentication
 if (!isLoggedIn() || currentUserRole() !== 'admin') {
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
     exit;
 }
 
-// User count metrics
+// user count metrics
 $userMetricsSql = "SELECT
                      COUNT(id) AS total_users,
                      SUM(CASE WHEN role = 'student' THEN 1 ELSE 0 END) AS total_students,
@@ -25,7 +25,7 @@ $userMetricsSql = "SELECT
 $userMetricsRes = mysqli_query($conn, $userMetricsSql);
 $userMetrics = mysqli_fetch_assoc($userMetricsRes);
 
-// Course metrics
+// course metrics
 $coursesMetricsSql = "SELECT
                         COUNT(id) AS total_courses,
                         SUM(CASE WHEN is_active = 1 THEN 1 ELSE 0 END) AS active_courses
@@ -33,7 +33,7 @@ $coursesMetricsSql = "SELECT
 $coursesMetricsRes = mysqli_query($conn, $coursesMetricsSql);
 $coursesMetrics = mysqli_fetch_assoc($coursesMetricsRes);
 
-// Assignment metrics
+// assignment metrics
 $assignmentsMetricsSql = "SELECT
                             COUNT(id) AS total_assignments,
                             SUM(CASE WHEN is_active = 1 THEN 1 ELSE 0 END) AS active_assignments
@@ -41,7 +41,7 @@ $assignmentsMetricsSql = "SELECT
 $assignmentsMetricsRes = mysqli_query($conn, $assignmentsMetricsSql);
 $assignmentsMetrics = mysqli_fetch_assoc($assignmentsMetricsRes);
 
-// Submission metrics
+// submission metrics
 $submissionsMetricsSql = "SELECT
                             COUNT(id) AS total_submissions,
                             SUM(CASE WHEN status = 'graded' THEN 1 ELSE 0 END) AS graded_submissions,
@@ -50,7 +50,7 @@ $submissionsMetricsSql = "SELECT
 $submissionsMetricsRes = mysqli_query($conn, $submissionsMetricsSql);
 $submissionsMetrics = mysqli_fetch_assoc($submissionsMetricsRes);
 
-// Recent user registrations (5)
+// recent user registrations (5)
 $recentUsersSql = "SELECT id, name, email, role, is_active, created_at
                    FROM users
                    ORDER BY id DESC
@@ -70,7 +70,7 @@ if ($recentUsersRes) {
     }
 }
 
-// Recent submissions (5)
+// recent submissions (5)
 $recentSubsSql = "SELECT
                     s.id,
                     s.submitted_at,

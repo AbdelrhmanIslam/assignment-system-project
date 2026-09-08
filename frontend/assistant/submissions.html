@@ -4,17 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Submissions Queue - Assistant</title>
-    <!-- Stylesheets -->
+
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/dashboard.css">
     <link rel="stylesheet" href="../assets/css/responsive.css">
 </head>
 <body>
     <div class="dashboard-page">
-        <!-- Back link -->
+
         <a href="dashboard.html" class="back-btn">&larr; Back to Dashboard</a>
 
-        <!-- Top Header -->
         <header class="dashboard-header">
             <div>
                 <h1>Submissions Evaluation Queue</h1>
@@ -28,11 +27,10 @@
             </div>
         </header>
 
-        <!-- Submissions Section -->
         <section class="assignments-section">
-            <!-- Filter Bar -->
+
             <div class="filter-bar" style="display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
-                <!-- Status filter tabs -->
+
                 <div class="filter-tabs">
                     <button class="filter-tab active" data-status="all">All</button>
                     <button class="filter-tab" data-status="pending">Pending Evaluation</button>
@@ -40,7 +38,6 @@
                     <button class="filter-tab" data-status="recheck">Needs Recheck</button>
                 </div>
 
-                <!-- Right controls: Course filter and search -->
                 <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
                     <select id="course-filter-select" style="padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; background: #fff;">
                         <option value="all">All Assigned Courses</option>
@@ -50,7 +47,6 @@
                 </div>
             </div>
 
-            <!-- Submissions Table -->
             <div class="table-container" id="table-container">
                 <table class="assignments-table">
                     <thead>
@@ -65,12 +61,11 @@
                         </tr>
                     </thead>
                     <tbody id="submissions-table-body">
-                        <!-- Populated dynamically via assistant_submissions.js -->
+
                     </tbody>
                 </table>
             </div>
 
-            <!-- Empty State -->
             <div id="empty-state" class="empty-state" style="display: none;">
                 <h3>No Submissions Found</h3>
                 <p>No student submissions match your selected filter criteria.</p>
@@ -78,7 +73,6 @@
         </section>
     </div>
 
-    <!-- Client-side Scripts -->
     <script src="../assets/js/main.js"></script>
     <script src="../assets/js/assistant_submissions.js"></script>
 </body>

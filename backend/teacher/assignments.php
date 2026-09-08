@@ -1,15 +1,14 @@
 <?php
-// Backend teacher assignments API (Listing & Creating assignments)
+// backend teacher assignments api (listing & creating assignments)
 
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
 
-// Set JSON response header
 header('Content-Type: application/json');
 
-// Check teacher authentication
+// check teacher authentication
 if (!isLoggedIn() || currentUserRole() !== 'teacher') {
     http_response_code(401);
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
@@ -18,7 +17,7 @@ if (!isLoggedIn() || currentUserRole() !== 'teacher') {
 
 $teacherId = (int) currentUserId();
 
-// Handle POST request to create an assignment
+// handle post request to create an assignment
 if (isPost()) {
     $courseId = isset($_POST['course_id']) ? (int) $_POST['course_id'] : 0;
     $title = post('title');
@@ -29,7 +28,7 @@ if (isPost()) {
     $allowedExtensions = post('allowed_extensions', 'pdf,doc,docx,zip');
     $maxFileSizeMb = isset($_POST['max_file_size_mb']) ? (int) $_POST['max_file_size_mb'] : 10;
 
-    // Verify course belongs to this teacher
+    // verify course belongs to this teacher
     $courseCheckSql = "SELECT id FROM courses WHERE id = $courseId AND teacher_id = $teacherId AND is_active = 1 LIMIT 1";
     $courseCheckRes = mysqli_query($conn, $courseCheckSql);
 
@@ -39,7 +38,7 @@ if (isPost()) {
         exit;
     }
 
-    // Validate assignment input fields
+    // validate assignment input fields
     if ($title === '') {
         http_response_code(400);
         echo json_encode(['success' => false, 'message' => 'Assignment title is required.']);
@@ -56,15 +55,15 @@ if (isPost()) {
         exit;
     }
 
-    // Format deadline to MySQL datetime format
+    // format deadline to mysql datetime format
     $formattedDeadline = date('Y-m-d H:i:s', strtotime($deadline));
 
-    // Escape string inputs for database insertion
+    // escape string inputs for database insertion
     $escapedTitle = mysqli_real_escape_string($conn, $title);
     $escapedDesc = mysqli_real_escape_string($conn, $description);
     $escapedExt = mysqli_real_escape_string($conn, $allowedExtensions);
 
-    // Insert assignment into database
+    // insert assignment into database
     $insertSql = "INSERT INTO assignments (
         course_id,
         title,
@@ -94,7 +93,7 @@ if (isPost()) {
     if ($insertRes) {
         $newId = mysqli_insert_id($conn);
 
-        // Notify all students enrolled in this course
+        // notify all students enrolled in this course
         $cNameRes = mysqli_query($conn, "SELECT name FROM courses WHERE id = $courseId LIMIT 1");
         $cNameRow = mysqli_fetch_assoc($cNameRes);
         $courseName = $cNameRow ? $cNameRow['name'] : 'Course';
@@ -123,8 +122,8 @@ if (isPost()) {
     exit;
 }
 
-// Handle GET request to retrieve assignments and courses list
-// Query all assignments for teacher courses
+// handle get request to retrieve assignments and courses list
+// query all assignments for teacher courses
 $assignmentsSql = "SELECT
     a.id,
     a.title,
@@ -156,7 +155,7 @@ if ($assignmentsRes) {
     }
 }
 
-// Query teacher courses for dropdown selection
+// query teacher courses for dropdown selection
 $coursesSql = "SELECT id, name FROM courses WHERE teacher_id = $teacherId AND is_active = 1 ORDER BY name ASC";
 $coursesRes = mysqli_query($conn, $coursesSql);
 $courses = [];
@@ -167,7 +166,6 @@ if ($coursesRes) {
     }
 }
 
-// Return JSON response
 echo json_encode([
     'success' => true,
     'assignments' => $assignments,

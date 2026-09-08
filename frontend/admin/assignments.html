@@ -4,17 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Assignments - Admin</title>
-    <!-- Stylesheets -->
+
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/dashboard.css">
     <link rel="stylesheet" href="../assets/css/responsive.css">
 </head>
 <body>
     <div class="dashboard-page">
-        <!-- Back to dashboard link -->
+
         <a href="dashboard.html" class="back-btn">&larr; Back to Dashboard</a>
 
-        <!-- Top Header -->
         <header class="dashboard-header">
             <div>
                 <h1>Assignments System Oversight</h1>
@@ -27,7 +26,6 @@
             </div>
         </header>
 
-        <!-- Main Content Section -->
         <section class="assignments-section">
             <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
                 <div>
@@ -35,11 +33,9 @@
                     <p>Track deadlines, submissions, and grading progress</p>
                 </div>
 
-                <!-- Search Input -->
                 <input type="text" id="search-input" placeholder="Search title, course, or teacher..." style="padding: 8px 14px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; width: 280px;">
             </div>
 
-            <!-- Table Container -->
             <div class="table-container" id="table-container">
                 <table class="assignments-table">
                     <thead>
@@ -55,12 +51,11 @@
                         </tr>
                     </thead>
                     <tbody id="assignments-table-body">
-                        <!-- Populated dynamically via admin_assignments.js -->
+
                     </tbody>
                 </table>
             </div>
 
-            <!-- Empty State -->
             <div id="empty-state" class="empty-state" style="display: none;">
                 <h3>No Assignments Found</h3>
                 <p>No assignments have been created in the system yet.</p>
@@ -68,7 +63,6 @@
         </section>
     </div>
 
-    <!-- Client-side Scripts -->
     <script src="../assets/js/main.js"></script>
     <script src="../assets/js/admin_assignments.js"></script>
 </body>

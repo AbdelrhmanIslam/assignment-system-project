@@ -4,17 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Courses - Admin</title>
-    <!-- Stylesheets -->
+
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/dashboard.css">
     <link rel="stylesheet" href="../assets/css/responsive.css">
 </head>
 <body>
     <div class="dashboard-page">
-        <!-- Back to dashboard link -->
+
         <a href="dashboard.html" class="back-btn">&larr; Back to Dashboard</a>
 
-        <!-- Top Header -->
         <header class="dashboard-header">
             <div>
                 <h1>Course Management</h1>
@@ -27,12 +26,10 @@
             </div>
         </header>
 
-        <!-- Alert Notification Box -->
         <div id="alert-box" style="display: none; margin-bottom: 20px;"></div>
 
-        <!-- Two Column Layout: Courses Table & Create Course Form -->
         <div class="assignment-layout">
-            <!-- Left Column: Courses List -->
+
             <div class="assignment-main">
                 <section class="assignments-section">
                     <div class="section-header">
@@ -40,7 +37,6 @@
                         <p>Active and archived academic courses</p>
                     </div>
 
-                    <!-- Courses Table -->
                     <div class="table-container" id="table-container">
                         <table class="assignments-table">
                             <thead>
@@ -55,12 +51,11 @@
                                 </tr>
                             </thead>
                             <tbody id="courses-table-body">
-                                <!-- Populated dynamically via admin_courses.js -->
+
                             </tbody>
                         </table>
                     </div>
 
-                    <!-- Empty State -->
                     <div id="empty-state" class="empty-state" style="display: none;">
                         <h3>No Courses Found</h3>
                         <p>No courses have been created in the system yet.</p>
@@ -68,7 +63,6 @@
                 </section>
             </div>
 
-            <!-- Right Column: Create Course Form -->
             <div class="assignment-sidebar">
                 <section class="content-card">
                     <h2>Create New Course</h2>
@@ -108,7 +102,6 @@
         </div>
     </div>
 
-    <!-- Client-side Scripts -->
     <script src="../assets/js/main.js"></script>
     <script src="../assets/js/admin_courses.js"></script>
 </body>

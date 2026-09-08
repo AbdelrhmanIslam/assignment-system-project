@@ -1,5 +1,5 @@
 <?php
-// Backend JSON API for teacher notifications
+// backend json api for teacher notifications
 
 header('Content-Type: application/json');
 
@@ -8,7 +8,7 @@ require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
 
-// Verify teacher authentication
+// verify teacher authentication
 if (!isLoggedIn() || currentUserRole() !== 'teacher') {
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
     exit;
@@ -16,7 +16,7 @@ if (!isLoggedIn() || currentUserRole() !== 'teacher') {
 
 $teacherId = (int) currentUserId();
 
-// Handle POST actions: mark as read or mark all as read
+// handle post actions: mark as read or mark all as read
 if (isPost()) {
     $action = isset($_POST['action']) ? sanitize($_POST['action']) : '';
 
@@ -39,7 +39,7 @@ if (isPost()) {
     exit;
 }
 
-// Handle GET: fetch all teacher notifications
+// handle get: fetch all teacher notifications
 $sql = "SELECT id, title, message, type, reference_id, is_read, created_at
         FROM notifications
         WHERE user_id = $teacherId

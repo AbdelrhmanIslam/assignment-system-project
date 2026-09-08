@@ -1,5 +1,5 @@
 <?php
-// Backend JSON API for student assignment result & grade report
+// backend json api for student assignment result & grade report
 
 header('Content-Type: application/json');
 
@@ -8,7 +8,7 @@ require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
 
-// Verify student is logged in
+// verify student is logged in
 if (!isLoggedIn() || currentUserRole() !== 'student') {
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
     exit;
@@ -22,7 +22,7 @@ if ($assignmentId <= 0) {
     exit;
 }
 
-// Fetch assignment and course details
+// fetch assignment and course details
 $assignSql = "SELECT a.id, a.title, a.description, a.max_grade, a.deadline, c.name AS course_name
               FROM assignments a
               INNER JOIN courses c ON c.id = a.course_id
@@ -37,7 +37,7 @@ if (!$assignment) {
     exit;
 }
 
-// Fetch latest submission for this student
+// fetch latest submission for this student
 $subSql = "SELECT id, file_name, file_size, version, submitted_at, is_late, status
            FROM submissions
            WHERE assignment_id = $assignmentId AND student_id = $studentId
@@ -53,7 +53,7 @@ if (!$submission) {
 
 $submissionId = (int) $submission['id'];
 
-// Fetch grade and feedback
+// fetch grade and feedback
 $gradeSql = "SELECT g.id, g.grade, g.feedback, g.correction_file_name, g.graded_at, u.name AS graded_by
              FROM grades g
              LEFT JOIN users u ON u.id = g.assistant_id
@@ -66,7 +66,7 @@ if ($submission['status'] === 'graded') {
     $grade = mysqli_fetch_assoc($gradeResult);
 }
 
-// Calculate score percentage and status
+// calculate score percentage and status
 $scorePercent = 0;
 $letterBadge = 'Needs Review';
 

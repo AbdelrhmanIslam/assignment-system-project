@@ -4,23 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - Assignment System</title>
-    <!-- Stylesheets -->
+
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/auth.css">
     <link rel="stylesheet" href="../assets/css/responsive.css">
 </head>
 <body>
 
-<!-- Register container -->
 <div class="auth-container">
     <div class="auth-card">
         <h1>Create Account</h1>
         <p class="auth-subtitle">Register as a student</p>
 
-        <!-- Alert box for success or error messages -->
         <div id="alert-box" style="display: none;"></div>
 
-        <!-- Register form connected to backend -->
+        <!-- register form connected to backend -->
         <form method="POST" action="../../backend/auth/register.php">
             <div class="form-group">
                 <label for="name">Full Name</label>
@@ -74,7 +72,6 @@
     </div>
 </div>
 
-<!-- JavaScript for handling messages -->
 <script src="../assets/js/main.js"></script>
 
 </body>

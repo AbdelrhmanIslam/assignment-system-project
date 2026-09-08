@@ -4,23 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Assignment System</title>
-    <!-- Stylesheets -->
+
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/auth.css">
     <link rel="stylesheet" href="../assets/css/responsive.css">
 </head>
 <body>
 
-<!-- Login container -->
 <div class="auth-container">
     <div class="auth-card">
         <h1>Assignment System</h1>
         <p class="auth-subtitle">Login to your account</p>
 
-        <!-- Alert box for error messages -->
         <div id="alert-box" style="display: none;"></div>
 
-        <!-- Login form connected to backend -->
+        <!-- login form connected to backend -->
         <form method="POST" action="../../backend/auth/login.php">
             <div class="form-group">
                 <label for="email">Email</label>
@@ -54,7 +52,6 @@
     </div>
 </div>
 
-<!-- JavaScript for handling messages -->
 <script src="../assets/js/main.js"></script>
 
 </body>

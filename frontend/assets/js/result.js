@@ -1,8 +1,8 @@
-// Student result report client-side dynamic loader
+// student result report client-side dynamic loader
 
 document.addEventListener('DOMContentLoaded', function () {
-    const urlParams = new URLSearchParams(window.location.search);
-    const assignmentId = urlParams.get('id');
+    var urlParams = new URLSearchParams(window.location.search);
+    var assignmentId = urlParams.get('id');
 
     if (!assignmentId) {
         showError('No assignment ID provided.');
@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function loadResult(id) {
-    const apiEndpoint = '../../backend/student/result.php?id=' + encodeURIComponent(id);
+    var apiEndpoint = '../../backend/student/result.php?id=' + encodeURIComponent(id);
 
     fetch(apiEndpoint, {
         method: 'GET',
@@ -28,7 +28,6 @@ function loadResult(id) {
             return;
         }
 
-        // Set user info
         if (data.user && document.getElementById('userName')) {
             document.getElementById('userName').textContent = data.user.name;
         }
@@ -42,29 +41,26 @@ function loadResult(id) {
 }
 
 function renderResult(data) {
-    const assign = data.assignment;
-    const sub = data.submission;
-    const grade = data.grade;
+    var assign = data.assignment;
+    var sub = data.submission;
+    var grade = data.grade;
 
-    // Assignment info
     document.getElementById('assignmentTitle').textContent = assign.title;
     document.getElementById('courseName').textContent = assign.course_name;
     document.getElementById('maxGrade').textContent = assign.max_grade;
 
-    // Submission info
     document.getElementById('subFileName').textContent = sub.file_name;
     document.getElementById('subFileSize').textContent = formatBytes(sub.file_size);
     document.getElementById('subDate').textContent = formatDate(sub.submitted_at);
     document.getElementById('subVersion').textContent = 'v' + sub.version;
 
-    // Submission download link
-    const downloadSubBtn = document.getElementById('downloadSubBtn');
+    var downloadSubBtn = document.getElementById('downloadSubBtn');
     if (downloadSubBtn) {
         downloadSubBtn.href = '../../backend/student/download.php?type=submission&id=' + sub.id;
     }
 
-    const resultCard = document.getElementById('resultDetails');
-    const pendingCard = document.getElementById('pendingCard');
+    var resultCard = document.getElementById('resultDetails');
+    var pendingCard = document.getElementById('pendingCard');
 
     if (grade) {
         if (pendingCard) pendingCard.style.display = 'none';
@@ -77,8 +73,8 @@ function renderResult(data) {
         document.getElementById('gradedBy').textContent = grade.graded_by;
         document.getElementById('gradedAt').textContent = formatDate(grade.graded_at);
 
-        // Correction file section
-        const correctionBox = document.getElementById('correctionBox');
+        // correction file section
+        var correctionBox = document.getElementById('correctionBox');
         if (correctionBox) {
             if (grade.has_correction_file) {
                 correctionBox.style.display = 'block';
@@ -94,24 +90,24 @@ function renderResult(data) {
         document.getElementById('subStatusBadge').textContent = sub.status.replace('_', ' ').toUpperCase();
     }
 
-    const loader = document.getElementById('loadingState');
+    var loader = document.getElementById('loadingState');
     if (loader) loader.style.display = 'none';
 
-    const content = document.getElementById('mainContent');
+    var content = document.getElementById('mainContent');
     if (content) content.style.display = 'block';
 }
 
 function formatBytes(bytes) {
     if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    var k = 1024;
+    var sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    var i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
 
 function formatDate(dateStr) {
     if (!dateStr) return '—';
-    const d = new Date(dateStr);
+    var d = new Date(dateStr);
     return d.toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'short',
@@ -122,11 +118,11 @@ function formatDate(dateStr) {
 }
 
 function showError(msg) {
-    const errorBox = document.getElementById('errorMessage');
+    var errorBox = document.getElementById('errorMessage');
     if (errorBox) {
         errorBox.textContent = msg;
         errorBox.style.display = 'block';
     }
-    const loader = document.getElementById('loadingState');
+    var loader = document.getElementById('loadingState');
     if (loader) loader.style.display = 'none';
 }

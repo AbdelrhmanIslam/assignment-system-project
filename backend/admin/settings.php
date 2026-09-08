@@ -1,5 +1,5 @@
 <?php
-// Backend JSON API for admin system settings & diagnostics
+// backend json api for admin system settings & diagnostics
 
 header('Content-Type: application/json');
 
@@ -8,13 +8,13 @@ require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
 
-// Verify admin authentication
+// verify admin authentication
 if (!isLoggedIn() || currentUserRole() !== 'admin') {
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
     exit;
 }
 
-// Calculate directory storage size helper
+// calculate directory storage size helper
 function calculateDirSize($path) {
     $totalSize = 0;
     if (is_dir($path)) {

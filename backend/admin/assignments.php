@@ -1,5 +1,5 @@
 <?php
-// Backend JSON API for admin assignments oversight
+// backend json api for admin assignments oversight
 
 header('Content-Type: application/json');
 
@@ -8,13 +8,13 @@ require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
 
-// Verify admin authentication
+// verify admin authentication
 if (!isLoggedIn() || currentUserRole() !== 'admin') {
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
     exit;
 }
 
-// Handle POST actions: toggle assignment status
+// handle post actions: toggle assignment status
 if (isPost()) {
     $action = isset($_POST['action']) ? sanitize($_POST['action']) : '';
 
@@ -62,7 +62,7 @@ if (isPost()) {
         if (mysqli_query($conn, $insertSql)) {
             $newId = mysqli_insert_id($conn);
 
-            // Notify enrolled students
+            // notify enrolled students
             $stRes = mysqli_query($conn, "SELECT student_id FROM course_students WHERE course_id = $courseId");
             if ($stRes) {
                 while ($stRow = mysqli_fetch_assoc($stRes)) {
@@ -83,7 +83,7 @@ if (isPost()) {
     exit;
 }
 
-// Handle GET: query all assignments across courses
+// handle get: query all assignments across courses
 $sql = "SELECT
           a.id,
           a.title,
@@ -128,7 +128,7 @@ if ($result) {
     }
 }
 
-// Query active courses for assignment creation
+// query active courses for assignment creation
 $coursesList = [];
 $cRes = mysqli_query($conn, "SELECT id, name FROM courses WHERE is_active = 1 ORDER BY name ASC");
 if ($cRes) {

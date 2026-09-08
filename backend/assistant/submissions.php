@@ -1,5 +1,5 @@
 <?php
-// Backend JSON API for assistant submissions queue
+// backend json api for assistant submissions queue
 
 header('Content-Type: application/json');
 
@@ -8,7 +8,7 @@ require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
 
-// Verify assistant authentication
+// verify assistant authentication
 if (!isLoggedIn() || currentUserRole() !== 'assistant') {
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
     exit;
@@ -16,7 +16,7 @@ if (!isLoggedIn() || currentUserRole() !== 'assistant') {
 
 $assistantId = (int) currentUserId();
 
-// Fetch assistant's assigned courses
+// fetch assistant's assigned courses
 $coursesSql = "SELECT c.id, c.name
                FROM courses c
                INNER JOIN course_assistants ca ON ca.course_id = c.id
@@ -50,7 +50,7 @@ if (empty($assignedCourseIds)) {
 
 $courseIdsCsv = implode(',', $assignedCourseIds);
 
-// Parse filters
+// parse filters
 $filterStatus = isset($_GET['status']) ? sanitize($_GET['status']) : 'all';
 $filterCourseId = isset($_GET['course_id']) ? (int) $_GET['course_id'] : 0;
 
@@ -70,7 +70,7 @@ if ($filterStatus === 'pending') {
 
 $whereSql = implode(' AND ', $whereClauses);
 
-// Query submissions
+// query submissions
 $sql = "SELECT
             s.id,
             s.file_name,

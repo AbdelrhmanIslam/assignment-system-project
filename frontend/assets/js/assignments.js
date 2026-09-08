@@ -1,4 +1,4 @@
-// Student All Assignments JavaScript controller
+// student all assignments javascript controller
 
 document.addEventListener('DOMContentLoaded', function () {
     var allAssignments = [];
@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var searchInput = document.getElementById('search-input');
     var filterButtons = document.querySelectorAll('.filter-tab');
 
-    // Fetch assignments list from backend API
+    // fetch assignments list from backend api
     fetch('../../backend/student/assignments.php')
         .then(function (response) {
             if (response.status === 401) {
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error('Error loading assignments:', error);
         });
 
-    // Handle filter tab click events
+    // handle filter tab click events
     for (var i = 0; i < filterButtons.length; i++) {
         filterButtons[i].addEventListener('click', function () {
             for (var j = 0; j < filterButtons.length; j++) {
@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Handle search input events
+    // handle search input events
     if (searchInput) {
         searchInput.addEventListener('input', function () {
             searchQuery = this.value.trim().toLowerCase();
@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Render the assignments table based on current filter and search
+    // render the assignments table based on current filter and search
     function renderTable() {
         if (!tbody) return;
 
@@ -86,19 +86,17 @@ document.addEventListener('DOMContentLoaded', function () {
             var item = filtered[i];
             var tr = document.createElement('tr');
 
-            // Assignment title cell
             var tdTitle = document.createElement('td');
             var strongTitle = document.createElement('strong');
             strongTitle.textContent = item.title;
             tdTitle.appendChild(strongTitle);
             tr.appendChild(tdTitle);
 
-            // Course name cell
+            // course name cell
             var tdCourse = document.createElement('td');
             tdCourse.textContent = item.course_name;
             tr.appendChild(tdCourse);
 
-            // Deadline cell
             var tdDeadline = document.createElement('td');
             var deadlineDate = new Date(item.deadline);
             tdDeadline.textContent = deadlineDate.toLocaleString('en-US', {
@@ -111,7 +109,6 @@ document.addEventListener('DOMContentLoaded', function () {
             });
             tr.appendChild(tdDeadline);
 
-            // Status badge cell
             var tdStatus = document.createElement('td');
             var badge = document.createElement('span');
             badge.className = 'status-badge ' + item.status_class;
@@ -119,7 +116,6 @@ document.addEventListener('DOMContentLoaded', function () {
             tdStatus.appendChild(badge);
             tr.appendChild(tdStatus);
 
-            // Grade cell
             var tdGrade = document.createElement('td');
             if (item.status_key === 'graded' && item.grade !== null) {
                 var strongGrade = document.createElement('strong');
@@ -133,7 +129,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             tr.appendChild(tdGrade);
 
-            // Action button cell
             var tdAction = document.createElement('td');
             var actionLink = document.createElement('a');
             if (item.status_key === 'graded') {
@@ -150,7 +145,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Update count labels on filter tabs
+    // update count labels on filter tabs
     function updateTabCounts() {
         var counts = {
             all: allAssignments.length,
@@ -172,7 +167,7 @@ document.addEventListener('DOMContentLoaded', function () {
         setTabText('tab-graded', 'Graded (' + counts.graded + ')');
     }
 
-    // Helper to update text content of an element
+    // helper to update text content of an element
     function setTabText(id, text) {
         var elem = document.getElementById(id);
         if (elem) {

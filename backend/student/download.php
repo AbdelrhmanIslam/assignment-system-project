@@ -1,12 +1,12 @@
 <?php
-// Secure file download handler for submissions and correction files
+// secure file download handler for submissions and correction files
 
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
 
-// Verify user is authenticated
+// verify user is authenticated
 if (!isLoggedIn()) {
     redirect(BASE_URL . '/frontend/auth/login.html');
 }
@@ -25,7 +25,7 @@ $filePath = '';
 $downloadName = '';
 
 if ($type === 'submission') {
-    // Fetch submission details with course info to authorize access
+    // fetch submission details with course info to authorize access
     $sql = "SELECT s.id, s.student_id, s.file_name, s.stored_file_name, a.course_id
             FROM submissions s
             INNER JOIN assignments a ON a.id = s.assignment_id
@@ -38,7 +38,7 @@ if ($type === 'submission') {
         die('Submission not found.');
     }
 
-    // Access control: admin has full access; student must own submission; teacher/assistant must be in course
+    // access control: admin has full access; student must own submission; teacher/assistant must be in course
     $allowed = false;
     if ($currentUserRole === 'admin') {
         $allowed = true;
@@ -65,7 +65,7 @@ if ($type === 'submission') {
     $filePath = UPLOAD_SUBMISSIONS . $sub['stored_file_name'];
     $downloadName = $sub['file_name'];
 } else if ($type === 'correction') {
-    // Fetch correction file details from grades table
+    // fetch correction file details from grades table
     $sql = "SELECT g.id, g.correction_file_name, g.correction_stored_name, s.student_id, a.course_id
             FROM grades g
             INNER JOIN submissions s ON s.id = g.submission_id
@@ -79,7 +79,7 @@ if ($type === 'submission') {
         die('Correction file not found.');
     }
 
-    // Access control
+    // access control
     $allowed = false;
     if ($currentUserRole === 'admin') {
         $allowed = true;
@@ -109,12 +109,12 @@ if ($type === 'submission') {
     die('Invalid download type.');
 }
 
-// Check if physical file exists
+// check if physical file exists
 if (!file_exists($filePath)) {
     die('The requested file does not exist on the server.');
 }
 
-// Send download headers
+// send download headers
 header('Content-Description: File Transfer');
 header('Content-Type: application/octet-stream');
 header('Content-Disposition: attachment; filename="' . basename($downloadName) . '"');

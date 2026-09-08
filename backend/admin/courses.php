@@ -1,5 +1,5 @@
 <?php
-// Backend JSON API for admin course management
+// backend json api for admin course management
 
 header('Content-Type: application/json');
 
@@ -8,13 +8,13 @@ require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
 
-// Verify admin authentication
+// verify admin authentication
 if (!isLoggedIn() || currentUserRole() !== 'admin') {
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
     exit;
 }
 
-// Handle POST actions: create course, toggle status, or assign assistant
+// handle post actions: create course, toggle status, or assign assistant
 if (isPost()) {
     $action = isset($_POST['action']) ? sanitize($_POST['action']) : '';
 
@@ -39,7 +39,7 @@ if (isPost()) {
         if ($insertCourseRes) {
             $newCourseId = mysqli_insert_id($conn);
 
-            // Assign assistant if selected
+            // assign assistant if selected
             if ($assistantId > 0) {
                 mysqli_query($conn, "INSERT INTO course_assistants (course_id, assistant_id, assigned_at)
                                      VALUES ($newCourseId, $assistantId, NOW())");
@@ -80,7 +80,7 @@ if (isPost()) {
             exit;
         }
 
-        // Check if already assigned
+        // check if already assigned
         $checkSql = "SELECT id FROM course_assistants WHERE course_id = $courseId AND assistant_id = $assistantId LIMIT 1";
         $checkRes = mysqli_query($conn, $checkSql);
 
@@ -102,7 +102,7 @@ if (isPost()) {
     exit;
 }
 
-// Handle GET: query courses with statistics and available teachers/assistants
+// handle get: query courses with statistics and available teachers/assistants
 $coursesSql = "SELECT
                  c.id,
                  c.name,
@@ -138,7 +138,7 @@ if ($coursesRes) {
     }
 }
 
-// Fetch list of teachers for dropdown
+// fetch list of teachers for dropdown
 $teachersRes = mysqli_query($conn, "SELECT id, name FROM users WHERE role = 'teacher' AND is_active = 1 ORDER BY name ASC");
 $teachersList = [];
 if ($teachersRes) {
@@ -147,7 +147,7 @@ if ($teachersRes) {
     }
 }
 
-// Fetch list of assistants for dropdown
+// fetch list of assistants for dropdown
 $assistantsRes = mysqli_query($conn, "SELECT id, name FROM users WHERE role = 'assistant' AND is_active = 1 ORDER BY name ASC");
 $assistantsList = [];
 if ($assistantsRes) {

@@ -1,5 +1,5 @@
 <?php
-// Backend JSON API for admin user management
+// backend json api for admin user management
 
 header('Content-Type: application/json');
 
@@ -8,7 +8,7 @@ require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
 
-// Verify admin authentication
+// verify admin authentication
 if (!isLoggedIn() || currentUserRole() !== 'admin') {
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
     exit;
@@ -16,7 +16,7 @@ if (!isLoggedIn() || currentUserRole() !== 'admin') {
 
 $adminId = (int) currentUserId();
 
-// Handle POST actions: create user or toggle status
+// handle post actions: create user or toggle status
 if (isPost()) {
     $action = isset($_POST['action']) ? sanitize($_POST['action']) : '';
 
@@ -26,7 +26,6 @@ if (isPost()) {
         $role = isset($_POST['role']) ? sanitize($_POST['role']) : '';
         $password = isset($_POST['password']) ? trim($_POST['password']) : '';
 
-        // Validation
         if (empty($name) || empty($email) || empty($role) || empty($password)) {
             echo json_encode(['success' => false, 'message' => 'All fields are required.']);
             exit;
@@ -48,7 +47,7 @@ if (isPost()) {
             exit;
         }
 
-        // Prevent duplicate email registration
+        // prevent duplicate email registration
         $escapedEmail = mysqli_real_escape_string($conn, $email);
         $checkDup = mysqli_query($conn, "SELECT id FROM users WHERE email = '$escapedEmail' LIMIT 1");
         if (mysqli_num_rows($checkDup) > 0) {
@@ -56,7 +55,7 @@ if (isPost()) {
             exit;
         }
 
-        // Hash password securely
+        // hash password securely
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
         $escapedName = mysqli_real_escape_string($conn, $name);
         $escapedHash = mysqli_real_escape_string($conn, $hashedPassword);
@@ -101,7 +100,7 @@ if (isPost()) {
     exit;
 }
 
-// Handle GET: query users with filters
+// handle get: query users with filters
 $filterRole = isset($_GET['role']) ? sanitize($_GET['role']) : 'all';
 $search = isset($_GET['search']) ? sanitize($_GET['search']) : '';
 

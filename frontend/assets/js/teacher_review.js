@@ -1,4 +1,4 @@
-// Teacher Submission Review & Grading JavaScript Controller
+// teacher submission review & grading javascript controller
 
 document.addEventListener('DOMContentLoaded', function () {
     var urlParams = new URLSearchParams(window.location.search);
@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var gradeForm = document.getElementById('grade-form');
     var alertBox = document.getElementById('alert-box');
 
-    // Fetch submission details from backend API
+    // fetch submission details from backend api
     fetch('../../backend/teacher/review.php?id=' + submissionId)
         .then(function (response) {
             if (response.status === 401) {
@@ -52,27 +52,25 @@ document.addEventListener('DOMContentLoaded', function () {
                 minute: '2-digit'
             }));
 
-            // File download link
+            // file download link
             var downloadLink = document.getElementById('download-file-btn');
             if (downloadLink && sub.file_path) {
                 downloadLink.href = '../../' + sub.file_path;
                 downloadLink.setAttribute('download', sub.file_name);
             }
 
-            // Status badge
             var statusBadge = document.getElementById('status-badge');
             if (statusBadge) {
                 statusBadge.textContent = (sub.status === 'graded') ? 'Graded' : 'Pending Review';
                 statusBadge.className = 'status-badge ' + (sub.status === 'graded' ? 'status-graded' : 'status-review');
             }
 
-            // Description
             var descBox = document.getElementById('assignment-description');
             if (descBox && sub.assignment_description) {
                 descBox.textContent = sub.assignment_description;
             }
 
-            // Existing grade pre-fill
+            // existing grade pre-fill
             var gradeInput = document.getElementById('input-grade');
             var maxGradeHint = document.getElementById('max-grade-hint');
             if (gradeInput) {
@@ -90,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 feedbackInput.value = sub.feedback;
             }
 
-            // Assistant notes display
+            // assistant notes display
             var assistantBox = document.getElementById('assistant-notes-box');
             if (sub.assistant_name && assistantBox) {
                 assistantBox.style.display = 'block';
@@ -111,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function () {
             showAlert('error', 'Failed to fetch submission details.');
         });
 
-    // Wire Approve button
+    // wire approve button
     var btnApprove = document.getElementById('btn-approve');
     if (btnApprove) {
         btnApprove.addEventListener('click', function () {
@@ -127,7 +125,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Wire Recheck button
+    // wire recheck button
     var btnRecheck = document.getElementById('btn-recheck');
     if (btnRecheck) {
         btnRecheck.addEventListener('click', function () {

@@ -1,15 +1,14 @@
 <?php
-// Backend student assignments list API
+// backend student assignments list api
 
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
 
-// Set JSON response header
 header('Content-Type: application/json');
 
-// Check student authentication
+// check student authentication
 if (!isLoggedIn() || currentUserRole() !== 'student') {
     http_response_code(401);
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
@@ -18,7 +17,7 @@ if (!isLoggedIn() || currentUserRole() !== 'student') {
 
 $studentId = (int) currentUserId();
 
-// Query all active assignments for courses in which the student is enrolled
+// query all active assignments for courses in which the student is enrolled
 $sql = "SELECT
     a.id,
     a.title,
@@ -53,7 +52,7 @@ if ($result) {
     while ($row = mysqli_fetch_assoc($result)) {
         $isPastDeadline = strtotime($row['deadline']) < time();
 
-        // Determine status classification and action button properties
+        // determine status classification and action button properties
         if (empty($row['submission_id'])) {
             $statusKey = 'not_submitted';
             $statusLabel = 'Not Submitted';
@@ -86,7 +85,6 @@ if ($result) {
     }
 }
 
-// Return JSON response
 echo json_encode([
     'success' => true,
     'assignments' => $assignments

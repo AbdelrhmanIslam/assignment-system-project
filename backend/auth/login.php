@@ -5,31 +5,31 @@ require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/functions.php';
 require_once __DIR__ . '/../includes/auth.php';
 
-// Redirect if already logged in
+// redirect if already logged in
 if (isLoggedIn()) {
     redirect(BASE_URL . '/index.php');
 }
 
-// Check if request is POST
+// check if request is post
 if (isPost()) {
     $email = post('email');
     $password = isset($_POST['password']) ? $_POST['password'] : '';
 
-    // Validate inputs
+    // validate inputs
     if (!isValidEmail($email)) {
         redirect(BASE_URL . '/frontend/auth/login.html?error=' . urlencode('Please enter a valid email address.'));
     } else if ($password === '') {
         redirect(BASE_URL . '/frontend/auth/login.html?error=' . urlencode('Please enter your password.'));
     } else {
-        // Escape input for safety
+        // escape input for safety
         $escapedEmail = mysqli_real_escape_string($conn, $email);
 
-        // Query user from database
+        // query user from database
         $sql = "SELECT id, name, email, password, role, is_active FROM users WHERE email = '$escapedEmail' LIMIT 1";
         $result = mysqli_query($conn, $sql);
         $user = mysqli_fetch_assoc($result);
 
-        // Verify credentials
+        // verify credentials
         if (!$user || !password_verify($password, $user['password'])) {
             redirect(BASE_URL . '/frontend/auth/login.html?error=' . urlencode('Invalid email or password.'));
         } else if ((int) $user['is_active'] !== 1) {
@@ -37,7 +37,7 @@ if (isPost()) {
         } else {
             loginUser($user);
 
-            // Redirect based on user role
+            // redirect based on user role
             switch ($user['role']) {
                 case 'student':
                     redirect(BASE_URL . '/frontend/student/dashboard.html');
@@ -59,6 +59,6 @@ if (isPost()) {
         }
     }
 } else {
-    // If not POST request, redirect to login page
+    // if not post request, redirect to login page
     redirect(BASE_URL . '/frontend/auth/login.html');
 }

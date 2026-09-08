@@ -1,5 +1,5 @@
 <?php
-// Backend JSON API for assistant grade and feedback submission
+// backend json api for assistant grade and feedback submission
 
 header('Content-Type: application/json');
 
@@ -8,7 +8,7 @@ require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
 
-// Verify assistant authentication
+// verify assistant authentication
 if (!isLoggedIn() || currentUserRole() !== 'assistant') {
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
     exit;
@@ -36,7 +36,7 @@ if ($submissionId <= 0 || $gradeInput === '') {
 
 $gradeValue = (float) $gradeInput;
 
-// Verify submission exists and assistant is assigned to course
+// verify submission exists and assistant is assigned to course
 $sql = "SELECT s.id, s.student_id, a.id AS assignment_id, a.title AS assignment_title, a.max_grade, c.teacher_id, u.name AS student_name
         FROM submissions s
         INNER JOIN assignments a ON a.id = s.assignment_id
@@ -59,7 +59,7 @@ if ($gradeValue < 0 || $gradeValue > $maxGrade) {
     exit;
 }
 
-// Handle optional correction file upload
+// handle optional correction file upload
 $correctionFileName = '';
 $correctionStoredName = '';
 $correctionFilePath = '';
@@ -88,10 +88,10 @@ if (isset($_FILES['correction_file']) && $_FILES['correction_file']['error'] ===
     }
 }
 
-// Prepare escaped SQL fields
+// prepare escaped sql fields
 $escapedFeedback = mysqli_real_escape_string($conn, $feedback);
 
-// Insert or update grades table
+// insert or update grades table
 if (!empty($correctionStoredName)) {
     $gradeSql = "INSERT INTO grades (
                     submission_id, assistant_id, grade, feedback,
@@ -126,7 +126,7 @@ if (!$gradeResult) {
     exit;
 }
 
-// Update submission status to pending teacher review
+// update submission status to pending teacher review
 $targetStatus = 'pending_teacher';
 if ($statusChoice === 'graded') {
     $targetStatus = 'pending_teacher';
@@ -136,7 +136,7 @@ if ($statusChoice === 'graded') {
 
 mysqli_query($conn, "UPDATE submissions SET status = '$targetStatus' WHERE id = $submissionId");
 
-// Insert notification for the course teacher
+// insert notification for the course teacher
 $teacherId = (int) $sub['teacher_id'];
 $assistantName = currentUserName();
 $studentName = $sub['student_name'];

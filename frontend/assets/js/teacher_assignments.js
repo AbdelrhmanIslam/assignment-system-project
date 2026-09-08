@@ -1,4 +1,4 @@
-// Teacher Assignments JavaScript Controller
+// teacher assignments javascript controller
 
 document.addEventListener('DOMContentLoaded', function () {
     var courseSelect = document.getElementById('assignment-course');
@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var createForm = document.getElementById('create-assignment-form');
     var alertBox = document.getElementById('alert-box');
 
-    // Load assignments and courses
+    // load assignments and courses
     loadAssignments();
 
     function loadAssignments() {
@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(function (data) {
                 if (!data || !data.success) return;
 
-                // Populate course dropdown options
+                // populate course dropdown options
                 if (courseSelect && data.courses) {
                     courseSelect.innerHTML = '<option value="">-- Choose Course --</option>';
                     for (var i = 0; i < data.courses.length; i++) {
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 }
 
-                // Render assignments table
+                // render assignments table
                 if (data.assignments && data.assignments.length > 0) {
                     if (tableContainer) tableContainer.style.display = 'block';
                     if (emptyNotice) emptyNotice.style.display = 'none';
@@ -45,17 +45,14 @@ document.addEventListener('DOMContentLoaded', function () {
                             var a = data.assignments[j];
                             var tr = document.createElement('tr');
 
-                            // Title cell
                             var tdTitle = document.createElement('td');
                             tdTitle.innerHTML = '<strong>' + escapeHtml(a.title) + '</strong>';
                             tr.appendChild(tdTitle);
 
-                            // Course cell
                             var tdCourse = document.createElement('td');
                             tdCourse.textContent = a.course_name;
                             tr.appendChild(tdCourse);
 
-                            // Deadline cell
                             var tdDeadline = document.createElement('td');
                             var dDate = new Date(a.deadline);
                             tdDeadline.textContent = dDate.toLocaleString('en-US', {
@@ -67,22 +64,18 @@ document.addEventListener('DOMContentLoaded', function () {
                             });
                             tr.appendChild(tdDeadline);
 
-                            // Max Grade cell
                             var tdGrade = document.createElement('td');
                             tdGrade.textContent = a.max_grade + ' pts';
                             tr.appendChild(tdGrade);
 
-                            // Submissions count cell
                             var tdSubs = document.createElement('td');
                             tdSubs.innerHTML = '<strong>' + (a.submission_count || 0) + '</strong> (' + (a.graded_count || 0) + ' graded)';
                             tr.appendChild(tdSubs);
 
-                            // Resubmission policy
                             var tdResub = document.createElement('td');
                             tdResub.textContent = (parseInt(a.allow_resubmission, 10) === 1) ? 'Yes' : 'No';
                             tr.appendChild(tdResub);
 
-                            // Action button cell
                             var tdAction = document.createElement('td');
                             var subBtn = document.createElement('a');
                             subBtn.href = 'submissions.html?assignment_id=' + a.id;
@@ -104,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
 
-    // Handle Create Assignment Form Submission
+    // handle create assignment form submission
     if (createForm) {
         createForm.addEventListener('submit', function (e) {
             e.preventDefault();
@@ -135,7 +128,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Alert display helper
+    // alert display helper
     function showAlert(type, text) {
         if (!alertBox) return;
         alertBox.className = (type === 'success') ? 'alert alert-success' : 'alert alert-error';

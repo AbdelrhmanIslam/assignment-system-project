@@ -1,16 +1,16 @@
 <?php
-// Main entry point router
+// main entry point router
 
 require_once __DIR__ . '/backend/config/config.php';
 require_once __DIR__ . '/backend/includes/auth.php';
 
-// Redirect guests to login HTML page
+// redirect guests to login html page
 if (!isLoggedIn()) {
     header('Location: ' . BASE_URL . '/frontend/auth/login.html');
     exit;
 }
 
-// Redirect authenticated users to their role HTML dashboard
+// redirect authenticated users to their role html dashboard
 switch (currentUserRole()) {
     case 'student':
         header('Location: ' . BASE_URL . '/frontend/student/dashboard.html');

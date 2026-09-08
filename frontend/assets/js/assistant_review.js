@@ -1,10 +1,10 @@
-// Assistant submission review & grading client controller
+// assistant submission review & grading client controller
 
-let currentMaxGrade = 100;
+var currentMaxGrade = 100;
 
 document.addEventListener('DOMContentLoaded', function () {
-    const urlParams = new URLSearchParams(window.location.search);
-    const submissionId = urlParams.get('id');
+    var urlParams = new URLSearchParams(window.location.search);
+    var submissionId = urlParams.get('id');
 
     if (!submissionId) {
         showError('No submission ID specified.');
@@ -38,17 +38,15 @@ function loadSubmissionDetails(id) {
 }
 
 function renderDetails(data) {
-    const sub = data.submission;
-    const assign = data.assignment;
-    const grade = data.grade;
-    const teacherReview = data.teacher_review;
+    var sub = data.submission;
+    var assign = data.assignment;
+    var grade = data.grade;
+    var teacherReview = data.teacher_review;
 
     currentMaxGrade = assign.max_grade;
 
-    // Header info
     setElementText('assignment-title', assign.title);
 
-    // Student & Submission Meta
     setElementText('student-name', sub.student_name);
     setElementText('student-email', sub.student_email);
     setElementText('course-name', assign.course_name);
@@ -59,14 +57,12 @@ function renderDetails(data) {
     setElementText('file-size', formatBytes(sub.file_size));
     setElementText('assignment-description', assign.description);
 
-    // Setup file download link
-    const downloadBtn = document.getElementById('download-file-btn');
+    var downloadBtn = document.getElementById('download-file-btn');
     if (downloadBtn) {
         downloadBtn.href = '../../backend/student/download.php?type=submission&id=' + sub.id;
     }
 
-    // Status Badge
-    const statusBadge = document.getElementById('status-badge');
+    var statusBadge = document.getElementById('status-badge');
     if (statusBadge) {
         statusBadge.textContent = sub.status.replace('_', ' ').toUpperCase();
         if (sub.status === 'graded') {
@@ -78,20 +74,20 @@ function renderDetails(data) {
         }
     }
 
-    // Setup input max constraint
-    const gradeInput = document.getElementById('input-grade');
+    // setup input max constraint
+    var gradeInput = document.getElementById('input-grade');
     if (gradeInput) {
         gradeInput.max = assign.max_grade;
         document.getElementById('max-grade-hint').textContent = 'Maximum allowed: ' + assign.max_grade + ' points';
     }
 
-    // Populate existing grade if present
+    // populate existing grade if present
     if (grade) {
         if (gradeInput) gradeInput.value = grade.grade;
-        const feedbackInput = document.getElementById('input-feedback');
+        var feedbackInput = document.getElementById('input-feedback');
         if (feedbackInput) feedbackInput.value = grade.feedback || '';
 
-        const existingGradeNotice = document.getElementById('existing-grade-notice');
+        var existingGradeNotice = document.getElementById('existing-grade-notice');
         if (existingGradeNotice) {
             existingGradeNotice.style.display = 'block';
             setElementText('previous-grade-val', grade.grade + ' / ' + assign.max_grade);
@@ -99,9 +95,9 @@ function renderDetails(data) {
         }
     }
 
-    // Show Teacher Recheck Request if available
+    // show teacher recheck request if available
     if (teacherReview && teacherReview.decision === 'recheck') {
-        const recheckAlert = document.getElementById('recheck-alert-box');
+        var recheckAlert = document.getElementById('recheck-alert-box');
         if (recheckAlert) {
             recheckAlert.style.display = 'block';
             setElementText('teacher-comment', teacherReview.comment || 'Please recheck this submission.');
@@ -111,24 +107,24 @@ function renderDetails(data) {
 }
 
 function setupGradeForm(submissionId) {
-    const form = document.getElementById('grade-form');
+    var form = document.getElementById('grade-form');
     if (!form) return;
 
     form.addEventListener('submit', function (e) {
         e.preventDefault();
 
-        const gradeInput = document.getElementById('input-grade');
-        const gradeVal = parseFloat(gradeInput.value);
+        var gradeInput = document.getElementById('input-grade');
+        var gradeVal = parseFloat(gradeInput.value);
 
         if (isNaN(gradeVal) || gradeVal < 0 || gradeVal > currentMaxGrade) {
             showError('Please enter a valid score between 0 and ' + currentMaxGrade);
             return;
         }
 
-        const formData = new FormData(form);
+        var formData = new FormData(form);
         formData.append('submission_id', submissionId);
 
-        const submitBtn = form.querySelector('button[type="submit"]');
+        var submitBtn = form.querySelector('button[type="submit"]');
         if (submitBtn) {
             submitBtn.disabled = true;
             submitBtn.textContent = 'Saving Grade...';
@@ -167,21 +163,21 @@ function setupGradeForm(submissionId) {
 }
 
 function setElementText(id, text) {
-    const el = document.getElementById(id);
+    var el = document.getElementById(id);
     if (el) el.textContent = text;
 }
 
 function formatBytes(bytes) {
     if (!bytes || bytes === 0) return '0 B';
-    const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    var k = 1024;
+    var sizes = ['B', 'KB', 'MB', 'GB'];
+    var i = Math.floor(Math.log(bytes) / Math.log(k));
     return (bytes / Math.pow(k, i)).toFixed(1) + ' ' + sizes[i];
 }
 
 function formatDate(dateStr) {
     if (!dateStr) return '—';
-    const d = new Date(dateStr);
+    var d = new Date(dateStr);
     return d.toLocaleDateString('en-US', {
         month: 'short',
         day: 'numeric',
@@ -192,7 +188,7 @@ function formatDate(dateStr) {
 }
 
 function showError(msg) {
-    const box = document.getElementById('alert-box');
+    var box = document.getElementById('alert-box');
     if (box) {
         box.className = 'alert-banner alert-error';
         box.textContent = msg;
@@ -201,7 +197,7 @@ function showError(msg) {
 }
 
 function showSuccess(msg) {
-    const box = document.getElementById('alert-box');
+    var box = document.getElementById('alert-box');
     if (box) {
         box.className = 'alert-banner alert-success';
         box.textContent = msg;

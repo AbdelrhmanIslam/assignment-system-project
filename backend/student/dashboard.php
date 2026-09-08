@@ -33,7 +33,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'student') {
 
 $studentId = (int) $_SESSION['user_id'];
 
-// Get student information
+// get student information
 $studentQuery = "SELECT id, name, email
                  FROM users
                  WHERE id = $studentId
@@ -67,7 +67,7 @@ if (!$student) {
     exit;
 }
 
-// Get assignment statistics
+// get assignment statistics
 $statsQuery = "SELECT
                 COUNT(DISTINCT a.id) AS total_assignments,
 
@@ -129,7 +129,7 @@ if (!$statsResult) {
 
 $stats = mysqli_fetch_assoc($statsResult);
 
-// Get student's assignments
+// get student's assignments
 $assignmentsQuery = "SELECT
                         a.id,
                         a.title,

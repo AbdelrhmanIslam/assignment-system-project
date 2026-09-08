@@ -1,4 +1,4 @@
-// Assistant dashboard client-side dynamic loader
+// assistant dashboard client-side dynamic loader
 
 document.addEventListener('DOMContentLoaded', function () {
     loadDashboardData();
@@ -18,16 +18,16 @@ function loadDashboardData() {
             return;
         }
 
-        // Update assistant name and email
+        // update assistant name and email
         if (data.user) {
-            const nameEl = document.getElementById('assistant-name');
+            var nameEl = document.getElementById('assistant-name');
             if (nameEl) nameEl.textContent = data.user.name;
 
-            const emailEl = document.getElementById('assistant-email');
+            var emailEl = document.getElementById('assistant-email');
             if (emailEl) emailEl.textContent = data.user.email;
         }
 
-        // Update statistics cards
+        // update statistics cards
         if (data.stats) {
             setElementText('stat-courses', data.stats.assigned_courses);
             setElementText('stat-pending', data.stats.pending_submissions);
@@ -35,7 +35,7 @@ function loadDashboardData() {
             setElementText('stat-total', data.stats.total_submissions);
         }
 
-        // Render recent submissions table
+        // render recent submissions table
         renderRecentSubmissions(data.recent_submissions);
     })
     .catch(function (error) {
@@ -44,9 +44,9 @@ function loadDashboardData() {
 }
 
 function renderRecentSubmissions(submissions) {
-    const tbody = document.getElementById('recent-submissions-body');
-    const emptyState = document.getElementById('empty-recent-state');
-    const tableContainer = document.getElementById('recent-table-container');
+    var tbody = document.getElementById('recent-submissions-body');
+    var emptyState = document.getElementById('empty-recent-state');
+    var tableContainer = document.getElementById('recent-table-container');
 
     if (!submissions || submissions.length === 0) {
         if (emptyState) emptyState.style.display = 'block';
@@ -61,13 +61,13 @@ function renderRecentSubmissions(submissions) {
     tbody.innerHTML = '';
 
     submissions.forEach(function (sub) {
-        const row = document.createElement('tr');
+        var row = document.createElement('tr');
 
-        // Status badge configuration
-        let badgeClass = 'status-not-submitted';
-        let badgeLabel = 'Submitted';
-        let actionLabel = 'Grade Work';
-        let actionClass = 'action-submit';
+        // status badge configuration
+        var badgeClass = 'status-not-submitted';
+        var badgeLabel = 'Submitted';
+        var actionLabel = 'Grade Work';
+        var actionClass = 'action-submit';
 
         if (sub.status === 'graded') {
             badgeClass = 'status-graded';
@@ -91,7 +91,7 @@ function renderRecentSubmissions(submissions) {
             actionClass = 'action-view';
         }
 
-        const gradeDisplay = (sub.grade !== null) ? (sub.grade + ' / ' + sub.max_grade) : '—';
+        var gradeDisplay = (sub.grade !== null) ? (sub.grade + ' / ' + sub.max_grade) : '—';
 
         row.innerHTML =
             '<td><strong>' + escapeHtml(sub.student_name) + '</strong></td>' +
@@ -107,13 +107,13 @@ function renderRecentSubmissions(submissions) {
 }
 
 function setElementText(id, text) {
-    const el = document.getElementById(id);
+    var el = document.getElementById(id);
     if (el) el.textContent = text;
 }
 
 function formatDate(dateStr) {
     if (!dateStr) return '—';
-    const d = new Date(dateStr);
+    var d = new Date(dateStr);
     return d.toLocaleDateString('en-US', {
         month: 'short',
         day: 'numeric',

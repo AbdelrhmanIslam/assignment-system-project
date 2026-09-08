@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Assignment Result - Student Portal</title>
-    <!-- Stylesheets -->
+
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/dashboard.css">
     <link rel="stylesheet" href="../assets/css/responsive.css">
 </head>
 <body>
     <div class="dashboard-page">
-        <!-- Top Header -->
+
         <header class="dashboard-header">
             <div>
                 <h1>Assignment Result & Evaluation</h1>
@@ -25,13 +25,11 @@
             </div>
         </header>
 
-        <!-- Loading / Error Alerts -->
         <div id="errorMessage" class="alert-banner alert-error" style="display:none; margin-bottom: 20px;"></div>
         <div id="loadingState" style="text-align:center; padding: 40px; color: #6b7280;">Loading assignment result...</div>
 
-        <!-- Main Content Area -->
         <div id="mainContent" style="display:none;">
-            <!-- Assignment Top Info Card -->
+
             <div class="content-card" style="margin-bottom: 25px;">
                 <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px;">
                     <div>
@@ -45,11 +43,10 @@
                 </div>
             </div>
 
-            <!-- Two Column Layout: Submission Info & Result Card -->
             <div class="assignment-layout">
-                <!-- Left Column: Grade & Feedback Report -->
+
                 <div>
-                    <!-- Graded Details Card -->
+                    <!-- graded details card -->
                     <div id="resultDetails" class="content-card" style="display:none; border-top: 4px solid #10b981;">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px; flex-wrap:wrap; gap:10px;">
                             <div>
@@ -64,19 +61,16 @@
                             </div>
                         </div>
 
-                        <!-- Feedback Section -->
                         <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 18px; margin-bottom: 20px;">
                             <h4 style="margin: 0 0 10px; font-size: 15px; color: #111827;">Instructor Feedback</h4>
                             <p id="gradeFeedback" style="margin: 0; line-height: 1.6; color: #374151; white-space: pre-line;">No feedback entered.</p>
                         </div>
 
-                        <!-- Evaluator Meta -->
                         <div style="display:flex; justify-content:space-between; font-size: 13px; color: #6b7280; border-top: 1px solid #f3f4f6; padding-top: 14px;">
                             <span>Evaluated by: <strong id="gradedBy" style="color:#111827;">--</strong></span>
                             <span>Date: <strong id="gradedAt" style="color:#111827;">--</strong></span>
                         </div>
 
-                        <!-- Correction File Section -->
                         <div id="correctionBox" style="display:none; margin-top: 20px; padding: 14px; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px;">
                             <h4 style="margin: 0 0 8px; font-size: 14px; color: #065f46;">Annotated Correction File Attached</h4>
                             <p style="margin: 0 0 10px; font-size: 13px; color: #047857;" id="correctionFileName">correction.pdf</p>
@@ -84,7 +78,7 @@
                         </div>
                     </div>
 
-                    <!-- Pending Review Card (if not yet graded) -->
+                    <!-- pending review card (if not yet graded) -->
                     <div id="pendingCard" class="content-card" style="display:none; border-top: 4px solid #f59e0b;">
                         <h3 style="margin: 0 0 10px; color: #b45309;">Submission Under Review</h3>
                         <p style="color: #4b5563; line-height: 1.5; margin-bottom: 15px;">
@@ -94,7 +88,6 @@
                     </div>
                 </div>
 
-                <!-- Right Column: Submission Overview -->
                 <div>
                     <div class="content-card">
                         <h2>Your Submission</h2>
@@ -117,7 +110,6 @@
                             </div>
                         </div>
 
-                        <!-- Download Submission File Button -->
                         <div style="margin-top: 15px;">
                             <a id="downloadSubBtn" href="#" class="view-btn" style="display:block; text-align:center; padding: 10px;">Download Submitted File</a>
                         </div>
@@ -127,7 +119,6 @@
         </div>
     </div>
 
-    <!-- Client-side Scripts -->
     <script src="../assets/js/main.js"></script>
     <script src="../assets/js/result.js"></script>
 </body>

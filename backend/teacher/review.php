@@ -1,15 +1,14 @@
 <?php
-// Backend teacher submission review detail API
+// backend teacher submission review detail api
 
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
 
-// Set JSON response header
 header('Content-Type: application/json');
 
-// Check teacher authentication
+// check teacher authentication
 if (!isLoggedIn() || currentUserRole() !== 'teacher') {
     http_response_code(401);
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
@@ -25,7 +24,7 @@ if ($submissionId <= 0) {
     exit;
 }
 
-// Query submission details ensuring it belongs to teacher's course
+// query submission details ensuring it belongs to teacher's course
 $sql = "SELECT
     s.id,
     s.assignment_id,
@@ -70,7 +69,6 @@ if (!$submission) {
     exit;
 }
 
-// Return JSON response
 echo json_encode([
     'success' => true,
     'submission' => $submission

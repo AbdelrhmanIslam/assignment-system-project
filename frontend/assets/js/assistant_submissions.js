@@ -1,9 +1,9 @@
-// Assistant submissions queue client-side controller
+// assistant submissions queue client-side controller
 
-let allSubmissions = [];
-let currentFilter = 'all';
-let currentCourseId = 'all';
-let searchQuery = '';
+var allSubmissions = [];
+var currentFilter = 'all';
+var currentCourseId = 'all';
+var searchQuery = '';
 
 document.addEventListener('DOMContentLoaded', function () {
     loadSubmissions();
@@ -12,8 +12,8 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function loadSubmissions() {
-    let url = '../../backend/assistant/submissions.php';
-    const params = [];
+    var url = '../../backend/assistant/submissions.php';
+    var params = [];
     if (currentFilter !== 'all') {
         params.push('status=' + encodeURIComponent(currentFilter));
     }
@@ -41,7 +41,7 @@ function loadSubmissions() {
             document.getElementById('assistant-name').textContent = data.user.name;
         }
 
-        // Populate courses dropdown if not already populated
+        // populate courses dropdown if not already populated
         populateCourseFilter(data.courses);
 
         allSubmissions = data.submissions || [];
@@ -53,12 +53,12 @@ function loadSubmissions() {
 }
 
 function populateCourseFilter(courses) {
-    const select = document.getElementById('course-filter-select');
+    var select = document.getElementById('course-filter-select');
     if (!select || select.children.length > 1) return;
 
     if (courses && courses.length > 0) {
         courses.forEach(function (c) {
-            const opt = document.createElement('option');
+            var opt = document.createElement('option');
             opt.value = c.id;
             opt.textContent = c.name;
             select.appendChild(opt);
@@ -67,7 +67,7 @@ function populateCourseFilter(courses) {
 }
 
 function setupFilters() {
-    const tabs = document.querySelectorAll('.filter-tab');
+    var tabs = document.querySelectorAll('.filter-tab');
     tabs.forEach(function (tab) {
         tab.addEventListener('click', function () {
             tabs.forEach(function (t) { t.classList.remove('active'); });
@@ -77,7 +77,7 @@ function setupFilters() {
         });
     });
 
-    const courseSelect = document.getElementById('course-filter-select');
+    var courseSelect = document.getElementById('course-filter-select');
     if (courseSelect) {
         courseSelect.addEventListener('change', function () {
             currentCourseId = courseSelect.value;
@@ -87,7 +87,7 @@ function setupFilters() {
 }
 
 function setupSearch() {
-    const searchInput = document.getElementById('search-input');
+    var searchInput = document.getElementById('search-input');
     if (searchInput) {
         searchInput.addEventListener('input', function () {
             searchQuery = searchInput.value.toLowerCase().trim();
@@ -97,7 +97,7 @@ function setupSearch() {
 }
 
 function applyFilterAndRender() {
-    let filtered = allSubmissions;
+    var filtered = allSubmissions;
 
     if (searchQuery !== '') {
         filtered = filtered.filter(function (sub) {
@@ -111,9 +111,9 @@ function applyFilterAndRender() {
 }
 
 function renderTable(submissions) {
-    const tbody = document.getElementById('submissions-table-body');
-    const emptyState = document.getElementById('empty-state');
-    const tableContainer = document.getElementById('table-container');
+    var tbody = document.getElementById('submissions-table-body');
+    var emptyState = document.getElementById('empty-state');
+    var tableContainer = document.getElementById('table-container');
 
     if (!submissions || submissions.length === 0) {
         if (emptyState) emptyState.style.display = 'block';
@@ -128,12 +128,12 @@ function renderTable(submissions) {
     tbody.innerHTML = '';
 
     submissions.forEach(function (sub) {
-        const row = document.createElement('tr');
+        var row = document.createElement('tr');
 
-        let badgeClass = 'status-not-submitted';
-        let badgeLabel = 'Submitted';
-        let actionLabel = 'Grade & Feedback';
-        let actionClass = 'action-submit';
+        var badgeClass = 'status-not-submitted';
+        var badgeLabel = 'Submitted';
+        var actionLabel = 'Grade & Feedback';
+        var actionClass = 'action-submit';
 
         if (sub.status === 'graded') {
             badgeClass = 'status-graded';
@@ -157,7 +157,7 @@ function renderTable(submissions) {
             actionClass = 'action-view';
         }
 
-        const gradeDisplay = (sub.grade !== null) ? (sub.grade + ' / ' + sub.max_grade) : '—';
+        var gradeDisplay = (sub.grade !== null) ? (sub.grade + ' / ' + sub.max_grade) : '—';
 
         row.innerHTML =
             '<td><strong>' + escapeHtml(sub.student_name) + '</strong><br><small style="color:#6b7280;">' + escapeHtml(sub.student_email) + '</small></td>' +
@@ -174,7 +174,7 @@ function renderTable(submissions) {
 
 function formatDate(dateStr) {
     if (!dateStr) return '—';
-    const d = new Date(dateStr);
+    var d = new Date(dateStr);
     return d.toLocaleDateString('en-US', {
         month: 'short',
         day: 'numeric',

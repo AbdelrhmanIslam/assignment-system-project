@@ -1,2 +1,2 @@
 <?php
-// Notification functions and helpers
+// notification functions and helpers
