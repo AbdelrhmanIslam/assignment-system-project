@@ -343,14 +343,3 @@ Open your browser and navigate to:
 http://localhost/nti_intern_full/assignment-system-project/
 ```
 You will be automatically routed to the login page. Use any of the test credentials listed in the [User Roles](#user-roles--default-test-accounts) section.
-
----
-
-## Developer Standards & Coding Rules
-
-To maintain maximum maintainability and accessibility for student developers and instructors:
-1. **Frontend**: Pure HTML, CSS, and Vanilla JavaScript. Zero `.php` files in `frontend/`.
-2. **Backend**: Pure procedural PHP with `mysqli_*`. Zero OOP or classes.
-3. **Comments Style**: Exclusively single-line comments (`//` in PHP/JS and `<!-- ... -->` in HTML). Zero block comments (`/* ... */`).
-4. **Comment Characters**: All comments must use **small characters only** (no uppercase characters).
-5. **No Advanced Constructs**: Straightforward loops, standard conditionals, and clean procedural function calls.
