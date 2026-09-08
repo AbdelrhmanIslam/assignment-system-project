@@ -35,6 +35,50 @@ if (isPost()) {
         exit;
     }
 
+    if ($action === 'create') {
+        $courseId = isset($_POST['course_id']) ? (int) $_POST['course_id'] : 0;
+        $title = isset($_POST['title']) ? sanitize($_POST['title']) : '';
+        $description = isset($_POST['description']) ? sanitize($_POST['description']) : '';
+        $maxGrade = isset($_POST['max_grade']) ? (float) $_POST['max_grade'] : 100;
+        $deadline = isset($_POST['deadline']) ? sanitize($_POST['deadline']) : '';
+        $allowResub = isset($_POST['allow_resubmission']) ? (int) $_POST['allow_resubmission'] : 0;
+        $allowedExt = isset($_POST['allowed_extensions']) ? sanitize($_POST['allowed_extensions']) : 'pdf,doc,docx,zip';
+        $maxSize = isset($_POST['max_file_size_mb']) ? (int) $_POST['max_file_size_mb'] : 10;
+        $adminId = (int) currentUserId();
+
+        if ($courseId <= 0 || empty($title) || empty($deadline)) {
+            echo json_encode(['success' => false, 'message' => 'Course, title, and deadline are required.']);
+            exit;
+        }
+
+        $formattedDeadline = date('Y-m-d H:i:s', strtotime($deadline));
+        $escapedTitle = mysqli_real_escape_string($conn, $title);
+        $escapedDesc = mysqli_real_escape_string($conn, $description);
+        $escapedExt = mysqli_real_escape_string($conn, $allowedExt);
+
+        $insertSql = "INSERT INTO assignments (course_id, title, description, max_grade, deadline, allow_resubmission, allowed_extensions, max_file_size_mb, created_by, is_active, created_at)
+                      VALUES ($courseId, '$escapedTitle', '$escapedDesc', $maxGrade, '$formattedDeadline', $allowResub, '$escapedExt', $maxSize, $adminId, 1, NOW())";
+
+        if (mysqli_query($conn, $insertSql)) {
+            $newId = mysqli_insert_id($conn);
+
+            // Notify enrolled students
+            $stRes = mysqli_query($conn, "SELECT student_id FROM course_students WHERE course_id = $courseId");
+            if ($stRes) {
+                while ($stRow = mysqli_fetch_assoc($stRes)) {
+                    $stId = (int) $stRow['student_id'];
+                    mysqli_query($conn, "INSERT INTO notifications (user_id, title, message, type, reference_id, is_read, created_at)
+                                         VALUES ($stId, 'New Assignment Posted', 'New assignment \"$escapedTitle\" published.', 'assignment', $newId, 0, NOW())");
+                }
+            }
+
+            echo json_encode(['success' => true, 'message' => 'Assignment created and published successfully!']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Failed to create assignment: ' . mysqli_error($conn)]);
+        }
+        exit;
+    }
+
     echo json_encode(['success' => false, 'message' => 'Invalid action.']);
     exit;
 }
@@ -84,11 +128,24 @@ if ($result) {
     }
 }
 
+// Query active courses for assignment creation
+$coursesList = [];
+$cRes = mysqli_query($conn, "SELECT id, name FROM courses WHERE is_active = 1 ORDER BY name ASC");
+if ($cRes) {
+    while ($cRow = mysqli_fetch_assoc($cRes)) {
+        $coursesList[] = [
+            'id' => (int) $cRow['id'],
+            'name' => $cRow['name']
+        ];
+    }
+}
+
 echo json_encode([
     'success' => true,
     'user' => [
         'name' => currentUserName(),
         'role' => currentUserRole()
     ],
+    'courses' => $coursesList,
     'assignments' => $assignments
 ]);

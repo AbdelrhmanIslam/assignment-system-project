@@ -93,9 +93,27 @@ if (isPost()) {
 
     if ($insertRes) {
         $newId = mysqli_insert_id($conn);
+
+        // Notify all students enrolled in this course
+        $cNameRes = mysqli_query($conn, "SELECT name FROM courses WHERE id = $courseId LIMIT 1");
+        $cNameRow = mysqli_fetch_assoc($cNameRes);
+        $courseName = $cNameRow ? $cNameRow['name'] : 'Course';
+
+        $notifTitle = mysqli_real_escape_string($conn, 'New Assignment Posted');
+        $notifMsg = mysqli_real_escape_string($conn, "A new assignment '{$title}' was posted in {$courseName}. Deadline: {$formattedDeadline}.");
+
+        $stRes = mysqli_query($conn, "SELECT student_id FROM course_students WHERE course_id = $courseId");
+        if ($stRes) {
+            while ($stRow = mysqli_fetch_assoc($stRes)) {
+                $stId = (int) $stRow['student_id'];
+                mysqli_query($conn, "INSERT INTO notifications (user_id, title, message, type, reference_id, is_read, created_at)
+                                     VALUES ($stId, '$notifTitle', '$notifMsg', 'assignment', $newId, 0, NOW())");
+            }
+        }
+
         echo json_encode([
             'success' => true,
-            'message' => 'Assignment created successfully!',
+            'message' => 'Assignment created and published to students successfully!',
             'assignment_id' => $newId
         ]);
     } else {
