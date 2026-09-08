@@ -48,6 +48,41 @@
    border-color: #2563eb;
 }
 
+.password-wrapper {
+   position: relative;
+   display: flex;
+   align-items: center;
+   width: 100%;
+}
+
+.password-wrapper input {
+   padding-right: 44px;
+}
+
+.toggle-password-btn {
+   position: absolute;
+   right: 12px;
+   top: 50%;
+   transform: translateY(-50%);
+   background: transparent;
+   border: none;
+   cursor: pointer;
+   padding: 0;
+   color: #6b7280;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   line-height: 1;
+}
+
+.toggle-password-btn:hover {
+   color: #1f2937;
+}
+
+.toggle-password-btn:focus {
+   outline: none;
+}
+
 .auth-link {
    text-align: center;
    margin-top: 20px;

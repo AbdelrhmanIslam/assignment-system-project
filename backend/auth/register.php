@@ -29,9 +29,31 @@ if (isPost()) {
         $errors[] = 'Please enter a valid email address.';
     }
 
-    // validate password condition (at least 8 characters)
-    if (strlen($password) < 8) {
-        $errors[] = 'Password must be at least 8 characters.';
+    // validate password criteria: more than 8 chars, uppercase, lowercase, number, symbol
+    $passwordErrors = [];
+
+    if (strlen($password) <= 8) {
+        $passwordErrors[] = 'Password must be more than 8 characters.';
+    }
+
+    if (!preg_match('/[A-Z]/', $password)) {
+        $passwordErrors[] = 'Password must contain at least 1 uppercase letter (A-Z).';
+    }
+
+    if (!preg_match('/[a-z]/', $password)) {
+        $passwordErrors[] = 'Password must contain at least 1 lowercase letter (a-z).';
+    }
+
+    if (!preg_match('/[0-9]/', $password)) {
+        $passwordErrors[] = 'Password must contain at least 1 number (0-9).';
+    }
+
+    if (!preg_match('/[^a-zA-Z0-9]/', $password)) {
+        $passwordErrors[] = 'Password must contain at least 1 symbol (such as #, !, $, etc.).';
+    }
+
+    if (!empty($passwordErrors)) {
+        $errors[] = implode("\n", $passwordErrors);
     }
 
     // validate password confirmation match
@@ -41,7 +63,7 @@ if (isPost()) {
 
     // if any validation errors exist, redirect back with error
     if (!empty($errors)) {
-        redirect(BASE_URL . '/frontend/auth/register.html?error=' . urlencode(implode(' ', $errors)));
+        redirect(BASE_URL . '/frontend/auth/register.html?error=' . urlencode(implode("\n", $errors)));
     }
 
     // escape email for query

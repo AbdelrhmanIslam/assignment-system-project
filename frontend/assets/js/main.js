@@ -16,7 +16,37 @@ document.addEventListener('DOMContentLoaded', function () {
         } else if (success) {
             alertBox.className = 'alert alert-success';
             alertBox.textContent = decodeURIComponent(success);
-            alertBox.style.display = 'block';
         }
+    }
+
+    // toggle password visibility on eye button click
+    var toggleBtns = document.querySelectorAll('.toggle-password-btn');
+    for (var i = 0; i < toggleBtns.length; i++) {
+        toggleBtns[i].addEventListener('click', function () {
+            var targetId = this.getAttribute('data-target');
+            var input = document.getElementById(targetId);
+            if (!input) {
+                return;
+            }
+            var eyeOpen = this.querySelector('.eye-open');
+            var eyeClosed = this.querySelector('.eye-closed');
+            if (input.type === 'password') {
+                input.type = 'text';
+                if (eyeOpen) {
+                    eyeOpen.style.display = 'none';
+                }
+                if (eyeClosed) {
+                    eyeClosed.style.display = 'inline-block';
+                }
+            } else {
+                input.type = 'password';
+                if (eyeOpen) {
+                    eyeOpen.style.display = 'inline-block';
+                }
+                if (eyeClosed) {
+                    eyeClosed.style.display = 'none';
+                }
+            }
+        });
     }
 });
