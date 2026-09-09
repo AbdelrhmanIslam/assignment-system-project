@@ -1,20 +1,24 @@
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
+   .dashboard-page {
+      padding: 28px 20px;
+   }
 
    .stats-grid {
       grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
    }
-
 }
 
-@media (max-width: 600px) {
-
-   .dashboard-page {
-      padding: 20px 15px;
-   }
-
+@media (max-width: 768px) {
    .dashboard-header {
       flex-direction: column;
       align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 24px;
+   }
+
+   .dashboard-header h1 {
+      font-size: 24px;
    }
 
    .header-actions {
@@ -22,12 +26,59 @@
       justify-content: space-between;
    }
 
+   .filter-bar {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 14px;
+   }
+
+   .search-input {
+      width: 100%;
+      min-width: unset;
+   }
+
    .stats-grid {
       grid-template-columns: 1fr;
+      gap: 14px;
+   }
+
+   .assignment-layout {
+      grid-template-columns: 1fr;
+      gap: 20px;
+   }
+
+   .meta-grid {
+      grid-template-columns: 1fr;
+   }
+}
+
+@media (max-width: 480px) {
+   .dashboard-page {
+      padding: 16px 12px;
    }
 
    .assignments-section {
-      padding: 15px;
+      padding: 18px 14px;
+      border-radius: var(--radius-md);
    }
 
+   .content-card {
+      padding: 20px 16px;
+      border-radius: var(--radius-md);
+   }
+
+   .auth-card {
+      padding: 28px 20px;
+      border-radius: var(--radius-lg);
+   }
+
+   .assignments-table th,
+   .assignments-table td {
+      padding: 12px 10px;
+      font-size: 13px;
+   }
+
+   .stat-number {
+      font-size: 28px;
+   }
 }
