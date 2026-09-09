@@ -35,11 +35,10 @@ This platform introduces an automated, two-tier evaluation workflow that connect
 ## Key Architecture & Design Principles
 
 1. **Separation of Frontend and Backend**:
-   * **Frontend (`frontend/`)**: 100% pure HTML, CSS, and Vanilla JavaScript. There are zero PHP files or server-side tags in the frontend layer.
+   * **Frontend (`frontend/`)**: pure HTML, CSS, and Vanilla JavaScript. There are zero PHP files or server-side tags in the frontend layer.
    * **Backend (`backend/`)**: RESTful JSON API endpoints and request handlers written in procedural PHP.
 2. **Pure Procedural PHP**:
    * Standard, easy-to-read procedural code using `mysqli_*` functions.
-   * No object-oriented programming (OOP), no classes, and no complex frameworks.
 3. **Clean Vanilla JavaScript**:
    * Universal DOM manipulation, promise-based `fetch()`, standard `var` declarations, and zero dependencies.
 4. **Strict Confidentiality of Draft Grades**:
