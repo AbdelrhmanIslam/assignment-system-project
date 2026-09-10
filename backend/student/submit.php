@@ -44,7 +44,7 @@ $assignmentResult = mysqli_query($conn, $assignmentSql);
 $assignment = mysqli_fetch_assoc($assignmentResult);
 
 if (!$assignment) {
-    redirect(BASE_URL . '/frontend/student/dashboard.html');
+    redirect(BASE_URL . '/frontend/student/dashboard.html?error=' . urlencode('Assignment not found or you are not enrolled in this course.'));
 }
 
 // check if deadline has passed

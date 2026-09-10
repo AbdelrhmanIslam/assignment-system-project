@@ -32,6 +32,13 @@ if (isPost()) {
         $escapedName = mysqli_real_escape_string($conn, $name);
         $escapedDesc = mysqli_real_escape_string($conn, $description);
 
+        // check if course name already exists
+        $chkExist = mysqli_query($conn, "SELECT id FROM courses WHERE name = '$escapedName' LIMIT 1");
+        if (mysqli_fetch_assoc($chkExist)) {
+            echo json_encode(['success' => false, 'message' => 'A course with this name already exists.']);
+            exit;
+        }
+
         $insertCourseSql = "INSERT INTO courses (name, description, teacher_id, is_active, created_at)
                             VALUES ('$escapedName', '$escapedDesc', $teacherId, 1, NOW())";
         $insertCourseRes = mysqli_query($conn, $insertCourseSql);
