@@ -40,33 +40,69 @@ var allAssistants = [];
 
 function updateAssistantDropdown(teacherId) {
     var assistantSelect = document.getElementById('select-assistant');
+    var helpText = document.getElementById('assistant-help-text');
     if (!assistantSelect) return;
-    assistantSelect.innerHTML = '<option value="">None / No Assistant</option>';
+    assistantSelect.innerHTML = '';
+
     if (!teacherId) {
         var opt = document.createElement('option');
         opt.value = '';
         opt.disabled = true;
-        opt.textContent = 'Please select an instructor first...';
+        opt.selected = true;
+        opt.textContent = 'Please select a Lead Teacher first...';
         assistantSelect.appendChild(opt);
+        assistantSelect.disabled = true;
+        if (helpText) {
+            helpText.textContent = 'Each teacher has their own isolated teaching assistants.';
+            helpText.style.color = '#6b7280';
+        }
         return;
     }
+
     var tIdNum = parseInt(teacherId, 10);
     var filtered = allAssistants.filter(function (a) {
         return a.teacher_ids && a.teacher_ids.indexOf(tIdNum) !== -1;
     });
+
     if (filtered.length === 0) {
         var optEmpty = document.createElement('option');
         optEmpty.value = '';
         optEmpty.disabled = true;
-        optEmpty.textContent = '(No assistants assigned to this instructor)';
+        optEmpty.selected = true;
+        optEmpty.textContent = 'No teaching assistants assigned to this teacher';
         assistantSelect.appendChild(optEmpty);
+        assistantSelect.disabled = true;
+        if (helpText) {
+            helpText.textContent = '⚠️ This teacher has no teaching assistants. Please assign an assistant in Manage Users first.';
+            helpText.style.color = '#dc2626';
+        }
     } else {
-        filtered.forEach(function (a) {
+        assistantSelect.disabled = false;
+        if (helpText) {
+            helpText.textContent = 'Showing assistants dedicated exclusively to this teacher (' + filtered.length + ' available).';
+            helpText.style.color = '#059669';
+        }
+
+        var placeholderOpt = document.createElement('option');
+        placeholderOpt.value = '';
+        placeholderOpt.disabled = true;
+        placeholderOpt.textContent = 'Choose assistant for this teacher...';
+        assistantSelect.appendChild(placeholderOpt);
+
+        filtered.forEach(function (a, idx) {
             var opt = document.createElement('option');
             opt.value = a.id;
-            opt.textContent = a.name;
+            opt.textContent = a.name + ' (Dedicated Assistant)';
+            if (filtered.length === 1 && idx === 0) {
+                opt.selected = true;
+                placeholderOpt.selected = false;
+            }
             assistantSelect.appendChild(opt);
         });
+
+        if (filtered.length > 1) {
+            placeholderOpt.selected = true;
+        }
     }
 }
 
@@ -167,6 +203,17 @@ function setupCreateCourseForm() {
 
     form.addEventListener('submit', function (e) {
         e.preventDefault();
+
+        var tId = document.getElementById('select-teacher').value;
+        var aId = document.getElementById('select-assistant').value;
+        if (!tId) {
+            showAlert('Please select a Lead Teacher for this course.', 'error');
+            return;
+        }
+        if (!aId) {
+            showAlert('Please select a Teaching Assistant assigned to this teacher.', 'error');
+            return;
+        }
 
         var formData = new FormData(form);
         formData.append('action', 'create');

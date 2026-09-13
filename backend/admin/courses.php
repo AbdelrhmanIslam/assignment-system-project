@@ -45,6 +45,18 @@ if (isPost()) {
             exit;
         }
 
+        // teaching assistant is mandatory and must belong to the selected lead teacher
+        if ($assistantId <= 0) {
+            echo json_encode(['success' => false, 'message' => 'A teaching assistant is required for this course.']);
+            exit;
+        }
+
+        $teacherAssists = getAssistantTeacherIds($conn, $assistantId);
+        if (!in_array($teacherId, $teacherAssists)) {
+            echo json_encode(['success' => false, 'message' => 'The selected teaching assistant is not assigned to this lead teacher.']);
+            exit;
+        }
+
         $insertCourseSql = "INSERT INTO courses (name, description, grade_level, teacher_id, is_active, created_at)
                             VALUES ('$escapedName', '$escapedDesc', '$escapedGrade', $teacherId, 1, NOW())";
         $insertCourseRes = mysqli_query($conn, $insertCourseSql);
@@ -55,11 +67,9 @@ if (isPost()) {
             // auto-enroll all active students belonging to this grade level
             enrollGradeLevelStudentsInCourse($conn, $newCourseId, $gradeLevel);
 
-            // assign assistant if selected
-            if ($assistantId > 0) {
-                mysqli_query($conn, "INSERT INTO course_assistants (course_id, assistant_id, assigned_at)
-                                     VALUES ($newCourseId, $assistantId, NOW())");
-            }
+            // assign isolated assistant to course
+            mysqli_query($conn, "INSERT INTO course_assistants (course_id, assistant_id, assigned_at)
+                                 VALUES ($newCourseId, $assistantId, NOW())");
 
             echo json_encode(['success' => true, 'message' => 'Course created successfully!']);
         } else {
@@ -93,6 +103,20 @@ if (isPost()) {
 
         if ($courseId <= 0 || $assistantId <= 0) {
             echo json_encode(['success' => false, 'message' => 'Course ID and Assistant ID are required.']);
+            exit;
+        }
+
+        // check if course exists and verify assistant belongs to its lead teacher
+        $cQ = mysqli_query($conn, "SELECT teacher_id FROM courses WHERE id = $courseId LIMIT 1");
+        $cRow = mysqli_fetch_assoc($cQ);
+        if (!$cRow) {
+            echo json_encode(['success' => false, 'message' => 'Course not found.']);
+            exit;
+        }
+        $courseTeacherId = (int)$cRow['teacher_id'];
+        $tAssists = getAssistantTeacherIds($conn, $assistantId);
+        if (!in_array($courseTeacherId, $tAssists)) {
+            echo json_encode(['success' => false, 'message' => 'The selected assistant is not assigned to this course\'s lead teacher.']);
             exit;
         }
 
