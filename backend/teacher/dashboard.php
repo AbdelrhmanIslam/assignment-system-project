@@ -32,6 +32,7 @@ if (!$teacher) {
 // query teacher statistics
 $stats = [
     'courses' => 0,
+    'total_students' => 0,
     'assignments' => 0,
     'submissions' => 0,
     'pending_review' => 0,
@@ -124,11 +125,44 @@ if ($coursesRes) {
     }
 }
 
+// query enrolled students across teacher's courses
+$studentsSql = "SELECT
+    u.id,
+    u.name,
+    u.email,
+    u.grade_level,
+    GROUP_CONCAT(DISTINCT c.name ORDER BY c.name SEPARATOR ', ') AS enrolled_courses,
+    COUNT(DISTINCT s.id) AS submission_count
+FROM course_students cs
+INNER JOIN courses c ON c.id = cs.course_id AND c.teacher_id = $teacherId AND c.is_active = 1
+INNER JOIN users u ON u.id = cs.student_id AND u.role = 'student' AND u.is_active = 1
+LEFT JOIN assignments a ON a.course_id = c.id
+LEFT JOIN submissions s ON s.assignment_id = a.id AND s.student_id = u.id
+GROUP BY u.id
+ORDER BY u.name ASC";
+
+$studentsRes = mysqli_query($conn, $studentsSql);
+$enrolledStudents = [];
+if ($studentsRes) {
+    while ($st = mysqli_fetch_assoc($studentsRes)) {
+        $enrolledStudents[] = [
+            'id' => (int) $st['id'],
+            'name' => $st['name'],
+            'email' => $st['email'],
+            'grade_level' => $st['grade_level'] ? $st['grade_level'] : 'First Year of Middle School',
+            'enrolled_courses' => $st['enrolled_courses'] ? $st['enrolled_courses'] : 'None',
+            'submission_count' => (int) $st['submission_count']
+        ];
+    }
+}
+$stats['total_students'] = count($enrolledStudents);
+
 echo json_encode([
     'success' => true,
     'teacher' => $teacher,
     'stats' => $stats,
     'recent_submissions' => $recentSubmissions,
-    'courses' => $courses
+    'courses' => $courses,
+    'students' => $enrolledStudents
 ]);
 exit;

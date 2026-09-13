@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // populate statistics cards
             if (data.stats) {
                 setElementText('stat-courses', data.stats.courses || 0);
+                setElementText('stat-students', data.stats.total_students || 0);
                 setElementText('stat-assignments', data.stats.assignments || 0);
                 setElementText('stat-pending', data.stats.pending_review || 0);
                 setElementText('stat-graded', data.stats.graded || 0);
@@ -118,11 +119,66 @@ document.addEventListener('DOMContentLoaded', function () {
                     coursesContainer.appendChild(cCard);
                 }
             }
+
+            // populate enrolled students table
+            setupEnrolledStudents(data.students || []);
         })
         .catch(function (error) {
             console.error('Error:', error);
         });
 });
+
+// setup enrolled students roster and search filter
+function setupEnrolledStudents(students) {
+    var searchInput = document.getElementById('students-search-input');
+    renderEnrolledStudents(students);
+
+    if (searchInput) {
+        searchInput.addEventListener('input', function () {
+            var q = searchInput.value.toLowerCase().trim();
+            if (!q) {
+                renderEnrolledStudents(students);
+                return;
+            }
+            var filtered = students.filter(function (s) {
+                return (s.name && s.name.toLowerCase().indexOf(q) !== -1) ||
+                       (s.email && s.email.toLowerCase().indexOf(q) !== -1) ||
+                       (s.enrolled_courses && s.enrolled_courses.toLowerCase().indexOf(q) !== -1) ||
+                       (s.grade_level && s.grade_level.toLowerCase().indexOf(q) !== -1);
+            });
+            renderEnrolledStudents(filtered);
+        });
+    }
+}
+
+function renderEnrolledStudents(list) {
+    var tbody = document.getElementById('enrolled-students-body');
+    var emptyNotice = document.getElementById('students-empty');
+    var tableContainer = document.getElementById('students-table-container');
+
+    if (!list || list.length === 0) {
+        if (tableContainer) tableContainer.style.display = 'none';
+        if (emptyNotice) emptyNotice.style.display = 'block';
+        return;
+    }
+
+    if (tableContainer) tableContainer.style.display = 'block';
+    if (emptyNotice) emptyNotice.style.display = 'none';
+
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    list.forEach(function (st) {
+        var tr = document.createElement('tr');
+        tr.innerHTML =
+            '<td><strong>' + escapeHtml(st.name) + '</strong></td>' +
+            '<td>' + escapeHtml(st.email) + '</td>' +
+            '<td><span class="status-badge status-review" style="font-size:11px;">' + escapeHtml(st.grade_level) + '</span></td>' +
+            '<td>' + escapeHtml(st.enrolled_courses) + '</td>' +
+            '<td><span class="status-badge status-submitted" style="font-size:11px;">' + st.submission_count + ' submissions</span></td>';
+        tbody.appendChild(tr);
+    });
+}
 
 // helper to set element text
 function setElementText(id, text) {

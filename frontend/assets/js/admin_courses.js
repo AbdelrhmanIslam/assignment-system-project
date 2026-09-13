@@ -36,7 +36,42 @@ function loadCourses() {
     });
 }
 
+var allAssistants = [];
+
+function updateAssistantDropdown(teacherId) {
+    var assistantSelect = document.getElementById('select-assistant');
+    if (!assistantSelect) return;
+    assistantSelect.innerHTML = '<option value="">None / No Assistant</option>';
+    if (!teacherId) {
+        var opt = document.createElement('option');
+        opt.value = '';
+        opt.disabled = true;
+        opt.textContent = 'Please select an instructor first...';
+        assistantSelect.appendChild(opt);
+        return;
+    }
+    var tIdNum = parseInt(teacherId, 10);
+    var filtered = allAssistants.filter(function (a) {
+        return a.teacher_ids && a.teacher_ids.indexOf(tIdNum) !== -1;
+    });
+    if (filtered.length === 0) {
+        var optEmpty = document.createElement('option');
+        optEmpty.value = '';
+        optEmpty.disabled = true;
+        optEmpty.textContent = '(No assistants assigned to this instructor)';
+        assistantSelect.appendChild(optEmpty);
+    } else {
+        filtered.forEach(function (a) {
+            var opt = document.createElement('option');
+            opt.value = a.id;
+            opt.textContent = a.name;
+            assistantSelect.appendChild(opt);
+        });
+    }
+}
+
 function populateDropdowns(teachers, assistants) {
+    allAssistants = assistants || [];
     var teacherSelect = document.getElementById('select-teacher');
     if (teacherSelect) {
         teacherSelect.innerHTML = '<option value="">Select Instructor...</option>';
@@ -47,16 +82,11 @@ function populateDropdowns(teachers, assistants) {
             opt.textContent = t.name + levelsText;
             teacherSelect.appendChild(opt);
         });
-    }
 
-    var assistantSelect = document.getElementById('select-assistant');
-    if (assistantSelect && assistantSelect.children.length <= 1) {
-        assistants.forEach(function (a) {
-            var opt = document.createElement('option');
-            opt.value = a.id;
-            opt.textContent = a.name;
-            assistantSelect.appendChild(opt);
-        });
+        teacherSelect.onchange = function () {
+            updateAssistantDropdown(teacherSelect.value);
+        };
+        updateAssistantDropdown(teacherSelect.value);
     }
 }
 

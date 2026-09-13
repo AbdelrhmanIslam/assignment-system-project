@@ -30,16 +30,71 @@ function loadDashboardData() {
         // update statistics cards
         if (data.stats) {
             setElementText('stat-courses', data.stats.assigned_courses);
+            setElementText('stat-students', data.stats.assigned_students || 0);
             setElementText('stat-pending', data.stats.pending_submissions);
             setElementText('stat-graded', data.stats.graded_submissions);
             setElementText('stat-total', data.stats.total_submissions);
         }
+
+        // render assigned students table
+        setupAssignedStudents(data.students || []);
 
         // render recent submissions table
         renderRecentSubmissions(data.recent_submissions);
     })
     .catch(function (error) {
         console.error('Error fetching dashboard data:', error);
+    });
+}
+
+function setupAssignedStudents(students) {
+    var searchInput = document.getElementById('assistant-students-search');
+    renderAssignedStudents(students);
+
+    if (searchInput) {
+        searchInput.addEventListener('input', function () {
+            var q = searchInput.value.toLowerCase().trim();
+            if (!q) {
+                renderAssignedStudents(students);
+                return;
+            }
+            var filtered = students.filter(function (s) {
+                return (s.name && s.name.toLowerCase().indexOf(q) !== -1) ||
+                       (s.email && s.email.toLowerCase().indexOf(q) !== -1) ||
+                       (s.course_names && s.course_names.toLowerCase().indexOf(q) !== -1) ||
+                       (s.grade_level && s.grade_level.toLowerCase().indexOf(q) !== -1);
+            });
+            renderAssignedStudents(filtered);
+        });
+    }
+}
+
+function renderAssignedStudents(list) {
+    var tbody = document.getElementById('assistant-students-body');
+    var emptyState = document.getElementById('students-empty');
+    var tableContainer = document.getElementById('students-table-container');
+
+    if (!list || list.length === 0) {
+        if (emptyState) emptyState.style.display = 'block';
+        if (tableContainer) tableContainer.style.display = 'none';
+        return;
+    }
+
+    if (emptyState) emptyState.style.display = 'none';
+    if (tableContainer) tableContainer.style.display = 'block';
+
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    list.forEach(function (st) {
+        var row = document.createElement('tr');
+        row.innerHTML =
+            '<td><strong>' + escapeHtml(st.name) + '</strong></td>' +
+            '<td>' + escapeHtml(st.email) + '</td>' +
+            '<td><span class="status-badge status-review" style="font-size:11px;">' + escapeHtml(st.grade_level) + '</span></td>' +
+            '<td>' + escapeHtml(st.course_names) + '</td>' +
+            '<td><span class="status-badge status-submitted" style="font-size:11px;">' + st.submission_count + ' submissions</span></td>';
+        tbody.appendChild(row);
     });
 }
 

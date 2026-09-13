@@ -168,12 +168,17 @@ if ($teachersRes) {
     }
 }
 
-// fetch list of assistants for dropdown
+// fetch list of assistants with their assigned teacher ids for dropdown
 $assistantsRes = mysqli_query($conn, "SELECT id, name FROM users WHERE role = 'assistant' AND is_active = 1 ORDER BY name ASC");
 $assistantsList = [];
 if ($assistantsRes) {
     while ($a = mysqli_fetch_assoc($assistantsRes)) {
-        $assistantsList[] = ['id' => (int) $a['id'], 'name' => $a['name']];
+        $aId = (int) $a['id'];
+        $assistantsList[] = [
+            'id' => $aId,
+            'name' => $a['name'],
+            'teacher_ids' => getAssistantTeacherIds($conn, $aId)
+        ];
     }
 }
 

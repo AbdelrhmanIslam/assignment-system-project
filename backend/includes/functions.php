@@ -107,3 +107,78 @@ function setTeacherGradeLevels($conn, $teacherId, $gradeLevels)
     }
     return true;
 }
+
+// fetch teacher ids assigned to an assistant
+function getAssistantTeacherIds($conn, $assistantId)
+{
+    $assistantId = (int)$assistantId;
+    $sql = "SELECT teacher_id FROM teacher_assistants WHERE assistant_id = $assistantId ORDER BY id ASC";
+    $res = mysqli_query($conn, $sql);
+    $ids = [];
+    if ($res) {
+        while ($row = mysqli_fetch_assoc($res)) {
+            $ids[] = (int)$row['teacher_id'];
+        }
+    }
+    return $ids;
+}
+
+// fetch teacher details assigned to an assistant
+function getAssistantTeachers($conn, $assistantId)
+{
+    $assistantId = (int)$assistantId;
+    $sql = "SELECT u.id, u.name, u.email
+            FROM teacher_assistants ta
+            INNER JOIN users u ON u.id = ta.teacher_id
+            WHERE ta.assistant_id = $assistantId AND u.is_active = 1
+            ORDER BY u.name ASC";
+    $res = mysqli_query($conn, $sql);
+    $teachers = [];
+    if ($res) {
+        while ($row = mysqli_fetch_assoc($res)) {
+            $teachers[] = [
+                'id' => (int)$row['id'],
+                'name' => $row['name'],
+                'email' => $row['email']
+            ];
+        }
+    }
+    return $teachers;
+}
+
+// update teachers assigned to an assistant
+function setAssistantTeachers($conn, $assistantId, $teacherIds)
+{
+    $assistantId = (int)$assistantId;
+    mysqli_query($conn, "DELETE FROM teacher_assistants WHERE assistant_id = $assistantId");
+    if (!is_array($teacherIds)) {
+        return true;
+    }
+    foreach ($teacherIds as $tId) {
+        $tId = (int)$tId;
+        if ($tId > 0) {
+            // verify user is a teacher
+            $chk = mysqli_query($conn, "SELECT id FROM users WHERE id = $tId AND role = 'teacher' AND is_active = 1 LIMIT 1");
+            if (mysqli_num_rows($chk) > 0) {
+                mysqli_query($conn, "INSERT IGNORE INTO teacher_assistants (teacher_id, assistant_id) VALUES ($tId, $assistantId)");
+            }
+        }
+    }
+    return true;
+}
+
+// fetch assistant ids assigned to a teacher
+function getTeacherAssistantIds($conn, $teacherId)
+{
+    $teacherId = (int)$teacherId;
+    $sql = "SELECT assistant_id FROM teacher_assistants WHERE teacher_id = $teacherId ORDER BY id ASC";
+    $res = mysqli_query($conn, $sql);
+    $ids = [];
+    if ($res) {
+        while ($row = mysqli_fetch_assoc($res)) {
+            $ids[] = (int)$row['assistant_id'];
+        }
+    }
+    return $ids;
+}
+

@@ -5,6 +5,8 @@ var searchQuery = '';
 
 var loadedUsers = [];
 
+var activeTeachers = [];
+
 document.addEventListener('DOMContentLoaded', function () {
     loadUsers();
     setupFilters();
@@ -20,8 +22,32 @@ function setupRoleChangeListeners() {
         var r = roleSelect.value;
         var sGroup = document.getElementById('create-student-grade-group');
         var tGroup = document.getElementById('create-teacher-grade-group');
+        var aGroup = document.getElementById('create-assistant-teacher-group');
         if (sGroup) sGroup.style.display = (r === 'student') ? 'block' : 'none';
         if (tGroup) tGroup.style.display = (r === 'teacher') ? 'block' : 'none';
+        if (aGroup) {
+            aGroup.style.display = (r === 'assistant') ? 'block' : 'none';
+            if (r === 'assistant') {
+                renderTeacherCheckboxes('create-assistant-teachers-list', 'teacher_ids[]', []);
+            }
+        }
+    });
+}
+
+function renderTeacherCheckboxes(containerId, inputName, selectedIds) {
+    var container = document.getElementById(containerId);
+    if (!container) return;
+    if (!activeTeachers || activeTeachers.length === 0) {
+        container.innerHTML = '<span style="font-size:12px; color:#ef4444;">No active teachers available.</span>';
+        return;
+    }
+    container.innerHTML = '';
+    activeTeachers.forEach(function (t) {
+        var lbl = document.createElement('label');
+        lbl.style.cssText = 'font-size: 13px; font-weight: normal; cursor: pointer; display: flex; align-items: center; gap: 8px;';
+        var isChecked = selectedIds && selectedIds.indexOf(t.id) !== -1;
+        lbl.innerHTML = '<input type="checkbox" name="' + inputName + '" value="' + t.id + '"' + (isChecked ? ' checked' : '') + '> ' + escapeHtml(t.name);
+        container.appendChild(lbl);
     });
 }
 
@@ -46,6 +72,12 @@ function loadUsers() {
 
         if (data.user && document.getElementById('admin-name')) {
             document.getElementById('admin-name').textContent = data.user.name;
+        }
+
+        if (data.active_teachers) {
+            activeTeachers = data.active_teachers;
+            // update create form teacher checkboxes
+            renderTeacherCheckboxes('create-assistant-teachers-list', 'teacher_ids[]', []);
         }
 
         loadedUsers = data.users || [];
@@ -122,6 +154,11 @@ function renderUsersTable(users) {
             gradeLevelCell = u.teacher_grade_levels.map(function (gl) {
                 return '<span class="status-badge status-review" style="font-size:10px; margin: 2px 2px 2px 0; display: inline-block;">' + escapeHtml(gl) + '</span>';
             }).join(' ');
+        } else if (u.role === 'assistant' && u.assigned_teachers && u.assigned_teachers.length > 0) {
+            gradeLevelCell = '<span style="font-size:11px; color:#6b7280; display:block; margin-bottom:2px;">Assists:</span>' +
+                u.assigned_teachers.map(function (t) {
+                    return '<span class="status-badge status-submitted" style="font-size:10px; margin: 2px 2px 2px 0; display: inline-block;">' + escapeHtml(t.name) + '</span>';
+                }).join(' ');
         }
 
         row.innerHTML =
@@ -266,22 +303,34 @@ function openEditUserModal(userId) {
 
     var sEditGroup = document.getElementById('edit-student-grade-group');
     var tEditGroup = document.getElementById('edit-teacher-grade-group');
+    var aEditGroup = document.getElementById('edit-assistant-teacher-group');
     var sEditSelect = document.getElementById('edit-student-grade');
 
     if (u.role === 'student') {
         if (sEditGroup) sEditGroup.style.display = 'block';
         if (tEditGroup) tEditGroup.style.display = 'none';
+        if (aEditGroup) aEditGroup.style.display = 'none';
         if (sEditSelect && u.grade_level) sEditSelect.value = u.grade_level;
     } else if (u.role === 'teacher') {
         if (sEditGroup) sEditGroup.style.display = 'none';
         if (tEditGroup) tEditGroup.style.display = 'block';
+        if (aEditGroup) aEditGroup.style.display = 'none';
         var checkboxes = document.querySelectorAll('.edit-t-grade');
         checkboxes.forEach(function (cb) {
             cb.checked = u.teacher_grade_levels && u.teacher_grade_levels.indexOf(cb.value) !== -1;
         });
+    } else if (u.role === 'assistant') {
+        if (sEditGroup) sEditGroup.style.display = 'none';
+        if (tEditGroup) tEditGroup.style.display = 'none';
+        if (aEditGroup) {
+            aEditGroup.style.display = 'block';
+            var selectedTeacherIds = (u.assigned_teachers || []).map(function (t) { return t.id; });
+            renderTeacherCheckboxes('edit-assistant-teachers-list', 'teacher_ids[]', selectedTeacherIds);
+        }
     } else {
         if (sEditGroup) sEditGroup.style.display = 'none';
         if (tEditGroup) tEditGroup.style.display = 'none';
+        if (aEditGroup) aEditGroup.style.display = 'none';
     }
 
     if (modal) {

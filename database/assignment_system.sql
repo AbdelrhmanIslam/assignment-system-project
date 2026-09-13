@@ -323,6 +323,23 @@ CREATE TABLE `teacher_grade_levels` (
   KEY `idx_teacher_id` (`teacher_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `teacher_assistants`
+--
+
+CREATE TABLE `teacher_assistants` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `teacher_id` int(10) UNSIGNED NOT NULL,
+  `assistant_id` int(10) UNSIGNED NOT NULL,
+  `assigned_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_teacher_assistant` (`teacher_id`,`assistant_id`),
+  KEY `idx_teacher_assistant_teacher` (`teacher_id`),
+  KEY `idx_teacher_assistant_assistant` (`assistant_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 --
 -- Dumping data for table `users`
 --
@@ -557,6 +574,13 @@ ALTER TABLE `submissions`
 ALTER TABLE `teacher_reviews`
   ADD CONSTRAINT `fk_teacher_reviews_submission` FOREIGN KEY (`submission_id`) REFERENCES `submissions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_teacher_reviews_teacher` FOREIGN KEY (`teacher_id`) REFERENCES `users` (`id`) ON UPDATE CASCADE;
+
+--
+-- Constraints for table `teacher_assistants`
+--
+ALTER TABLE `teacher_assistants`
+  ADD CONSTRAINT `fk_teacher_assistants_teacher` FOREIGN KEY (`teacher_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_teacher_assistants_assistant` FOREIGN KEY (`assistant_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

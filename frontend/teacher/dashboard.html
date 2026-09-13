@@ -48,6 +48,11 @@
         </div>
 
         <div class="stat-card">
+            <span class="stat-label">Enrolled Students</span>
+            <strong class="stat-number" id="stat-students" style="color: #2563eb;">0</strong>
+        </div>
+
+        <div class="stat-card">
             <span class="stat-label">Total Assignments</span>
             <strong class="stat-number" id="stat-assignments">0</strong>
         </div>
@@ -60,6 +65,38 @@
         <div class="stat-card">
             <span class="stat-label">Graded Submissions</span>
             <strong class="stat-number" id="stat-graded" style="color: #16a34a;">0</strong>
+        </div>
+    </section>
+
+    <section class="assignments-section" style="margin-bottom: 30px;">
+        <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <div>
+                <h2>My Enrolled Students</h2>
+                <p>Students currently enrolled in your courses</p>
+            </div>
+            <input type="text" id="students-search-input" placeholder="Search student name or course..." style="padding: 8px 14px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; width: 240px;">
+        </div>
+
+        <div id="students-empty" class="empty-state" style="display: none;">
+            <h3>No Students Enrolled Yet</h3>
+            <p>There are currently no students enrolled in your active courses.</p>
+        </div>
+
+        <div id="students-table-container" class="table-container" style="display: none;">
+            <table class="assignments-table">
+                <thead>
+                    <tr>
+                        <th>Student Name</th>
+                        <th>Email</th>
+                        <th>Grade Level</th>
+                        <th>Enrolled Courses</th>
+                        <th>Submissions</th>
+                    </tr>
+                </thead>
+                <tbody id="enrolled-students-body">
+
+                </tbody>
+            </table>
         </div>
     </section>
 

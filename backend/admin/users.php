@@ -48,9 +48,10 @@ if (isPost()) {
             exit;
         }
 
-        // validate role-specific grade level requirements
+        // validate role-specific requirements
         $studentGrade = '';
         $teacherGrades = [];
+        $assistantTeachers = [];
         if ($role === 'student') {
             $studentGrade = isset($_POST['grade_level']) ? trim($_POST['grade_level']) : '';
             if (!in_array($studentGrade, getAllowedGradeLevels())) {
@@ -64,6 +65,15 @@ if (isPost()) {
             }
             if (empty($teacherGrades)) {
                 echo json_encode(['success' => false, 'message' => 'Please select at least one Grade Level for this teacher.']);
+                exit;
+            }
+        } elseif ($role === 'assistant') {
+            $rawTIds = isset($_POST['teacher_ids']) ? $_POST['teacher_ids'] : (isset($_POST['teacher_ids[]']) ? $_POST['teacher_ids[]'] : null);
+            if ($rawTIds !== null) {
+                $assistantTeachers = is_array($rawTIds) ? $rawTIds : explode(',', $rawTIds);
+            }
+            if (empty($assistantTeachers)) {
+                echo json_encode(['success' => false, 'message' => 'Please select at least one Teacher for this assistant.']);
                 exit;
             }
         }
@@ -92,6 +102,8 @@ if (isPost()) {
                 enrollStudentInGradeLevelCourses($conn, $newUserId, $studentGrade);
             } elseif ($role === 'teacher') {
                 setTeacherGradeLevels($conn, $newUserId, $teacherGrades);
+            } elseif ($role === 'assistant') {
+                setAssistantTeachers($conn, $newUserId, $assistantTeachers);
             }
             echo json_encode(['success' => true, 'message' => 'User created successfully!']);
         } else {
@@ -185,6 +197,15 @@ if (isPost()) {
             }
         }
 
+        // update assigned teachers if assistant
+        if ($targetRole === 'assistant') {
+            $rawUpdateTIds = isset($_POST['teacher_ids']) ? $_POST['teacher_ids'] : (isset($_POST['teacher_ids[]']) ? $_POST['teacher_ids[]'] : null);
+            if ($rawUpdateTIds !== null) {
+                $asstTeachers = is_array($rawUpdateTIds) ? $rawUpdateTIds : explode(',', $rawUpdateTIds);
+                setAssistantTeachers($conn, $targetUserId, $asstTeachers);
+            }
+        }
+
         if ($newPassword !== '') {
             if (strlen($newPassword) < 8) {
                 echo json_encode(['success' => false, 'message' => 'Password must be at least 8 characters long.']);
@@ -241,6 +262,7 @@ if ($result) {
         $uId = (int) $row['id'];
         $uRole = $row['role'];
         $teacherLevels = ($uRole === 'teacher') ? getTeacherGradeLevels($conn, $uId) : [];
+        $assignedTeachers = ($uRole === 'assistant') ? getAssistantTeachers($conn, $uId) : [];
 
         $users[] = [
             'id' => $uId,
@@ -249,8 +271,22 @@ if ($result) {
             'role' => $uRole,
             'grade_level' => $row['grade_level'],
             'teacher_grade_levels' => $teacherLevels,
+            'assigned_teachers' => $assignedTeachers,
             'is_active' => (int) $row['is_active'] === 1,
             'created_at' => $row['created_at']
+        ];
+    }
+}
+
+// query active teachers list for dropdowns and checkboxes
+$activeTeachersRes = mysqli_query($conn, "SELECT id, name, email FROM users WHERE role = 'teacher' AND is_active = 1 ORDER BY name ASC");
+$activeTeachers = [];
+if ($activeTeachersRes) {
+    while ($tRow = mysqli_fetch_assoc($activeTeachersRes)) {
+        $activeTeachers[] = [
+            'id' => (int) $tRow['id'],
+            'name' => $tRow['name'],
+            'email' => $tRow['email']
         ];
     }
 }
@@ -261,5 +297,6 @@ echo json_encode([
         'name' => currentUserName(),
         'role' => currentUserRole()
     ],
-    'users' => $users
+    'users' => $users,
+    'active_teachers' => $activeTeachers
 ]);

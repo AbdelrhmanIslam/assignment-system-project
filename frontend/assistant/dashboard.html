@@ -39,6 +39,11 @@
             </div>
 
             <div class="stat-card">
+                <span class="stat-label">Assigned Students</span>
+                <strong class="stat-number" id="stat-students" style="color: #0284c7;">0</strong>
+            </div>
+
+            <div class="stat-card">
                 <span class="stat-label">Pending Grading</span>
                 <strong class="stat-number" id="stat-pending" style="color: #d97706;">0</strong>
             </div>
@@ -51,6 +56,38 @@
             <div class="stat-card">
                 <span class="stat-label">Total Submissions</span>
                 <strong class="stat-number" id="stat-total">0</strong>
+            </div>
+        </section>
+
+        <section class="assignments-section" style="margin-bottom: 30px;">
+            <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <div>
+                    <h2>Students Under My Evaluation</h2>
+                    <p>Enrolled students in courses you assist</p>
+                </div>
+                <input type="text" id="assistant-students-search" placeholder="Search student name or course..." style="padding: 8px 14px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; width: 240px;">
+            </div>
+
+            <div id="students-empty" class="empty-state" style="display: none;">
+                <h3>No Students Assigned Yet</h3>
+                <p>No students are currently enrolled in your assigned courses.</p>
+            </div>
+
+            <div id="students-table-container" class="table-container" style="display: none;">
+                <table class="assignments-table">
+                    <thead>
+                        <tr>
+                            <th>Student Name</th>
+                            <th>Email</th>
+                            <th>Grade Level</th>
+                            <th>Assigned Courses</th>
+                            <th>Submissions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="assistant-students-body">
+
+                    </tbody>
+                </table>
             </div>
         </section>
 

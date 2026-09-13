@@ -46,11 +46,13 @@ if (empty($assignedCourseIds)) {
         ],
         'stats' => [
             'assigned_courses' => 0,
+            'assigned_students' => 0,
             'pending_submissions' => 0,
             'graded_submissions' => 0,
             'total_submissions' => 0
         ],
-        'recent_submissions' => []
+        'recent_submissions' => [],
+        'students' => []
     ]);
     exit;
 }
@@ -126,6 +128,39 @@ if ($recentResult) {
     }
 }
 
+// query distinct students enrolled in assistant's courses
+$studentsSql = "SELECT
+    u.id,
+    u.name,
+    u.email,
+    u.grade_level,
+    GROUP_CONCAT(DISTINCT c.name ORDER BY c.name SEPARATOR ', ') AS course_names,
+    COUNT(DISTINCT s.id) AS submission_count
+FROM course_students cs
+INNER JOIN courses c ON c.id = cs.course_id AND c.is_active = 1
+INNER JOIN course_assistants ca ON ca.course_id = c.id AND ca.assistant_id = $assistantId
+INNER JOIN users u ON u.id = cs.student_id AND u.role = 'student' AND u.is_active = 1
+LEFT JOIN assignments a ON a.course_id = c.id
+LEFT JOIN submissions s ON s.assignment_id = a.id AND s.student_id = u.id
+GROUP BY u.id
+ORDER BY u.name ASC";
+
+$studentsRes = mysqli_query($conn, $studentsSql);
+$assignedStudents = [];
+if ($studentsRes) {
+    while ($st = mysqli_fetch_assoc($studentsRes)) {
+        $assignedStudents[] = [
+            'id' => (int) $st['id'],
+            'name' => $st['name'],
+            'email' => $st['email'],
+            'grade_level' => $st['grade_level'] ? $st['grade_level'] : 'First Year of Middle School',
+            'course_names' => $st['course_names'] ? $st['course_names'] : 'None',
+            'submission_count' => (int) $st['submission_count']
+        ];
+    }
+}
+$assignedStudentsCount = count($assignedStudents);
+
 echo json_encode([
     'success' => true,
     'user' => [
@@ -135,9 +170,11 @@ echo json_encode([
     ],
     'stats' => [
         'assigned_courses' => $totalCoursesCount,
+        'assigned_students' => $assignedStudentsCount,
         'pending_submissions' => $pendingCount,
         'graded_submissions' => $gradedCount,
         'total_submissions' => $totalSubmissionsCount
     ],
-    'recent_submissions' => $recentSubmissions
+    'recent_submissions' => $recentSubmissions,
+    'students' => $assignedStudents
 ]);
