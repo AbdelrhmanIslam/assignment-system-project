@@ -40,3 +40,70 @@ function isValidEmail($email)
 {
     return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
 }
+
+// return array of allowed system grade levels
+function getAllowedGradeLevels()
+{
+    return [
+        'First Year of Middle School',
+        'Second Year of Middle School',
+        'Third Year of Middle School',
+        'First Year of High School'
+    ];
+}
+
+// enroll a student into all active courses for their grade level
+function enrollStudentInGradeLevelCourses($conn, $studentId, $gradeLevel)
+{
+    $studentId = (int)$studentId;
+    $escapedGrade = mysqli_real_escape_string($conn, $gradeLevel);
+    $sql = "INSERT IGNORE INTO course_students (course_id, student_id)
+            SELECT id, $studentId FROM courses
+            WHERE grade_level = '$escapedGrade' AND is_active = 1";
+    return mysqli_query($conn, $sql);
+}
+
+// enroll all active students of a grade level into a specific course
+function enrollGradeLevelStudentsInCourse($conn, $courseId, $gradeLevel)
+{
+    $courseId = (int)$courseId;
+    $escapedGrade = mysqli_real_escape_string($conn, $gradeLevel);
+    $sql = "INSERT IGNORE INTO course_students (course_id, student_id)
+            SELECT $courseId, id FROM users
+            WHERE role = 'student' AND grade_level = '$escapedGrade' AND is_active = 1";
+    return mysqli_query($conn, $sql);
+}
+
+// fetch assigned grade levels for a teacher
+function getTeacherGradeLevels($conn, $teacherId)
+{
+    $teacherId = (int)$teacherId;
+    $sql = "SELECT grade_level FROM teacher_grade_levels WHERE teacher_id = $teacherId ORDER BY id ASC";
+    $res = mysqli_query($conn, $sql);
+    $levels = [];
+    if ($res) {
+        while ($row = mysqli_fetch_assoc($res)) {
+            $levels[] = $row['grade_level'];
+        }
+    }
+    return $levels;
+}
+
+// update assigned grade levels for a teacher
+function setTeacherGradeLevels($conn, $teacherId, $gradeLevels)
+{
+    $teacherId = (int)$teacherId;
+    mysqli_query($conn, "DELETE FROM teacher_grade_levels WHERE teacher_id = $teacherId");
+    if (!is_array($gradeLevels)) {
+        return true;
+    }
+    $allowed = getAllowedGradeLevels();
+    foreach ($gradeLevels as $gl) {
+        $gl = trim($gl);
+        if (in_array($gl, $allowed)) {
+            $escapedGl = mysqli_real_escape_string($conn, $gl);
+            mysqli_query($conn, "INSERT IGNORE INTO teacher_grade_levels (teacher_id, grade_level) VALUES ($teacherId, '$escapedGl')");
+        }
+    }
+    return true;
+}

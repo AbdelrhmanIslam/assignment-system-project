@@ -85,6 +85,7 @@ CREATE TABLE `courses` (
   `id` int(10) UNSIGNED NOT NULL,
   `name` varchar(150) NOT NULL,
   `description` text DEFAULT NULL,
+  `grade_level` varchar(60) NOT NULL DEFAULT 'First Year of Middle School',
   `teacher_id` int(10) UNSIGNED NOT NULL,
   `is_active` tinyint(1) NOT NULL DEFAULT 1,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
@@ -300,9 +301,26 @@ CREATE TABLE `users` (
   `email` varchar(150) NOT NULL,
   `password` varchar(255) NOT NULL,
   `role` enum('student','assistant','teacher','admin') NOT NULL DEFAULT 'student',
+  `grade_level` varchar(60) DEFAULT NULL,
   `is_active` tinyint(1) NOT NULL DEFAULT 1,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `teacher_grade_levels`
+--
+
+CREATE TABLE `teacher_grade_levels` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `teacher_id` int(10) UNSIGNED NOT NULL,
+  `grade_level` varchar(60) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_teacher_grade_unique` (`teacher_id`,`grade_level`),
+  KEY `idx_teacher_id` (`teacher_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
