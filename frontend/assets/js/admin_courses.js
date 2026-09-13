@@ -61,7 +61,10 @@ function updateAssistantDropdown(teacherId) {
 
     var tIdNum = parseInt(teacherId, 10);
     var filtered = allAssistants.filter(function (a) {
-        return a.teacher_ids && a.teacher_ids.indexOf(tIdNum) !== -1;
+        if (!a.teacher_ids || !Array.isArray(a.teacher_ids)) return false;
+        return a.teacher_ids.some(function (tid) {
+            return parseInt(tid, 10) === tIdNum;
+        });
     });
 
     if (filtered.length === 0) {
@@ -122,6 +125,9 @@ function populateDropdowns(teachers, assistants) {
         teacherSelect.onchange = function () {
             updateAssistantDropdown(teacherSelect.value);
         };
+        teacherSelect.oninput = function () {
+            updateAssistantDropdown(teacherSelect.value);
+        };
         updateAssistantDropdown(teacherSelect.value);
     }
 }
@@ -164,9 +170,14 @@ function renderCoursesTable(courses) {
             '<td>' + c.assignment_count + ' Assignments</td>' +
             '<td>' + statusBadge + '</td>' +
             '<td>' +
-                '<button onclick="toggleCourseStatus(' + c.id + ')" class="view-btn" style="' + toggleClass + ' font-size:12px; padding:6px 12px; border:none; cursor:pointer;">' +
-                    toggleLabel +
-                '</button>' +
+                '<div style="display:inline-flex; gap:6px; align-items:center;">' +
+                    '<button onclick="toggleCourseStatus(' + c.id + ')" class="view-btn" style="' + toggleClass + ' font-size:12px; padding:6px 10px; border:none; cursor:pointer; border-radius:4px;">' +
+                        toggleLabel +
+                    '</button>' +
+                    '<button onclick="deleteCourse(' + c.id + ', \'' + escapeHtml(c.name).replace(/'/g, "\\'") + '\')" class="view-btn" style="background:#dc2626; font-size:12px; padding:6px 10px; border:none; cursor:pointer; border-radius:4px;">' +
+                        'Delete' +
+                    '</button>' +
+                '</div>' +
             '</td>';
 
         tbody.appendChild(row);
@@ -187,13 +198,43 @@ function toggleCourseStatus(courseId) {
     .then(function (res) { return res.json(); })
     .then(function (data) {
         if (data.success) {
+            showAlert(data.message || 'Course status updated successfully.', 'success');
             loadCourses();
         } else {
-            alert(data.message || 'Failed to update course status.');
+            showAlert(data.message || 'Failed to update course status.', 'error');
         }
     })
     .catch(function (err) {
         console.error('Error toggling course status:', err);
+        showAlert('Server error while toggling course status.', 'error');
+    });
+}
+
+function deleteCourse(courseId, courseName) {
+    if (!confirm('Are you sure you want to permanently delete "' + courseName + '"?\nThis will remove all associated assignments, student enrollments, and teaching assistant links.')) {
+        return;
+    }
+
+    var formData = new FormData();
+    formData.append('action', 'delete');
+    formData.append('course_id', courseId);
+
+    fetch('../../backend/admin/courses.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(function (res) { return res.json(); })
+    .then(function (data) {
+        if (data.success) {
+            showAlert(data.message || 'Course deleted successfully.', 'success');
+            loadCourses();
+        } else {
+            showAlert(data.message || 'Failed to delete course.', 'error');
+        }
+    })
+    .catch(function (err) {
+        console.error('Error deleting course:', err);
+        showAlert('Server error while deleting course.', 'error');
     });
 }
 

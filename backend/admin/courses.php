@@ -97,6 +97,26 @@ if (isPost()) {
         exit;
     }
 
+    if ($action === 'delete') {
+        $courseId = isset($_POST['course_id']) ? (int) $_POST['course_id'] : 0;
+
+        if ($courseId <= 0) {
+            echo json_encode(['success' => false, 'message' => 'Invalid course ID.']);
+            exit;
+        }
+
+        // Delete course (foreign keys cascade to course_assistants, course_students, assignments)
+        $delSql = "DELETE FROM courses WHERE id = $courseId";
+        $delRes = mysqli_query($conn, $delSql);
+
+        if ($delRes) {
+            echo json_encode(['success' => true, 'message' => 'Course deleted successfully.']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Failed to delete course: ' . mysqli_error($conn)]);
+        }
+        exit;
+    }
+
     if ($action === 'assign_assistant') {
         $courseId = isset($_POST['course_id']) ? (int) $_POST['course_id'] : 0;
         $assistantId = isset($_POST['assistant_id']) ? (int) $_POST['assistant_id'] : 0;
