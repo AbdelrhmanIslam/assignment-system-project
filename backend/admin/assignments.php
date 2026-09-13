@@ -55,9 +55,11 @@ if (isPost()) {
         $escapedTitle = mysqli_real_escape_string($conn, $title);
         $escapedDesc = mysqli_real_escape_string($conn, $description);
         $escapedExt = mysqli_real_escape_string($conn, $allowedExt);
+        $gradeLevel = isset($_POST['grade_level']) ? sanitize($_POST['grade_level']) : 'First Year of Middle School';
+        $escapedGradeLevel = mysqli_real_escape_string($conn, $gradeLevel);
 
-        $insertSql = "INSERT INTO assignments (course_id, title, description, max_grade, deadline, allow_resubmission, allowed_extensions, max_file_size_mb, created_by, is_active, created_at)
-                      VALUES ($courseId, '$escapedTitle', '$escapedDesc', $maxGrade, '$formattedDeadline', $allowResub, '$escapedExt', $maxSize, $adminId, 1, NOW())";
+        $insertSql = "INSERT INTO assignments (course_id, title, description, grade_level, max_grade, deadline, allow_resubmission, allowed_extensions, max_file_size_mb, created_by, is_active, created_at)
+                      VALUES ($courseId, '$escapedTitle', '$escapedDesc', '$escapedGradeLevel', $maxGrade, '$formattedDeadline', $allowResub, '$escapedExt', $maxSize, $adminId, 1, NOW())";
 
         if (mysqli_query($conn, $insertSql)) {
             $newId = mysqli_insert_id($conn);
@@ -87,6 +89,7 @@ if (isPost()) {
 $sql = "SELECT
           a.id,
           a.title,
+          a.grade_level,
           a.max_grade,
           a.deadline,
           a.allow_resubmission,
@@ -113,6 +116,7 @@ if ($result) {
             'id' => (int) $row['id'],
             'title' => $row['title'],
             'course_name' => $row['course_name'],
+            'grade_level' => !empty($row['grade_level']) ? $row['grade_level'] : 'First Year of Middle School',
             'teacher_name' => $row['teacher_name'] ? $row['teacher_name'] : 'Instructor',
             'max_grade' => (float) $row['max_grade'],
             'deadline' => $row['deadline'],

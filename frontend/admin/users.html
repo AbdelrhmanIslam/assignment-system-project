@@ -112,6 +112,45 @@
         </div>
     </div>
 
+    <!-- edit user modal -->
+    <div id="edit-user-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; align-items: center; justify-content: center; padding: 20px;">
+        <div class="content-card" style="max-width: 500px; width: 100%; background: #ffffff; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); padding: 28px; position: relative;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+                <h2 style="margin: 0; font-size: 20px;">Edit User Details</h2>
+                <button type="button" onclick="closeEditUserModal()" style="background: none; border: none; font-size: 24px; line-height: 1; cursor: pointer; color: #9ca3af;">&times;</button>
+            </div>
+            <p style="color: #6b7280; font-size: 13px; margin-bottom: 20px;">Update user full name and email address. Only administrators have this privilege.</p>
+
+            <form id="edit-user-form">
+                <input type="hidden" id="edit-user-id" name="user_id">
+
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label for="edit-name" style="display: block; font-weight: 600; margin-bottom: 6px;">Full Name *</label>
+                    <input type="text" id="edit-name" name="name" required style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label for="edit-email" style="display: block; font-weight: 600; margin-bottom: 6px;">Email Address *</label>
+                    <input type="email" id="edit-email" name="email" required style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 22px;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 6px;">System Role</label>
+                    <span id="edit-role-badge" class="status-badge" style="display: inline-block; padding: 6px 12px; font-size: 13px;"></span>
+                </div>
+
+                <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                    <button type="button" onclick="closeEditUserModal()" class="view-btn" style="background: #e5e7eb; color: #374151; border: none; cursor: pointer; padding: 10px 18px;">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn-primary" style="padding: 10px 22px;">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script src="../assets/js/main.js"></script>
     <script src="../assets/js/admin_users.js"></script>
 </body>

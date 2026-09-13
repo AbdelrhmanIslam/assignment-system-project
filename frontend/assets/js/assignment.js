@@ -42,6 +42,7 @@ document.addEventListener('DOMContentLoaded', function () {
             setElementText('course-name', assignment.course_name);
             setElementText('teacher-name', assignment.teacher_name ? assignment.teacher_name : 'Teacher');
             setElementText('max-grade', assignment.max_grade + ' pts');
+            setElementText('target-grade-level', assignment.grade_level || 'First Year of Middle School');
             setElementText('description-text', assignment.description);
             setElementText('allowed-extensions', assignment.allowed_extensions);
             setElementText('max-file-size', assignment.max_file_size_mb + ' MB');

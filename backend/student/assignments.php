@@ -22,6 +22,7 @@ $sql = "SELECT
     a.id,
     a.title,
     a.description,
+    a.grade_level,
     a.deadline,
     a.max_grade,
     a.allow_resubmission,
@@ -50,6 +51,7 @@ $assignments = [];
 
 if ($result) {
     while ($row = mysqli_fetch_assoc($result)) {
+        $row['id'] = (int) $row['id'];
         $isPastDeadline = strtotime($row['deadline']) < time();
 
         // determine status classification and action button properties

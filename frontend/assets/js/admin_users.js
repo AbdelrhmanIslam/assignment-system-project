@@ -3,10 +3,13 @@
 var currentRoleFilter = 'all';
 var searchQuery = '';
 
+var loadedUsers = [];
+
 document.addEventListener('DOMContentLoaded', function () {
     loadUsers();
     setupFilters();
     setupCreateUserForm();
+    setupEditUserForm();
 });
 
 function loadUsers() {
@@ -32,7 +35,8 @@ function loadUsers() {
             document.getElementById('admin-name').textContent = data.user.name;
         }
 
-        renderUsersTable(data.users);
+        loadedUsers = data.users || [];
+        renderUsersTable(loadedUsers);
     })
     .catch(function (error) {
         console.error('Fetch error:', error);
@@ -63,6 +67,13 @@ function setupFilters() {
     }
 }
 
+function getRoleBadgeClass(role) {
+    if (role === 'admin') return 'status-closed';
+    if (role === 'teacher') return 'status-review';
+    if (role === 'assistant') return 'status-submitted';
+    return 'status-graded';
+}
+
 function renderUsersTable(users) {
     var tbody = document.getElementById('users-table-body');
     var emptyState = document.getElementById('empty-state');
@@ -82,12 +93,7 @@ function renderUsersTable(users) {
 
     users.forEach(function (u) {
         var row = document.createElement('tr');
-
-        var roleBadge = 'status-not-submitted';
-        if (u.role === 'admin') roleBadge = 'status-closed';
-        else if (u.role === 'teacher') roleBadge = 'status-review';
-        else if (u.role === 'assistant') roleBadge = 'status-submitted';
-        else if (u.role === 'student') roleBadge = 'status-graded';
+        var roleBadge = getRoleBadgeClass(u.role);
 
         var statusBadge = u.is_active ?
             '<span class="status-badge status-graded">Active</span>' :
@@ -103,6 +109,9 @@ function renderUsersTable(users) {
             '<td>' + statusBadge + '</td>' +
             '<td>' + formatDate(u.created_at) + '</td>' +
             '<td>' +
+                '<button onclick="openEditUserModal(' + u.id + ')" class="action-btn action-view" style="font-size:12px; padding:6px 12px; border:none; cursor:pointer; margin-right:6px;">' +
+                    'Edit' +
+                '</button>' +
                 '<button onclick="toggleUserStatus(' + u.id + ')" class="view-btn" style="' + toggleBtnClass + ' font-size:12px; padding:6px 12px; border:none; cursor:pointer;">' +
                     toggleBtnLabel +
                 '</button>' +
@@ -187,6 +196,90 @@ function setupCreateUserForm() {
             }
             console.error('Error creating user:', err);
             showAlert('Server error while creating user.', 'error');
+        });
+    });
+}
+
+function openEditUserModal(userId) {
+    var u = null;
+    for (var i = 0; i < loadedUsers.length; i++) {
+        if (loadedUsers[i].id === userId) {
+            u = loadedUsers[i];
+            break;
+        }
+    }
+    if (!u) return;
+
+    var idInput = document.getElementById('edit-user-id');
+    var nameInput = document.getElementById('edit-name');
+    var emailInput = document.getElementById('edit-email');
+    var roleBadge = document.getElementById('edit-role-badge');
+    var modal = document.getElementById('edit-user-modal');
+
+    if (idInput) idInput.value = u.id;
+    if (nameInput) nameInput.value = u.name;
+    if (emailInput) emailInput.value = u.email;
+
+    if (roleBadge) {
+        roleBadge.textContent = u.role.toUpperCase();
+        roleBadge.className = 'status-badge ' + getRoleBadgeClass(u.role);
+    }
+
+    if (modal) {
+        modal.style.display = 'flex';
+    }
+}
+
+function closeEditUserModal() {
+    var modal = document.getElementById('edit-user-modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+function setupEditUserForm() {
+    var form = document.getElementById('edit-user-form');
+    if (!form) return;
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        var formData = new FormData(form);
+        formData.append('action', 'update_user');
+
+        var saveBtn = form.querySelector('button[type="submit"]');
+        if (saveBtn) {
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Saving...';
+        }
+
+        fetch('../../backend/admin/users.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+            if (saveBtn) {
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Save Changes';
+            }
+
+            if (!data.success) {
+                alert(data.message || 'Failed to update user.');
+                return;
+            }
+
+            showAlert('User details updated successfully!', 'success');
+            closeEditUserModal();
+            loadUsers();
+        })
+        .catch(function (err) {
+            if (saveBtn) {
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Save Changes';
+            }
+            console.error('Error updating user:', err);
+            alert('Server error while updating user.');
         });
     });
 }

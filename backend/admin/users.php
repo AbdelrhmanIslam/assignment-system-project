@@ -10,6 +10,7 @@ require_once __DIR__ . '/../includes/functions.php';
 
 // verify admin authentication
 if (!isLoggedIn() || currentUserRole() !== 'admin') {
+    http_response_code(403);
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
     exit;
 }
@@ -92,6 +93,42 @@ if (isPost()) {
             echo json_encode(['success' => true, 'message' => 'User status toggled successfully.']);
         } else {
             echo json_encode(['success' => false, 'message' => 'Failed to update user status.']);
+        }
+        exit;
+    }
+
+    if ($action === 'update_user') {
+        $targetUserId = isset($_POST['user_id']) ? (int) $_POST['user_id'] : 0;
+        $name = isset($_POST['name']) ? trim($_POST['name']) : '';
+        $email = isset($_POST['email']) ? trim($_POST['email']) : '';
+
+        if ($targetUserId <= 0 || $name === '' || $email === '') {
+            echo json_encode(['success' => false, 'message' => 'Please provide a valid user ID, name, and email.']);
+            exit;
+        }
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            echo json_encode(['success' => false, 'message' => 'Please provide a valid email address.']);
+            exit;
+        }
+
+        $escapedEmail = mysqli_real_escape_string($conn, $email);
+        $escapedName = mysqli_real_escape_string($conn, $name);
+
+        // check if email is already taken by another user
+        $dupQuery = mysqli_query($conn, "SELECT id FROM users WHERE email = '$escapedEmail' AND id != $targetUserId LIMIT 1");
+        if (mysqli_num_rows($dupQuery) > 0) {
+            echo json_encode(['success' => false, 'message' => 'This email address is already registered to another account.']);
+            exit;
+        }
+
+        $updateSql = "UPDATE users SET name = '$escapedName', email = '$escapedEmail' WHERE id = $targetUserId";
+        $updateRes = mysqli_query($conn, $updateSql);
+
+        if ($updateRes) {
+            echo json_encode(['success' => true, 'message' => 'User name and email updated successfully!']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Database error: ' . mysqli_error($conn)]);
         }
         exit;
     }

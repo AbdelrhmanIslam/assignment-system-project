@@ -49,6 +49,7 @@ CREATE TABLE `assignments` (
   `course_id` int(10) UNSIGNED NOT NULL,
   `title` varchar(200) NOT NULL,
   `description` text NOT NULL,
+  `grade_level` varchar(60) NOT NULL DEFAULT 'First Year of Middle School',
   `max_grade` decimal(6,2) NOT NULL DEFAULT 100.00,
   `deadline` datetime NOT NULL,
   `allow_resubmission` tinyint(1) NOT NULL DEFAULT 0,

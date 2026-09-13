@@ -58,9 +58,22 @@ if (isPost()) {
     // format deadline to mysql datetime format
     $formattedDeadline = date('Y-m-d H:i:s', strtotime($deadline));
 
+    // validate grade level
+    $gradeLevel = post('grade_level', 'First Year of Middle School');
+    $allowedGradeLevels = [
+        'First Year of Middle School',
+        'Second Year of Middle School',
+        'Third Year of Middle School',
+        'First Year of High School'
+    ];
+    if (!in_array($gradeLevel, $allowedGradeLevels)) {
+        $gradeLevel = 'First Year of Middle School';
+    }
+
     // escape string inputs for database insertion
     $escapedTitle = mysqli_real_escape_string($conn, $title);
     $escapedDesc = mysqli_real_escape_string($conn, $description);
+    $escapedGradeLevel = mysqli_real_escape_string($conn, $gradeLevel);
     $escapedExt = mysqli_real_escape_string($conn, $allowedExtensions);
 
     // insert assignment into database
@@ -68,6 +81,7 @@ if (isPost()) {
         course_id,
         title,
         description,
+        grade_level,
         max_grade,
         deadline,
         allow_resubmission,
@@ -79,6 +93,7 @@ if (isPost()) {
         $courseId,
         '$escapedTitle',
         '$escapedDesc',
+        '$escapedGradeLevel',
         $maxGrade,
         '$formattedDeadline',
         $allowResubmission,
@@ -128,6 +143,7 @@ $assignmentsSql = "SELECT
     a.id,
     a.title,
     a.description,
+    a.grade_level,
     a.max_grade,
     a.deadline,
     a.allow_resubmission,
@@ -150,6 +166,7 @@ $assignments = [];
 
 if ($assignmentsRes) {
     while ($row = mysqli_fetch_assoc($assignmentsRes)) {
+        $row['id'] = (int) $row['id'];
         $row['is_past_deadline'] = strtotime($row['deadline']) < time();
         $assignments[] = $row;
     }

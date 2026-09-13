@@ -97,6 +97,15 @@ document.addEventListener('DOMContentLoaded', function () {
             tdCourse.textContent = item.course_name;
             tr.appendChild(tdCourse);
 
+            // target grade level cell
+            var tdGradeLevel = document.createElement('td');
+            var glBadge = document.createElement('span');
+            glBadge.className = 'status-badge status-review';
+            glBadge.style.fontSize = '11px';
+            glBadge.textContent = item.grade_level || 'First Year of Middle School';
+            tdGradeLevel.appendChild(glBadge);
+            tr.appendChild(tdGradeLevel);
+
             var tdDeadline = document.createElement('td');
             var deadlineDate = new Date(item.deadline);
             tdDeadline.textContent = deadlineDate.toLocaleString('en-US', {

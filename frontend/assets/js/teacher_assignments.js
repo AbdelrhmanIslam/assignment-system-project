@@ -53,6 +53,14 @@ document.addEventListener('DOMContentLoaded', function () {
                             tdCourse.textContent = a.course_name;
                             tr.appendChild(tdCourse);
 
+                            var tdGradeLevel = document.createElement('td');
+                            var glBadge = document.createElement('span');
+                            glBadge.className = 'status-badge status-review';
+                            glBadge.style.fontSize = '11px';
+                            glBadge.textContent = a.grade_level || 'First Year of Middle School';
+                            tdGradeLevel.appendChild(glBadge);
+                            tr.appendChild(tdGradeLevel);
+
                             var tdDeadline = document.createElement('td');
                             var dDate = new Date(a.deadline);
                             tdDeadline.textContent = dDate.toLocaleString('en-US', {

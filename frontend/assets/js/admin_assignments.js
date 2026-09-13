@@ -83,6 +83,7 @@ function renderTable(assignments) {
         row.innerHTML =
             '<td><strong>' + escapeHtml(a.title) + '</strong></td>' +
             '<td>' + escapeHtml(a.course_name) + '</td>' +
+            '<td><span class="status-badge status-review" style="font-size:11px;">' + escapeHtml(a.grade_level || 'First Year of Middle School') + '</span></td>' +
             '<td>' + escapeHtml(a.teacher_name) + '</td>' +
             '<td>' + a.max_grade + ' pts</td>' +
             '<td>' + formatDate(a.deadline) + '</td>' +

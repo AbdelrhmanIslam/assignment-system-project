@@ -31,6 +31,7 @@ $assignmentSql = "SELECT
     a.course_id,
     a.title,
     a.description,
+    a.grade_level,
     a.max_grade,
     a.deadline,
     a.allow_resubmission,
