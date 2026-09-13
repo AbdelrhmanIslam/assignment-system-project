@@ -112,7 +112,7 @@ function renderUsersTable(users) {
                 '<button onclick="openEditUserModal(' + u.id + ')" class="action-btn action-view" style="font-size:12px; padding:6px 12px; border:none; cursor:pointer; margin-right:6px;">' +
                     'Edit' +
                 '</button>' +
-                '<button onclick="toggleUserStatus(' + u.id + ')" class="view-btn" style="' + toggleBtnClass + ' font-size:12px; padding:6px 12px; border:none; cursor:pointer;">' +
+                '<button onclick="toggleUserStatus(' + u.id + ', this)" class="view-btn" style="' + toggleBtnClass + ' font-size:12px; padding:6px 12px; border:none; cursor:pointer;">' +
                     toggleBtnLabel +
                 '</button>' +
             '</td>';
@@ -121,9 +121,11 @@ function renderUsersTable(users) {
     });
 }
 
-function toggleUserStatus(userId) {
-    if (!confirm('Are you sure you want to change this user status?')) {
-        return;
+function toggleUserStatus(userId, btn) {
+    if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Updating...';
+        btn.style.opacity = '0.7';
     }
 
     var formData = new FormData();
@@ -137,13 +139,25 @@ function toggleUserStatus(userId) {
     .then(function (res) { return res.json(); })
     .then(function (data) {
         if (data.success) {
+            showAlert(data.message || 'User status updated successfully.', 'success');
             loadUsers();
         } else {
-            alert(data.message || 'Failed to update user status.');
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = 'Toggle';
+                btn.style.opacity = '1';
+            }
+            showAlert(data.message || 'Failed to update user status.', 'error');
         }
     })
     .catch(function (err) {
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = 'Toggle';
+            btn.style.opacity = '1';
+        }
         console.error('Error toggling status:', err);
+        showAlert('Server error while updating user status.', 'error');
     });
 }
 
@@ -213,12 +227,14 @@ function openEditUserModal(userId) {
     var idInput = document.getElementById('edit-user-id');
     var nameInput = document.getElementById('edit-name');
     var emailInput = document.getElementById('edit-email');
+    var passwordInput = document.getElementById('edit-password');
     var roleBadge = document.getElementById('edit-role-badge');
     var modal = document.getElementById('edit-user-modal');
 
     if (idInput) idInput.value = u.id;
     if (nameInput) nameInput.value = u.name;
     if (emailInput) emailInput.value = u.email;
+    if (passwordInput) passwordInput.value = '';
 
     if (roleBadge) {
         roleBadge.textContent = u.role.toUpperCase();
@@ -244,6 +260,12 @@ function setupEditUserForm() {
     form.addEventListener('submit', function (e) {
         e.preventDefault();
 
+        var passInput = document.getElementById('edit-password');
+        if (passInput && passInput.value.trim() !== '' && passInput.value.trim().length < 8) {
+            showAlert('New password must be at least 8 characters long.', 'error');
+            return;
+        }
+
         var formData = new FormData(form);
         formData.append('action', 'update_user');
 
@@ -265,7 +287,7 @@ function setupEditUserForm() {
             }
 
             if (!data.success) {
-                alert(data.message || 'Failed to update user.');
+                showAlert(data.message || 'Failed to update user.', 'error');
                 return;
             }
 
@@ -279,7 +301,7 @@ function setupEditUserForm() {
                 saveBtn.textContent = 'Save Changes';
             }
             console.error('Error updating user:', err);
-            alert('Server error while updating user.');
+            showAlert('Server error while updating user.', 'error');
         });
     });
 }
@@ -300,12 +322,44 @@ function escapeHtml(str) {
 }
 
 function showAlert(msg, type) {
+    // update page alert banner if available
     var box = document.getElementById('alert-box');
-    if (!box) return;
-    box.className = 'alert-banner ' + (type === 'success' ? 'alert-success' : 'alert-error');
-    box.textContent = msg;
-    box.style.display = 'block';
+    if (box) {
+        box.className = 'alert ' + (type === 'success' ? 'alert-success' : 'alert-error');
+        box.textContent = msg;
+        box.style.display = 'block';
+    }
+
+    // display modern floating toast notification
+    var toast = document.getElementById('floating-toast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'floating-toast';
+        toast.style.cssText = 'position: fixed; top: 25px; right: 25px; z-index: 99999; padding: 14px 22px; border-radius: 8px; font-size: 14px; font-weight: 600; box-shadow: 0 10px 25px rgba(0,0,0,0.18); display: flex; align-items: center; gap: 10px; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); transform: translateY(-20px); opacity: 0; pointer-events: none;';
+        document.body.appendChild(toast);
+    }
+
+    if (type === 'success') {
+        toast.style.background = '#ecfdf5';
+        toast.style.color = '#047857';
+        toast.style.border = '1px solid #a7f3d0';
+        toast.innerHTML = '<span style="font-size: 16px;">&#10004;</span> ' + escapeHtml(msg);
+    } else {
+        toast.style.background = '#fff1f2';
+        toast.style.color = '#be123c';
+        toast.style.border = '1px solid #fecdd3';
+        toast.innerHTML = '<span style="font-size: 16px;">&#9888;</span> ' + escapeHtml(msg);
+    }
+
     setTimeout(function () {
-        box.style.display = 'none';
-    }, 4000);
+        toast.style.transform = 'translateY(0)';
+        toast.style.opacity = '1';
+    }, 10);
+
+    if (window.toastTimer) clearTimeout(window.toastTimer);
+    window.toastTimer = setTimeout(function () {
+        toast.style.transform = 'translateY(-20px)';
+        toast.style.opacity = '0';
+        if (box) box.style.display = 'none';
+    }, 4500);
 }

@@ -33,7 +33,7 @@ if (isPost()) {
         if (!$user || !password_verify($password, $user['password'])) {
             redirect(BASE_URL . '/frontend/auth/login.html?error=' . urlencode('Invalid email or password.'));
         } else if ((int) $user['is_active'] !== 1) {
-            redirect(BASE_URL . '/frontend/auth/login.html?error=' . urlencode('Your account has been disabled.'));
+            redirect(BASE_URL . '/frontend/auth/login.html?error=' . urlencode('Your account is deactivated. Please contact the administrator.'));
         } else {
             loginUser($user);
 

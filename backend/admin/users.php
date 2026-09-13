@@ -90,7 +90,12 @@ if (isPost()) {
         $updateRes = mysqli_query($conn, $updateSql);
 
         if ($updateRes) {
-            echo json_encode(['success' => true, 'message' => 'User status toggled successfully.']);
+            // fetch new status to customize message
+            $chkStatus = mysqli_query($conn, "SELECT is_active FROM users WHERE id = $targetUserId LIMIT 1");
+            $stRow = mysqli_fetch_assoc($chkStatus);
+            $isActive = (int) $stRow['is_active'];
+            $msg = ($isActive === 1) ? 'User activated successfully.' : 'User deactivated successfully.';
+            echo json_encode(['success' => true, 'message' => $msg, 'is_active' => $isActive]);
         } else {
             echo json_encode(['success' => false, 'message' => 'Failed to update user status.']);
         }
@@ -101,6 +106,7 @@ if (isPost()) {
         $targetUserId = isset($_POST['user_id']) ? (int) $_POST['user_id'] : 0;
         $name = isset($_POST['name']) ? trim($_POST['name']) : '';
         $email = isset($_POST['email']) ? trim($_POST['email']) : '';
+        $newPassword = isset($_POST['password']) ? trim($_POST['password']) : '';
 
         if ($targetUserId <= 0 || $name === '' || $email === '') {
             echo json_encode(['success' => false, 'message' => 'Please provide a valid user ID, name, and email.']);
@@ -122,11 +128,24 @@ if (isPost()) {
             exit;
         }
 
-        $updateSql = "UPDATE users SET name = '$escapedName', email = '$escapedEmail' WHERE id = $targetUserId";
+        // update user with optional new password
+        if ($newPassword !== '') {
+            if (strlen($newPassword) < 8) {
+                echo json_encode(['success' => false, 'message' => 'Password must be at least 8 characters long.']);
+                exit;
+            }
+            $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+            $escapedHash = mysqli_real_escape_string($conn, $hashedPassword);
+            $updateSql = "UPDATE users SET name = '$escapedName', email = '$escapedEmail', password = '$escapedHash' WHERE id = $targetUserId";
+        } else {
+            $updateSql = "UPDATE users SET name = '$escapedName', email = '$escapedEmail' WHERE id = $targetUserId";
+        }
+
         $updateRes = mysqli_query($conn, $updateSql);
 
         if ($updateRes) {
-            echo json_encode(['success' => true, 'message' => 'User name and email updated successfully!']);
+            $msg = ($newPassword !== '') ? 'User details and password updated successfully!' : 'User name and email updated successfully!';
+            echo json_encode(['success' => true, 'message' => $msg]);
         } else {
             echo json_encode(['success' => false, 'message' => 'Database error: ' . mysqli_error($conn)]);
         }
