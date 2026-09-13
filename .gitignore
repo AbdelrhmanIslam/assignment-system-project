@@ -3,6 +3,8 @@
 *.pptx
 *.pdf
 *.txt
+*.ps1
+
 ##### Windows
 # Windows thumbnail cache files
 Thumbs.db
