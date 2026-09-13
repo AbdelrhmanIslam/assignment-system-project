@@ -116,7 +116,7 @@ if (isPost()) {
         $notifTitle = mysqli_real_escape_string($conn, 'New Assignment Posted');
         $notifMsg = mysqli_real_escape_string($conn, "A new assignment '{$title}' was posted in {$courseName}. Deadline: {$formattedDeadline}.");
 
-        $stRes = mysqli_query($conn, "SELECT student_id FROM course_students WHERE course_id = $courseId");
+        $stRes = mysqli_query($conn, "SELECT cs.student_id FROM course_students cs INNER JOIN users u ON u.id = cs.student_id WHERE cs.course_id = $courseId AND u.grade_level = '$gradeLevel' AND u.is_active = 1");
         if ($stRes) {
             while ($stRow = mysqli_fetch_assoc($stRes)) {
                 $stId = (int) $stRow['student_id'];
@@ -173,7 +173,7 @@ if ($assignmentsRes) {
 }
 
 // query teacher courses for dropdown selection
-$coursesSql = "SELECT id, name FROM courses WHERE teacher_id = $teacherId AND is_active = 1 ORDER BY name ASC";
+$coursesSql = "SELECT id, name, grade_level FROM courses WHERE teacher_id = $teacherId AND is_active = 1 ORDER BY name ASC";
 $coursesRes = mysqli_query($conn, $coursesSql);
 $courses = [];
 
@@ -186,6 +186,7 @@ if ($coursesRes) {
 echo json_encode([
     'success' => true,
     'assignments' => $assignments,
-    'courses' => $courses
+    'courses' => $courses,
+    'teacher_grade_levels' => getTeacherGradeLevels($conn, $teacherId)
 ]);
 exit;

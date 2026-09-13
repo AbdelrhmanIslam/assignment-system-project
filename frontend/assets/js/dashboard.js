@@ -50,6 +50,7 @@ function loadDashboard() {
 function updateStudentInfo(student) {
   var studentName = document.getElementById("student-name");
   var studentEmail = document.getElementById("student-email");
+  var studentGradeBadge = document.getElementById("student-grade-badge");
 
   if (studentName) {
     studentName.textContent = student.name;
@@ -57,6 +58,11 @@ function updateStudentInfo(student) {
 
   if (studentEmail) {
     studentEmail.textContent = student.email;
+  }
+
+  if (studentGradeBadge && student.grade_level) {
+    studentGradeBadge.textContent = student.grade_level;
+    studentGradeBadge.style.display = "inline-block";
   }
 }
 

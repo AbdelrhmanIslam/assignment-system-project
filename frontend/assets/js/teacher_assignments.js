@@ -29,9 +29,23 @@ document.addEventListener('DOMContentLoaded', function () {
                     for (var i = 0; i < data.courses.length; i++) {
                         var opt = document.createElement('option');
                         opt.value = data.courses[i].id;
-                        opt.textContent = data.courses[i].name;
+                        var cgl = data.courses[i].grade_level || '';
+                        opt.textContent = data.courses[i].name + (cgl ? ' (' + cgl + ')' : '');
+                        opt.setAttribute('data-grade-level', cgl);
                         courseSelect.appendChild(opt);
                     }
+                }
+
+                if (courseSelect && !courseSelect.dataset.hasListener) {
+                    courseSelect.dataset.hasListener = 'true';
+                    courseSelect.addEventListener('change', function () {
+                        var selOpt = courseSelect.options[courseSelect.selectedIndex];
+                        var cGrade = selOpt ? selOpt.getAttribute('data-grade-level') : '';
+                        var glSelect = document.getElementById('assignment-grade-level');
+                        if (glSelect && cGrade) {
+                            glSelect.value = cGrade;
+                        }
+                    });
                 }
 
                 // render assignments table

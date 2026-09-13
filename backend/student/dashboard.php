@@ -34,7 +34,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'student') {
 $studentId = (int) $_SESSION['user_id'];
 
 // get student information
-$studentQuery = "SELECT id, name, email
+$studentQuery = "SELECT id, name, email, grade_level
                  FROM users
                  WHERE id = $studentId
                  AND role = 'student'
@@ -67,7 +67,10 @@ if (!$student) {
     exit;
 }
 
-// get assignment statistics
+$studentGrade = isset($student['grade_level']) ? $student['grade_level'] : '';
+$escapedStudentGrade = mysqli_real_escape_string($conn, $studentGrade);
+
+// get assignment statistics filtered by student grade level
 $statsQuery = "SELECT
                 COUNT(DISTINCT a.id) AS total_assignments,
 
@@ -112,7 +115,8 @@ $statsQuery = "SELECT
                        LIMIT 1
                    )
 
-               WHERE a.is_active = 1";
+               WHERE a.is_active = 1
+                 AND (a.grade_level = '$escapedStudentGrade' OR '$escapedStudentGrade' = '')";
 
 $statsResult = mysqli_query($conn, $statsQuery);
 
@@ -129,11 +133,12 @@ if (!$statsResult) {
 
 $stats = mysqli_fetch_assoc($statsResult);
 
-// get student's assignments
+// get student's assignments filtered by grade level
 $assignmentsQuery = "SELECT
                         a.id,
                         a.title,
                         a.description,
+                        a.grade_level,
                         a.max_grade,
                         a.deadline,
                         a.allow_resubmission,
@@ -174,6 +179,7 @@ $assignmentsQuery = "SELECT
                          ON g.submission_id = s.id
 
                      WHERE a.is_active = 1
+                       AND (a.grade_level = '$escapedStudentGrade' OR '$escapedStudentGrade' = '')
 
                      ORDER BY a.deadline ASC";
 

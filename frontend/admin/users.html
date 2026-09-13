@@ -53,6 +53,7 @@
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th>Role</th>
+                                    <th>Grade Level</th>
                                     <th>Status</th>
                                     <th>Joined</th>
                                     <th>Action</th>
@@ -95,6 +96,35 @@
                                 <option value="assistant">Teaching Assistant</option>
                                 <option value="admin">Administrator</option>
                             </select>
+                        </div>
+
+                        <div id="create-student-grade-group" class="form-group" style="margin-bottom: 15px;">
+                            <label for="input-student-grade" style="display: block; font-weight: 600; margin-bottom: 5px;">Student Grade Level *</label>
+                            <select id="input-student-grade" name="grade_level" style="width: 100%; padding: 9px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+                                <option value="First Year of Middle School">First Year of Middle School</option>
+                                <option value="Second Year of Middle School">Second Year of Middle School</option>
+                                <option value="Third Year of Middle School">Third Year of Middle School</option>
+                                <option value="First Year of High School">First Year of High School</option>
+                            </select>
+                        </div>
+
+                        <div id="create-teacher-grade-group" class="form-group" style="margin-bottom: 15px; display: none;">
+                            <label style="display: block; font-weight: 600; margin-bottom: 5px;">Assigned Grade Levels * (Multiple Allowed)</label>
+                            <p style="font-size: 12px; color: #6b7280; margin-bottom: 8px;">Select which grade levels this teacher can instruct</p>
+                            <div style="display: flex; flex-direction: column; gap: 6px;">
+                                <label style="font-size: 13px; font-weight: normal; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                                    <input type="checkbox" name="teacher_grade_levels[]" value="First Year of Middle School" checked> First Year of Middle School
+                                </label>
+                                <label style="font-size: 13px; font-weight: normal; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                                    <input type="checkbox" name="teacher_grade_levels[]" value="Second Year of Middle School"> Second Year of Middle School
+                                </label>
+                                <label style="font-size: 13px; font-weight: normal; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                                    <input type="checkbox" name="teacher_grade_levels[]" value="Third Year of Middle School"> Third Year of Middle School
+                                </label>
+                                <label style="font-size: 13px; font-weight: normal; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                                    <input type="checkbox" name="teacher_grade_levels[]" value="First Year of High School"> First Year of High School
+                                </label>
+                            </div>
                         </div>
 
                         <div class="form-group" style="margin-bottom: 20px;">
@@ -140,9 +170,37 @@
                     <p style="font-size: 12px; color: #6b7280; margin-top: 4px;">Leave blank if you do not want to change this user's password.</p>
                 </div>
 
-                <div class="form-group" style="margin-bottom: 22px;">
+                <div class="form-group" style="margin-bottom: 18px;">
                     <label style="display: block; font-weight: 600; margin-bottom: 6px;">System Role</label>
                     <span id="edit-role-badge" class="status-badge" style="display: inline-block; padding: 6px 12px; font-size: 13px;"></span>
+                </div>
+
+                <div id="edit-student-grade-group" class="form-group" style="margin-bottom: 16px; display: none;">
+                    <label for="edit-student-grade" style="display: block; font-weight: 600; margin-bottom: 6px;">Student Grade Level</label>
+                    <select id="edit-student-grade" name="grade_level" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+                        <option value="First Year of Middle School">First Year of Middle School</option>
+                        <option value="Second Year of Middle School">Second Year of Middle School</option>
+                        <option value="Third Year of Middle School">Third Year of Middle School</option>
+                        <option value="First Year of High School">First Year of High School</option>
+                    </select>
+                </div>
+
+                <div id="edit-teacher-grade-group" class="form-group" style="margin-bottom: 16px; display: none;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 6px;">Assigned Grade Levels (Multiple Allowed)</label>
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <label style="font-size: 13px; font-weight: normal; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" class="edit-t-grade" name="teacher_grade_levels[]" value="First Year of Middle School"> First Year of Middle School
+                        </label>
+                        <label style="font-size: 13px; font-weight: normal; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" class="edit-t-grade" name="teacher_grade_levels[]" value="Second Year of Middle School"> Second Year of Middle School
+                        </label>
+                        <label style="font-size: 13px; font-weight: normal; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" class="edit-t-grade" name="teacher_grade_levels[]" value="Third Year of Middle School"> Third Year of Middle School
+                        </label>
+                        <label style="font-size: 13px; font-weight: normal; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" class="edit-t-grade" name="teacher_grade_levels[]" value="First Year of High School"> First Year of High School
+                        </label>
+                    </div>
                 </div>
 
                 <div style="display: flex; gap: 12px; justify-content: flex-end;">

@@ -56,6 +56,16 @@ if (!$assignment) {
     exit;
 }
 
+// verify grade level match
+$uQuery = mysqli_query($conn, "SELECT grade_level FROM users WHERE id = $studentId LIMIT 1");
+$uRow = mysqli_fetch_assoc($uQuery);
+$studentGrade = isset($uRow['grade_level']) ? $uRow['grade_level'] : '';
+if (!empty($studentGrade) && !empty($assignment['grade_level']) && $assignment['grade_level'] !== $studentGrade) {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'message' => 'This assignment is not intended for your grade level.']);
+    exit;
+}
+
 // fetch latest submission and grade for this student and assignment
 $submissionSql = "SELECT
     s.id,

@@ -38,11 +38,13 @@ function loadCourses() {
 
 function populateDropdowns(teachers, assistants) {
     var teacherSelect = document.getElementById('select-teacher');
-    if (teacherSelect && teacherSelect.children.length <= 1) {
+    if (teacherSelect) {
+        teacherSelect.innerHTML = '<option value="">Select Instructor...</option>';
         teachers.forEach(function (t) {
             var opt = document.createElement('option');
             opt.value = t.id;
-            opt.textContent = t.name;
+            var levelsText = (t.grade_levels && t.grade_levels.length > 0) ? ' (' + t.grade_levels.join(', ') + ')' : '';
+            opt.textContent = t.name + levelsText;
             teacherSelect.appendChild(opt);
         });
     }
@@ -85,8 +87,11 @@ function renderCoursesTable(courses) {
         var toggleLabel = c.is_active ? 'Archive' : 'Activate';
         var toggleClass = c.is_active ? 'background:#ef4444;' : 'background:#10b981;';
 
+        var gradeLevelBadge = '<span class="status-badge status-review" style="font-size:11px;">' + escapeHtml(c.grade_level || 'First Year of Middle School') + '</span>';
+
         row.innerHTML =
             '<td><strong>' + escapeHtml(c.name) + '</strong><br><small style="color:#6b7280;">' + escapeHtml(c.description || 'No description') + '</small></td>' +
+            '<td>' + gradeLevelBadge + '</td>' +
             '<td>' + escapeHtml(c.teacher_name) + '</td>' +
             '<td>' + escapeHtml(c.assistants) + '</td>' +
             '<td>' + c.student_count + ' Students</td>' +
@@ -180,11 +185,41 @@ function escapeHtml(str) {
 
 function showAlert(msg, type) {
     var box = document.getElementById('alert-box');
-    if (!box) return;
-    box.className = 'alert-banner ' + (type === 'success' ? 'alert-success' : 'alert-error');
-    box.textContent = msg;
-    box.style.display = 'block';
+    if (box) {
+        box.className = 'alert ' + (type === 'success' ? 'alert-success' : 'alert-error');
+        box.textContent = msg;
+        box.style.display = 'block';
+    }
+
+    var toast = document.getElementById('floating-toast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'floating-toast';
+        toast.style.cssText = 'position: fixed; top: 25px; right: 25px; z-index: 99999; padding: 14px 22px; border-radius: 8px; font-size: 14px; font-weight: 600; box-shadow: 0 10px 25px rgba(0,0,0,0.18); display: flex; align-items: center; gap: 10px; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); transform: translateY(-20px); opacity: 0; pointer-events: none;';
+        document.body.appendChild(toast);
+    }
+
+    if (type === 'success') {
+        toast.style.background = '#ecfdf5';
+        toast.style.color = '#047857';
+        toast.style.border = '1px solid #a7f3d0';
+        toast.innerHTML = '<span style="font-size: 16px;">&#10004;</span> ' + escapeHtml(msg);
+    } else {
+        toast.style.background = '#fff1f2';
+        toast.style.color = '#be123c';
+        toast.style.border = '1px solid #fecdd3';
+        toast.innerHTML = '<span style="font-size: 16px;">&#9888;</span> ' + escapeHtml(msg);
+    }
+
     setTimeout(function () {
-        box.style.display = 'none';
-    }, 4000);
+        toast.style.transform = 'translateY(0)';
+        toast.style.opacity = '1';
+    }, 10);
+
+    if (window.toastTimer) clearTimeout(window.toastTimer);
+    window.toastTimer = setTimeout(function () {
+        toast.style.transform = 'translateY(-20px)';
+        toast.style.opacity = '0';
+        if (box) box.style.display = 'none';
+    }, 4500);
 }

@@ -14,6 +14,7 @@ if (isLoggedIn()) {
 if (isPost()) {
     $name = post('name');
     $email = post('email');
+    $gradeLevel = post('grade_level');
     $password = isset($_POST['password']) ? $_POST['password'] : '';
     $confirmPassword = isset($_POST['confirm_password']) ? $_POST['confirm_password'] : '';
 
@@ -22,6 +23,11 @@ if (isPost()) {
     // validate name
     if ($name === '') {
         $errors[] = 'Name is required.';
+    }
+
+    // validate grade level
+    if (!in_array($gradeLevel, getAllowedGradeLevels())) {
+        $errors[] = 'Please select a valid grade level.';
     }
 
     // validate email format
@@ -80,12 +86,16 @@ if (isPost()) {
     // hash password securely
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
     $escapedName = mysqli_real_escape_string($conn, $name);
+    $escapedGradeLevel = mysqli_real_escape_string($conn, $gradeLevel);
 
-    // insert new student record
-    $insertSql = "INSERT INTO users (name, email, password, role) VALUES ('$escapedName', '$escapedEmail', '$hashedPassword', 'student')";
+    // insert new student record with grade level
+    $insertSql = "INSERT INTO users (name, email, password, role, grade_level) VALUES ('$escapedName', '$escapedEmail', '$hashedPassword', 'student', '$escapedGradeLevel')";
     $insertResult = mysqli_query($conn, $insertSql);
 
     if ($insertResult) {
+        $newStudentId = (int) mysqli_insert_id($conn);
+        // auto-enroll student in all active courses belonging to their grade level
+        enrollStudentInGradeLevelCourses($conn, $newStudentId, $gradeLevel);
         redirect(BASE_URL . '/frontend/auth/register.html?success=' . urlencode('Account created successfully. You can now log in.'));
     } else {
         redirect(BASE_URL . '/frontend/auth/register.html?error=' . urlencode('Failed to create account. Please try again.'));

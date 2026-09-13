@@ -33,6 +33,7 @@ $assignmentSql = "SELECT
     a.allow_resubmission,
     a.allowed_extensions,
     a.max_file_size_mb,
+    a.grade_level,
     c.id AS course_id
 FROM assignments a
 INNER JOIN courses c ON c.id = a.course_id
@@ -45,6 +46,14 @@ $assignment = mysqli_fetch_assoc($assignmentResult);
 
 if (!$assignment) {
     redirect(BASE_URL . '/frontend/student/dashboard.html?error=' . urlencode('Assignment not found or you are not enrolled in this course.'));
+}
+
+// verify student grade level match
+$uQuery = mysqli_query($conn, "SELECT grade_level FROM users WHERE id = $studentId LIMIT 1");
+$uRow = mysqli_fetch_assoc($uQuery);
+$studentGrade = isset($uRow['grade_level']) ? $uRow['grade_level'] : '';
+if (!empty($studentGrade) && !empty($assignment['grade_level']) && $assignment['grade_level'] !== $studentGrade) {
+    redirect(BASE_URL . '/frontend/student/dashboard.html?error=' . urlencode('This assignment is not intended for your grade level.'));
 }
 
 // check if deadline has passed

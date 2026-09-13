@@ -42,6 +42,7 @@
                             <thead>
                                 <tr>
                                     <th>Course Name</th>
+                                    <th>Grade Level</th>
                                     <th>Teacher</th>
                                     <th>Assistants</th>
                                     <th>Students</th>
@@ -72,6 +73,16 @@
                         <div class="form-group" style="margin-bottom: 15px;">
                             <label for="input-course-name" style="display: block; font-weight: 600; margin-bottom: 5px;">Course Title *</label>
                             <input type="text" id="input-course-name" name="name" required placeholder="e.g. Mobile Application Development" style="width: 100%; padding: 9px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <label for="select-course-grade" style="display: block; font-weight: 600; margin-bottom: 5px;">Target Grade Level *</label>
+                            <select id="select-course-grade" name="grade_level" required style="width: 100%; padding: 9px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+                                <option value="First Year of Middle School">First Year of Middle School</option>
+                                <option value="Second Year of Middle School">Second Year of Middle School</option>
+                                <option value="Third Year of Middle School">Third Year of Middle School</option>
+                                <option value="First Year of High School">First Year of High School</option>
+                            </select>
                         </div>
 
                         <div class="form-group" style="margin-bottom: 15px;">

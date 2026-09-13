@@ -17,7 +17,13 @@ if (!isLoggedIn() || currentUserRole() !== 'student') {
 
 $studentId = (int) currentUserId();
 
-// query all active assignments for courses in which the student is enrolled
+// fetch student grade level
+$uQuery = mysqli_query($conn, "SELECT grade_level FROM users WHERE id = $studentId LIMIT 1");
+$uRow = mysqli_fetch_assoc($uQuery);
+$studentGrade = isset($uRow['grade_level']) ? $uRow['grade_level'] : '';
+$escapedGrade = mysqli_real_escape_string($conn, $studentGrade);
+
+// query all active assignments matching student grade level
 $sql = "SELECT
     a.id,
     a.title,
@@ -44,6 +50,7 @@ LEFT JOIN submissions s ON s.id = (
 )
 LEFT JOIN grades g ON g.submission_id = s.id
 WHERE a.is_active = 1
+  AND (a.grade_level = '$escapedGrade' OR '$escapedGrade' = '')
 ORDER BY a.deadline ASC";
 
 $result = mysqli_query($conn, $sql);

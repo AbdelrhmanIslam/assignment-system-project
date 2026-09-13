@@ -10,7 +10,20 @@ document.addEventListener('DOMContentLoaded', function () {
     setupFilters();
     setupCreateUserForm();
     setupEditUserForm();
+    setupRoleChangeListeners();
 });
+
+function setupRoleChangeListeners() {
+    var roleSelect = document.getElementById('input-role');
+    if (!roleSelect) return;
+    roleSelect.addEventListener('change', function () {
+        var r = roleSelect.value;
+        var sGroup = document.getElementById('create-student-grade-group');
+        var tGroup = document.getElementById('create-teacher-grade-group');
+        if (sGroup) sGroup.style.display = (r === 'student') ? 'block' : 'none';
+        if (tGroup) tGroup.style.display = (r === 'teacher') ? 'block' : 'none';
+    });
+}
 
 function loadUsers() {
     var url = '../../backend/admin/users.php?role=' + encodeURIComponent(currentRoleFilter);
@@ -102,10 +115,20 @@ function renderUsersTable(users) {
         var toggleBtnLabel = u.is_active ? 'Deactivate' : 'Activate';
         var toggleBtnClass = u.is_active ? 'background:#ef4444;' : 'background:#10b981;';
 
+        var gradeLevelCell = '—';
+        if (u.role === 'student' && u.grade_level) {
+            gradeLevelCell = '<span class="status-badge status-submitted" style="font-size:11px;">' + escapeHtml(u.grade_level) + '</span>';
+        } else if (u.role === 'teacher' && u.teacher_grade_levels && u.teacher_grade_levels.length > 0) {
+            gradeLevelCell = u.teacher_grade_levels.map(function (gl) {
+                return '<span class="status-badge status-review" style="font-size:10px; margin: 2px 2px 2px 0; display: inline-block;">' + escapeHtml(gl) + '</span>';
+            }).join(' ');
+        }
+
         row.innerHTML =
             '<td><strong>' + escapeHtml(u.name) + '</strong></td>' +
             '<td>' + escapeHtml(u.email) + '</td>' +
             '<td><span class="status-badge ' + roleBadge + '">' + u.role.toUpperCase() + '</span></td>' +
+            '<td>' + gradeLevelCell + '</td>' +
             '<td>' + statusBadge + '</td>' +
             '<td>' + formatDate(u.created_at) + '</td>' +
             '<td>' +
@@ -239,6 +262,26 @@ function openEditUserModal(userId) {
     if (roleBadge) {
         roleBadge.textContent = u.role.toUpperCase();
         roleBadge.className = 'status-badge ' + getRoleBadgeClass(u.role);
+    }
+
+    var sEditGroup = document.getElementById('edit-student-grade-group');
+    var tEditGroup = document.getElementById('edit-teacher-grade-group');
+    var sEditSelect = document.getElementById('edit-student-grade');
+
+    if (u.role === 'student') {
+        if (sEditGroup) sEditGroup.style.display = 'block';
+        if (tEditGroup) tEditGroup.style.display = 'none';
+        if (sEditSelect && u.grade_level) sEditSelect.value = u.grade_level;
+    } else if (u.role === 'teacher') {
+        if (sEditGroup) sEditGroup.style.display = 'none';
+        if (tEditGroup) tEditGroup.style.display = 'block';
+        var checkboxes = document.querySelectorAll('.edit-t-grade');
+        checkboxes.forEach(function (cb) {
+            cb.checked = u.teacher_grade_levels && u.teacher_grade_levels.indexOf(cb.value) !== -1;
+        });
+    } else {
+        if (sEditGroup) sEditGroup.style.display = 'none';
+        if (tEditGroup) tEditGroup.style.display = 'none';
     }
 
     if (modal) {

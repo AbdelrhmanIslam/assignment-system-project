@@ -21,6 +21,7 @@ if (isPost()) {
     if ($action === 'create') {
         $name = isset($_POST['name']) ? sanitize($_POST['name']) : '';
         $description = isset($_POST['description']) ? sanitize($_POST['description']) : '';
+        $gradeLevel = isset($_POST['grade_level']) ? trim($_POST['grade_level']) : 'First Year of Middle School';
         $teacherId = isset($_POST['teacher_id']) ? (int) $_POST['teacher_id'] : 0;
         $assistantId = isset($_POST['assistant_id']) ? (int) $_POST['assistant_id'] : 0;
 
@@ -29,8 +30,13 @@ if (isPost()) {
             exit;
         }
 
+        if (!in_array($gradeLevel, getAllowedGradeLevels())) {
+            $gradeLevel = 'First Year of Middle School';
+        }
+
         $escapedName = mysqli_real_escape_string($conn, $name);
         $escapedDesc = mysqli_real_escape_string($conn, $description);
+        $escapedGrade = mysqli_real_escape_string($conn, $gradeLevel);
 
         // check if course name already exists
         $chkExist = mysqli_query($conn, "SELECT id FROM courses WHERE name = '$escapedName' LIMIT 1");
@@ -39,12 +45,15 @@ if (isPost()) {
             exit;
         }
 
-        $insertCourseSql = "INSERT INTO courses (name, description, teacher_id, is_active, created_at)
-                            VALUES ('$escapedName', '$escapedDesc', $teacherId, 1, NOW())";
+        $insertCourseSql = "INSERT INTO courses (name, description, grade_level, teacher_id, is_active, created_at)
+                            VALUES ('$escapedName', '$escapedDesc', '$escapedGrade', $teacherId, 1, NOW())";
         $insertCourseRes = mysqli_query($conn, $insertCourseSql);
 
         if ($insertCourseRes) {
             $newCourseId = mysqli_insert_id($conn);
+
+            // auto-enroll all active students belonging to this grade level
+            enrollGradeLevelStudentsInCourse($conn, $newCourseId, $gradeLevel);
 
             // assign assistant if selected
             if ($assistantId > 0) {
@@ -88,10 +97,8 @@ if (isPost()) {
         }
 
         // check if already assigned
-        $checkSql = "SELECT id FROM course_assistants WHERE course_id = $courseId AND assistant_id = $assistantId LIMIT 1";
-        $checkRes = mysqli_query($conn, $checkSql);
-
-        if (mysqli_num_rows($checkRes) > 0) {
+        $chkAsst = mysqli_query($conn, "SELECT id FROM course_assistants WHERE course_id = $courseId AND assistant_id = $assistantId LIMIT 1");
+        if (mysqli_fetch_assoc($chkAsst)) {
             echo json_encode(['success' => false, 'message' => 'Assistant is already assigned to this course.']);
             exit;
         }
@@ -114,6 +121,7 @@ $coursesSql = "SELECT
                  c.id,
                  c.name,
                  c.description,
+                 c.grade_level,
                  c.is_active,
                  c.created_at,
                  u.name AS teacher_name,
@@ -135,6 +143,7 @@ if ($coursesRes) {
             'id' => (int) $row['id'],
             'name' => $row['name'],
             'description' => $row['description'],
+            'grade_level' => $row['grade_level'] ? $row['grade_level'] : 'First Year of Middle School',
             'is_active' => (int) $row['is_active'] === 1,
             'teacher_name' => $row['teacher_name'] ? $row['teacher_name'] : 'Unassigned',
             'assistants' => $row['assistant_names'] ? $row['assistant_names'] : 'None',
@@ -145,12 +154,17 @@ if ($coursesRes) {
     }
 }
 
-// fetch list of teachers for dropdown
+// fetch list of teachers with assigned grade levels for dropdown
 $teachersRes = mysqli_query($conn, "SELECT id, name FROM users WHERE role = 'teacher' AND is_active = 1 ORDER BY name ASC");
 $teachersList = [];
 if ($teachersRes) {
     while ($t = mysqli_fetch_assoc($teachersRes)) {
-        $teachersList[] = ['id' => (int) $t['id'], 'name' => $t['name']];
+        $tId = (int) $t['id'];
+        $teachersList[] = [
+            'id' => $tId,
+            'name' => $t['name'],
+            'grade_levels' => getTeacherGradeLevels($conn, $tId)
+        ];
     }
 }
 
