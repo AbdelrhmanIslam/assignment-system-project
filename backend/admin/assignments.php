@@ -26,11 +26,41 @@ if (isPost()) {
             exit;
         }
 
-        $toggleSql = "UPDATE assignments SET is_active = IF(is_active = 1, 0, 1) WHERE id = $assignId";
+        $curQ = mysqli_query($conn, "SELECT is_active, title FROM assignments WHERE id = $assignId LIMIT 1");
+        $curRow = mysqli_fetch_assoc($curQ);
+        if (!$curRow) {
+            echo json_encode(['success' => false, 'message' => 'Assignment not found.']);
+            exit;
+        }
+
+        $newStatus = ((int)$curRow['is_active'] === 1) ? 0 : 1;
+        $toggleSql = "UPDATE assignments SET is_active = $newStatus WHERE id = $assignId";
         if (mysqli_query($conn, $toggleSql)) {
-            echo json_encode(['success' => true, 'message' => 'Assignment status toggled successfully.']);
+            $statusMsg = ($newStatus === 1) ? "Assignment '{$curRow['title']}' activated successfully." : "Assignment '{$curRow['title']}' archived successfully.";
+            echo json_encode(['success' => true, 'message' => $statusMsg]);
         } else {
             echo json_encode(['success' => false, 'message' => 'Failed to update assignment status.']);
+        }
+        exit;
+    }
+
+    if ($action === 'delete') {
+        $assignId = isset($_POST['assignment_id']) ? (int) $_POST['assignment_id'] : 0;
+
+        if ($assignId <= 0) {
+            echo json_encode(['success' => false, 'message' => 'Invalid assignment ID.']);
+            exit;
+        }
+
+        $aQ = mysqli_query($conn, "SELECT title FROM assignments WHERE id = $assignId LIMIT 1");
+        $aRow = mysqli_fetch_assoc($aQ);
+        $assignTitle = $aRow ? $aRow['title'] : 'Assignment';
+
+        $delSql = "DELETE FROM assignments WHERE id = $assignId";
+        if (mysqli_query($conn, $delSql)) {
+            echo json_encode(['success' => true, 'message' => "Assignment '$assignTitle' deleted successfully."]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Failed to delete assignment: ' . mysqli_error($conn)]);
         }
         exit;
     }

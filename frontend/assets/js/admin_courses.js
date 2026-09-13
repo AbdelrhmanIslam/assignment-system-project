@@ -171,10 +171,10 @@ function renderCoursesTable(courses) {
             '<td>' + statusBadge + '</td>' +
             '<td>' +
                 '<div style="display:inline-flex; gap:6px; align-items:center;">' +
-                    '<button onclick="toggleCourseStatus(' + c.id + ')" class="view-btn" style="' + toggleClass + ' font-size:12px; padding:6px 10px; border:none; cursor:pointer; border-radius:4px;">' +
+                    '<button onclick="toggleCourseStatus(' + c.id + ', this)" class="view-btn" style="' + toggleClass + ' font-size:12px; padding:6px 10px; border:none; cursor:pointer; border-radius:4px;">' +
                         toggleLabel +
                     '</button>' +
-                    '<button onclick="deleteCourse(' + c.id + ', \'' + escapeHtml(c.name).replace(/'/g, "\\'") + '\')" class="view-btn" style="background:#dc2626; font-size:12px; padding:6px 10px; border:none; cursor:pointer; border-radius:4px;">' +
+                    '<button onclick="deleteCourse(' + c.id + ', this)" class="view-btn" style="background:#dc2626; font-size:12px; padding:6px 10px; border:none; cursor:pointer; border-radius:4px;">' +
                         'Delete' +
                     '</button>' +
                 '</div>' +
@@ -184,8 +184,12 @@ function renderCoursesTable(courses) {
     });
 }
 
-function toggleCourseStatus(courseId) {
-    if (!confirm('Are you sure you want to change this course status?')) return;
+function toggleCourseStatus(courseId, btn) {
+    if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Updating...';
+        btn.style.opacity = '0.7';
+    }
 
     var formData = new FormData();
     formData.append('action', 'toggle_status');
@@ -201,18 +205,30 @@ function toggleCourseStatus(courseId) {
             showAlert(data.message || 'Course status updated successfully.', 'success');
             loadCourses();
         } else {
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = 'Toggle';
+                btn.style.opacity = '1';
+            }
             showAlert(data.message || 'Failed to update course status.', 'error');
         }
     })
     .catch(function (err) {
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = 'Toggle';
+            btn.style.opacity = '1';
+        }
         console.error('Error toggling course status:', err);
         showAlert('Server error while toggling course status.', 'error');
     });
 }
 
-function deleteCourse(courseId, courseName) {
-    if (!confirm('Are you sure you want to permanently delete "' + courseName + '"?\nThis will remove all associated assignments, student enrollments, and teaching assistant links.')) {
-        return;
+function deleteCourse(courseId, btn) {
+    if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Deleting...';
+        btn.style.opacity = '0.7';
     }
 
     var formData = new FormData();
@@ -229,10 +245,20 @@ function deleteCourse(courseId, courseName) {
             showAlert(data.message || 'Course deleted successfully.', 'success');
             loadCourses();
         } else {
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = 'Delete';
+                btn.style.opacity = '1';
+            }
             showAlert(data.message || 'Failed to delete course.', 'error');
         }
     })
     .catch(function (err) {
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = 'Delete';
+            btn.style.opacity = '1';
+        }
         console.error('Error deleting course:', err);
         showAlert('Server error while deleting course.', 'error');
     });

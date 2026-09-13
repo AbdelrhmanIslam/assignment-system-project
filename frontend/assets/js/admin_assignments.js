@@ -90,17 +90,26 @@ function renderTable(assignments) {
             '<td>' + subInfo + '</td>' +
             '<td>' + statusBadge + '</td>' +
             '<td>' +
-                '<button onclick="toggleAssignmentStatus(' + a.id + ')" class="view-btn" style="' + toggleClass + ' font-size:12px; padding:6px 12px; border:none; cursor:pointer;">' +
-                    toggleLabel +
-                '</button>' +
+                '<div style="display:inline-flex; gap:6px; align-items:center;">' +
+                    '<button onclick="toggleAssignmentStatus(' + a.id + ', this)" class="view-btn" style="' + toggleClass + ' font-size:12px; padding:6px 10px; border:none; cursor:pointer; border-radius:4px;">' +
+                        toggleLabel +
+                    '</button>' +
+                    '<button onclick="deleteAssignment(' + a.id + ', this)" class="view-btn" style="background:#dc2626; font-size:12px; padding:6px 10px; border:none; cursor:pointer; border-radius:4px;">' +
+                        'Delete' +
+                    '</button>' +
+                '</div>' +
             '</td>';
 
         tbody.appendChild(row);
     });
 }
 
-function toggleAssignmentStatus(assignId) {
-    if (!confirm('Are you sure you want to change this assignment status?')) return;
+function toggleAssignmentStatus(assignId, btn) {
+    if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Updating...';
+        btn.style.opacity = '0.7';
+    }
 
     var formData = new FormData();
     formData.append('action', 'toggle_status');
@@ -113,13 +122,65 @@ function toggleAssignmentStatus(assignId) {
     .then(function (res) { return res.json(); })
     .then(function (data) {
         if (data.success) {
+            showAlert(data.message || 'Assignment status updated successfully.', 'success');
             loadAssignments();
         } else {
-            alert(data.message || 'Failed to update assignment status.');
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = 'Toggle';
+                btn.style.opacity = '1';
+            }
+            showAlert(data.message || 'Failed to update assignment status.', 'error');
         }
     })
     .catch(function (err) {
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = 'Toggle';
+            btn.style.opacity = '1';
+        }
         console.error('Error toggling assignment status:', err);
+        showAlert('Server error while updating assignment status.', 'error');
+    });
+}
+
+function deleteAssignment(assignId, btn) {
+    if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Deleting...';
+        btn.style.opacity = '0.7';
+    }
+
+    var formData = new FormData();
+    formData.append('action', 'delete');
+    formData.append('assignment_id', assignId);
+
+    fetch('../../backend/admin/assignments.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(function (res) { return res.json(); })
+    .then(function (data) {
+        if (data.success) {
+            showAlert(data.message || 'Assignment deleted successfully.', 'success');
+            loadAssignments();
+        } else {
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = 'Delete';
+                btn.style.opacity = '1';
+            }
+            showAlert(data.message || 'Failed to delete assignment.', 'error');
+        }
+    })
+    .catch(function (err) {
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = 'Delete';
+            btn.style.opacity = '1';
+        }
+        console.error('Error deleting assignment:', err);
+        showAlert('Server error while deleting assignment.', 'error');
     });
 }
 
@@ -138,4 +199,45 @@ function formatDate(dateStr) {
 function escapeHtml(str) {
     if (!str) return '';
     return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function showAlert(msg, type) {
+    var box = document.getElementById('alert-box');
+    if (box) {
+        box.className = 'alert ' + (type === 'success' ? 'alert-success' : 'alert-error');
+        box.textContent = msg;
+        box.style.display = 'block';
+    }
+
+    var toast = document.getElementById('floating-toast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'floating-toast';
+        toast.style.cssText = 'position: fixed; top: 25px; right: 25px; z-index: 99999; padding: 14px 22px; border-radius: 8px; font-size: 14px; font-weight: 600; box-shadow: 0 10px 25px rgba(0,0,0,0.18); display: flex; align-items: center; gap: 10px; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); transform: translateY(-20px); opacity: 0; pointer-events: none;';
+        document.body.appendChild(toast);
+    }
+
+    if (type === 'success') {
+        toast.style.background = '#ecfdf5';
+        toast.style.color = '#047857';
+        toast.style.border = '1px solid #a7f3d0';
+        toast.innerHTML = '<span style="font-size: 16px;">&#10004;</span> ' + escapeHtml(msg);
+    } else {
+        toast.style.background = '#fff1f2';
+        toast.style.color = '#be123c';
+        toast.style.border = '1px solid #fecdd3';
+        toast.innerHTML = '<span style="font-size: 16px;">&#9888;</span> ' + escapeHtml(msg);
+    }
+
+    setTimeout(function () {
+        toast.style.transform = 'translateY(0)';
+        toast.style.opacity = '1';
+    }, 10);
+
+    if (window.toastTimer) clearTimeout(window.toastTimer);
+    window.toastTimer = setTimeout(function () {
+        toast.style.transform = 'translateY(-20px)';
+        toast.style.opacity = '0';
+        if (box) box.style.display = 'none';
+    }, 4500);
 }

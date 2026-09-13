@@ -86,11 +86,20 @@ if (isPost()) {
             exit;
         }
 
-        $toggleSql = "UPDATE courses SET is_active = IF(is_active = 1, 0, 1) WHERE id = $courseId";
+        $curQ = mysqli_query($conn, "SELECT is_active, name FROM courses WHERE id = $courseId LIMIT 1");
+        $curRow = mysqli_fetch_assoc($curQ);
+        if (!$curRow) {
+            echo json_encode(['success' => false, 'message' => 'Course not found.']);
+            exit;
+        }
+
+        $newStatus = ((int)$curRow['is_active'] === 1) ? 0 : 1;
+        $toggleSql = "UPDATE courses SET is_active = $newStatus WHERE id = $courseId";
         $toggleRes = mysqli_query($conn, $toggleSql);
 
         if ($toggleRes) {
-            echo json_encode(['success' => true, 'message' => 'Course status updated successfully.']);
+            $statusMsg = ($newStatus === 1) ? "Course '{$curRow['name']}' activated successfully." : "Course '{$curRow['name']}' archived successfully.";
+            echo json_encode(['success' => true, 'message' => $statusMsg]);
         } else {
             echo json_encode(['success' => false, 'message' => 'Failed to toggle course status.']);
         }
@@ -105,12 +114,16 @@ if (isPost()) {
             exit;
         }
 
+        $cQ = mysqli_query($conn, "SELECT name FROM courses WHERE id = $courseId LIMIT 1");
+        $cRow = mysqli_fetch_assoc($cQ);
+        $courseName = $cRow ? $cRow['name'] : 'Course';
+
         // Delete course (foreign keys cascade to course_assistants, course_students, assignments)
         $delSql = "DELETE FROM courses WHERE id = $courseId";
         $delRes = mysqli_query($conn, $delSql);
 
         if ($delRes) {
-            echo json_encode(['success' => true, 'message' => 'Course deleted successfully.']);
+            echo json_encode(['success' => true, 'message' => "Course '$courseName' deleted successfully."]);
         } else {
             echo json_encode(['success' => false, 'message' => 'Failed to delete course: ' . mysqli_error($conn)]);
         }
