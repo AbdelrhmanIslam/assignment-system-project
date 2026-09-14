@@ -275,6 +275,7 @@ if ($result) {
         $uRole = $row['role'];
         $teacherLevels = ($uRole === 'teacher') ? getTeacherGradeLevels($conn, $uId) : [];
         $assignedTeachers = ($uRole === 'assistant') ? getAssistantTeachers($conn, $uId) : [];
+        $studentTeachers = ($uRole === 'student') ? getStudentTeachers($conn, $uId) : [];
         $studentTeacherIds = ($uRole === 'student') ? getStudentTeacherIds($conn, $uId) : [];
 
         $studentCourses = [];
@@ -311,10 +312,14 @@ if ($result) {
             $tcRes = mysqli_query($conn, $tcSql);
             if ($tcRes) {
                 while ($tcRow = mysqli_fetch_assoc($tcRes)) {
+                    $tcGrade = $tcRow['grade_level'];
+                    if (!empty($tcGrade) && !in_array($tcGrade, $teacherLevels)) {
+                        $teacherLevels[] = $tcGrade;
+                    }
                     $teacherCourses[] = [
                         'course_id' => (int) $tcRow['id'],
                         'course_name' => $tcRow['course_name'],
-                        'grade_level' => $tcRow['grade_level'],
+                        'grade_level' => $tcGrade,
                         'student_count' => (int) $tcRow['student_count']
                     ];
                 }
@@ -329,6 +334,7 @@ if ($result) {
             'grade_level' => $row['grade_level'],
             'teacher_grade_levels' => $teacherLevels,
             'assigned_teachers' => $assignedTeachers,
+            'student_teachers' => $studentTeachers,
             'student_teacher_ids' => $studentTeacherIds,
             'student_courses' => $studentCourses,
             'teacher_courses' => $teacherCourses,

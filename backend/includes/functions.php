@@ -110,6 +110,29 @@ function getStudentTeacherIds($conn, $studentId)
     return $ids;
 }
 
+// fetch teacher details assigned to a student
+function getStudentTeachers($conn, $studentId)
+{
+    $studentId = (int)$studentId;
+    $sql = "SELECT u.id, u.name, u.email
+            FROM student_teachers st
+            INNER JOIN users u ON u.id = st.teacher_id
+            WHERE st.student_id = $studentId AND u.is_active = 1
+            ORDER BY u.name ASC";
+    $res = mysqli_query($conn, $sql);
+    $teachers = [];
+    if ($res) {
+        while ($row = mysqli_fetch_assoc($res)) {
+            $teachers[] = [
+                'id' => (int)$row['id'],
+                'name' => $row['name'],
+                'email' => $row['email']
+            ];
+        }
+    }
+    return $teachers;
+}
+
 // update teachers assigned to a student
 function setStudentTeachers($conn, $studentId, $teacherIds)
 {
