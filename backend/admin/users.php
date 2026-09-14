@@ -50,6 +50,7 @@ if (isPost()) {
 
         // validate role-specific requirements
         $studentGrade = '';
+        $studentTeachers = [];
         $teacherGrades = [];
         $assistantTeachers = [];
         if ($role === 'student') {
@@ -57,6 +58,10 @@ if (isPost()) {
             if (!in_array($studentGrade, getAllowedGradeLevels())) {
                 echo json_encode(['success' => false, 'message' => 'Please select a valid Grade Level for this student.']);
                 exit;
+            }
+            $rawSTeachers = isset($_POST['student_teacher_ids']) ? $_POST['student_teacher_ids'] : (isset($_POST['teacher_ids']) ? $_POST['teacher_ids'] : null);
+            if ($rawSTeachers !== null) {
+                $studentTeachers = is_array($rawSTeachers) ? $rawSTeachers : explode(',', $rawSTeachers);
             }
         } elseif ($role === 'teacher') {
             $rawTGrades = isset($_POST['teacher_grade_levels']) ? $_POST['teacher_grade_levels'] : (isset($_POST['teacher_grade_levels[]']) ? $_POST['teacher_grade_levels[]'] : null);
@@ -99,7 +104,10 @@ if (isPost()) {
         if ($insertRes) {
             $newUserId = (int) mysqli_insert_id($conn);
             if ($role === 'student') {
-                enrollStudentInGradeLevelCourses($conn, $newUserId, $studentGrade);
+                if (!empty($studentTeachers)) {
+                    setStudentTeachers($conn, $newUserId, $studentTeachers);
+                }
+                enrollStudentInGradeLevelCourses($conn, $newUserId, $studentGrade, $studentTeachers);
             } elseif ($role === 'teacher') {
                 setTeacherGradeLevels($conn, $newUserId, $teacherGrades);
             } elseif ($role === 'assistant') {
@@ -178,13 +186,21 @@ if (isPost()) {
         $targetUserRow = mysqli_fetch_assoc($roleQuery);
         $targetRole = $targetUserRow ? $targetUserRow['role'] : '';
 
-        // update grade level if student
-        if ($targetRole === 'student' && isset($_POST['grade_level'])) {
-            $updatedGrade = trim($_POST['grade_level']);
-            if (in_array($updatedGrade, getAllowedGradeLevels())) {
-                $escapedUpdatedGrade = mysqli_real_escape_string($conn, $updatedGrade);
-                $setClauses[] = "grade_level = '$escapedUpdatedGrade'";
-                enrollStudentInGradeLevelCourses($conn, $targetUserId, $updatedGrade);
+        // update grade level and teachers if student
+        if ($targetRole === 'student') {
+            $rawUpdateSTeachers = isset($_POST['student_teacher_ids']) ? $_POST['student_teacher_ids'] : (isset($_POST['teacher_ids']) ? $_POST['teacher_ids'] : null);
+            if ($rawUpdateSTeachers !== null) {
+                $sTeachers = is_array($rawUpdateSTeachers) ? $rawUpdateSTeachers : explode(',', $rawUpdateSTeachers);
+                setStudentTeachers($conn, $targetUserId, $sTeachers);
+            }
+            if (isset($_POST['grade_level'])) {
+                $updatedGrade = trim($_POST['grade_level']);
+                if (in_array($updatedGrade, getAllowedGradeLevels())) {
+                    $escapedUpdatedGrade = mysqli_real_escape_string($conn, $updatedGrade);
+                    $setClauses[] = "grade_level = '$escapedUpdatedGrade'";
+                    $currTeacherIds = getStudentTeacherIds($conn, $targetUserId);
+                    enrollStudentInGradeLevelCourses($conn, $targetUserId, $updatedGrade, $currTeacherIds);
+                }
             }
         }
 
@@ -249,11 +265,7 @@ if (!empty($search)) {
 }
 
 $whereSql = implode(' AND ', $whereClauses);
-
-$sql = "SELECT id, name, email, role, grade_level, is_active, created_at
-        FROM users
-        WHERE $whereSql
-        ORDER BY id DESC";
+$sql = "SELECT id, name, email, role, grade_level, is_active, created_at FROM users WHERE $whereSql ORDER BY id DESC";
 $result = mysqli_query($conn, $sql);
 
 $users = [];
@@ -263,6 +275,7 @@ if ($result) {
         $uRole = $row['role'];
         $teacherLevels = ($uRole === 'teacher') ? getTeacherGradeLevels($conn, $uId) : [];
         $assignedTeachers = ($uRole === 'assistant') ? getAssistantTeachers($conn, $uId) : [];
+        $studentTeacherIds = ($uRole === 'student') ? getStudentTeacherIds($conn, $uId) : [];
 
         $users[] = [
             'id' => $uId,
@@ -272,6 +285,7 @@ if ($result) {
             'grade_level' => $row['grade_level'],
             'teacher_grade_levels' => $teacherLevels,
             'assigned_teachers' => $assignedTeachers,
+            'student_teacher_ids' => $studentTeacherIds,
             'is_active' => (int) $row['is_active'] === 1,
             'created_at' => $row['created_at']
         ];

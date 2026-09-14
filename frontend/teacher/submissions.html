@@ -39,12 +39,18 @@
                 <button class="filter-tab" data-filter="graded" id="tab-graded">Graded</button>
             </div>
 
-            <input
-                type="text"
-                id="search-input"
-                class="search-input"
-                placeholder="Search by student, assignment, or course..."
-            >
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                <select id="student-filter-select" style="padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; background: #fff;">
+                    <option value="all">All Students</option>
+                </select>
+
+                <input
+                    type="text"
+                    id="search-input"
+                    class="search-input"
+                    placeholder="Search by student, assignment, or course..."
+                >
+            </div>
         </div>
 
         <div id="submissions-empty" class="empty-state" style="display: none;">

@@ -52,26 +52,82 @@ function getAllowedGradeLevels()
     ];
 }
 
-// enroll a student into all active courses for their grade level
-function enrollStudentInGradeLevelCourses($conn, $studentId, $gradeLevel)
+// enroll a student into active courses for their grade level (optionally filtered by selected teachers)
+function enrollStudentInGradeLevelCourses($conn, $studentId, $gradeLevel, $teacherIds = [])
 {
     $studentId = (int)$studentId;
     $escapedGrade = mysqli_real_escape_string($conn, $gradeLevel);
+    $whereTeacher = "";
+    if (!empty($teacherIds)) {
+        if (!is_array($teacherIds)) {
+            $teacherIds = explode(',', $teacherIds);
+        }
+        $validTeacherIds = array_filter(array_map('intval', $teacherIds), function ($id) {
+            return $id > 0;
+        });
+        if (!empty($validTeacherIds)) {
+            $tIdsCsv = implode(',', $validTeacherIds);
+            $whereTeacher = " AND teacher_id IN ($tIdsCsv)";
+        }
+    }
     $sql = "INSERT IGNORE INTO course_students (course_id, student_id)
             SELECT id, $studentId FROM courses
-            WHERE grade_level = '$escapedGrade' AND is_active = 1";
+            WHERE grade_level = '$escapedGrade' AND is_active = 1 $whereTeacher";
     return mysqli_query($conn, $sql);
 }
 
-// enroll all active students of a grade level into a specific course
-function enrollGradeLevelStudentsInCourse($conn, $courseId, $gradeLevel)
+// enroll active students of a grade level into a specific course (filtered by teacher if provided)
+function enrollGradeLevelStudentsInCourse($conn, $courseId, $gradeLevel, $teacherId = 0)
 {
     $courseId = (int)$courseId;
     $escapedGrade = mysqli_real_escape_string($conn, $gradeLevel);
-    $sql = "INSERT IGNORE INTO course_students (course_id, student_id)
-            SELECT $courseId, id FROM users
-            WHERE role = 'student' AND grade_level = '$escapedGrade' AND is_active = 1";
+    $teacherId = (int)$teacherId;
+    if ($teacherId > 0) {
+        $sql = "INSERT IGNORE INTO course_students (course_id, student_id)
+                SELECT $courseId, u.id FROM users u
+                INNER JOIN student_teachers st ON st.student_id = u.id AND st.teacher_id = $teacherId
+                WHERE u.role = 'student' AND u.grade_level = '$escapedGrade' AND u.is_active = 1";
+    } else {
+        $sql = "INSERT IGNORE INTO course_students (course_id, student_id)
+                SELECT $courseId, id FROM users
+                WHERE role = 'student' AND grade_level = '$escapedGrade' AND is_active = 1";
+    }
     return mysqli_query($conn, $sql);
+}
+
+// fetch teacher ids assigned to a student
+function getStudentTeacherIds($conn, $studentId)
+{
+    $studentId = (int)$studentId;
+    $sql = "SELECT teacher_id FROM student_teachers WHERE student_id = $studentId ORDER BY id ASC";
+    $res = mysqli_query($conn, $sql);
+    $ids = [];
+    if ($res) {
+        while ($row = mysqli_fetch_assoc($res)) {
+            $ids[] = (int)$row['teacher_id'];
+        }
+    }
+    return $ids;
+}
+
+// update teachers assigned to a student
+function setStudentTeachers($conn, $studentId, $teacherIds)
+{
+    $studentId = (int)$studentId;
+    mysqli_query($conn, "DELETE FROM student_teachers WHERE student_id = $studentId");
+    if (!is_array($teacherIds)) {
+        return true;
+    }
+    foreach ($teacherIds as $tId) {
+        $tId = (int)$tId;
+        if ($tId > 0) {
+            $chk = mysqli_query($conn, "SELECT id FROM users WHERE id = $tId AND role = 'teacher' AND is_active = 1 LIMIT 1");
+            if (mysqli_num_rows($chk) > 0) {
+                mysqli_query($conn, "INSERT IGNORE INTO student_teachers (student_id, teacher_id) VALUES ($studentId, $tId)");
+            }
+        }
+    }
+    return true;
 }
 
 // fetch assigned grade levels for a teacher

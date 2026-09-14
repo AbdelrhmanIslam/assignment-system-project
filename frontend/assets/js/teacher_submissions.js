@@ -11,14 +11,18 @@ document.addEventListener('DOMContentLoaded', function () {
     var searchInput = document.getElementById('search-input');
     var filterTabs = document.querySelectorAll('.filter-tab');
 
-    // read optional assignment_id parameter from url
+    // read optional assignment_id or student_id parameters from url
     var urlParams = new URLSearchParams(window.location.search);
     var assignmentFilterId = urlParams.get('assignment_id');
+    var studentFilterId = urlParams.get('student_id');
+    var studentSelect = document.getElementById('student-filter-select');
+    var selectedStudent = studentFilterId || 'all';
 
     var apiUrl = '../../backend/teacher/submissions.php';
-    if (assignmentFilterId) {
-        apiUrl += '?assignment_id=' + encodeURIComponent(assignmentFilterId);
-    }
+    var queryParts = [];
+    if (assignmentFilterId) queryParts.push('assignment_id=' + encodeURIComponent(assignmentFilterId));
+    if (studentFilterId) queryParts.push('student_id=' + encodeURIComponent(studentFilterId));
+    if (queryParts.length > 0) apiUrl += '?' + queryParts.join('&');
 
     // fetch submissions from backend api
     fetch(apiUrl)
@@ -33,6 +37,27 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!data || !data.success) return;
 
             allSubmissions = data.submissions || [];
+
+            // populate student filter dropdown
+            if (studentSelect && data.students) {
+                studentSelect.innerHTML = '<option value="all">All Students</option>';
+                data.students.forEach(function (st) {
+                    var opt = document.createElement('option');
+                    opt.value = st.id;
+                    opt.textContent = st.name;
+                    if (studentFilterId && String(st.id) === String(studentFilterId)) {
+                        opt.selected = true;
+                    }
+                    studentSelect.appendChild(opt);
+                });
+
+                studentSelect.addEventListener('change', function () {
+                    selectedStudent = this.value;
+                    updateTabCounts();
+                    renderTable();
+                });
+            }
+
             updateTabCounts();
             renderTable();
         })
@@ -65,6 +90,10 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!tbody) return;
 
         var filtered = allSubmissions.filter(function (item) {
+            if (selectedStudent !== 'all' && selectedStudent !== '' && selectedStudent !== null) {
+                if (String(item.student_id) !== String(selectedStudent)) return false;
+            }
+
             var matchesFilter = true;
             if (currentFilter === 'pending') {
                 matchesFilter = (item.status === 'submitted' || item.status === 'under_review' || item.status === 'pending_teacher');

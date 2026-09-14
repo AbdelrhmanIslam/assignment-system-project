@@ -338,6 +338,21 @@ CREATE TABLE `teacher_assistants` (
   UNIQUE KEY `unique_teacher_assistant` (`teacher_id`,`assistant_id`),
   KEY `idx_teacher_assistant_teacher` (`teacher_id`),
   KEY `idx_teacher_assistant_assistant` (`assistant_id`)
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `student_teachers`
+--
+
+CREATE TABLE `student_teachers` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `student_id` int(10) UNSIGNED NOT NULL,
+  `teacher_id` int(10) UNSIGNED NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_student_teacher` (`student_id`,`teacher_id`),
+  KEY `idx_st_student` (`student_id`),
+  KEY `idx_st_teacher` (`teacher_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -581,6 +596,13 @@ ALTER TABLE `teacher_reviews`
 ALTER TABLE `teacher_assistants`
   ADD CONSTRAINT `fk_teacher_assistants_teacher` FOREIGN KEY (`teacher_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_teacher_assistants_assistant` FOREIGN KEY (`assistant_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `student_teachers`
+--
+ALTER TABLE `student_teachers`
+  ADD CONSTRAINT `fk_st_student` FOREIGN KEY (`student_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_st_teacher` FOREIGN KEY (`teacher_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

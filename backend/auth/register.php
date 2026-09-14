@@ -72,8 +72,10 @@ if (isPost()) {
         redirect(BASE_URL . '/frontend/auth/register.html?error=' . urlencode(implode("\n", $errors)));
     }
 
-    // escape email for query
+    // escape name, email, grade level
     $escapedEmail = mysqli_real_escape_string($conn, $email);
+    $escapedName = mysqli_real_escape_string($conn, $name);
+    $escapedGradeLevel = mysqli_real_escape_string($conn, $gradeLevel);
 
     // check if email already exists in database
     $checkSql = "SELECT id FROM users WHERE email = '$escapedEmail' LIMIT 1";
@@ -83,10 +85,23 @@ if (isPost()) {
         redirect(BASE_URL . '/frontend/auth/register.html?error=' . urlencode('An account with this email already exists.'));
     }
 
+    // validate selected teacher(s) for this grade level
+    $rawTeacherIds = isset($_POST['teacher_ids']) ? $_POST['teacher_ids'] : (isset($_POST['teacher_ids[]']) ? $_POST['teacher_ids[]'] : []);
+    $teacherIds = [];
+    if (!empty($rawTeacherIds)) {
+        $teacherIds = is_array($rawTeacherIds) ? $rawTeacherIds : explode(',', $rawTeacherIds);
+        $teacherIds = array_filter(array_map('intval', $teacherIds), function ($id) {
+            return $id > 0;
+        });
+    }
+
+    $chkTeachRes = mysqli_query($conn, "SELECT u.id FROM users u INNER JOIN teacher_grade_levels tgl ON tgl.teacher_id = u.id WHERE tgl.grade_level = '$escapedGradeLevel' AND u.role = 'teacher' AND u.is_active = 1");
+    if ($chkTeachRes && mysqli_num_rows($chkTeachRes) > 0 && empty($teacherIds)) {
+        redirect(BASE_URL . '/frontend/auth/register.html?error=' . urlencode('Please select at least one teacher for your grade level.'));
+    }
+
     // hash password securely
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-    $escapedName = mysqli_real_escape_string($conn, $name);
-    $escapedGradeLevel = mysqli_real_escape_string($conn, $gradeLevel);
 
     // insert new student record with grade level
     $insertSql = "INSERT INTO users (name, email, password, role, grade_level) VALUES ('$escapedName', '$escapedEmail', '$hashedPassword', 'student', '$escapedGradeLevel')";
@@ -94,8 +109,12 @@ if (isPost()) {
 
     if ($insertResult) {
         $newStudentId = (int) mysqli_insert_id($conn);
-        // auto-enroll student in all active courses belonging to their grade level
-        enrollStudentInGradeLevelCourses($conn, $newStudentId, $gradeLevel);
+        // link student to chosen teachers in student_teachers table
+        if (!empty($teacherIds)) {
+            setStudentTeachers($conn, $newStudentId, $teacherIds);
+        }
+        // auto-enroll student in active courses belonging to their grade level and chosen teachers
+        enrollStudentInGradeLevelCourses($conn, $newStudentId, $gradeLevel, $teacherIds);
         redirect(BASE_URL . '/frontend/auth/register.html?success=' . urlencode('Account created successfully. You can now log in.'));
     } else {
         redirect(BASE_URL . '/frontend/auth/register.html?error=' . urlencode('Failed to create account. Please try again.'));

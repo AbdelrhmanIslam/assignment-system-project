@@ -175,10 +175,117 @@ function renderEnrolledStudents(list) {
             '<td>' + escapeHtml(st.email) + '</td>' +
             '<td><span class="status-badge status-review" style="font-size:11px;">' + escapeHtml(st.grade_level) + '</span></td>' +
             '<td>' + escapeHtml(st.enrolled_courses) + '</td>' +
-            '<td><span class="status-badge status-submitted" style="font-size:11px;">' + st.submission_count + ' submissions</span></td>';
+            '<td><span class="status-badge status-submitted" style="font-size:11px;">' + st.submission_count + ' submissions</span></td>' +
+            '<td><button type="button" class="action-btn action-review btn-student-history" data-id="' + st.id + '" data-name="' + escapeHtml(st.name) + '" data-email="' + escapeHtml(st.email) + '" data-grade="' + escapeHtml(st.grade_level) + '" style="border:none; cursor:pointer; font-size:12px; padding:5px 10px;">📜 History</button></td>';
         tbody.appendChild(tr);
     });
+
+    // attach click listeners to history buttons
+    var btns = tbody.querySelectorAll('.btn-student-history');
+    btns.forEach(function (b) {
+        b.addEventListener('click', function () {
+            var stId = this.getAttribute('data-id');
+            var stName = this.getAttribute('data-name');
+            var stEmail = this.getAttribute('data-email');
+            var stGrade = this.getAttribute('data-grade');
+            openStudentHistoryModal(stId, stName, stEmail, stGrade);
+        });
+    });
 }
+
+function openStudentHistoryModal(studentId, name, email, grade) {
+    var modal = document.getElementById('student-history-modal');
+    if (!modal) return;
+
+    var nameEl = document.getElementById('modal-student-name');
+    var emailEl = document.getElementById('modal-student-email');
+    var gradeEl = document.getElementById('modal-student-grade');
+    var subLink = document.getElementById('modal-full-queue-link');
+
+    if (nameEl) nameEl.textContent = name;
+    if (emailEl) emailEl.textContent = email;
+    if (gradeEl) gradeEl.textContent = grade;
+    if (subLink) subLink.href = 'submissions.html?student_id=' + studentId;
+
+    var loadingEl = document.getElementById('modal-history-loading');
+    var emptyEl = document.getElementById('modal-history-empty');
+    var tableCont = document.getElementById('modal-history-table-container');
+    var tableBody = document.getElementById('modal-history-table-body');
+
+    modal.style.display = 'flex';
+    if (loadingEl) loadingEl.style.display = 'block';
+    if (emptyEl) emptyEl.style.display = 'none';
+    if (tableCont) tableCont.style.display = 'none';
+    if (tableBody) tableBody.innerHTML = '';
+
+    fetch('../../backend/teacher/submissions.php?student_id=' + encodeURIComponent(studentId))
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+            if (loadingEl) loadingEl.style.display = 'none';
+
+            if (data && data.success && data.submissions && data.submissions.length > 0) {
+                if (tableCont) tableCont.style.display = 'block';
+                if (emptyEl) emptyEl.style.display = 'none';
+
+                data.submissions.forEach(function (sub) {
+                    var tr = document.createElement('tr');
+                    var statusInfo = getStatusInfo(sub.status);
+                    var dateObj = new Date(sub.submitted_at);
+                    var dateStr = dateObj.toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+
+                    var gradeText = '—';
+                    if (sub.grade !== null && sub.grade !== undefined && sub.grade !== '') {
+                        gradeText = '<strong>' + sub.grade + '</strong> / ' + sub.max_grade;
+                    }
+
+                    tr.innerHTML =
+                        '<td><strong>' + escapeHtml(sub.assignment_title) + '</strong></td>' +
+                        '<td>' + escapeHtml(sub.course_name) + '</td>' +
+                        '<td>' + dateStr + '</td>' +
+                        '<td><span class="status-badge" style="font-size:11px; background:#f1f5f9; color:#475569;">v' + (sub.version || 1) + '</span></td>' +
+                        '<td><span class="status-badge ' + statusInfo.className + '" style="font-size:11px;">' + statusInfo.label + '</span></td>' +
+                        '<td>' + gradeText + '</td>' +
+                        '<td><a href="review.html?id=' + sub.id + '" class="action-btn action-review" style="font-size:12px; padding:5px 9px; text-decoration:none; display:inline-block;">✏️ Review & Edit</a></td>';
+
+                    tableBody.appendChild(tr);
+                });
+            } else {
+                if (tableCont) tableCont.style.display = 'none';
+                if (emptyEl) emptyEl.style.display = 'block';
+            }
+        })
+        .catch(function (err) {
+            if (loadingEl) loadingEl.style.display = 'none';
+            if (emptyEl) {
+                emptyEl.innerHTML = '<p style="color:#ef4444;">Failed to load submissions for this student.</p>';
+                emptyEl.style.display = 'block';
+            }
+        });
+}
+
+// close history modal helpers
+document.addEventListener('DOMContentLoaded', function () {
+    var modal = document.getElementById('student-history-modal');
+    var closeBtn = document.getElementById('close-history-modal-btn');
+    var closeFooterBtn = document.getElementById('btn-close-modal');
+
+    function closeModal() {
+        if (modal) modal.style.display = 'none';
+    }
+
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    if (closeFooterBtn) closeFooterBtn.addEventListener('click', closeModal);
+    if (modal) {
+        modal.addEventListener('click', function (e) {
+            if (e.target === modal) closeModal();
+        });
+    }
+});
 
 // helper to set element text
 function setElementText(id, text) {

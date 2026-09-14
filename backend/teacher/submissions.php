@@ -20,6 +20,7 @@ $teacherId = (int) currentUserId();
 // read optional query filter parameters
 $filterCourseId = isset($_GET['course_id']) ? (int) $_GET['course_id'] : 0;
 $filterAssignmentId = isset($_GET['assignment_id']) ? (int) $_GET['assignment_id'] : 0;
+$filterStudentId = isset($_GET['student_id']) ? (int) $_GET['student_id'] : 0;
 $filterStatus = isset($_GET['status']) ? trim($_GET['status']) : '';
 
 // build dynamic where clause
@@ -31,6 +32,10 @@ if ($filterCourseId > 0) {
 
 if ($filterAssignmentId > 0) {
     $whereClause .= " AND a.id = $filterAssignmentId";
+}
+
+if ($filterStudentId > 0) {
+    $whereClause .= " AND s.student_id = $filterStudentId";
 }
 
 if ($filterStatus !== '' && $filterStatus !== 'all') {
@@ -83,8 +88,30 @@ if ($result) {
     }
 }
 
+// query distinct students enrolled or submitted for this teacher
+$studentsSql = "SELECT DISTINCT u.id, u.name, u.email
+                FROM users u
+                LEFT JOIN student_teachers st ON st.student_id = u.id AND st.teacher_id = $teacherId
+                LEFT JOIN course_students cs ON cs.student_id = u.id
+                LEFT JOIN courses c ON c.id = cs.course_id AND c.teacher_id = $teacherId AND c.is_active = 1
+                WHERE u.role = 'student' AND u.is_active = 1
+                  AND (st.id IS NOT NULL OR c.id IS NOT NULL)
+                ORDER BY u.name ASC";
+$studentsRes = mysqli_query($conn, $studentsSql);
+$studentsList = [];
+if ($studentsRes) {
+    while ($st = mysqli_fetch_assoc($studentsRes)) {
+        $studentsList[] = [
+            'id' => (int) $st['id'],
+            'name' => $st['name'],
+            'email' => $st['email']
+        ];
+    }
+}
+
 echo json_encode([
     'success' => true,
-    'submissions' => $submissions
+    'submissions' => $submissions,
+    'students' => $studentsList
 ]);
 exit;

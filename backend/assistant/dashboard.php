@@ -128,7 +128,7 @@ if ($recentResult) {
     }
 }
 
-// query distinct students enrolled in assistant's courses
+// query distinct students enrolled in assistant's courses or belonging to assisted teachers
 $studentsSql = "SELECT
     u.id,
     u.name,
@@ -136,12 +136,16 @@ $studentsSql = "SELECT
     u.grade_level,
     GROUP_CONCAT(DISTINCT c.name ORDER BY c.name SEPARATOR ', ') AS course_names,
     COUNT(DISTINCT s.id) AS submission_count
-FROM course_students cs
-INNER JOIN courses c ON c.id = cs.course_id AND c.is_active = 1
-INNER JOIN course_assistants ca ON ca.course_id = c.id AND ca.assistant_id = $assistantId
-INNER JOIN users u ON u.id = cs.student_id AND u.role = 'student' AND u.is_active = 1
+FROM users u
+LEFT JOIN student_teachers st ON st.student_id = u.id
+LEFT JOIN teacher_assistants ta ON ta.teacher_id = st.teacher_id AND ta.assistant_id = $assistantId
+LEFT JOIN course_students cs ON cs.student_id = u.id
+LEFT JOIN course_assistants ca ON ca.course_id = cs.course_id AND ca.assistant_id = $assistantId
+LEFT JOIN courses c ON c.id = cs.course_id AND c.is_active = 1 AND (ca.id IS NOT NULL OR c.teacher_id = ta.teacher_id)
 LEFT JOIN assignments a ON a.course_id = c.id
 LEFT JOIN submissions s ON s.assignment_id = a.id AND s.student_id = u.id
+WHERE u.role = 'student' AND u.is_active = 1
+  AND (ta.id IS NOT NULL OR ca.id IS NOT NULL)
 GROUP BY u.id
 ORDER BY u.name ASC";
 

@@ -16,11 +16,12 @@ if (!isLoggedIn() || currentUserRole() !== 'assistant') {
 
 $assistantId = (int) currentUserId();
 
-// fetch assistant's assigned courses
-$coursesSql = "SELECT c.id, c.name
+// fetch assistant's assigned courses (either assigned directly to course or through assisted lead teacher)
+$coursesSql = "SELECT DISTINCT c.id, c.name
                FROM courses c
-               INNER JOIN course_assistants ca ON ca.course_id = c.id
-               WHERE ca.assistant_id = $assistantId AND c.is_active = 1";
+               LEFT JOIN course_assistants ca ON ca.course_id = c.id AND ca.assistant_id = $assistantId
+               LEFT JOIN teacher_assistants ta ON ta.teacher_id = c.teacher_id AND ta.assistant_id = $assistantId
+               WHERE (ca.id IS NOT NULL OR ta.id IS NOT NULL) AND c.is_active = 1";
 $coursesResult = mysqli_query($conn, $coursesSql);
 
 $assignedCourseIds = [];
@@ -43,6 +44,7 @@ if (empty($assignedCourseIds)) {
             'role' => currentUserRole()
         ],
         'courses' => [],
+        'students' => [],
         'submissions' => []
     ]);
     exit;
@@ -53,11 +55,16 @@ $courseIdsCsv = implode(',', $assignedCourseIds);
 // parse filters
 $filterStatus = isset($_GET['status']) ? sanitize($_GET['status']) : 'all';
 $filterCourseId = isset($_GET['course_id']) ? (int) $_GET['course_id'] : 0;
+$filterStudentId = isset($_GET['student_id']) ? (int) $_GET['student_id'] : 0;
 
 $whereClauses = ["a.course_id IN ($courseIdsCsv)"];
 
 if ($filterCourseId > 0 && in_array($filterCourseId, $assignedCourseIds)) {
     $whereClauses[] = "a.course_id = $filterCourseId";
+}
+
+if ($filterStudentId > 0) {
+    $whereClauses[] = "s.student_id = $filterStudentId";
 }
 
 if ($filterStatus === 'pending') {
@@ -120,6 +127,25 @@ if ($result) {
     }
 }
 
+// query students for filter dropdown
+$studentsSql = "SELECT DISTINCT u.id, u.name, u.email
+                FROM users u
+                INNER JOIN submissions s ON s.student_id = u.id
+                INNER JOIN assignments a ON a.id = s.assignment_id
+                WHERE a.course_id IN ($courseIdsCsv)
+                ORDER BY u.name ASC";
+$studentsRes = mysqli_query($conn, $studentsSql);
+$studentsList = [];
+if ($studentsRes) {
+    while ($stRow = mysqli_fetch_assoc($studentsRes)) {
+        $studentsList[] = [
+            'id' => (int) $stRow['id'],
+            'name' => $stRow['name'],
+            'email' => $stRow['email']
+        ];
+    }
+}
+
 echo json_encode([
     'success' => true,
     'user' => [
@@ -127,5 +153,7 @@ echo json_encode([
         'role' => currentUserRole()
     ],
     'courses' => $coursesList,
+    'students' => $studentsList,
     'submissions' => $submissions
 ]);
+exit;

@@ -95,7 +95,20 @@
                 </select>
             </div>
 
-            <button type="submit" class="btn-primary">
+            <!-- Dynamic teachers for selected grade level -->
+            <div id="teachers-selection-group" class="form-group" style="display: none; margin-top: -5px;">
+                <label style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <span style="font-weight: 600; font-size: 14px; color: #374151;">Select Teacher(s) *</span>
+                    <span style="font-size: 11px; font-weight: normal; color: #6b7280;">Choose one or more</span>
+                </label>
+                <div id="teachers-loading" style="display: none; font-size: 13px; color: #6b7280; padding: 6px 0;">Loading teachers for this grade...</div>
+                <div id="teachers-empty" style="display: none; font-size: 12px; color: #92400e; background: #fef3c7; border: 1px solid #fde68a; border-radius: 6px; padding: 8px 12px;">No teachers currently assigned to this grade level.</div>
+                <div id="teachers-checkboxes-container" style="display: flex; flex-direction: column; gap: 8px; max-height: 180px; overflow-y: auto; padding: 6px; border: 1px solid #d1d5db; border-radius: 6px; background: #f9fafb;">
+                    <!-- teacher options rendered dynamically -->
+                </div>
+            </div>
+
+            <button type="submit" id="btn-register" class="btn-primary">
                 Create Account
             </button>
         </form>
@@ -108,6 +121,90 @@
 </div>
 
 <script src="../assets/js/main.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var gradeSelect = document.getElementById('grade_level');
+    var teachersGroup = document.getElementById('teachers-selection-group');
+    var teachersContainer = document.getElementById('teachers-checkboxes-container');
+    var teachersLoading = document.getElementById('teachers-loading');
+    var teachersEmpty = document.getElementById('teachers-empty');
+    var registerForm = document.querySelector('form');
+
+    function escapeHtml(text) {
+        var div = document.createElement('div');
+        div.textContent = text || '';
+        return div.innerHTML;
+    }
+
+    if (gradeSelect) {
+        gradeSelect.addEventListener('change', function () {
+            var selectedGrade = this.value;
+            if (!selectedGrade) {
+                teachersGroup.style.display = 'none';
+                teachersContainer.innerHTML = '';
+                return;
+            }
+
+            teachersGroup.style.display = 'block';
+            teachersLoading.style.display = 'block';
+            teachersEmpty.style.display = 'none';
+            teachersContainer.style.display = 'none';
+            teachersContainer.innerHTML = '';
+
+            fetch('../../backend/auth/get_teachers_by_grade.php?grade_level=' + encodeURIComponent(selectedGrade))
+                .then(function (res) { return res.json(); })
+                .then(function (data) {
+                    teachersLoading.style.display = 'none';
+                    if (data && data.success && data.teachers && data.teachers.length > 0) {
+                        teachersEmpty.style.display = 'none';
+                        teachersContainer.style.display = 'flex';
+                        teachersContainer.innerHTML = '';
+
+                        data.teachers.forEach(function (t, idx) {
+                            var label = document.createElement('label');
+                            label.style.cssText = 'display: flex; align-items: center; gap: 10px; padding: 8px 10px; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; cursor: pointer; transition: background 0.15s; font-size: 13px;';
+                            label.onmouseenter = function() { this.style.background = '#f3f4f6'; };
+                            label.onmouseleave = function() { this.style.background = '#ffffff'; };
+
+                            label.innerHTML =
+                                '<input type="checkbox" name="teacher_ids[]" value="' + t.id + '" checked style="accent-color: #4f46e5; width: 16px; height: 16px; cursor: pointer;">' +
+                                '<div style="line-height: 1.3;">' +
+                                    '<strong style="color: #111827; display: block;">' + escapeHtml(t.name) + '</strong>' +
+                                    '<span style="color: #6b7280; font-size: 12px;">' + escapeHtml(t.email) + '</span>' +
+                                '</div>';
+
+                            teachersContainer.appendChild(label);
+                        });
+                    } else {
+                        teachersEmpty.style.display = 'block';
+                        teachersContainer.style.display = 'none';
+                    }
+                })
+                .catch(function (err) {
+                    teachersLoading.style.display = 'none';
+                    teachersEmpty.textContent = 'Failed to load teachers. Please try again.';
+                    teachersEmpty.style.display = 'block';
+                });
+        });
+    }
+
+    if (registerForm) {
+        registerForm.addEventListener('submit', function (e) {
+            var checkboxes = teachersContainer ? teachersContainer.querySelectorAll('input[name="teacher_ids[]"]') : [];
+            if (checkboxes.length > 0) {
+                var checkedCount = 0;
+                checkboxes.forEach(function (cb) {
+                    if (cb.checked) checkedCount++;
+                });
+                if (checkedCount === 0) {
+                    e.preventDefault();
+                    alert('Please select at least one teacher for your grade level.');
+                }
+            }
+        });
+    }
+});
+</script>
 
 </body>
 </html>

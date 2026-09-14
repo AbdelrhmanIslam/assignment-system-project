@@ -125,7 +125,7 @@ if ($coursesRes) {
     }
 }
 
-// query enrolled students across teacher's courses
+// query enrolled students across teacher's courses and direct student_teachers links
 $studentsSql = "SELECT
     u.id,
     u.name,
@@ -133,11 +133,14 @@ $studentsSql = "SELECT
     u.grade_level,
     GROUP_CONCAT(DISTINCT c.name ORDER BY c.name SEPARATOR ', ') AS enrolled_courses,
     COUNT(DISTINCT s.id) AS submission_count
-FROM course_students cs
-INNER JOIN courses c ON c.id = cs.course_id AND c.teacher_id = $teacherId AND c.is_active = 1
-INNER JOIN users u ON u.id = cs.student_id AND u.role = 'student' AND u.is_active = 1
+FROM users u
+LEFT JOIN student_teachers st ON st.student_id = u.id AND st.teacher_id = $teacherId
+LEFT JOIN course_students cs ON cs.student_id = u.id
+LEFT JOIN courses c ON c.id = cs.course_id AND c.teacher_id = $teacherId AND c.is_active = 1
 LEFT JOIN assignments a ON a.course_id = c.id
 LEFT JOIN submissions s ON s.assignment_id = a.id AND s.student_id = u.id
+WHERE u.role = 'student' AND u.is_active = 1
+  AND (st.id IS NOT NULL OR c.id IS NOT NULL)
 GROUP BY u.id
 ORDER BY u.name ASC";
 
