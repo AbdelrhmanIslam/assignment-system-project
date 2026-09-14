@@ -132,7 +132,7 @@ function loadUsers() {
         }
 
         loadedUsers = data.users || [];
-        renderUsersTable(loadedUsers);
+        renderHierarchicalUsers(loadedUsers);
     })
     .catch(function (error) {
         console.error('Fetch error:', error);
@@ -150,6 +150,20 @@ function setupFilters() {
         });
     });
 
+    var btnExpand = document.getElementById('btn-expand-all');
+    if (btnExpand) {
+        btnExpand.addEventListener('click', function () {
+            expandAllCategories();
+        });
+    }
+
+    var btnCollapse = document.getElementById('btn-collapse-all');
+    if (btnCollapse) {
+        btnCollapse.addEventListener('click', function () {
+            collapseAllCategories();
+        });
+    }
+
     var searchInput = document.getElementById('search-input');
     if (searchInput) {
         var debounceTimer;
@@ -163,6 +177,37 @@ function setupFilters() {
     }
 }
 
+window.toggleCategoryCard = function (headerEl) {
+    var card = headerEl.closest('.user-category-card');
+    if (card) {
+        card.classList.toggle('is-collapsed');
+    }
+};
+
+window.toggleGradeSubcategory = function (headerEl, event) {
+    if (event) {
+        event.stopPropagation();
+    }
+    var block = headerEl.closest('.grade-subcategory-block');
+    if (block) {
+        block.classList.toggle('is-collapsed');
+    }
+};
+
+window.expandAllCategories = function () {
+    var cards = document.querySelectorAll('.user-category-card');
+    cards.forEach(function (c) { c.classList.remove('is-collapsed'); });
+    var subBlocks = document.querySelectorAll('.grade-subcategory-block');
+    subBlocks.forEach(function (b) { b.classList.remove('is-collapsed'); });
+};
+
+window.collapseAllCategories = function () {
+    var cards = document.querySelectorAll('.user-category-card');
+    cards.forEach(function (c) { c.classList.add('is-collapsed'); });
+    var subBlocks = document.querySelectorAll('.grade-subcategory-block');
+    subBlocks.forEach(function (b) { b.classList.add('is-collapsed'); });
+};
+
 function getRoleBadgeClass(role) {
     if (role === 'admin') return 'status-closed';
     if (role === 'teacher') return 'status-review';
@@ -170,189 +215,553 @@ function getRoleBadgeClass(role) {
     return 'status-graded';
 }
 
-function renderUsersTable(users) {
-    var thead = document.getElementById('users-table-head');
-    var tbody = document.getElementById('users-table-body');
+var ORDERED_GRADE_LEVELS = [
+    'First Year of Middle School',
+    'Second Year of Middle School',
+    'Third Year of Middle School',
+    'First Year of High School'
+];
+
+function sortGradeLevels(grades) {
+    return grades.sort(function (a, b) {
+        var idxA = ORDERED_GRADE_LEVELS.indexOf(a);
+        var idxB = ORDERED_GRADE_LEVELS.indexOf(b);
+        if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+        if (idxA !== -1) return -1;
+        if (idxB !== -1) return 1;
+        return a.localeCompare(b);
+    });
+}
+
+function renderStatusBadge(isActive) {
+    return isActive ?
+        '<span class="status-badge status-graded">Active</span>' :
+        '<span class="status-badge status-closed">Inactive</span>';
+}
+
+function renderActionButtons(u) {
+    var toggleBtnLabel = u.is_active ? 'Deactivate' : 'Activate';
+    var toggleBtnClass = u.is_active ? 'background:#ef4444;' : 'background:#10b981;';
+
+    return '<div style="display:inline-flex; gap:6px; align-items:center;">' +
+        '<button onclick="openEditUserModal(' + u.id + ')" class="action-btn action-view" style="font-size:12px; padding:6px 12px; border:none; cursor:pointer;">' +
+            'Edit' +
+        '</button>' +
+        '<button onclick="toggleUserStatus(' + u.id + ', this)" class="view-btn" style="' + toggleBtnClass + ' font-size:12px; padding:6px 12px; border:none; cursor:pointer;">' +
+            toggleBtnLabel +
+        '</button>' +
+    '</div>';
+}
+
+function renderStudentRowHtml(u) {
+    var statusBadge = renderStatusBadge(u.is_active);
+    var actionButtons = renderActionButtons(u);
+
+    var sCoursesHtml = '<span style="font-size:12px; color:#9ca3af;">No assigned courses</span>';
+    if (u.student_courses && u.student_courses.length > 0) {
+        sCoursesHtml = '<div style="display:flex; flex-direction:column; gap:4px;">' +
+            u.student_courses.map(function (c) {
+                return '<span style="font-size:12px; color:#1e293b;">📘 <strong>' + escapeHtml(c.course_name) + '</strong> (<span style="color:#4f46e5; font-weight:500;">👨‍🏫 ' + escapeHtml(c.teacher_name) + '</span>)</span>';
+            }).join('') + '</div>';
+    }
+
+    return '<tr>' +
+        '<td><strong>' + escapeHtml(u.name) + '</strong></td>' +
+        '<td>' + escapeHtml(u.email) + '</td>' +
+        '<td><span class="status-badge status-submitted" style="font-size:11px;">' + escapeHtml(u.grade_level || 'First Year of Middle School') + '</span></td>' +
+        '<td>' + sCoursesHtml + '</td>' +
+        '<td>' + statusBadge + '</td>' +
+        '<td>' + formatDate(u.created_at) + '</td>' +
+        '<td>' + actionButtons + '</td>' +
+    '</tr>';
+}
+
+function renderTeacherRowHtml(u) {
+    var statusBadge = renderStatusBadge(u.is_active);
+    var actionButtons = renderActionButtons(u);
+
+    var tGradesHtml = '—';
+    if (u.teacher_grade_levels && u.teacher_grade_levels.length > 0) {
+        tGradesHtml = '<div style="display:flex; flex-wrap:wrap; gap:3px;">' +
+            u.teacher_grade_levels.map(function (gl) {
+                return '<span class="status-badge status-review" style="font-size:10px;">' + escapeHtml(gl) + '</span>';
+            }).join('') + '</div>';
+    }
+
+    var tCoursesHtml = '<span style="font-size:12px; color:#9ca3af;">0 courses</span>';
+    if (u.teacher_courses && u.teacher_courses.length > 0) {
+        tCoursesHtml = '<div style="display:flex; flex-direction:column; gap:4px;">' +
+            u.teacher_courses.map(function (tc) {
+                return '<span style="font-size:12px; color:#1e293b;">📘 <strong>' + escapeHtml(tc.course_name) + '</strong> (<span style="color:#059669; font-weight:600;">' + tc.student_count + ' students</span>)</span>';
+            }).join('') + '</div>';
+    }
+
+    return '<tr>' +
+        '<td><strong>' + escapeHtml(u.name) + '</strong></td>' +
+        '<td>' + escapeHtml(u.email) + '</td>' +
+        '<td>' + tGradesHtml + '</td>' +
+        '<td><span class="status-badge status-review" style="font-size:11px; font-weight:600;">' + (u.courses_count || 0) + ' Courses</span></td>' +
+        '<td>' + tCoursesHtml + '</td>' +
+        '<td>' + statusBadge + '</td>' +
+        '<td>' + formatDate(u.created_at) + '</td>' +
+        '<td>' + actionButtons + '</td>' +
+    '</tr>';
+}
+
+function renderAssistantRowHtml(u) {
+    var roleBadge = getRoleBadgeClass(u.role);
+    var statusBadge = renderStatusBadge(u.is_active);
+    var actionButtons = renderActionButtons(u);
+
+    var asstForHtml = '<span style="font-size:12px; color:#9ca3af;">Unassigned</span>';
+    if (u.assigned_teachers && u.assigned_teachers.length > 0) {
+        asstForHtml = '<div style="display:flex; flex-wrap:wrap; gap:4px;">' +
+            u.assigned_teachers.map(function (t) {
+                return '<span class="status-badge status-submitted" style="font-size:11px;">🧑‍🏫 ' + escapeHtml(t.name) + '</span>';
+            }).join('') + '</div>';
+    }
+
+    return '<tr>' +
+        '<td><strong>' + escapeHtml(u.name) + '</strong></td>' +
+        '<td>' + escapeHtml(u.email) + '</td>' +
+        '<td><span class="status-badge ' + roleBadge + '">' + u.role.toUpperCase() + '</span></td>' +
+        '<td>' + asstForHtml + '</td>' +
+        '<td>' + statusBadge + '</td>' +
+        '<td>' + formatDate(u.created_at) + '</td>' +
+        '<td>' + actionButtons + '</td>' +
+    '</tr>';
+}
+
+function renderAdminRowHtml(u) {
+    var roleBadge = getRoleBadgeClass(u.role);
+    var statusBadge = renderStatusBadge(u.is_active);
+    var actionButtons = renderActionButtons(u);
+
+    return '<tr>' +
+        '<td><strong>' + escapeHtml(u.name) + '</strong></td>' +
+        '<td>' + escapeHtml(u.email) + '</td>' +
+        '<td><span class="status-badge ' + roleBadge + '">' + u.role.toUpperCase() + '</span></td>' +
+        '<td>' + statusBadge + '</td>' +
+        '<td>' + formatDate(u.created_at) + '</td>' +
+        '<td>' + actionButtons + '</td>' +
+    '</tr>';
+}
+
+function renderStudentsHierarchy(students) {
+    if (!students || students.length === 0) {
+        return '<div style="padding:20px; text-align:center; color:#64748b;">No students found.</div>';
+    }
+
+    // Grouping: Teacher -> Grade Level -> [Students]
+    // A student assigned to multiple teachers appears under each assigned teacher under their Grade Level.
+    // STRICT: Only use backend student_teachers relationships from the database. Do NOT assume or synthesize relationships!
+    var teacherMap = {};
+
+    students.forEach(function (s) {
+        var grade = s.grade_level || 'First Year of Middle School';
+        var teachers = (s.student_teachers && Array.isArray(s.student_teachers)) ? s.student_teachers : [];
+
+        if (teachers.length === 0) {
+            var unKey = '__unassigned__';
+            if (!teacherMap[unKey]) {
+                teacherMap[unKey] = {
+                    id: unKey,
+                    name: 'Unassigned Students (No Teacher Selected)',
+                    email: 'Students not yet assigned to an instructor',
+                    isUnassigned: true,
+                    grades: {}
+                };
+            }
+            if (!teacherMap[unKey].grades[grade]) {
+                teacherMap[unKey].grades[grade] = [];
+            }
+            teacherMap[unKey].grades[grade].push(s);
+        } else {
+            teachers.forEach(function (t) {
+                var tKey = String(t.id);
+                if (!teacherMap[tKey]) {
+                    teacherMap[tKey] = {
+                        id: tKey,
+                        name: t.name,
+                        email: t.email || '',
+                        isUnassigned: false,
+                        grades: {}
+                    };
+                }
+                if (!teacherMap[tKey].grades[grade]) {
+                    teacherMap[tKey].grades[grade] = [];
+                }
+                if (!teacherMap[tKey].grades[grade].some(function (existing) { return existing.id === s.id; })) {
+                    teacherMap[tKey].grades[grade].push(s);
+                }
+            });
+        }
+    });
+
+    var sortedKeys = Object.keys(teacherMap).sort(function (a, b) {
+        if (teacherMap[a].isUnassigned) return 1;
+        if (teacherMap[b].isUnassigned) return -1;
+        return teacherMap[a].name.localeCompare(teacherMap[b].name);
+    });
+
+    var html = '';
+    sortedKeys.forEach(function (tKey) {
+        var tGroup = teacherMap[tKey];
+        var gradesObj = tGroup.grades;
+        var gradeKeys = sortGradeLevels(Object.keys(gradesObj));
+
+        var totalInTeacher = 0;
+        gradeKeys.forEach(function (gk) { totalInTeacher += gradesObj[gk].length; });
+
+        var headerBorderClass = tGroup.isUnassigned ? 'unassigned-cat' : 'teacher-cat';
+        var icon = tGroup.isUnassigned ? '👤' : '👨‍🏫';
+        var subtitle = tGroup.email ? escapeHtml(tGroup.email) : (tGroup.isUnassigned ? 'Students pending teacher assignment' : '');
+
+        html += '<div class="user-category-card">';
+        html += '  <div class="user-category-header ' + headerBorderClass + '" onclick="toggleCategoryCard(this)" title="Click to collapse / expand this teacher category">';
+        html += '    <div style="display:flex; align-items:center; gap:10px;">';
+        html += '      <span style="font-size:22px;">' + icon + '</span>';
+        html += '      <div>';
+        html += '        <h3 class="category-title">' + (tGroup.isUnassigned ? escapeHtml(tGroup.name) : ('Teacher: ' + escapeHtml(tGroup.name))) + '</h3>';
+        if (subtitle) html += '        <span class="category-subtitle">' + subtitle + '</span>';
+        html += '      </div>';
+        html += '    </div>';
+        html += '    <div style="display:flex; align-items:center; gap:10px;">';
+        html += '      <span class="count-badge">👥 ' + totalInTeacher + ' ' + (totalInTeacher === 1 ? 'Student' : 'Students') + '</span>';
+        html += '      <span class="accordion-toggle-icon" title="Toggle Section">▾</span>';
+        html += '    </div>';
+        html += '  </div>';
+
+        html += '  <div class="user-category-body" style="padding-bottom:8px;">';
+
+        gradeKeys.forEach(function (gk) {
+            var sList = gradesObj[gk];
+            html += '    <div class="grade-subcategory-block">';
+            html += '      <div class="grade-subcategory-header" onclick="toggleGradeSubcategory(this, event)" title="Click to collapse / expand this grade level">';
+            html += '        <span style="display:flex; align-items:center; gap:8px;">';
+            html += '          <span>📚</span>';
+            html += '          <span>' + escapeHtml(gk) + '</span>';
+            html += '        </span>';
+            html += '        <div style="display:flex; align-items:center; gap:6px;">';
+            html += '          <span class="sub-count-badge">' + sList.length + ' ' + (sList.length === 1 ? 'Student' : 'Students') + '</span>';
+            html += '          <span class="sub-accordion-toggle-icon">▾</span>';
+            html += '        </div>';
+            html += '      </div>';
+            html += '      <div class="hierarchical-table-wrapper">';
+            html += '        <table class="assignments-table">';
+            html += '          <thead>';
+            html += '            <tr>';
+            html += '              <th>Student Name</th>';
+            html += '              <th>Email</th>';
+            html += '              <th>Grade Level</th>';
+            html += '              <th>Assigned Courses &amp; Own Teacher</th>';
+            html += '              <th>Status</th>';
+            html += '              <th>Joined</th>';
+            html += '              <th>Action</th>';
+            html += '            </tr>';
+            html += '          </thead>';
+            html += '          <tbody>';
+            sList.forEach(function (s) {
+                html += renderStudentRowHtml(s);
+            });
+            html += '          </tbody>';
+            html += '        </table>';
+            html += '      </div>';
+            html += '    </div>';
+        });
+
+        html += '  </div>';
+        html += '</div>';
+    });
+
+    return html;
+}
+
+function renderTeachersHierarchy(teachers) {
+    if (!teachers || teachers.length === 0) {
+        return '<div style="padding:20px; text-align:center; color:#64748b;">No teachers found.</div>';
+    }
+
+    // Grouping: Grade Level -> [Teachers]
+    // STRICT: Only use backend teacher_grade_levels relationships. Do NOT assume relationships!
+    var gradeMap = {};
+    ORDERED_GRADE_LEVELS.forEach(function (g) {
+        gradeMap[g] = [];
+    });
+    var unassignedKey = 'Unassigned Grade Level';
+
+    teachers.forEach(function (t) {
+        var levels = (t.teacher_grade_levels && Array.isArray(t.teacher_grade_levels)) ? t.teacher_grade_levels : [];
+        if (levels.length === 0) {
+            if (!gradeMap[unassignedKey]) gradeMap[unassignedKey] = [];
+            gradeMap[unassignedKey].push(t);
+        } else {
+            levels.forEach(function (lvl) {
+                if (!gradeMap[lvl]) gradeMap[lvl] = [];
+                if (!gradeMap[lvl].some(function (existing) { return existing.id === t.id; })) {
+                    gradeMap[lvl].push(t);
+                }
+            });
+        }
+    });
+
+    var gradeKeys = sortGradeLevels(Object.keys(gradeMap).filter(function (gk) {
+        return gradeMap[gk].length > 0;
+    }));
+
+    if (gradeKeys.length === 0) {
+        return '<div style="padding:20px; text-align:center; color:#64748b;">No teachers found for this criteria.</div>';
+    }
+
+    var html = '';
+    gradeKeys.forEach(function (gk) {
+        var tList = gradeMap[gk];
+        var isUn = (gk === unassignedKey);
+
+        html += '<div class="user-category-card">';
+        html += '  <div class="user-category-header ' + (isUn ? 'unassigned-cat' : 'grade-cat') + '" onclick="toggleCategoryCard(this)" title="Click to collapse / expand this grade level category">';
+        html += '    <div style="display:flex; align-items:center; gap:10px;">';
+        html += '      <span style="font-size:22px;">🎓</span>';
+        html += '      <div>';
+        html += '        <h3 class="category-title">' + escapeHtml(gk) + '</h3>';
+        html += '        <span class="category-subtitle">Teachers instructing courses in ' + escapeHtml(gk) + '</span>';
+        html += '      </div>';
+        html += '    </div>';
+        html += '    <div style="display:flex; align-items:center; gap:10px;">';
+        html += '      <span class="count-badge">👨‍🏫 ' + tList.length + ' ' + (tList.length === 1 ? 'Teacher' : 'Teachers') + '</span>';
+        html += '      <span class="accordion-toggle-icon" title="Toggle Section">▾</span>';
+        html += '    </div>';
+        html += '  </div>';
+
+        html += '  <div class="hierarchical-table-wrapper">';
+        html += '    <table class="assignments-table">';
+        html += '      <thead>';
+        html += '        <tr>';
+        html += '          <th>Teacher Name</th>';
+        html += '          <th>Email</th>';
+        html += '          <th>Grade Level(s)</th>';
+        html += '          <th>Number of Courses</th>';
+        html += '          <th>Courses &amp; Students Assigned</th>';
+        html += '          <th>Status</th>';
+        html += '          <th>Joined</th>';
+        html += '          <th>Action</th>';
+        html += '        </tr>';
+        html += '      </thead>';
+        html += '      <tbody>';
+        tList.forEach(function (t) {
+            html += renderTeacherRowHtml(t);
+        });
+        html += '      </tbody>';
+        html += '    </table>';
+        html += '  </div>';
+        html += '</div>';
+    });
+
+    return html;
+}
+
+function renderAssistantsHierarchy(assistants) {
+    if (!assistants || assistants.length === 0) {
+        return '<div style="padding:20px; text-align:center; color:#64748b;">No assistants found.</div>';
+    }
+
+    // Grouping: Assigned Teacher -> [Assistants]
+    // STRICT: Only use backend assigned_teachers relationships. An assistant assigned to one teacher must NOT appear under another teacher.
+    var teacherMap = {};
+    var unKey = '__unassigned__';
+
+    assistants.forEach(function (a) {
+        var teachers = (a.assigned_teachers && Array.isArray(a.assigned_teachers)) ? a.assigned_teachers : [];
+        if (teachers.length === 0) {
+            if (!teacherMap[unKey]) {
+                teacherMap[unKey] = {
+                    id: unKey,
+                    name: 'Unassigned Teaching Assistants',
+                    isUnassigned: true,
+                    assistants: []
+                };
+            }
+            teacherMap[unKey].assistants.push(a);
+        } else {
+            teachers.forEach(function (t) {
+                var tKey = String(t.id);
+                if (!teacherMap[tKey]) {
+                    teacherMap[tKey] = {
+                        id: tKey,
+                        name: t.name,
+                        email: t.email || '',
+                        isUnassigned: false,
+                        assistants: []
+                    };
+                }
+                if (!teacherMap[tKey].assistants.some(function (existing) { return existing.id === a.id; })) {
+                    teacherMap[tKey].assistants.push(a);
+                }
+            });
+        }
+    });
+
+    var sortedKeys = Object.keys(teacherMap).sort(function (a, b) {
+        if (teacherMap[a].isUnassigned) return 1;
+        if (teacherMap[b].isUnassigned) return -1;
+        return teacherMap[a].name.localeCompare(teacherMap[b].name);
+    });
+
+    var html = '';
+    sortedKeys.forEach(function (tKey) {
+        var tGroup = teacherMap[tKey];
+        var aList = tGroup.assistants;
+
+        var headerTitle = tGroup.isUnassigned ? escapeHtml(tGroup.name) : ('Assistant For: ' + escapeHtml(tGroup.name));
+        var headerSubtitle = tGroup.email ? escapeHtml(tGroup.email) : (tGroup.isUnassigned ? 'Assistants pending teacher assignment' : 'Designated teaching assistant staff');
+
+        html += '<div class="user-category-card">';
+        html += '  <div class="user-category-header ' + (tGroup.isUnassigned ? 'unassigned-cat' : 'assistant-cat') + '" onclick="toggleCategoryCard(this)" title="Click to collapse / expand this assistant category">';
+        html += '    <div style="display:flex; align-items:center; gap:10px;">';
+        html += '      <span style="font-size:22px;">🧑‍🏫</span>';
+        html += '      <div>';
+        html += '        <h3 class="category-title">' + headerTitle + '</h3>';
+        html += '        <span class="category-subtitle">' + headerSubtitle + '</span>';
+        html += '      </div>';
+        html += '    </div>';
+        html += '    <div style="display:flex; align-items:center; gap:10px;">';
+        html += '      <span class="count-badge">🧑‍🏫 ' + aList.length + ' ' + (aList.length === 1 ? 'Assistant' : 'Assistants') + '</span>';
+        html += '      <span class="accordion-toggle-icon" title="Toggle Section">▾</span>';
+        html += '    </div>';
+        html += '  </div>';
+
+        html += '  <div class="hierarchical-table-wrapper">';
+        html += '    <table class="assignments-table">';
+        html += '      <thead>';
+        html += '        <tr>';
+        html += '          <th>Assistant Name</th>';
+        html += '          <th>Email</th>';
+        html += '          <th>Role</th>';
+        html += '          <th>Assistant For</th>';
+        html += '          <th>Status</th>';
+        html += '          <th>Joined</th>';
+        html += '          <th>Action</th>';
+        html += '        </tr>';
+        html += '      </thead>';
+        html += '      <tbody>';
+        aList.forEach(function (a) {
+            html += renderAssistantRowHtml(a);
+        });
+        html += '      </tbody>';
+        html += '    </table>';
+        html += '  </div>';
+        html += '</div>';
+    });
+
+    return html;
+}
+
+function renderAdminsHierarchy(admins) {
+    if (!admins || admins.length === 0) {
+        return '<div style="padding:20px; text-align:center; color:#64748b;">No administrators found.</div>';
+    }
+
+    var html = '';
+    html += '<div class="user-category-card">';
+    html += '  <div class="user-category-header admin-cat" onclick="toggleCategoryCard(this)" title="Click to collapse / expand administrators">';
+    html += '    <div style="display:flex; align-items:center; gap:10px;">';
+    html += '      <span style="font-size:22px;">🛡️</span>';
+    html += '      <div>';
+    html += '        <h3 class="category-title">System Administrators</h3>';
+    html += '        <span class="category-subtitle">Users with full administrative access and system privileges</span>';
+    html += '      </div>';
+    html += '    </div>';
+    html += '    <div style="display:flex; align-items:center; gap:10px;">';
+    html += '      <span class="count-badge">🛡️ ' + admins.length + ' ' + (admins.length === 1 ? 'Admin' : 'Admins') + '</span>';
+    html += '      <span class="accordion-toggle-icon" title="Toggle Section">▾</span>';
+    html += '    </div>';
+    html += '  </div>';
+
+    html += '  <div class="hierarchical-table-wrapper">';
+    html += '    <table class="assignments-table">';
+    html += '      <thead>';
+    html += '        <tr>';
+    html += '          <th>Administrator Name</th>';
+    html += '          <th>Email</th>';
+    html += '          <th>Role</th>';
+    html += '          <th>Status</th>';
+    html += '          <th>Joined</th>';
+    html += '          <th>Action</th>';
+    html += '        </tr>';
+    html += '      </thead>';
+    html += '      <tbody>';
+    admins.forEach(function (ad) {
+        html += renderAdminRowHtml(ad);
+    });
+    html += '      </tbody>';
+    html += '    </table>';
+    html += '  </div>';
+    html += '</div>';
+
+    return html;
+}
+
+function renderHierarchicalUsers(users) {
+    var container = document.getElementById('users-hierarchical-container');
     var emptyState = document.getElementById('empty-state');
-    var tableContainer = document.getElementById('table-container');
+    if (!container) return;
 
     if (!users || users.length === 0) {
+        container.innerHTML = '';
         if (emptyState) emptyState.style.display = 'block';
-        if (tableContainer) tableContainer.style.display = 'none';
         return;
     }
 
     if (emptyState) emptyState.style.display = 'none';
-    if (tableContainer) tableContainer.style.display = 'block';
 
-    if (thead) {
-        if (currentRoleFilter === 'student') {
-            thead.innerHTML = '<tr><th>Name</th><th>Email</th><th>Grade Level</th><th>Assigned Courses &amp; Own Teacher</th><th>Status</th><th>Joined</th><th>Action</th></tr>';
-        } else if (currentRoleFilter === 'teacher') {
-            thead.innerHTML = '<tr><th>Name</th><th>Email</th><th>Grade Level</th><th>Number of Courses</th><th>Courses &amp; Students Assigned</th><th>Status</th><th>Joined</th><th>Action</th></tr>';
-        } else if (currentRoleFilter === 'assistant') {
-            thead.innerHTML = '<tr><th>Name</th><th>Email</th><th>Role</th><th>Assistant For</th><th>Status</th><th>Joined</th><th>Action</th></tr>';
-        } else if (currentRoleFilter === 'admin') {
-            thead.innerHTML = '<tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Joined</th><th>Action</th></tr>';
+    if (currentRoleFilter === 'student') {
+        container.innerHTML = renderStudentsHierarchy(users);
+    } else if (currentRoleFilter === 'teacher') {
+        container.innerHTML = renderTeachersHierarchy(users);
+    } else if (currentRoleFilter === 'assistant') {
+        container.innerHTML = renderAssistantsHierarchy(users);
+    } else if (currentRoleFilter === 'admin') {
+        container.innerHTML = renderAdminsHierarchy(users);
+    } else {
+        // 'all' filter: render all 4 sections in order with role headers
+        var students = users.filter(function (u) { return u.role === 'student'; });
+        var teachers = users.filter(function (u) { return u.role === 'teacher'; });
+        var assistants = users.filter(function (u) { return u.role === 'assistant'; });
+        var admins = users.filter(function (u) { return u.role === 'admin'; });
+
+        var combinedHtml = '';
+
+        if (students.length > 0) {
+            combinedHtml += '<div class="role-section-divider"><h2><span>👨‍🎓</span> Students (' + students.length + ')</h2><span style="font-size:12px; color:#6b7280;">Grouped by Teacher &amp; Academic Grade Level</span></div>';
+            combinedHtml += renderStudentsHierarchy(students);
+        }
+
+        if (teachers.length > 0) {
+            combinedHtml += '<div class="role-section-divider"><h2><span>👨‍🏫</span> Teachers (' + teachers.length + ')</h2><span style="font-size:12px; color:#6b7280;">Grouped by Instructing Grade Level</span></div>';
+            combinedHtml += renderTeachersHierarchy(teachers);
+        }
+
+        if (assistants.length > 0) {
+            combinedHtml += '<div class="role-section-divider"><h2><span>🧑‍🏫</span> Teaching Assistants (' + assistants.length + ')</h2><span style="font-size:12px; color:#6b7280;">Grouped by Assigned Teacher</span></div>';
+            combinedHtml += renderAssistantsHierarchy(assistants);
+        }
+
+        if (admins.length > 0) {
+            combinedHtml += '<div class="role-section-divider"><h2><span>🛡️</span> Administrators (' + admins.length + ')</h2><span style="font-size:12px; color:#6b7280;">System Administrative Accounts</span></div>';
+            combinedHtml += renderAdminsHierarchy(admins);
+        }
+
+        if (combinedHtml === '') {
+            container.innerHTML = '';
+            if (emptyState) emptyState.style.display = 'block';
         } else {
-            thead.innerHTML = '<tr><th>Name</th><th>Email</th><th>Role</th><th>Academic Info / Assistant For</th><th>Assigned Courses / Teaching Details</th><th>Status</th><th>Joined</th><th>Action</th></tr>';
+            container.innerHTML = combinedHtml;
         }
     }
 
-    if (!tbody) return;
-    tbody.innerHTML = '';
-
-    users.forEach(function (u) {
-        var row = document.createElement('tr');
-        var roleBadge = getRoleBadgeClass(u.role);
-
-        var statusBadge = u.is_active ?
-            '<span class="status-badge status-graded">Active</span>' :
-            '<span class="status-badge status-closed">Inactive</span>';
-
-        var toggleBtnLabel = u.is_active ? 'Deactivate' : 'Activate';
-        var toggleBtnClass = u.is_active ? 'background:#ef4444;' : 'background:#10b981;';
-
-        var actionButtons =
-            '<div style="display:inline-flex; gap:6px; align-items:center;">' +
-                '<button onclick="openEditUserModal(' + u.id + ')" class="action-btn action-view" style="font-size:12px; padding:6px 12px; border:none; cursor:pointer;">' +
-                    'Edit' +
-                '</button>' +
-                '<button onclick="toggleUserStatus(' + u.id + ', this)" class="view-btn" style="' + toggleBtnClass + ' font-size:12px; padding:6px 12px; border:none; cursor:pointer;">' +
-                    toggleBtnLabel +
-                '</button>' +
-            '</div>';
-
-        if (currentRoleFilter === 'student') {
-            var sCoursesHtml = '<span style="font-size:12px; color:#9ca3af;">No assigned courses</span>';
-            if (u.student_courses && u.student_courses.length > 0) {
-                sCoursesHtml = '<div style="display:flex; flex-direction:column; gap:4px;">' +
-                    u.student_courses.map(function (c) {
-                        return '<span style="font-size:12px; color:#1e293b;">📘 <strong>' + escapeHtml(c.course_name) + '</strong> (<span style="color:#4f46e5; font-weight:500;">👨‍🏫 ' + escapeHtml(c.teacher_name) + '</span>)</span>';
-                    }).join('') + '</div>';
-            }
-
-            row.innerHTML =
-                '<td><strong>' + escapeHtml(u.name) + '</strong></td>' +
-                '<td>' + escapeHtml(u.email) + '</td>' +
-                '<td><span class="status-badge status-submitted" style="font-size:11px;">' + escapeHtml(u.grade_level || 'First Year of Middle School') + '</span></td>' +
-                '<td>' + sCoursesHtml + '</td>' +
-                '<td>' + statusBadge + '</td>' +
-                '<td>' + formatDate(u.created_at) + '</td>' +
-                '<td>' + actionButtons + '</td>';
-
-        } else if (currentRoleFilter === 'teacher') {
-            var tGradesHtml = '—';
-            if (u.teacher_grade_levels && u.teacher_grade_levels.length > 0) {
-                tGradesHtml = '<div style="display:flex; flex-wrap:wrap; gap:3px;">' +
-                    u.teacher_grade_levels.map(function (gl) {
-                        return '<span class="status-badge status-review" style="font-size:10px;">' + escapeHtml(gl) + '</span>';
-                    }).join('') + '</div>';
-            }
-
-            var tCoursesHtml = '<span style="font-size:12px; color:#9ca3af;">0 courses</span>';
-            if (u.teacher_courses && u.teacher_courses.length > 0) {
-                tCoursesHtml = '<div style="display:flex; flex-direction:column; gap:4px;">' +
-                    u.teacher_courses.map(function (tc) {
-                        return '<span style="font-size:12px; color:#1e293b;">📘 <strong>' + escapeHtml(tc.course_name) + '</strong> (<span style="color:#059669; font-weight:600;">' + tc.student_count + ' students</span>)</span>';
-                    }).join('') + '</div>';
-            }
-
-            row.innerHTML =
-                '<td><strong>' + escapeHtml(u.name) + '</strong></td>' +
-                '<td>' + escapeHtml(u.email) + '</td>' +
-                '<td>' + tGradesHtml + '</td>' +
-                '<td><span class="status-badge status-review" style="font-size:11px; font-weight:600;">' + (u.courses_count || 0) + ' Courses</span></td>' +
-                '<td>' + tCoursesHtml + '</td>' +
-                '<td>' + statusBadge + '</td>' +
-                '<td>' + formatDate(u.created_at) + '</td>' +
-                '<td>' + actionButtons + '</td>';
-
-        } else if (currentRoleFilter === 'assistant') {
-            var asstForHtml = '<span style="font-size:12px; color:#9ca3af;">Unassigned</span>';
-            if (u.assigned_teachers && u.assigned_teachers.length > 0) {
-                asstForHtml = '<div style="display:flex; flex-wrap:wrap; gap:4px;">' +
-                    u.assigned_teachers.map(function (t) {
-                        return '<span class="status-badge status-submitted" style="font-size:11px;">🧑‍🏫 ' + escapeHtml(t.name) + '</span>';
-                    }).join('') + '</div>';
-            }
-
-            row.innerHTML =
-                '<td><strong>' + escapeHtml(u.name) + '</strong></td>' +
-                '<td>' + escapeHtml(u.email) + '</td>' +
-                '<td><span class="status-badge ' + roleBadge + '">' + u.role.toUpperCase() + '</span></td>' +
-                '<td>' + asstForHtml + '</td>' +
-                '<td>' + statusBadge + '</td>' +
-                '<td>' + formatDate(u.created_at) + '</td>' +
-                '<td>' + actionButtons + '</td>';
-
-        } else if (currentRoleFilter === 'admin') {
-            // In Admins delete Grade Level from his table
-            row.innerHTML =
-                '<td><strong>' + escapeHtml(u.name) + '</strong></td>' +
-                '<td>' + escapeHtml(u.email) + '</td>' +
-                '<td><span class="status-badge ' + roleBadge + '">' + u.role.toUpperCase() + '</span></td>' +
-                '<td>' + statusBadge + '</td>' +
-                '<td>' + formatDate(u.created_at) + '</td>' +
-                '<td>' + actionButtons + '</td>';
-
-        } else {
-            // All role tab
-            var academicInfo = '—';
-            var detailInfo = '—';
-
-            if (u.role === 'student') {
-                academicInfo = '<span class="status-badge status-submitted" style="font-size:11px;">' + escapeHtml(u.grade_level || 'First Year of Middle School') + '</span>';
-                if (u.student_courses && u.student_courses.length > 0) {
-                    detailInfo = '<div style="display:flex; flex-direction:column; gap:3px;">' +
-                        u.student_courses.map(function (c) {
-                            return '<span style="font-size:11px; color:#1e293b;">📘 ' + escapeHtml(c.course_name) + ' (<span style="color:#4f46e5;">' + escapeHtml(c.teacher_name) + '</span>)</span>';
-                        }).join('') + '</div>';
-                } else {
-                    detailInfo = '<span style="font-size:11px; color:#9ca3af;">No assigned courses</span>';
-                }
-            } else if (u.role === 'teacher') {
-                if (u.teacher_grade_levels && u.teacher_grade_levels.length > 0) {
-                    academicInfo = '<div style="display:flex; flex-wrap:wrap; gap:2px;">' +
-                        u.teacher_grade_levels.map(function (gl) {
-                            return '<span class="status-badge status-review" style="font-size:10px;">' + escapeHtml(gl) + '</span>';
-                        }).join('') + '</div>';
-                }
-                detailInfo = '<span class="status-badge status-review" style="font-size:10px; margin-bottom:4px; display:inline-block;">' + (u.courses_count || 0) + ' Courses</span>';
-                if (u.teacher_courses && u.teacher_courses.length > 0) {
-                    detailInfo += '<div style="display:flex; flex-direction:column; gap:2px; margin-top:2px;">' +
-                        u.teacher_courses.map(function (tc) {
-                            return '<span style="font-size:11px; color:#1e293b;">📘 ' + escapeHtml(tc.course_name) + ' (' + tc.student_count + ' st.)</span>';
-                        }).join('') + '</div>';
-                }
-            } else if (u.role === 'assistant') {
-                if (u.assigned_teachers && u.assigned_teachers.length > 0) {
-                    academicInfo = '<div style="font-size:11px; color:#6b7280;">Assistant for:<br>' +
-                        u.assigned_teachers.map(function (t) {
-                            return '<span class="status-badge status-submitted" style="font-size:10px; margin-top:2px; display:inline-block;">🧑‍🏫 ' + escapeHtml(t.name) + '</span>';
-                        }).join(' ') + '</div>';
-                } else {
-                    academicInfo = '<span style="font-size:11px; color:#9ca3af;">Assistant (Unassigned)</span>';
-                }
-                detailInfo = '—';
-            } else if (u.role === 'admin') {
-                academicInfo = '—';
-                detailInfo = '<span style="font-size:11px; color:#6b7280;">System Administrator</span>';
-            }
-
-            row.innerHTML =
-                '<td><strong>' + escapeHtml(u.name) + '</strong></td>' +
-                '<td>' + escapeHtml(u.email) + '</td>' +
-                '<td><span class="status-badge ' + roleBadge + '">' + u.role.toUpperCase() + '</span></td>' +
-                '<td>' + academicInfo + '</td>' +
-                '<td>' + detailInfo + '</td>' +
-                '<td>' + statusBadge + '</td>' +
-                '<td>' + formatDate(u.created_at) + '</td>' +
-                '<td>' + actionButtons + '</td>';
-        }
-
-        tbody.appendChild(row);
-    });
+    if (searchQuery !== '') {
+        setTimeout(expandAllCategories, 50);
+    }
 }
 
 function toggleUserStatus(userId, btn) {

@@ -313,9 +313,6 @@ if ($result) {
             if ($tcRes) {
                 while ($tcRow = mysqli_fetch_assoc($tcRes)) {
                     $tcGrade = $tcRow['grade_level'];
-                    if (!empty($tcGrade) && !in_array($tcGrade, $teacherLevels)) {
-                        $teacherLevels[] = $tcGrade;
-                    }
                     $teacherCourses[] = [
                         'course_id' => (int) $tcRow['id'],
                         'course_name' => $tcRow['course_name'],
