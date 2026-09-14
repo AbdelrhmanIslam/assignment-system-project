@@ -116,7 +116,11 @@ if (isPost()) {
         $notifTitle = mysqli_real_escape_string($conn, 'New Assignment Posted');
         $notifMsg = mysqli_real_escape_string($conn, "A new assignment '{$title}' was posted in {$courseName}. Deadline: {$formattedDeadline}.");
 
-        $stRes = mysqli_query($conn, "SELECT cs.student_id FROM course_students cs INNER JOIN users u ON u.id = cs.student_id WHERE cs.course_id = $courseId AND u.grade_level = '$gradeLevel' AND u.is_active = 1");
+        $stRes = mysqli_query($conn, "SELECT cs.student_id 
+                                       FROM course_students cs 
+                                       INNER JOIN users u ON u.id = cs.student_id 
+                                       INNER JOIN student_teachers st ON st.student_id = u.id AND st.teacher_id = $teacherId
+                                       WHERE cs.course_id = $courseId AND u.grade_level = '$gradeLevel' AND u.is_active = 1");
         if ($stRes) {
             while ($stRow = mysqli_fetch_assoc($stRes)) {
                 $stId = (int) $stRow['student_id'];

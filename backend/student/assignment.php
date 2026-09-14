@@ -25,7 +25,7 @@ if ($assignmentId <= 0) {
 
 $studentId = (int) currentUserId();
 
-// fetch assignment info and verify student enrollment in course
+// fetch assignment info and verify student enrollment in course and teacher selection
 $assignmentSql = "SELECT
     a.id,
     a.course_id,
@@ -38,10 +38,12 @@ $assignmentSql = "SELECT
     a.allowed_extensions,
     a.max_file_size_mb,
     c.name AS course_name,
-    u.name AS teacher_name
+    COALESCE(ut.name, u.name) AS teacher_name
 FROM assignments a
 INNER JOIN courses c ON c.id = a.course_id
+INNER JOIN student_teachers st ON st.student_id = $studentId AND st.teacher_id = c.teacher_id
 INNER JOIN course_students cs ON cs.course_id = a.course_id AND cs.student_id = $studentId
+LEFT JOIN users ut ON ut.id = c.teacher_id
 LEFT JOIN users u ON u.id = a.created_by
 WHERE a.id = $assignmentId AND a.is_active = 1
 LIMIT 1";
@@ -52,7 +54,7 @@ $assignment = mysqli_fetch_assoc($assignmentResult);
 // return 404 if assignment not found or student not enrolled
 if (!$assignment) {
     http_response_code(404);
-    echo json_encode(['success' => false, 'message' => 'Assignment not found or you are not enrolled in this course.']);
+    echo json_encode(['success' => false, 'message' => 'Assignment not found or you have not selected the teacher for this assignment.']);
     exit;
 }
 

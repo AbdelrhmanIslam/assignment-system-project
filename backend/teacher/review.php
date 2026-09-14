@@ -50,7 +50,8 @@ $sql = "SELECT
     g.correction_file_name,
     g.correction_stored_name,
     g.graded_at,
-    ast.name AS assistant_name
+    ast.name AS assistant_name,
+    ast.email AS assistant_email
 FROM submissions s
 INNER JOIN users u ON u.id = s.student_id
 INNER JOIN assignments a ON a.id = s.assignment_id

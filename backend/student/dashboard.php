@@ -70,7 +70,27 @@ if (!$student) {
 $studentGrade = isset($student['grade_level']) ? $student['grade_level'] : '';
 $escapedStudentGrade = mysqli_real_escape_string($conn, $studentGrade);
 
-// get assignment statistics filtered by student grade level
+// get student's selected teachers
+$teachersQuery = "SELECT u.id, u.name, u.email
+                  FROM users u
+                  INNER JOIN student_teachers st ON st.teacher_id = u.id
+                  WHERE st.student_id = $studentId
+                    AND u.role = 'teacher'
+                    AND u.is_active = 1
+                  ORDER BY u.name ASC";
+$teachersResult = mysqli_query($conn, $teachersQuery);
+$myTeachers = [];
+if ($teachersResult) {
+    while ($t = mysqli_fetch_assoc($teachersResult)) {
+        $myTeachers[] = [
+            'id' => (int) $t['id'],
+            'name' => $t['name'],
+            'email' => $t['email']
+        ];
+    }
+}
+
+// get assignment statistics filtered by student grade level and selected teachers
 $statsQuery = "SELECT
                 COUNT(DISTINCT a.id) AS total_assignments,
 
@@ -100,6 +120,13 @@ $statsQuery = "SELECT
                 ) AS graded
 
                FROM assignments a
+
+               INNER JOIN courses c
+                   ON c.id = a.course_id
+
+               INNER JOIN student_teachers st
+                   ON st.student_id = $studentId
+                  AND st.teacher_id = c.teacher_id
 
                INNER JOIN course_students cs
                    ON cs.course_id = a.course_id
@@ -133,7 +160,7 @@ if (!$statsResult) {
 
 $stats = mysqli_fetch_assoc($statsResult);
 
-// get student's assignments filtered by grade level
+// get student's assignments filtered by grade level and selected teachers
 $assignmentsQuery = "SELECT
                         a.id,
                         a.title,
@@ -147,6 +174,7 @@ $assignmentsQuery = "SELECT
 
                         c.id AS course_id,
                         c.name AS course_name,
+                        ut.name AS teacher_name,
 
                         s.id AS submission_id,
                         s.version AS submission_version,
@@ -160,6 +188,13 @@ $assignmentsQuery = "SELECT
 
                      INNER JOIN courses c
                          ON c.id = a.course_id
+
+                     INNER JOIN users ut
+                         ON ut.id = c.teacher_id
+
+                     INNER JOIN student_teachers st
+                         ON st.student_id = $studentId
+                        AND st.teacher_id = c.teacher_id
 
                      INNER JOIN course_students cs
                          ON cs.course_id = a.course_id
@@ -236,8 +271,10 @@ echo json_encode([
     'student' => [
         'id' => (int) $student['id'],
         'name' => $student['name'],
-        'email' => $student['email']
+        'email' => $student['email'],
+        'grade_level' => $student['grade_level']
     ],
+    'teachers' => $myTeachers,
     'stats' => [
         'total' => (int) ($stats['total_assignments'] ?? 0),
         'not_submitted' => (int) ($stats['not_submitted'] ?? 0),
@@ -246,3 +283,4 @@ echo json_encode([
     ],
     'assignments' => $assignments
 ]);
+

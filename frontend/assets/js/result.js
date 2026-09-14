@@ -47,6 +47,10 @@ function renderResult(data) {
 
     document.getElementById('assignmentTitle').textContent = assign.title;
     document.getElementById('courseName').textContent = assign.course_name;
+    var teacherEl = document.getElementById('teacherName');
+    if (teacherEl) {
+        teacherEl.textContent = '👨‍🏫 Teacher: ' + (assign.teacher_name || 'Lead Teacher');
+    }
     document.getElementById('maxGrade').textContent = assign.max_grade;
 
     document.getElementById('subFileName').textContent = sub.file_name;
@@ -72,6 +76,19 @@ function renderResult(data) {
         document.getElementById('gradeFeedback').textContent = grade.feedback || 'No written feedback provided.';
         document.getElementById('gradedBy').textContent = grade.graded_by;
         document.getElementById('gradedAt').textContent = formatDate(grade.graded_at);
+
+        // assistant signature box
+        var assistantBox = document.getElementById('assistantSignatureBox');
+        if (assistantBox) {
+            if (grade.assistant_signature) {
+                assistantBox.style.display = 'block';
+                document.getElementById('assistantSignName').textContent = grade.assistant_signature.name;
+                document.getElementById('assistantSignEmail').textContent = grade.assistant_signature.email || 'teaching assistant';
+                document.getElementById('assistantSignDate').textContent = formatDate(grade.assistant_signature.signed_at);
+            } else {
+                assistantBox.style.display = 'none';
+            }
+        }
 
         // correction file section
         var correctionBox = document.getElementById('correctionBox');

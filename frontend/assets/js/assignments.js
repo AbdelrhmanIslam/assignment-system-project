@@ -65,7 +65,8 @@ document.addEventListener('DOMContentLoaded', function () {
             if (searchQuery !== '') {
                 var title = item.title ? item.title.toLowerCase() : '';
                 var course = item.course_name ? item.course_name.toLowerCase() : '';
-                matchesSearch = (title.indexOf(searchQuery) !== -1 || course.indexOf(searchQuery) !== -1);
+                var teacher = item.teacher_name ? item.teacher_name.toLowerCase() : '';
+                matchesSearch = (title.indexOf(searchQuery) !== -1 || course.indexOf(searchQuery) !== -1 || teacher.indexOf(searchQuery) !== -1);
             }
 
             return matchesFilter && matchesSearch;
@@ -96,6 +97,14 @@ document.addEventListener('DOMContentLoaded', function () {
             var tdCourse = document.createElement('td');
             tdCourse.textContent = item.course_name;
             tr.appendChild(tdCourse);
+
+            // teacher cell
+            var tdTeacher = document.createElement('td');
+            var teacherSpan = document.createElement('span');
+            teacherSpan.style.cssText = 'font-weight: 600; color: #4338ca; display: inline-flex; align-items: center; gap: 4px;';
+            teacherSpan.textContent = '👨‍🏫 ' + (item.teacher_name || 'Instructor');
+            tdTeacher.appendChild(teacherSpan);
+            tr.appendChild(tdTeacher);
 
             // target grade level cell
             var tdGradeLevel = document.createElement('td');

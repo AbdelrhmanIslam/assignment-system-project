@@ -127,6 +127,20 @@
 
             </section>
 
+            <!-- My Selected Teachers Section -->
+            <section class="teachers-section" style="margin-bottom: 2rem;">
+                <div class="section-header" style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h2>My Selected Teachers</h2>
+                        <p>Teachers you are registered with for your grade level</p>
+                    </div>
+                </div>
+
+                <div id="teachers-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; margin-top: 1rem;">
+                    <!-- Rendered dynamically by dashboard.js -->
+                </div>
+            </section>
+
             <section class="assignments-section">
 
                 <div class="section-header" style="display: flex; justify-content: space-between; align-items: center;">
@@ -167,7 +181,7 @@
                     </h3>
 
                     <p>
-                        There are currently no assignments available.
+                        There are currently no assignments available from your selected teachers.
                     </p>
 
                 </div>
@@ -190,6 +204,10 @@
 
                                 <th>
                                     Course
+                                </th>
+
+                                <th>
+                                    Teacher
                                 </th>
 
                                 <th>
@@ -226,7 +244,7 @@
     </div>
 
     <script src="../assets/js/main.js"></script>
-    <script src="../assets/js/dashboard.js"></script>
+    <script src="../assets/js/dashboard.js?v=3"></script>
 
 </body>
 

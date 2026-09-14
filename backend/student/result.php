@@ -22,18 +22,20 @@ if ($assignmentId <= 0) {
     exit;
 }
 
-// fetch assignment and course details
-$assignSql = "SELECT a.id, a.title, a.description, a.max_grade, a.deadline, c.name AS course_name
+// fetch assignment and course details with teacher name and student isolation check
+$assignSql = "SELECT a.id, a.title, a.description, a.max_grade, a.deadline, c.name AS course_name, ut.name AS teacher_name
               FROM assignments a
               INNER JOIN courses c ON c.id = a.course_id
+              INNER JOIN student_teachers st ON st.student_id = $studentId AND st.teacher_id = c.teacher_id
               INNER JOIN course_students cs ON cs.course_id = a.course_id AND cs.student_id = $studentId
+              LEFT JOIN users ut ON ut.id = c.teacher_id
               WHERE a.id = $assignmentId AND a.is_active = 1
               LIMIT 1";
 $assignResult = mysqli_query($conn, $assignSql);
 $assignment = mysqli_fetch_assoc($assignResult);
 
 if (!$assignment) {
-    echo json_encode(['success' => false, 'message' => 'Assignment not found or you are not enrolled.']);
+    echo json_encode(['success' => false, 'message' => 'Assignment not found or you are not enrolled with this teacher.']);
     exit;
 }
 
@@ -53,8 +55,9 @@ if (!$submission) {
 
 $submissionId = (int) $submission['id'];
 
-// fetch grade and feedback
-$gradeSql = "SELECT g.id, g.grade, g.feedback, g.correction_file_name, g.graded_at, u.name AS graded_by
+// fetch grade, feedback, and assistant signature
+$gradeSql = "SELECT g.id, g.grade, g.feedback, g.correction_file_name, g.graded_at,
+                    u.id AS assistant_id, u.name AS assistant_name, u.email AS assistant_email
              FROM grades g
              LEFT JOIN users u ON u.id = g.assistant_id
              WHERE g.submission_id = $submissionId
@@ -96,6 +99,7 @@ echo json_encode([
         'title' => $assignment['title'],
         'description' => $assignment['description'],
         'course_name' => $assignment['course_name'],
+        'teacher_name' => $assignment['teacher_name'] ? $assignment['teacher_name'] : 'Lead Teacher',
         'max_grade' => (float) $assignment['max_grade'],
         'deadline' => $assignment['deadline']
     ],
@@ -111,11 +115,18 @@ echo json_encode([
     'grade' => $grade ? [
         'grade' => (float) $grade['grade'],
         'feedback' => $grade['feedback'],
-        'graded_by' => $grade['graded_by'] ? $grade['graded_by'] : 'Instructor',
+        'graded_by' => !empty($grade['assistant_name']) ? $grade['assistant_name'] : 'Instructor',
         'graded_at' => $grade['graded_at'],
         'has_correction_file' => !empty($grade['correction_file_name']),
         'correction_file_name' => $grade['correction_file_name'],
         'percentage' => $scorePercent,
-        'badge' => $letterBadge
+        'badge' => $letterBadge,
+        'assistant_signature' => !empty($grade['assistant_name']) ? [
+            'id' => (int) $grade['assistant_id'],
+            'name' => $grade['assistant_name'],
+            'email' => $grade['assistant_email'],
+            'title' => 'Teaching Assistant',
+            'signed_at' => $grade['graded_at']
+        ] : null
     ] : null
 ]);

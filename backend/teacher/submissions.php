@@ -21,6 +21,7 @@ $teacherId = (int) currentUserId();
 $filterCourseId = isset($_GET['course_id']) ? (int) $_GET['course_id'] : 0;
 $filterAssignmentId = isset($_GET['assignment_id']) ? (int) $_GET['assignment_id'] : 0;
 $filterStudentId = isset($_GET['student_id']) ? (int) $_GET['student_id'] : 0;
+$filterAssistantId = isset($_GET['assistant_id']) ? (int) $_GET['assistant_id'] : 0;
 $filterStatus = isset($_GET['status']) ? trim($_GET['status']) : '';
 
 // build dynamic where clause
@@ -36,6 +37,10 @@ if ($filterAssignmentId > 0) {
 
 if ($filterStudentId > 0) {
     $whereClause .= " AND s.student_id = $filterStudentId";
+}
+
+if ($filterAssistantId > 0) {
+    $whereClause .= " AND g.assistant_id = $filterAssistantId";
 }
 
 if ($filterStatus !== '' && $filterStatus !== 'all') {
@@ -69,7 +74,9 @@ $sql = "SELECT
     g.grade,
     g.feedback,
     g.assistant_id,
-    ast.name AS assistant_name
+    g.graded_at,
+    ast.name AS assistant_name,
+    ast.email AS assistant_email
 FROM submissions s
 INNER JOIN users u ON u.id = s.student_id
 INNER JOIN assignments a ON a.id = s.assignment_id
@@ -77,7 +84,7 @@ INNER JOIN courses c ON c.id = a.course_id
 LEFT JOIN grades g ON g.submission_id = s.id
 LEFT JOIN users ast ON ast.id = g.assistant_id
 $whereClause
-ORDER BY s.submitted_at DESC";
+ORDER BY COALESCE(g.graded_at, s.submitted_at) DESC";
 
 $result = mysqli_query($conn, $sql);
 $submissions = [];

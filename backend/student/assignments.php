@@ -23,7 +23,7 @@ $uRow = mysqli_fetch_assoc($uQuery);
 $studentGrade = isset($uRow['grade_level']) ? $uRow['grade_level'] : '';
 $escapedGrade = mysqli_real_escape_string($conn, $studentGrade);
 
-// query all active assignments matching student grade level
+// query all active assignments matching student grade level and selected teachers
 $sql = "SELECT
     a.id,
     a.title,
@@ -33,12 +33,15 @@ $sql = "SELECT
     a.max_grade,
     a.allow_resubmission,
     c.name AS course_name,
+    ut.name AS teacher_name,
     s.id AS submission_id,
     s.status AS submission_status,
     s.submitted_at,
     g.grade
 FROM assignments a
 INNER JOIN courses c ON c.id = a.course_id
+INNER JOIN users ut ON ut.id = c.teacher_id
+INNER JOIN student_teachers st ON st.student_id = $studentId AND st.teacher_id = c.teacher_id
 INNER JOIN course_students cs ON cs.course_id = a.course_id AND cs.student_id = $studentId
 LEFT JOIN submissions s ON s.id = (
     SELECT s2.id

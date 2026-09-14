@@ -125,6 +125,32 @@ if ($coursesRes) {
     }
 }
 
+// query teaching assistants assigned to this teacher
+$assistantsSql = "SELECT u.id, u.name, u.email,
+                         COUNT(DISTINCT CASE WHEN c.teacher_id = $teacherId THEN g.id END) AS graded_count
+                  FROM users u
+                  INNER JOIN teacher_assistants ta ON ta.assistant_id = u.id
+                  LEFT JOIN grades g ON g.assistant_id = u.id
+                  LEFT JOIN submissions s ON s.id = g.submission_id
+                  LEFT JOIN assignments a ON a.id = s.assignment_id
+                  LEFT JOIN courses c ON c.id = a.course_id AND c.teacher_id = $teacherId
+                  WHERE ta.teacher_id = $teacherId AND u.role = 'assistant' AND u.is_active = 1
+                  GROUP BY u.id
+                  ORDER BY u.name ASC";
+$assistantsRes = mysqli_query($conn, $assistantsSql);
+$assistants = [];
+if ($assistantsRes) {
+    while ($ast = mysqli_fetch_assoc($assistantsRes)) {
+        $assistants[] = [
+            'id' => (int) $ast['id'],
+            'name' => $ast['name'],
+            'email' => $ast['email'],
+            'graded_count' => (int) $ast['graded_count']
+        ];
+    }
+}
+$stats['assistants'] = count($assistants);
+
 // query enrolled students across teacher's courses and direct student_teachers links
 $studentsSql = "SELECT
     u.id,
@@ -132,7 +158,8 @@ $studentsSql = "SELECT
     u.email,
     u.grade_level,
     GROUP_CONCAT(DISTINCT c.name ORDER BY c.name SEPARATOR ', ') AS enrolled_courses,
-    COUNT(DISTINCT s.id) AS submission_count
+    COUNT(DISTINCT s.id) AS submission_count,
+    COUNT(DISTINCT CASE WHEN s.status = 'graded' THEN s.id END) AS marked_count
 FROM users u
 LEFT JOIN student_teachers st ON st.student_id = u.id AND st.teacher_id = $teacherId
 LEFT JOIN course_students cs ON cs.student_id = u.id
@@ -154,7 +181,8 @@ if ($studentsRes) {
             'email' => $st['email'],
             'grade_level' => $st['grade_level'] ? $st['grade_level'] : 'First Year of Middle School',
             'enrolled_courses' => $st['enrolled_courses'] ? $st['enrolled_courses'] : 'None',
-            'submission_count' => (int) $st['submission_count']
+            'submission_count' => (int) $st['submission_count'],
+            'marked_count' => (int) $st['marked_count']
         ];
     }
 }
@@ -164,6 +192,7 @@ echo json_encode([
     'success' => true,
     'teacher' => $teacher,
     'stats' => $stats,
+    'assistants' => $assistants,
     'recent_submissions' => $recentSubmissions,
     'courses' => $courses,
     'students' => $enrolledStudents

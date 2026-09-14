@@ -41,6 +41,7 @@ document.addEventListener('DOMContentLoaded', function () {
             setElementText('assignment-title', assignment.title);
             setElementText('course-name', assignment.course_name);
             setElementText('teacher-name', assignment.teacher_name ? assignment.teacher_name : 'Teacher');
+            setElementText('lead-teacher-name', assignment.teacher_name ? assignment.teacher_name : 'Lead Teacher');
             setElementText('max-grade', assignment.max_grade + ' pts');
             setElementText('target-grade-level', assignment.grade_level || 'First Year of Middle School');
             setElementText('description-text', assignment.description);

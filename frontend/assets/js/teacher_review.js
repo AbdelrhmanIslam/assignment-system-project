@@ -88,12 +88,25 @@ document.addEventListener('DOMContentLoaded', function () {
                 feedbackInput.value = sub.feedback;
             }
 
-            // assistant notes display
+            // assistant signature display
             var assistantBox = document.getElementById('assistant-notes-box');
             if (sub.assistant_name && assistantBox) {
                 assistantBox.style.display = 'block';
                 setElementText('assistant-name', sub.assistant_name);
+                setElementText('assistant-email', sub.assistant_email || 'Teaching Assistant');
                 setElementText('assistant-proposed-grade', (sub.grade !== null ? sub.grade : '—') + ' / ' + sub.max_grade);
+                if (sub.graded_at) {
+                    var gDate = new Date(sub.graded_at);
+                    setElementText('assistant-signed-at', gDate.toLocaleString('en-US', {
+                        month: 'short',
+                        day: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    }));
+                } else {
+                    setElementText('assistant-signed-at', '—');
+                }
 
                 var corrBox = document.getElementById('assistant-corr-box');
                 var downloadCorrBtn = document.getElementById('download-assistant-corr-btn');

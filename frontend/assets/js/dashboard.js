@@ -37,6 +37,7 @@ function loadDashboard() {
       }
 
       updateStudentInfo(data.student);
+      updateTeachers(data.teachers);
       updateStatistics(data.stats);
       updateAssignments(data.assignments);
     })
@@ -45,6 +46,54 @@ function loadDashboard() {
 
       showDashboardError(error.message);
     });
+}
+
+function updateTeachers(teachers) {
+  var container = document.getElementById("teachers-container");
+  if (!container) return;
+  container.innerHTML = "";
+
+  if (!teachers || teachers.length === 0) {
+    var emptyDiv = document.createElement("div");
+    emptyDiv.style.cssText = "grid-column: 1 / -1; padding: 1.5rem; background: #f9fafb; border: 1px dashed #d1d5db; border-radius: 8px; color: #6b7280; text-align: center;";
+    emptyDiv.innerHTML = "<strong>No teachers assigned yet.</strong><p style='margin: 4px 0 0; font-size: 0.9rem;'>You will see assignments as soon as you are enrolled with your instructors.</p>";
+    container.appendChild(emptyDiv);
+    return;
+  }
+
+  teachers.forEach(function (t) {
+    var card = document.createElement("div");
+    card.className = "stat-card";
+    card.style.cssText = "display: flex; align-items: center; gap: 14px; padding: 16px 20px; border-left: 4px solid #4f46e5; text-align: left;";
+
+    var avatar = document.createElement("div");
+    avatar.style.cssText = "width: 44px; height: 44px; border-radius: 50%; background: #e0e7ff; color: #4338ca; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;";
+    avatar.textContent = "👨‍🏫";
+
+    var info = document.createElement("div");
+    info.style.cssText = "flex: 1; min-width: 0;";
+
+    var name = document.createElement("strong");
+    name.style.cssText = "display: block; font-size: 15px; color: #111827; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;";
+    name.textContent = t.name;
+
+    var email = document.createElement("span");
+    email.style.cssText = "display: block; font-size: 13px; color: #6b7280; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;";
+    email.textContent = t.email;
+
+    var badge = document.createElement("span");
+    badge.className = "status-badge status-graded";
+    badge.style.cssText = "font-size: 11px; padding: 2px 8px; margin-top: 6px; display: inline-block;";
+    badge.textContent = "Active Instructor";
+
+    info.appendChild(name);
+    info.appendChild(email);
+    info.appendChild(badge);
+
+    card.appendChild(avatar);
+    card.appendChild(info);
+    container.appendChild(card);
+  });
 }
 
 function updateStudentInfo(student) {
@@ -138,6 +187,12 @@ function updateAssignments(assignments) {
     var courseCell = document.createElement("td");
     courseCell.textContent = assignment.course_name;
 
+    var teacherCell = document.createElement("td");
+    var teacherBadge = document.createElement("span");
+    teacherBadge.style.cssText = "font-weight: 600; color: #4338ca; display: inline-flex; align-items: center; gap: 4px;";
+    teacherBadge.textContent = "👨‍🏫 " + (assignment.teacher_name || "Lead Teacher");
+    teacherCell.appendChild(teacherBadge);
+
     var deadlineCell = document.createElement("td");
     deadlineCell.textContent = formatDate(assignment.deadline);
 
@@ -178,6 +233,7 @@ function updateAssignments(assignments) {
 
     row.appendChild(assignmentCell);
     row.appendChild(courseCell);
+    row.appendChild(teacherCell);
     row.appendChild(deadlineCell);
     row.appendChild(statusCell);
     row.appendChild(gradeCell);
