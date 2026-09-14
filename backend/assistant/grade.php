@@ -42,8 +42,9 @@ $sql = "SELECT s.id, s.student_id, a.id AS assignment_id, a.title AS assignment_
         INNER JOIN assignments a ON a.id = s.assignment_id
         INNER JOIN courses c ON c.id = a.course_id
         INNER JOIN users u ON u.id = s.student_id
-        INNER JOIN course_assistants ca ON ca.course_id = a.course_id AND ca.assistant_id = $assistantId
-        WHERE s.id = $submissionId
+        LEFT JOIN course_assistants ca ON ca.course_id = a.course_id AND ca.assistant_id = $assistantId
+        LEFT JOIN teacher_assistants ta ON ta.teacher_id = c.teacher_id AND ta.assistant_id = $assistantId
+        WHERE s.id = $submissionId AND (ca.id IS NOT NULL OR ta.id IS NOT NULL)
         LIMIT 1";
 $result = mysqli_query($conn, $sql);
 $sub = mysqli_fetch_assoc($result);

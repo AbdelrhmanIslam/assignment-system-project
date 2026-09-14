@@ -52,7 +52,10 @@ if ($type === 'submission') {
         }
     } else if ($currentUserRole === 'assistant') {
         $courseId = (int)$sub['course_id'];
-        $chk = mysqli_query($conn, "SELECT id FROM course_assistants WHERE course_id = $courseId AND assistant_id = $currentUserId LIMIT 1");
+        $chk = mysqli_query($conn, "SELECT c.id FROM courses c
+                                    LEFT JOIN course_assistants ca ON ca.course_id = c.id AND ca.assistant_id = $currentUserId
+                                    LEFT JOIN teacher_assistants ta ON ta.teacher_id = c.teacher_id AND ta.assistant_id = $currentUserId
+                                    WHERE c.id = $courseId AND (ca.id IS NOT NULL OR ta.id IS NOT NULL) LIMIT 1");
         if (mysqli_fetch_assoc($chk)) {
             $allowed = true;
         }
@@ -93,7 +96,10 @@ if ($type === 'submission') {
         }
     } else if ($currentUserRole === 'assistant') {
         $courseId = (int)$grade['course_id'];
-        $chk = mysqli_query($conn, "SELECT id FROM course_assistants WHERE course_id = $courseId AND assistant_id = $currentUserId LIMIT 1");
+        $chk = mysqli_query($conn, "SELECT c.id FROM courses c
+                                    LEFT JOIN course_assistants ca ON ca.course_id = c.id AND ca.assistant_id = $currentUserId
+                                    LEFT JOIN teacher_assistants ta ON ta.teacher_id = c.teacher_id AND ta.assistant_id = $currentUserId
+                                    WHERE c.id = $courseId AND (ca.id IS NOT NULL OR ta.id IS NOT NULL) LIMIT 1");
         if (mysqli_fetch_assoc($chk)) {
             $allowed = true;
         }

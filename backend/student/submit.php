@@ -37,6 +37,7 @@ $assignmentSql = "SELECT
     c.id AS course_id
 FROM assignments a
 INNER JOIN courses c ON c.id = a.course_id
+INNER JOIN student_teachers st ON st.student_id = $studentId AND st.teacher_id = c.teacher_id
 INNER JOIN course_students cs ON cs.course_id = a.course_id AND cs.student_id = $studentId
 WHERE a.id = $assignmentId AND a.is_active = 1
 LIMIT 1";
