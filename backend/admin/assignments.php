@@ -128,12 +128,14 @@ $sql = "SELECT
           a.is_active,
           a.created_at,
           c.name AS course_name,
-          u.name AS teacher_name,
+          c.teacher_id,
+          COALESCE(ut.name, u.name, 'Instructor') AS teacher_name,
           (SELECT COUNT(s.id) FROM submissions s WHERE s.assignment_id = a.id) AS total_submissions,
           (SELECT COUNT(s.id) FROM submissions s WHERE s.assignment_id = a.id AND s.status = 'graded') AS graded_submissions,
           (SELECT COUNT(s.id) FROM submissions s WHERE s.assignment_id = a.id AND s.status IN ('submitted', 'under_review', 'recheck')) AS pending_submissions
         FROM assignments a
         INNER JOIN courses c ON c.id = a.course_id
+        LEFT JOIN users ut ON ut.id = c.teacher_id
         LEFT JOIN users u ON u.id = a.created_by
         ORDER BY a.deadline ASC";
 
@@ -147,6 +149,7 @@ if ($result) {
             'title' => $row['title'],
             'course_name' => $row['course_name'],
             'grade_level' => !empty($row['grade_level']) ? $row['grade_level'] : 'First Year of Middle School',
+            'teacher_id' => (int) $row['teacher_id'],
             'teacher_name' => $row['teacher_name'] ? $row['teacher_name'] : 'Instructor',
             'max_grade' => (float) $row['max_grade'],
             'deadline' => $row['deadline'],
@@ -158,6 +161,27 @@ if ($result) {
             'graded_submissions' => (int) $row['graded_submissions'],
             'pending_submissions' => (int) $row['pending_submissions'],
             'created_at' => $row['created_at']
+        ];
+    }
+}
+
+// query active teachers for category filtering
+$teachersList = [];
+$tRes = mysqli_query($conn, "SELECT u.id, u.name, u.email,
+                             COUNT(DISTINCT a.id) AS assignment_count
+                             FROM users u
+                             LEFT JOIN courses c ON c.teacher_id = u.id
+                             LEFT JOIN assignments a ON a.course_id = c.id
+                             WHERE u.role = 'teacher' AND u.is_active = 1
+                             GROUP BY u.id
+                             ORDER BY u.name ASC");
+if ($tRes) {
+    while ($tRow = mysqli_fetch_assoc($tRes)) {
+        $teachersList[] = [
+            'id' => (int) $tRow['id'],
+            'name' => $tRow['name'],
+            'email' => $tRow['email'],
+            'assignment_count' => (int) $tRow['assignment_count']
         ];
     }
 }
@@ -181,5 +205,6 @@ echo json_encode([
         'role' => currentUserRole()
     ],
     'courses' => $coursesList,
+    'teachers' => $teachersList,
     'assignments' => $assignments
 ]);

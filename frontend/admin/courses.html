@@ -32,9 +32,35 @@
 
             <div class="assignment-main">
                 <section class="assignments-section">
-                    <div class="section-header">
-                        <h2>All Courses</h2>
-                        <p>Active and archived academic courses</p>
+                    <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 16px;">
+                        <div>
+                            <h2>Courses by Grade Level (Category)</h2>
+                            <p>Browse courses organized by academic Grade Level categories and their instructors</p>
+                        </div>
+                        <input type="text" id="course-search-input" placeholder="Search course or teacher..." style="padding: 8px 14px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; width: 220px;">
+                    </div>
+
+                    <div class="filter-bar" style="margin-bottom: 16px;">
+                        <div class="filter-tabs" id="grade-category-tabs">
+                            <button type="button" class="filter-tab active" data-grade="all">All Grade Levels</button>
+                            <button type="button" class="filter-tab" data-grade="First Year of Middle School">First Year Middle</button>
+                            <button type="button" class="filter-tab" data-grade="Second Year of Middle School">Second Year Middle</button>
+                            <button type="button" class="filter-tab" data-grade="Third Year of Middle School">Third Year Middle</button>
+                            <button type="button" class="filter-tab" data-grade="First Year of High School">First Year High</button>
+                        </div>
+                    </div>
+
+                    <div id="grade-category-banner" style="display: none; padding: 12px 18px; background: #f5f3ff; border: 1px solid #ede9fe; border-left: 4px solid #7c3aed; border-radius: 8px; margin-bottom: 18px; font-size: 13px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                            <div>
+                                <span style="color: #6b7280; font-weight: 500;">Grade Level Category:</span>
+                                <strong id="category-name-display" style="color: #5b21b6; margin-left: 4px;">—</strong>
+                            </div>
+                            <div id="category-teachers-container" style="color: #4b5563;">
+                                <span style="color: #6b7280;">Instructors in this Grade Level:</span>
+                                <span id="category-teachers-list" style="font-weight: 600; color: #1e1b4b; margin-left: 4px;">—</span>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="table-container" id="table-container">
@@ -114,7 +140,7 @@
         </div>
     </div>
 
-    <script src="../assets/js/main.js?v=1.3"></script>
-    <script src="../assets/js/admin_courses.js?v=1.3"></script>
+    <script src="../assets/js/main.js?v=2.0"></script>
+    <script src="../assets/js/admin_courses.js?v=2.0"></script>
 </body>
 </html>

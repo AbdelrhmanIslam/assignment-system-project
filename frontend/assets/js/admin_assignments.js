@@ -1,6 +1,8 @@
 // admin assignments oversight client-side controller
 
 var allAssignments = [];
+var allTeachers = [];
+var currentTeacherCategory = 'all';
 var searchQuery = '';
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -27,10 +29,53 @@ function loadAssignments() {
         }
 
         allAssignments = data.assignments || [];
-        renderTable(allAssignments);
+        allTeachers = data.teachers || [];
+
+        renderTeacherCategoryTabs(allTeachers);
+        applyAssignmentFilters();
     })
     .catch(function (error) {
         console.error('Fetch error:', error);
+    });
+}
+
+function renderTeacherCategoryTabs(teachers) {
+    var tabsContainer = document.getElementById('teacher-category-tabs');
+    if (!tabsContainer) return;
+
+    tabsContainer.innerHTML = '';
+
+    // 'All Teachers' tab
+    var allBtn = document.createElement('button');
+    allBtn.type = 'button';
+    allBtn.className = 'filter-tab' + (currentTeacherCategory === 'all' ? ' active' : '');
+    allBtn.setAttribute('data-teacher-id', 'all');
+    allBtn.textContent = 'All Teachers (' + allAssignments.length + ')';
+    tabsContainer.appendChild(allBtn);
+
+    // Specific teacher tabs
+    teachers.forEach(function (t) {
+        var count = allAssignments.filter(function (a) {
+            return a.teacher_id === t.id;
+        }).length;
+
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'filter-tab' + (currentTeacherCategory === String(t.id) ? ' active' : '');
+        btn.setAttribute('data-teacher-id', t.id);
+        btn.textContent = '👨‍🏫 ' + t.name + ' (' + count + ')';
+        tabsContainer.appendChild(btn);
+    });
+
+    // Attach click listener to tabs
+    var tabs = tabsContainer.querySelectorAll('.filter-tab');
+    tabs.forEach(function (tab) {
+        tab.addEventListener('click', function () {
+            tabs.forEach(function (btn) { btn.classList.remove('active'); });
+            tab.classList.add('active');
+            currentTeacherCategory = tab.getAttribute('data-teacher-id');
+            applyAssignmentFilters();
+        });
     });
 }
 
@@ -39,13 +84,59 @@ function setupSearch() {
     if (searchInput) {
         searchInput.addEventListener('input', function () {
             searchQuery = searchInput.value.toLowerCase().trim();
-            var filtered = allAssignments.filter(function (a) {
-                return a.title.toLowerCase().includes(searchQuery) ||
-                       a.course_name.toLowerCase().includes(searchQuery) ||
-                       a.teacher_name.toLowerCase().includes(searchQuery);
-            });
-            renderTable(filtered);
+            applyAssignmentFilters();
         });
+    }
+}
+
+function applyAssignmentFilters() {
+    var filtered = allAssignments.filter(function (a) {
+        if (currentTeacherCategory !== 'all' && a.teacher_id !== parseInt(currentTeacherCategory, 10)) {
+            return false;
+        }
+        if (searchQuery) {
+            var title = (a.title || '').toLowerCase();
+            var course = (a.course_name || '').toLowerCase();
+            var teacher = (a.teacher_name || '').toLowerCase();
+            if (title.indexOf(searchQuery) === -1 &&
+                course.indexOf(searchQuery) === -1 &&
+                teacher.indexOf(searchQuery) === -1) {
+                return false;
+            }
+        }
+        return true;
+    });
+
+    updateTeacherCategoryBanner(filtered);
+    renderTable(filtered);
+}
+
+function updateTeacherCategoryBanner(filtered) {
+    var banner = document.getElementById('teacher-category-banner');
+    var nameEl = document.getElementById('teacher-category-name');
+    var countEl = document.getElementById('teacher-assignments-count');
+    if (!banner) return;
+
+    if (currentTeacherCategory === 'all') {
+        banner.style.display = 'none';
+        return;
+    }
+
+    var selectedTeacher = null;
+    var tIdNum = parseInt(currentTeacherCategory, 10);
+    for (var i = 0; i < allTeachers.length; i++) {
+        if (allTeachers[i].id === tIdNum) {
+            selectedTeacher = allTeachers[i];
+            break;
+        }
+    }
+
+    banner.style.display = 'block';
+    if (nameEl) {
+        nameEl.textContent = selectedTeacher ? '👨‍🏫 ' + selectedTeacher.name + ' (' + selectedTeacher.email + ')' : 'Selected Teacher';
+    }
+    if (countEl) {
+        countEl.textContent = filtered.length + ' Assignment' + (filtered.length === 1 ? '' : 's');
     }
 }
 
@@ -84,7 +175,7 @@ function renderTable(assignments) {
             '<td><strong>' + escapeHtml(a.title) + '</strong></td>' +
             '<td>' + escapeHtml(a.course_name) + '</td>' +
             '<td><span class="status-badge status-review" style="font-size:11px;">' + escapeHtml(a.grade_level || 'First Year of Middle School') + '</span></td>' +
-            '<td>' + escapeHtml(a.teacher_name) + '</td>' +
+            '<td><strong style="color:#1e1b4b; display:inline-flex; align-items:center; gap:4px;">👨‍🏫 ' + escapeHtml(a.teacher_name) + '</strong></td>' +
             '<td>' + a.max_grade + ' pts</td>' +
             '<td>' + formatDate(a.deadline) + '</td>' +
             '<td>' + subInfo + '</td>' +

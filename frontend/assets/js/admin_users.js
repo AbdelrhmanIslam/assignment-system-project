@@ -171,6 +171,7 @@ function getRoleBadgeClass(role) {
 }
 
 function renderUsersTable(users) {
+    var thead = document.getElementById('users-table-head');
     var tbody = document.getElementById('users-table-body');
     var emptyState = document.getElementById('empty-state');
     var tableContainer = document.getElementById('table-container');
@@ -183,6 +184,20 @@ function renderUsersTable(users) {
 
     if (emptyState) emptyState.style.display = 'none';
     if (tableContainer) tableContainer.style.display = 'block';
+
+    if (thead) {
+        if (currentRoleFilter === 'student') {
+            thead.innerHTML = '<tr><th>Name</th><th>Email</th><th>Grade Level</th><th>Assigned Courses &amp; Own Teacher</th><th>Status</th><th>Joined</th><th>Action</th></tr>';
+        } else if (currentRoleFilter === 'teacher') {
+            thead.innerHTML = '<tr><th>Name</th><th>Email</th><th>Grade Level</th><th>Number of Courses</th><th>Courses &amp; Students Assigned</th><th>Status</th><th>Joined</th><th>Action</th></tr>';
+        } else if (currentRoleFilter === 'assistant') {
+            thead.innerHTML = '<tr><th>Name</th><th>Email</th><th>Role</th><th>Assistant For</th><th>Status</th><th>Joined</th><th>Action</th></tr>';
+        } else if (currentRoleFilter === 'admin') {
+            thead.innerHTML = '<tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Joined</th><th>Action</th></tr>';
+        } else {
+            thead.innerHTML = '<tr><th>Name</th><th>Email</th><th>Role</th><th>Academic Info / Assistant For</th><th>Assigned Courses / Teaching Details</th><th>Status</th><th>Joined</th><th>Action</th></tr>';
+        }
+    }
 
     if (!tbody) return;
     tbody.innerHTML = '';
@@ -198,35 +213,143 @@ function renderUsersTable(users) {
         var toggleBtnLabel = u.is_active ? 'Deactivate' : 'Activate';
         var toggleBtnClass = u.is_active ? 'background:#ef4444;' : 'background:#10b981;';
 
-        var gradeLevelCell = '—';
-        if (u.role === 'student' && u.grade_level) {
-            gradeLevelCell = '<span class="status-badge status-submitted" style="font-size:11px;">' + escapeHtml(u.grade_level) + '</span>';
-        } else if (u.role === 'teacher' && u.teacher_grade_levels && u.teacher_grade_levels.length > 0) {
-            gradeLevelCell = u.teacher_grade_levels.map(function (gl) {
-                return '<span class="status-badge status-review" style="font-size:10px; margin: 2px 2px 2px 0; display: inline-block;">' + escapeHtml(gl) + '</span>';
-            }).join(' ');
-        } else if (u.role === 'assistant' && u.assigned_teachers && u.assigned_teachers.length > 0) {
-            gradeLevelCell = '<span style="font-size:11px; color:#6b7280; display:block; margin-bottom:2px;">Assists:</span>' +
-                u.assigned_teachers.map(function (t) {
-                    return '<span class="status-badge status-submitted" style="font-size:10px; margin: 2px 2px 2px 0; display: inline-block;">' + escapeHtml(t.name) + '</span>';
-                }).join(' ');
-        }
-
-        row.innerHTML =
-            '<td><strong>' + escapeHtml(u.name) + '</strong></td>' +
-            '<td>' + escapeHtml(u.email) + '</td>' +
-            '<td><span class="status-badge ' + roleBadge + '">' + u.role.toUpperCase() + '</span></td>' +
-            '<td>' + gradeLevelCell + '</td>' +
-            '<td>' + statusBadge + '</td>' +
-            '<td>' + formatDate(u.created_at) + '</td>' +
-            '<td>' +
-                '<button onclick="openEditUserModal(' + u.id + ')" class="action-btn action-view" style="font-size:12px; padding:6px 12px; border:none; cursor:pointer; margin-right:6px;">' +
+        var actionButtons =
+            '<div style="display:inline-flex; gap:6px; align-items:center;">' +
+                '<button onclick="openEditUserModal(' + u.id + ')" class="action-btn action-view" style="font-size:12px; padding:6px 12px; border:none; cursor:pointer;">' +
                     'Edit' +
                 '</button>' +
                 '<button onclick="toggleUserStatus(' + u.id + ', this)" class="view-btn" style="' + toggleBtnClass + ' font-size:12px; padding:6px 12px; border:none; cursor:pointer;">' +
                     toggleBtnLabel +
                 '</button>' +
-            '</td>';
+            '</div>';
+
+        if (currentRoleFilter === 'student') {
+            var sCoursesHtml = '<span style="font-size:12px; color:#9ca3af;">No assigned courses</span>';
+            if (u.student_courses && u.student_courses.length > 0) {
+                sCoursesHtml = '<div style="display:flex; flex-direction:column; gap:4px;">' +
+                    u.student_courses.map(function (c) {
+                        return '<span style="font-size:12px; color:#1e293b;">📘 <strong>' + escapeHtml(c.course_name) + '</strong> (<span style="color:#4f46e5; font-weight:500;">👨‍🏫 ' + escapeHtml(c.teacher_name) + '</span>)</span>';
+                    }).join('') + '</div>';
+            }
+
+            row.innerHTML =
+                '<td><strong>' + escapeHtml(u.name) + '</strong></td>' +
+                '<td>' + escapeHtml(u.email) + '</td>' +
+                '<td><span class="status-badge status-submitted" style="font-size:11px;">' + escapeHtml(u.grade_level || 'First Year of Middle School') + '</span></td>' +
+                '<td>' + sCoursesHtml + '</td>' +
+                '<td>' + statusBadge + '</td>' +
+                '<td>' + formatDate(u.created_at) + '</td>' +
+                '<td>' + actionButtons + '</td>';
+
+        } else if (currentRoleFilter === 'teacher') {
+            var tGradesHtml = '—';
+            if (u.teacher_grade_levels && u.teacher_grade_levels.length > 0) {
+                tGradesHtml = '<div style="display:flex; flex-wrap:wrap; gap:3px;">' +
+                    u.teacher_grade_levels.map(function (gl) {
+                        return '<span class="status-badge status-review" style="font-size:10px;">' + escapeHtml(gl) + '</span>';
+                    }).join('') + '</div>';
+            }
+
+            var tCoursesHtml = '<span style="font-size:12px; color:#9ca3af;">0 courses</span>';
+            if (u.teacher_courses && u.teacher_courses.length > 0) {
+                tCoursesHtml = '<div style="display:flex; flex-direction:column; gap:4px;">' +
+                    u.teacher_courses.map(function (tc) {
+                        return '<span style="font-size:12px; color:#1e293b;">📘 <strong>' + escapeHtml(tc.course_name) + '</strong> (<span style="color:#059669; font-weight:600;">' + tc.student_count + ' students</span>)</span>';
+                    }).join('') + '</div>';
+            }
+
+            row.innerHTML =
+                '<td><strong>' + escapeHtml(u.name) + '</strong></td>' +
+                '<td>' + escapeHtml(u.email) + '</td>' +
+                '<td>' + tGradesHtml + '</td>' +
+                '<td><span class="status-badge status-review" style="font-size:11px; font-weight:600;">' + (u.courses_count || 0) + ' Courses</span></td>' +
+                '<td>' + tCoursesHtml + '</td>' +
+                '<td>' + statusBadge + '</td>' +
+                '<td>' + formatDate(u.created_at) + '</td>' +
+                '<td>' + actionButtons + '</td>';
+
+        } else if (currentRoleFilter === 'assistant') {
+            var asstForHtml = '<span style="font-size:12px; color:#9ca3af;">Unassigned</span>';
+            if (u.assigned_teachers && u.assigned_teachers.length > 0) {
+                asstForHtml = '<div style="display:flex; flex-wrap:wrap; gap:4px;">' +
+                    u.assigned_teachers.map(function (t) {
+                        return '<span class="status-badge status-submitted" style="font-size:11px;">🧑‍🏫 ' + escapeHtml(t.name) + '</span>';
+                    }).join('') + '</div>';
+            }
+
+            row.innerHTML =
+                '<td><strong>' + escapeHtml(u.name) + '</strong></td>' +
+                '<td>' + escapeHtml(u.email) + '</td>' +
+                '<td><span class="status-badge ' + roleBadge + '">' + u.role.toUpperCase() + '</span></td>' +
+                '<td>' + asstForHtml + '</td>' +
+                '<td>' + statusBadge + '</td>' +
+                '<td>' + formatDate(u.created_at) + '</td>' +
+                '<td>' + actionButtons + '</td>';
+
+        } else if (currentRoleFilter === 'admin') {
+            // In Admins delete Grade Level from his table
+            row.innerHTML =
+                '<td><strong>' + escapeHtml(u.name) + '</strong></td>' +
+                '<td>' + escapeHtml(u.email) + '</td>' +
+                '<td><span class="status-badge ' + roleBadge + '">' + u.role.toUpperCase() + '</span></td>' +
+                '<td>' + statusBadge + '</td>' +
+                '<td>' + formatDate(u.created_at) + '</td>' +
+                '<td>' + actionButtons + '</td>';
+
+        } else {
+            // All role tab
+            var academicInfo = '—';
+            var detailInfo = '—';
+
+            if (u.role === 'student') {
+                academicInfo = '<span class="status-badge status-submitted" style="font-size:11px;">' + escapeHtml(u.grade_level || 'First Year of Middle School') + '</span>';
+                if (u.student_courses && u.student_courses.length > 0) {
+                    detailInfo = '<div style="display:flex; flex-direction:column; gap:3px;">' +
+                        u.student_courses.map(function (c) {
+                            return '<span style="font-size:11px; color:#1e293b;">📘 ' + escapeHtml(c.course_name) + ' (<span style="color:#4f46e5;">' + escapeHtml(c.teacher_name) + '</span>)</span>';
+                        }).join('') + '</div>';
+                } else {
+                    detailInfo = '<span style="font-size:11px; color:#9ca3af;">No assigned courses</span>';
+                }
+            } else if (u.role === 'teacher') {
+                if (u.teacher_grade_levels && u.teacher_grade_levels.length > 0) {
+                    academicInfo = '<div style="display:flex; flex-wrap:wrap; gap:2px;">' +
+                        u.teacher_grade_levels.map(function (gl) {
+                            return '<span class="status-badge status-review" style="font-size:10px;">' + escapeHtml(gl) + '</span>';
+                        }).join('') + '</div>';
+                }
+                detailInfo = '<span class="status-badge status-review" style="font-size:10px; margin-bottom:4px; display:inline-block;">' + (u.courses_count || 0) + ' Courses</span>';
+                if (u.teacher_courses && u.teacher_courses.length > 0) {
+                    detailInfo += '<div style="display:flex; flex-direction:column; gap:2px; margin-top:2px;">' +
+                        u.teacher_courses.map(function (tc) {
+                            return '<span style="font-size:11px; color:#1e293b;">📘 ' + escapeHtml(tc.course_name) + ' (' + tc.student_count + ' st.)</span>';
+                        }).join('') + '</div>';
+                }
+            } else if (u.role === 'assistant') {
+                if (u.assigned_teachers && u.assigned_teachers.length > 0) {
+                    academicInfo = '<div style="font-size:11px; color:#6b7280;">Assistant for:<br>' +
+                        u.assigned_teachers.map(function (t) {
+                            return '<span class="status-badge status-submitted" style="font-size:10px; margin-top:2px; display:inline-block;">🧑‍🏫 ' + escapeHtml(t.name) + '</span>';
+                        }).join(' ') + '</div>';
+                } else {
+                    academicInfo = '<span style="font-size:11px; color:#9ca3af;">Assistant (Unassigned)</span>';
+                }
+                detailInfo = '—';
+            } else if (u.role === 'admin') {
+                academicInfo = '—';
+                detailInfo = '<span style="font-size:11px; color:#6b7280;">System Administrator</span>';
+            }
+
+            row.innerHTML =
+                '<td><strong>' + escapeHtml(u.name) + '</strong></td>' +
+                '<td>' + escapeHtml(u.email) + '</td>' +
+                '<td><span class="status-badge ' + roleBadge + '">' + u.role.toUpperCase() + '</span></td>' +
+                '<td>' + academicInfo + '</td>' +
+                '<td>' + detailInfo + '</td>' +
+                '<td>' + statusBadge + '</td>' +
+                '<td>' + formatDate(u.created_at) + '</td>' +
+                '<td>' + actionButtons + '</td>';
+        }
 
         tbody.appendChild(row);
     });

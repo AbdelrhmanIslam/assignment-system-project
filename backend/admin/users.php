@@ -277,6 +277,50 @@ if ($result) {
         $assignedTeachers = ($uRole === 'assistant') ? getAssistantTeachers($conn, $uId) : [];
         $studentTeacherIds = ($uRole === 'student') ? getStudentTeacherIds($conn, $uId) : [];
 
+        $studentCourses = [];
+        if ($uRole === 'student') {
+            $scSql = "SELECT c.id, c.name AS course_name, c.grade_level, ut.name AS teacher_name, ut.email AS teacher_email
+                      FROM course_students cs
+                      INNER JOIN courses c ON c.id = cs.course_id
+                      LEFT JOIN users ut ON ut.id = c.teacher_id
+                      WHERE cs.student_id = $uId
+                      ORDER BY c.name ASC";
+            $scRes = mysqli_query($conn, $scSql);
+            if ($scRes) {
+                while ($scRow = mysqli_fetch_assoc($scRes)) {
+                    $studentCourses[] = [
+                        'course_id' => (int) $scRow['id'],
+                        'course_name' => $scRow['course_name'],
+                        'grade_level' => $scRow['grade_level'],
+                        'teacher_name' => $scRow['teacher_name'] ? $scRow['teacher_name'] : 'Unassigned',
+                        'teacher_email' => $scRow['teacher_email']
+                    ];
+                }
+            }
+        }
+
+        $teacherCourses = [];
+        if ($uRole === 'teacher') {
+            $tcSql = "SELECT c.id, c.name AS course_name, c.grade_level,
+                             COUNT(DISTINCT cs.student_id) AS student_count
+                      FROM courses c
+                      LEFT JOIN course_students cs ON cs.course_id = c.id
+                      WHERE c.teacher_id = $uId AND c.is_active = 1
+                      GROUP BY c.id
+                      ORDER BY c.name ASC";
+            $tcRes = mysqli_query($conn, $tcSql);
+            if ($tcRes) {
+                while ($tcRow = mysqli_fetch_assoc($tcRes)) {
+                    $teacherCourses[] = [
+                        'course_id' => (int) $tcRow['id'],
+                        'course_name' => $tcRow['course_name'],
+                        'grade_level' => $tcRow['grade_level'],
+                        'student_count' => (int) $tcRow['student_count']
+                    ];
+                }
+            }
+        }
+
         $users[] = [
             'id' => $uId,
             'name' => $row['name'],
@@ -286,6 +330,9 @@ if ($result) {
             'teacher_grade_levels' => $teacherLevels,
             'assigned_teachers' => $assignedTeachers,
             'student_teacher_ids' => $studentTeacherIds,
+            'student_courses' => $studentCourses,
+            'teacher_courses' => $teacherCourses,
+            'courses_count' => count($teacherCourses),
             'is_active' => (int) $row['is_active'] === 1,
             'created_at' => $row['created_at']
         ];

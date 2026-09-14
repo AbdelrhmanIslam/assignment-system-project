@@ -1,11 +1,91 @@
 // admin course management client-side controller
 
 var allCourses = [];
+var allTeachers = [];
+var allAssistants = [];
+var currentGradeFilter = 'all';
+var courseSearchQuery = '';
 
 document.addEventListener('DOMContentLoaded', function () {
     loadCourses();
     setupCreateCourseForm();
+    setupCategoryFilters();
+    setupCourseSearch();
 });
+
+function setupCategoryFilters() {
+    var tabs = document.querySelectorAll('#grade-category-tabs .filter-tab');
+    tabs.forEach(function (tab) {
+        tab.addEventListener('click', function () {
+            tabs.forEach(function (t) { t.classList.remove('active'); });
+            tab.classList.add('active');
+            currentGradeFilter = tab.getAttribute('data-grade');
+            applyCourseFilters();
+        });
+    });
+}
+
+function setupCourseSearch() {
+    var searchInput = document.getElementById('course-search-input');
+    if (searchInput) {
+        searchInput.addEventListener('input', function () {
+            courseSearchQuery = searchInput.value.trim().toLowerCase();
+            applyCourseFilters();
+        });
+    }
+}
+
+function applyCourseFilters() {
+    var filtered = allCourses.filter(function (c) {
+        if (currentGradeFilter !== 'all' && (c.grade_level || 'First Year of Middle School') !== currentGradeFilter) {
+            return false;
+        }
+        if (courseSearchQuery) {
+            var name = (c.name || '').toLowerCase();
+            var desc = (c.description || '').toLowerCase();
+            var teacher = (c.teacher_name || '').toLowerCase();
+            if (name.indexOf(courseSearchQuery) === -1 &&
+                desc.indexOf(courseSearchQuery) === -1 &&
+                teacher.indexOf(courseSearchQuery) === -1) {
+                return false;
+            }
+        }
+        return true;
+    });
+
+    updateCategoryBanner(filtered);
+    renderCoursesTable(filtered);
+}
+
+function updateCategoryBanner(filteredCourses) {
+    var banner = document.getElementById('grade-category-banner');
+    var catDisplay = document.getElementById('category-name-display');
+    var teachersDisplay = document.getElementById('category-teachers-list');
+    if (!banner) return;
+
+    banner.style.display = 'block';
+
+    if (catDisplay) {
+        catDisplay.textContent = (currentGradeFilter === 'all') ? 'All Academic Grade Levels' : currentGradeFilter;
+    }
+
+    if (teachersDisplay) {
+        var distinctTeachers = [];
+        filteredCourses.forEach(function (c) {
+            if (c.teacher_name && c.teacher_name !== 'Unassigned' && distinctTeachers.indexOf(c.teacher_name) === -1) {
+                distinctTeachers.push(c.teacher_name);
+            }
+        });
+
+        if (distinctTeachers.length > 0) {
+            teachersDisplay.innerHTML = distinctTeachers.map(function (t) {
+                return '<span class="status-badge status-review" style="font-size:11px; margin-right:4px;">👨‍🏫 ' + escapeHtml(t) + '</span>';
+            }).join(' ');
+        } else {
+            teachersDisplay.innerHTML = '<span style="color:#9ca3af; font-weight:normal;">None assigned</span>';
+        }
+    }
+}
 
 function loadCourses() {
     fetch('../../backend/admin/courses.php', {
@@ -26,10 +106,12 @@ function loadCourses() {
         }
 
         // populate dropdown options
-        populateDropdowns(data.teachers, data.assistants);
+        allTeachers = data.teachers || [];
+        allAssistants = data.assistants || [];
+        populateDropdowns(allTeachers, allAssistants);
 
         allCourses = data.courses || [];
-        renderCoursesTable(allCourses);
+        applyCourseFilters();
     })
     .catch(function (error) {
         console.error('Error fetching courses:', error);
@@ -111,25 +193,55 @@ function updateAssistantDropdown(teacherId) {
 
 function populateDropdowns(teachers, assistants) {
     allAssistants = assistants || [];
+    allTeachers = teachers || [];
+
+    var gradeSelect = document.getElementById('select-course-grade');
     var teacherSelect = document.getElementById('select-teacher');
-    if (teacherSelect) {
+
+    function updateTeacherOptions() {
+        if (!teacherSelect) return;
+        var selectedGrade = gradeSelect ? gradeSelect.value : '';
         teacherSelect.innerHTML = '<option value="">Select Instructor...</option>';
-        teachers.forEach(function (t) {
-            var opt = document.createElement('option');
-            opt.value = t.id;
-            var levelsText = (t.grade_levels && t.grade_levels.length > 0) ? ' (' + t.grade_levels.join(', ') + ')' : '';
-            opt.textContent = t.name + levelsText;
-            teacherSelect.appendChild(opt);
+
+        var eligibleTeachers = allTeachers.filter(function (t) {
+            if (!selectedGrade) return true;
+            if (!t.grade_levels || !Array.isArray(t.grade_levels)) return true;
+            return t.grade_levels.indexOf(selectedGrade) !== -1;
         });
 
+        if (eligibleTeachers.length === 0) {
+            var opt = document.createElement('option');
+            opt.value = '';
+            opt.disabled = true;
+            opt.textContent = 'No teachers assigned to ' + selectedGrade;
+            teacherSelect.appendChild(opt);
+        } else {
+            eligibleTeachers.forEach(function (t) {
+                var opt = document.createElement('option');
+                opt.value = t.id;
+                var levelsText = (t.grade_levels && t.grade_levels.length > 0) ? ' (' + t.grade_levels.join(', ') + ')' : '';
+                opt.textContent = t.name + levelsText;
+                teacherSelect.appendChild(opt);
+            });
+        }
+
+        updateAssistantDropdown(teacherSelect.value);
+    }
+
+    if (gradeSelect) {
+        gradeSelect.onchange = updateTeacherOptions;
+    }
+
+    if (teacherSelect) {
         teacherSelect.onchange = function () {
             updateAssistantDropdown(teacherSelect.value);
         };
         teacherSelect.oninput = function () {
             updateAssistantDropdown(teacherSelect.value);
         };
-        updateAssistantDropdown(teacherSelect.value);
     }
+
+    updateTeacherOptions();
 }
 
 function renderCoursesTable(courses) {
@@ -164,8 +276,8 @@ function renderCoursesTable(courses) {
         row.innerHTML =
             '<td><strong>' + escapeHtml(c.name) + '</strong><br><small style="color:#6b7280;">' + escapeHtml(c.description || 'No description') + '</small></td>' +
             '<td>' + gradeLevelBadge + '</td>' +
-            '<td>' + escapeHtml(c.teacher_name) + '</td>' +
-            '<td>' + escapeHtml(c.assistants) + '</td>' +
+            '<td><strong style="color:#1e1b4b; display:inline-flex; align-items:center; gap:4px;">👨‍🏫 ' + escapeHtml(c.teacher_name) + '</strong></td>' +
+            '<td>' + (c.assistants && c.assistants !== 'None' ? '<span style="color:#6d28d9; font-weight:500;">🧑‍🏫 ' + escapeHtml(c.assistants) + '</span>' : '<span style="color:#9ca3af;">None</span>') + '</td>' +
             '<td>' + c.student_count + ' Students</td>' +
             '<td>' + c.assignment_count + ' Assignments</td>' +
             '<td>' + statusBadge + '</td>' +
