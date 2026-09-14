@@ -231,9 +231,69 @@
         </div>
     </div>
 
+    <!-- Teaching Assistant Marking History Modal -->
+    <div id="assistant-history-modal" class="modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.55); z-index: 9999; justify-content: center; align-items: center; padding: 20px;">
+        <div class="modal-content" style="background: #ffffff; width: 100%; max-width: 980px; max-height: 90vh; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); overflow: hidden; display: flex; flex-direction: column;">
+            <div style="padding: 18px 24px; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; background: #f8fafc;">
+                <div>
+                    <h2 style="font-size: 18px; color: #0f172a; margin: 0 0 4px 0;">Teaching Assistant Marking History</h2>
+                    <p style="font-size: 13px; color: #64748b; margin: 0;">Viewing all student assignments marked and graded by this assistant</p>
+                </div>
+                <button type="button" id="close-asst-history-modal-btn" style="background: none; border: none; font-size: 24px; color: #94a3b8; cursor: pointer; line-height: 1;">&times;</button>
+            </div>
+            <div style="padding: 18px 24px; overflow-y: auto; flex: 1;">
+                <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 14px; padding: 12px 16px; background: #f5f3ff; border: 1px solid #ede9fe; border-radius: 8px; font-size: 13px; align-items: center;">
+                    <div><span style="color: #6b7280;">Assistant:</span> <strong id="modal-asst-name" style="color: #5b21b6;">—</strong></div>
+                    <div><span style="color: #6b7280;">Email:</span> <span id="modal-asst-email" style="color: #4c1d95;">—</span></div>
+                    <div><span class="status-badge" style="background: #ede9fe; color: #6d28d9; font-size: 11px; padding: 3px 9px;">🧑‍🏫 Teaching Assistant</span></div>
+                </div>
+
+                <!-- History filter tabs -->
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <button type="button" class="modal-tab active" id="tab-asst-all-history" style="padding: 6px 14px; font-size: 12px; border-radius: 6px; border: 1px solid #7c3aed; background: #7c3aed; color: #fff; cursor: pointer; font-weight: 600;">All Marked Submissions (<span id="modal-asst-count-all">0</span>)</button>
+                        <button type="button" class="modal-tab" id="tab-asst-graded-history" style="padding: 6px 14px; font-size: 12px; border-radius: 6px; border: 1px solid #cbd5e1; background: #f8fafc; color: #334155; cursor: pointer; font-weight: 500;">✅ Graded &amp; Approved (<span id="modal-asst-count-graded">0</span>)</button>
+                        <button type="button" class="modal-tab" id="tab-asst-pending-history" style="padding: 6px 14px; font-size: 12px; border-radius: 6px; border: 1px solid #cbd5e1; background: #f8fafc; color: #334155; cursor: pointer; font-weight: 500;">⏳ Pending Approval (<span id="modal-asst-count-pending">0</span>)</button>
+                    </div>
+                    <input type="text" id="asst-history-search" placeholder="Filter student or assignment..." style="padding: 6px 12px; font-size: 12px; border: 1px solid #cbd5e1; border-radius: 6px; width: 220px;">
+                </div>
+
+                <div id="modal-asst-history-loading" style="display: none; text-align: center; padding: 30px; color: #64748b;">
+                    Loading marked assignments...
+                </div>
+
+                <div id="modal-asst-history-empty" style="display: none; text-align: center; padding: 40px 20px; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1;">
+                    <h3 style="font-size: 16px; color: #334155; margin-bottom: 6px;">No Marked Assignments Found</h3>
+                    <p style="font-size: 13px; color: #64748b; margin: 0;">This teaching assistant has not marked any student assignments yet.</p>
+                </div>
+
+                <div id="modal-asst-history-table-container" style="display: none; overflow-x: auto;">
+                    <table class="assignments-table" style="width: 100%; font-size: 13px;">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Assignment &amp; Course</th>
+                                <th>Grade Awarded</th>
+                                <th>Graded Date</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="modal-asst-history-table-body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div style="padding: 14px 24px; border-top: 1px solid #e5e7eb; background: #f8fafc; display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 12px; color: #64748b;">Teacher review and grade overrides take immediate effect.</span>
+                <button type="button" id="btn-close-asst-modal" class="view-btn" style="background: #64748b; font-size: 13px;">Close</button>
+            </div>
+        </div>
+    </div>
+
 </div>
 
-<script src="../assets/js/teacher_dashboard.js?v=3.0"></script>
+<script src="../assets/js/teacher_dashboard.js?v=4.0"></script>
 
 </body>
 </html>

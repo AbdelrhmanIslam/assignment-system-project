@@ -148,7 +148,10 @@ function renderTeachingAssistants(assistants) {
     assistants.forEach(function (ast) {
         var card = document.createElement('div');
         card.className = 'stat-card';
-        card.style.cssText = 'display: flex; align-items: center; gap: 16px; padding: 18px 20px; border-left: 4px solid #7c3aed; background: #ffffff; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.08);';
+        card.style.cssText = 'display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 20px; border-left: 4px solid #7c3aed; background: #ffffff; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.08);';
+
+        var leftContent = document.createElement('div');
+        leftContent.style.cssText = 'display: flex; align-items: center; gap: 14px; min-width: 0; flex: 1;';
 
         var avatar = document.createElement('div');
         avatar.style.cssText = 'width: 48px; height: 48px; border-radius: 50%; background: #f3e8ff; color: #7c3aed; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0;';
@@ -185,9 +188,38 @@ function renderTeachingAssistants(assistants) {
         details.appendChild(email);
         details.appendChild(badgeRow);
 
-        card.appendChild(avatar);
-        card.appendChild(details);
+        leftContent.appendChild(avatar);
+        leftContent.appendChild(details);
+
+        // Action column with History button
+        var actionCol = document.createElement('div');
+        actionCol.style.cssText = 'flex-shrink: 0;';
+
+        var historyBtn = document.createElement('button');
+        historyBtn.type = 'button';
+        historyBtn.className = 'action-btn action-review btn-assistant-history';
+        historyBtn.setAttribute('data-id', ast.id);
+        historyBtn.setAttribute('data-name', ast.name);
+        historyBtn.setAttribute('data-email', ast.email);
+        historyBtn.style.cssText = 'border: none; cursor: pointer; font-size: 12px; padding: 6px 12px; background: #7c3aed; color: #ffffff; border-radius: 6px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 1px 2px rgba(124,58,237,0.25);';
+        historyBtn.innerHTML = '📜 History';
+
+        actionCol.appendChild(historyBtn);
+
+        card.appendChild(leftContent);
+        card.appendChild(actionCol);
         container.appendChild(card);
+    });
+
+    // attach click listeners to assistant history buttons
+    var astBtns = container.querySelectorAll('.btn-assistant-history');
+    astBtns.forEach(function (b) {
+        b.addEventListener('click', function () {
+            var astId = this.getAttribute('data-id');
+            var astName = this.getAttribute('data-name');
+            var astEmail = this.getAttribute('data-email');
+            openAssistantHistoryModal(astId, astName, astEmail);
+        });
     });
 }
 
@@ -467,6 +499,213 @@ document.addEventListener('DOMContentLoaded', function () {
     if (modal) {
         modal.addEventListener('click', function (e) {
             if (e.target === modal) closeModal();
+        });
+    }
+});
+
+// Assistant Marking History Modal Handler
+var currentAsstModalSubmissions = [];
+var currentAsstModalFilter = 'all';
+
+function openAssistantHistoryModal(assistantId, name, email) {
+    var modal = document.getElementById('assistant-history-modal');
+    if (!modal) return;
+
+    var nameEl = document.getElementById('modal-asst-name');
+    var emailEl = document.getElementById('modal-asst-email');
+
+    if (nameEl) nameEl.textContent = name;
+    if (emailEl) emailEl.textContent = email;
+
+    var loadingEl = document.getElementById('modal-asst-history-loading');
+    var emptyEl = document.getElementById('modal-asst-history-empty');
+    var tableCont = document.getElementById('modal-asst-history-table-container');
+    var tableBody = document.getElementById('modal-asst-history-table-body');
+    var searchInput = document.getElementById('asst-history-search');
+
+    if (searchInput) searchInput.value = '';
+
+    modal.style.display = 'flex';
+    if (loadingEl) loadingEl.style.display = 'block';
+    if (emptyEl) emptyEl.style.display = 'none';
+    if (tableCont) tableCont.style.display = 'none';
+    if (tableBody) tableBody.innerHTML = '';
+
+    setAsstModalTabActive('all');
+    currentAsstModalFilter = 'all';
+
+    fetch('../../backend/teacher/submissions.php?assistant_id=' + encodeURIComponent(assistantId))
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+            if (loadingEl) loadingEl.style.display = 'none';
+
+            currentAsstModalSubmissions = (data && data.success && data.submissions) ? data.submissions : [];
+
+            var countAll = currentAsstModalSubmissions.length;
+            var countGraded = 0;
+            var countPending = 0;
+            currentAsstModalSubmissions.forEach(function (s) {
+                if (s.status === 'graded') {
+                    countGraded++;
+                } else {
+                    countPending++;
+                }
+            });
+
+            setElementText('modal-asst-count-all', countAll);
+            setElementText('modal-asst-count-graded', countGraded);
+            setElementText('modal-asst-count-pending', countPending);
+
+            renderAsstModalHistoryRows(currentAsstModalFilter);
+        })
+        .catch(function (err) {
+            if (loadingEl) loadingEl.style.display = 'none';
+            if (emptyEl) {
+                emptyEl.innerHTML = '<p style="color:#ef4444;">Failed to load marked submissions for this assistant.</p>';
+                emptyEl.style.display = 'block';
+            }
+        });
+}
+
+function renderAsstModalHistoryRows(filter) {
+    var emptyEl = document.getElementById('modal-asst-history-empty');
+    var tableCont = document.getElementById('modal-asst-history-table-container');
+    var tableBody = document.getElementById('modal-asst-history-table-body');
+    var searchInput = document.getElementById('asst-history-search');
+    var searchQ = (searchInput ? searchInput.value.toLowerCase().trim() : '');
+
+    if (!tableBody) return;
+
+    var filtered = currentAsstModalSubmissions.filter(function (sub) {
+        if (filter === 'graded' && sub.status !== 'graded') return false;
+        if (filter === 'pending' && sub.status === 'graded') return false;
+        if (searchQ) {
+            var stName = (sub.student_name || '').toLowerCase();
+            var stEmail = (sub.student_email || '').toLowerCase();
+            var asTitle = (sub.assignment_title || '').toLowerCase();
+            var cName = (sub.course_name || '').toLowerCase();
+            if (stName.indexOf(searchQ) === -1 && stEmail.indexOf(searchQ) === -1 &&
+                asTitle.indexOf(searchQ) === -1 && cName.indexOf(searchQ) === -1) {
+                return false;
+            }
+        }
+        return true;
+    });
+
+    tableBody.innerHTML = '';
+
+    if (filtered.length === 0) {
+        if (tableCont) tableCont.style.display = 'none';
+        if (emptyEl) {
+            emptyEl.style.display = 'block';
+            emptyEl.innerHTML = '<h3 style="font-size: 16px; color: #334155; margin-bottom: 6px;">No Matching Submissions</h3><p style="font-size: 13px; color: #64748b; margin: 0;">No marked assignments match the selected filter.</p>';
+        }
+        return;
+    }
+
+    if (tableCont) tableCont.style.display = 'block';
+    if (emptyEl) emptyEl.style.display = 'none';
+
+    filtered.forEach(function (sub) {
+        var tr = document.createElement('tr');
+        var statusInfo = getStatusInfo(sub.status);
+        var dateObj = new Date(sub.graded_at || sub.submitted_at);
+        var dateStr = dateObj.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+
+        var gradeText = '—';
+        if (sub.grade !== null && sub.grade !== undefined && sub.grade !== '') {
+            gradeText = '<strong style="color:#15803d; font-size:14px;">' + sub.grade + '</strong> / ' + sub.max_grade;
+        }
+
+        tr.innerHTML =
+            '<td><strong style="color:#1e293b; display:block;">' + escapeHtml(sub.student_name) + '</strong><span style="font-size:11px; color:#64748b;">' + escapeHtml(sub.student_email) + '</span></td>' +
+            '<td><strong style="color:#1e293b; display:block;">' + escapeHtml(sub.assignment_title) + '</strong><span style="font-size:11px; color:#64748b;">' + escapeHtml(sub.course_name) + '</span></td>' +
+            '<td>' + gradeText + '</td>' +
+            '<td><span style="font-size:12px; color:#475569;">' + dateStr + '</span></td>' +
+            '<td><span class="status-badge ' + statusInfo.className + '" style="font-size:11px;">' + statusInfo.label + '</span></td>' +
+            '<td><a href="review.html?id=' + sub.id + '" class="action-btn action-review" style="font-size:11px; padding:5px 10px; display:inline-flex; align-items:center; gap:4px; text-decoration:none;">✏️ Edit Grade</a></td>';
+
+        tableBody.appendChild(tr);
+    });
+}
+
+function setAsstModalTabActive(filter) {
+    var tabs = {
+        'all': document.getElementById('tab-asst-all-history'),
+        'graded': document.getElementById('tab-asst-graded-history'),
+        'pending': document.getElementById('tab-asst-pending-history')
+    };
+
+    for (var key in tabs) {
+        var el = tabs[key];
+        if (el) {
+            if (key === filter) {
+                el.style.background = '#7c3aed';
+                el.style.color = '#ffffff';
+                el.style.borderColor = '#7c3aed';
+                el.style.fontWeight = '600';
+            } else {
+                el.style.background = '#f8fafc';
+                el.style.color = '#334155';
+                el.style.borderColor = '#cbd5e1';
+                el.style.fontWeight = '500';
+            }
+        }
+    }
+}
+
+// wire assistant modal tabs and events
+document.addEventListener('DOMContentLoaded', function () {
+    var tabAll = document.getElementById('tab-asst-all-history');
+    var tabGraded = document.getElementById('tab-asst-graded-history');
+    var tabPending = document.getElementById('tab-asst-pending-history');
+    var searchInput = document.getElementById('asst-history-search');
+
+    if (tabAll) {
+        tabAll.addEventListener('click', function () {
+            currentAsstModalFilter = 'all';
+            setAsstModalTabActive('all');
+            renderAsstModalHistoryRows('all');
+        });
+    }
+    if (tabGraded) {
+        tabGraded.addEventListener('click', function () {
+            currentAsstModalFilter = 'graded';
+            setAsstModalTabActive('graded');
+            renderAsstModalHistoryRows('graded');
+        });
+    }
+    if (tabPending) {
+        tabPending.addEventListener('click', function () {
+            currentAsstModalFilter = 'pending';
+            setAsstModalTabActive('pending');
+            renderAsstModalHistoryRows('pending');
+        });
+    }
+    if (searchInput) {
+        searchInput.addEventListener('input', function () {
+            renderAsstModalHistoryRows(currentAsstModalFilter);
+        });
+    }
+
+    var asstModal = document.getElementById('assistant-history-modal');
+    var asstCloseBtn = document.getElementById('close-asst-history-modal-btn');
+    var asstCloseFooterBtn = document.getElementById('btn-close-asst-modal');
+
+    function closeAsstModal() {
+        if (asstModal) asstModal.style.display = 'none';
+    }
+
+    if (asstCloseBtn) asstCloseBtn.addEventListener('click', closeAsstModal);
+    if (asstCloseFooterBtn) asstCloseFooterBtn.addEventListener('click', closeAsstModal);
+    if (asstModal) {
+        asstModal.addEventListener('click', function (e) {
+            if (e.target === asstModal) closeAsstModal();
         });
     }
 });
