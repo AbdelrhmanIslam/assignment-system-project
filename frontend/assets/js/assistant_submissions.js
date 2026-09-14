@@ -3,6 +3,8 @@
 var allSubmissions = [];
 var currentFilter = 'all';
 var currentCourseId = 'all';
+var urlParams = new URLSearchParams(window.location.search);
+var currentStudentId = urlParams.get('student_id') || 'all';
 var searchQuery = '';
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -19,6 +21,9 @@ function loadSubmissions() {
     }
     if (currentCourseId !== 'all') {
         params.push('course_id=' + encodeURIComponent(currentCourseId));
+    }
+    if (currentStudentId !== 'all') {
+        params.push('student_id=' + encodeURIComponent(currentStudentId));
     }
     if (params.length > 0) {
         url += '?' + params.join('&');
@@ -44,6 +49,9 @@ function loadSubmissions() {
         // populate courses dropdown if not already populated
         populateCourseFilter(data.courses);
 
+        // populate students dropdown if not already populated
+        populateStudentFilter(data.students);
+
         allSubmissions = data.submissions || [];
         applyFilterAndRender();
     })
@@ -66,6 +74,23 @@ function populateCourseFilter(courses) {
     }
 }
 
+function populateStudentFilter(students) {
+    var select = document.getElementById('student-filter-select');
+    if (!select || select.children.length > 1) return;
+
+    if (students && students.length > 0) {
+        students.forEach(function (st) {
+            var opt = document.createElement('option');
+            opt.value = st.id;
+            opt.textContent = st.name;
+            if (String(st.id) === String(currentStudentId)) {
+                opt.selected = true;
+            }
+            select.appendChild(opt);
+        });
+    }
+}
+
 function setupFilters() {
     var tabs = document.querySelectorAll('.filter-tab');
     tabs.forEach(function (tab) {
@@ -81,6 +106,14 @@ function setupFilters() {
     if (courseSelect) {
         courseSelect.addEventListener('change', function () {
             currentCourseId = courseSelect.value;
+            loadSubmissions();
+        });
+    }
+
+    var studentSelect = document.getElementById('student-filter-select');
+    if (studentSelect) {
+        studentSelect.addEventListener('change', function () {
+            currentStudentId = studentSelect.value;
             loadSubmissions();
         });
     }
