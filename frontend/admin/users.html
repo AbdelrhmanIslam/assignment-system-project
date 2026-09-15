@@ -8,20 +8,23 @@
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/dashboard.css">
     <link rel="stylesheet" href="../assets/css/responsive.css">
+    <script>
+        (function(){var t=localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);})();
+    </script>
     <style>
         /* Hierarchical Categories Styling */
         .user-category-card {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
             margin-bottom: 24px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            box-shadow: var(--shadow-subtle);
             overflow: hidden;
-            transition: box-shadow 0.2s ease, border-color 0.2s ease;
+            transition: var(--transition-all);
         }
         .user-category-card:hover {
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
-            border-color: #cbd5e1;
+            box-shadow: var(--shadow-md);
+            border-color: var(--border-strong);
         }
         .user-category-header {
             padding: 14px 20px;
@@ -30,28 +33,34 @@
             align-items: center;
             flex-wrap: wrap;
             gap: 12px;
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            border-bottom: 1px solid #e2e8f0;
+            background: var(--bg-muted);
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            user-select: none;
+            transition: var(--transition-all);
+        }
+        .user-category-header:hover {
+            background: var(--bg-subtle);
         }
         .user-category-header.teacher-cat {
-            border-left: 5px solid #4f46e5;
+            border-left: 4px solid var(--role-teacher-text);
         }
         .user-category-header.grade-cat {
-            border-left: 5px solid #059669;
+            border-left: 4px solid var(--role-student-text);
         }
         .user-category-header.assistant-cat {
-            border-left: 5px solid #8b5cf6;
+            border-left: 4px solid var(--role-assistant-text);
         }
         .user-category-header.admin-cat {
-            border-left: 5px solid #dc2626;
+            border-left: 4px solid var(--role-admin-text);
         }
         .user-category-header.unassigned-cat {
-            border-left: 5px solid #94a3b8;
+            border-left: 4px solid var(--text-muted);
         }
         .category-title {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 700;
-            color: #1e293b;
+            color: var(--text-heading);
             margin: 0;
             display: flex;
             align-items: center;
@@ -59,52 +68,59 @@
         }
         .category-subtitle {
             font-size: 12px;
-            color: #64748b;
+            color: var(--text-muted);
             margin-top: 2px;
         }
         .count-badge {
             font-size: 12px;
             font-weight: 600;
-            padding: 4px 12px;
-            border-radius: 20px;
-            background: #e0e7ff;
-            color: #3730a3;
-            border: 1px solid #c7d2fe;
+            padding: 3px 10px;
+            border-radius: var(--radius-pill);
+            background: var(--role-teacher-bg);
+            color: var(--role-teacher-text);
+            border: 1px solid var(--role-teacher-border);
             display: inline-flex;
             align-items: center;
             gap: 5px;
         }
         .grade-subcategory-block {
             margin: 16px 20px 20px;
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
             overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+            box-shadow: var(--shadow-xs);
         }
         .grade-subcategory-header {
-            background: #f8fafc;
+            background: var(--bg-muted);
             padding: 10px 16px;
             font-size: 13.5px;
             font-weight: 600;
-            color: #334155;
-            border-bottom: 1px solid #e2e8f0;
+            color: var(--text-heading);
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            cursor: pointer;
+            user-select: none;
+            transition: var(--transition-all);
+        }
+        .grade-subcategory-header:hover {
+            background: var(--bg-subtle);
         }
         .sub-count-badge {
             font-size: 11px;
             font-weight: 600;
-            padding: 2px 9px;
-            border-radius: 12px;
-            background: #e2e8f0;
-            color: #475569;
+            padding: 2px 8px;
+            border-radius: var(--radius-pill);
+            background: var(--bg-muted);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
         }
         .role-section-divider {
             margin: 32px 0 18px;
             padding-bottom: 8px;
-            border-bottom: 2px solid #e2e8f0;
+            border-bottom: 2px solid var(--border-color);
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -112,7 +128,7 @@
         .role-section-divider h2 {
             font-size: 18px;
             font-weight: 700;
-            color: #0f172a;
+            color: var(--text-heading);
             display: flex;
             align-items: center;
             gap: 8px;
@@ -120,32 +136,25 @@
         }
         .hierarchical-table-wrapper {
             overflow-x: auto;
-        }
-        /* Collapsible Accordion Styles */
-        .user-category-header {
-            cursor: pointer;
-            user-select: none;
-            transition: background 0.15s ease;
-        }
-        .user-category-header:hover {
-            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            -webkit-overflow-scrolling: touch;
         }
         .accordion-toggle-icon {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 28px;
-            height: 28px;
+            width: 26px;
+            height: 26px;
             border-radius: 50%;
-            background: rgba(0, 0, 0, 0.05);
-            color: #475569;
-            font-size: 13px;
-            transition: transform 0.2s ease, background 0.15s ease;
-            margin-left: 10px;
+            background: var(--bg-muted);
+            color: var(--text-muted);
+            font-size: 12px;
+            transition: transform var(--transition-base), background var(--transition-fast);
+            margin-left: 8px;
+            border: 1px solid var(--border-subtle);
         }
         .user-category-header:hover .accordion-toggle-icon {
-            background: rgba(0, 0, 0, 0.1);
-            color: #0f172a;
+            background: var(--bg-surface);
+            color: var(--text-heading);
         }
         .user-category-card.is-collapsed .accordion-toggle-icon {
             transform: rotate(-90deg);
@@ -154,16 +163,6 @@
         .user-category-card.is-collapsed .hierarchical-table-wrapper {
             display: none !important;
         }
-
-        /* Subcategory (Grade level in students) Collapsible Styles */
-        .grade-subcategory-header {
-            cursor: pointer;
-            user-select: none;
-            transition: background 0.15s ease;
-        }
-        .grade-subcategory-header:hover {
-            background: #e2e8f0;
-        }
         .sub-accordion-toggle-icon {
             display: inline-flex;
             align-items: center;
@@ -171,11 +170,12 @@
             width: 22px;
             height: 22px;
             border-radius: 50%;
-            background: rgba(0, 0, 0, 0.05);
-            color: #64748b;
+            background: var(--bg-muted);
+            color: var(--text-muted);
             font-size: 11px;
-            transition: transform 0.2s ease;
-            margin-left: 8px;
+            transition: transform var(--transition-base);
+            margin-left: 6px;
+            border: 1px solid var(--border-subtle);
         }
         .grade-subcategory-block.is-collapsed .sub-accordion-toggle-icon {
             transform: rotate(-90deg);

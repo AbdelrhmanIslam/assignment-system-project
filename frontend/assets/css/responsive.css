@@ -1,35 +1,59 @@
+/* ==========================================================================
+   RESPONSIVE DESIGN BREAKPOINTS
+   ========================================================================== */
+
+/* Tablet (1024px and below) */
 @media (max-width: 1024px) {
    .dashboard-page {
-      padding: 28px 20px;
+      padding: 24px 20px;
    }
 
    .stats-grid {
       grid-template-columns: repeat(2, 1fr);
-      gap: 18px;
+      gap: 16px;
+   }
+
+   .assignment-layout {
+      grid-template-columns: 1fr;
+      gap: 22px;
    }
 }
 
+/* Mobile & Small Tablet (768px and below) */
 @media (max-width: 768px) {
+   body {
+      overflow-x: hidden;
+   }
+
    .dashboard-header {
       flex-direction: column;
       align-items: flex-start;
       gap: 16px;
       margin-bottom: 24px;
-   }
-
-   .dashboard-header h1 {
-      font-size: 24px;
+      padding-bottom: 16px;
    }
 
    .header-actions {
       width: 100%;
       justify-content: space-between;
+      gap: 8px;
    }
 
    .filter-bar {
       flex-direction: column;
       align-items: stretch;
-      gap: 14px;
+      gap: 12px;
+   }
+
+   .filter-tabs {
+      overflow-x: auto;
+      padding-bottom: 4px;
+      -webkit-overflow-scrolling: touch;
+      flex-wrap: nowrap;
+   }
+
+   .filter-tab {
+      flex-shrink: 0;
    }
 
    .search-input {
@@ -42,43 +66,65 @@
       gap: 14px;
    }
 
-   .assignment-layout {
-      grid-template-columns: 1fr;
-      gap: 20px;
-   }
-
    .meta-grid {
       grid-template-columns: 1fr;
+      gap: 10px;
+   }
+
+   /* Modals mobile sizing */
+   .modal-content,
+   div[id$="-modal"] > .content-card,
+   div[id$="-modal"] > .modal-content {
+      width: 100% !important;
+      max-width: calc(100vw - 32px) !important;
+      max-height: 92vh !important;
+      margin: 16px auto !important;
+      padding: 20px 16px !important;
+   }
+
+   /* Touch friendly touch targets */
+   .btn-primary,
+   .action-btn,
+   .view-btn,
+   .logout-btn,
+   .theme-toggle-btn {
+      min-height: 40px;
+   }
+
+   .assignments-table th,
+   .assignments-table td {
+      padding: 11px 12px;
+      font-size: 13px;
    }
 }
 
+/* Small Mobile (480px and below) */
 @media (max-width: 480px) {
    .dashboard-page {
       padding: 16px 12px;
    }
 
-   .assignments-section {
-      padding: 18px 14px;
-      border-radius: var(--radius-md);
-   }
-
+   .assignments-section,
    .content-card {
-      padding: 20px 16px;
+      padding: 16px 14px;
       border-radius: var(--radius-md);
    }
 
    .auth-card {
-      padding: 28px 20px;
-      border-radius: var(--radius-lg);
+      padding: 24px 18px;
+      border-radius: var(--radius-md);
    }
 
-   .assignments-table th,
-   .assignments-table td {
-      padding: 12px 10px;
-      font-size: 13px;
+   .auth-theme-toggle {
+      top: 12px;
+      right: 12px;
+   }
+
+   .header-actions {
+      flex-wrap: wrap;
    }
 
    .stat-number {
-      font-size: 28px;
+      font-size: 26px;
    }
 }
