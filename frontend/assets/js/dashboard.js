@@ -55,7 +55,7 @@ function updateTeachers(teachers) {
 
   if (!teachers || teachers.length === 0) {
     var emptyDiv = document.createElement("div");
-    emptyDiv.style.cssText = "grid-column: 1 / -1; padding: 1.5rem; background: #f9fafb; border: 1px dashed #d1d5db; border-radius: 8px; color: #6b7280; text-align: center;";
+    emptyDiv.style.cssText = "grid-column: 1 / -1; padding: 1.5rem; background: var(--glass-bg); border: 1px dashed var(--glass-border); border-radius: var(--radius-md); color: var(--text-muted); text-align: center;";
     emptyDiv.innerHTML = "<strong>No teachers assigned yet.</strong><p style='margin: 4px 0 0; font-size: 0.9rem;'>You will see assignments as soon as you are enrolled with your instructors.</p>";
     container.appendChild(emptyDiv);
     return;
@@ -64,21 +64,22 @@ function updateTeachers(teachers) {
   teachers.forEach(function (t) {
     var card = document.createElement("div");
     card.className = "stat-card";
-    card.style.cssText = "display: flex; align-items: center; gap: 14px; padding: 16px 20px; border-left: 4px solid #4f46e5; text-align: left;";
+    card.style.cssText = "display: flex; align-items: center; gap: 14px; padding: 16px 20px; border-left: 4px solid var(--role-teacher); text-align: left;";
 
     var avatar = document.createElement("div");
-    avatar.style.cssText = "width: 44px; height: 44px; border-radius: 50%; background: #e0e7ff; color: #4338ca; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;";
-    avatar.textContent = "👨‍🏫";
+    avatar.style.cssText = "width: 44px; height: 44px; border-radius: 50%; background: var(--glass-bg-elevated); color: var(--role-teacher); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0; border: 1px solid var(--glass-border);";
+    var initials = (t.name || 'T').split(' ').map(function(w){return w[0];}).slice(0,2).join('').toUpperCase();
+    avatar.textContent = initials;
 
     var info = document.createElement("div");
     info.style.cssText = "flex: 1; min-width: 0;";
 
     var name = document.createElement("strong");
-    name.style.cssText = "display: block; font-size: 15px; color: #111827; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;";
+    name.style.cssText = "display: block; font-size: 15px; color: var(--text-primary); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;";
     name.textContent = t.name;
 
     var email = document.createElement("span");
-    email.style.cssText = "display: block; font-size: 13px; color: #6b7280; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;";
+    email.style.cssText = "display: block; font-size: 13px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;";
     email.textContent = t.email;
 
     var badge = document.createElement("span");
@@ -189,8 +190,8 @@ function updateAssignments(assignments) {
 
     var teacherCell = document.createElement("td");
     var teacherBadge = document.createElement("span");
-    teacherBadge.style.cssText = "font-weight: 600; color: #4338ca; display: inline-flex; align-items: center; gap: 4px;";
-    teacherBadge.textContent = "👨‍🏫 " + (assignment.teacher_name || "Lead Teacher");
+    teacherBadge.style.cssText = "font-weight: 600; color: var(--text-primary); display: inline-flex; align-items: center; gap: 4px;";
+    teacherBadge.textContent = assignment.teacher_name || "Lead Teacher";
     teacherCell.appendChild(teacherBadge);
 
     var deadlineCell = document.createElement("td");

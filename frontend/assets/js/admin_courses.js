@@ -79,7 +79,7 @@ function updateCategoryBanner(filteredCourses) {
 
         if (distinctTeachers.length > 0) {
             teachersDisplay.innerHTML = distinctTeachers.map(function (t) {
-                return '<span class="status-badge status-review" style="font-size:11px; margin-right:4px;">👨‍🏫 ' + escapeHtml(t) + '</span>';
+                return '<span class="status-badge status-review" style="font-size:11px; margin-right:4px;">' + escapeHtml(t) + '</span>';
             }).join(' ');
         } else {
             teachersDisplay.innerHTML = '<span style="color:#9ca3af; font-weight:normal;">None assigned</span>';
@@ -158,7 +158,7 @@ function updateAssistantDropdown(teacherId) {
         assistantSelect.appendChild(optEmpty);
         assistantSelect.disabled = true;
         if (helpText) {
-            helpText.textContent = '⚠️ This teacher has no teaching assistants. Please assign an assistant in Manage Users first.';
+            helpText.textContent = 'This teacher has no teaching assistants. Please assign an assistant in Manage Users first.';
             helpText.style.color = '#dc2626';
         }
     } else {
@@ -274,10 +274,10 @@ function renderCoursesTable(courses) {
         var gradeLevelBadge = '<span class="status-badge status-review" style="font-size:11px;">' + escapeHtml(c.grade_level || 'First Year of Middle School') + '</span>';
 
         row.innerHTML =
-            '<td><strong>' + escapeHtml(c.name) + '</strong><br><small style="color:#6b7280;">' + escapeHtml(c.description || 'No description') + '</small></td>' +
+            '<td><strong style="color:var(--text-primary);">' + escapeHtml(c.name) + '</strong><br><small style="color:var(--text-muted);">' + escapeHtml(c.description || 'No description') + '</small></td>' +
             '<td>' + gradeLevelBadge + '</td>' +
-            '<td><strong style="color:#1e1b4b; display:inline-flex; align-items:center; gap:4px;">👨‍🏫 ' + escapeHtml(c.teacher_name) + '</strong></td>' +
-            '<td>' + (c.assistants && c.assistants !== 'None' ? '<span style="color:#6d28d9; font-weight:500;">🧑‍🏫 ' + escapeHtml(c.assistants) + '</span>' : '<span style="color:#9ca3af;">None</span>') + '</td>' +
+            '<td><strong style="color:var(--text-primary); display:inline-flex; align-items:center; gap:4px;">' + escapeHtml(c.teacher_name) + '</strong></td>' +
+            '<td>' + (c.assistants && c.assistants !== 'None' ? '<span class="status-badge status-review" style="font-size:11px;">' + escapeHtml(c.assistants) + '</span>' : '<span style="color:var(--text-muted);">None</span>') + '</td>' +
             '<td>' + c.student_count + ' Students</td>' +
             '<td>' + c.assignment_count + ' Assignments</td>' +
             '<td>' + statusBadge + '</td>' +

@@ -148,24 +148,25 @@ function renderTeachingAssistants(assistants) {
     assistants.forEach(function (ast) {
         var card = document.createElement('div');
         card.className = 'stat-card';
-        card.style.cssText = 'display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 20px; border-left: 4px solid #7c3aed; background: #ffffff; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.08);';
+        card.style.cssText = 'display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 20px; border-left: 4px solid var(--role-assistant); background: var(--glass-bg); border-radius: var(--radius-md); box-shadow: var(--shadow-glass); border: 1px solid var(--glass-border);';
 
         var leftContent = document.createElement('div');
         leftContent.style.cssText = 'display: flex; align-items: center; gap: 14px; min-width: 0; flex: 1;';
 
         var avatar = document.createElement('div');
-        avatar.style.cssText = 'width: 48px; height: 48px; border-radius: 50%; background: #f3e8ff; color: #7c3aed; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0;';
-        avatar.textContent = '🧑‍🏫';
+        avatar.style.cssText = 'width: 48px; height: 48px; border-radius: 50%; background: var(--glass-bg-elevated); color: var(--role-assistant); display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; flex-shrink: 0; border: 1px solid var(--glass-border);';
+        var initials = (ast.name || 'A').split(' ').map(function(w){return w[0];}).slice(0,2).join('').toUpperCase();
+        avatar.textContent = initials;
 
         var details = document.createElement('div');
         details.style.cssText = 'flex: 1; min-width: 0;';
 
         var name = document.createElement('strong');
-        name.style.cssText = 'display: block; font-size: 15px; color: #1e1b4b; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;';
+        name.style.cssText = 'display: block; font-size: 15px; color: var(--text-primary); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;';
         name.textContent = ast.name;
 
         var email = document.createElement('span');
-        email.style.cssText = 'display: block; font-size: 13px; color: #6b7280; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;';
+        email.style.cssText = 'display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;';
         email.textContent = ast.email;
 
         var badgeRow = document.createElement('div');
@@ -173,13 +174,13 @@ function renderTeachingAssistants(assistants) {
 
         var roleBadge = document.createElement('span');
         roleBadge.className = 'status-badge status-review';
-        roleBadge.style.cssText = 'font-size: 11px; padding: 2px 8px; background: #ede9fe; color: #6d28d9;';
+        roleBadge.style.cssText = 'font-size: 11px; padding: 2px 8px;';
         roleBadge.textContent = 'Teaching Assistant';
 
         var markedBadge = document.createElement('span');
         markedBadge.className = 'status-badge status-graded';
         markedBadge.style.cssText = 'font-size: 11px; padding: 2px 8px;';
-        markedBadge.textContent = '✍️ ' + (ast.graded_count || 0) + ' Marked';
+        markedBadge.textContent = 'Marked: ' + (ast.graded_count || 0);
 
         badgeRow.appendChild(roleBadge);
         badgeRow.appendChild(markedBadge);
@@ -201,8 +202,8 @@ function renderTeachingAssistants(assistants) {
         historyBtn.setAttribute('data-id', ast.id);
         historyBtn.setAttribute('data-name', ast.name);
         historyBtn.setAttribute('data-email', ast.email);
-        historyBtn.style.cssText = 'border: none; cursor: pointer; font-size: 12px; padding: 6px 12px; background: #7c3aed; color: #ffffff; border-radius: 6px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 1px 2px rgba(124,58,237,0.25);';
-        historyBtn.innerHTML = '📜 History';
+        historyBtn.style.cssText = 'border: none; cursor: pointer; font-size: 12px; padding: 6px 12px; background: var(--role-teacher); color: #ffffff; border-radius: 6px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;';
+        historyBtn.textContent = 'History';
 
         actionCol.appendChild(historyBtn);
 
@@ -266,8 +267,8 @@ function renderEnrolledStudents(list) {
     list.forEach(function (st) {
         var tr = document.createElement('tr');
         var markedBadge = (st.marked_count > 0)
-            ? '<span class="status-badge status-graded" style="font-size:11px;">✅ ' + st.marked_count + ' Marked</span>'
-            : '<span class="status-badge" style="font-size:11px; background:#f1f5f9; color:#64748b;">0 Marked</span>';
+            ? '<span class="status-badge status-graded" style="font-size:11px;">' + st.marked_count + ' Marked</span>'
+            : '<span class="status-badge" style="font-size:11px; background:var(--glass-bg-elevated); color:var(--text-muted); border:1px solid var(--glass-border);">0 Marked</span>';
 
         tr.innerHTML =
             '<td><strong>' + escapeHtml(st.name) + '</strong></td>' +
@@ -276,7 +277,7 @@ function renderEnrolledStudents(list) {
             '<td>' + escapeHtml(st.enrolled_courses) + '</td>' +
             '<td><span class="status-badge status-submitted" style="font-size:11px;">' + st.submission_count + ' submissions</span></td>' +
             '<td>' + markedBadge + '</td>' +
-            '<td><button type="button" class="action-btn action-review btn-student-history" data-id="' + st.id + '" data-name="' + escapeHtml(st.name) + '" data-email="' + escapeHtml(st.email) + '" data-grade="' + escapeHtml(st.grade_level) + '" style="border:none; cursor:pointer; font-size:12px; padding:5px 10px;">📜 History</button></td>';
+            '<td><button type="button" class="action-btn action-review btn-student-history" data-id="' + st.id + '" data-name="' + escapeHtml(st.name) + '" data-email="' + escapeHtml(st.email) + '" data-grade="' + escapeHtml(st.grade_level) + '" style="border:none; cursor:pointer; font-size:12px; padding:5px 10px;">History</button></td>';
         tbody.appendChild(tr);
     });
 
@@ -406,21 +407,21 @@ function renderModalHistoryRows(filter) {
         var markedByHtml = '—';
         if (sub.status === 'graded') {
             if (sub.assistant_name) {
-                markedByHtml = '<span style="font-weight:600; color:#15803d; display:block;">✍️ ' + escapeHtml(sub.assistant_name) + '</span>' +
-                               '<span style="font-size:11px; color:#64748b;">' + escapeHtml(sub.assistant_email || 'Teaching Assistant') + '</span>';
+                markedByHtml = '<span style="font-weight:600; color:var(--text-success, #10b981); display:block;">' + escapeHtml(sub.assistant_name) + '</span>' +
+                               '<span style="font-size:11px; color:var(--text-muted);">' + escapeHtml(sub.assistant_email || 'Teaching Assistant') + '</span>';
             } else {
-                markedByHtml = '<span style="font-weight:600; color:#3b82f6;">👨‍🏫 Teacher</span>';
+                markedByHtml = '<span style="font-weight:600; color:var(--role-teacher);">Teacher</span>';
             }
         }
 
-        var actionBtnText = (sub.status === 'graded') ? '✏️ Edit Grade' : '🔍 Review & Grade';
+        var actionBtnText = (sub.status === 'graded') ? 'Edit Grade' : 'Review & Grade';
         var actionBtnClass = (sub.status === 'graded') ? 'action-btn action-result' : 'action-btn action-review';
 
         tr.innerHTML =
             '<td><strong>' + escapeHtml(sub.assignment_title) + '</strong></td>' +
             '<td>' + escapeHtml(sub.course_name) + '</td>' +
             '<td>' + dateStr + '</td>' +
-            '<td><span class="status-badge" style="font-size:11px; background:#f1f5f9; color:#475569;">v' + (sub.version || 1) + '</span></td>' +
+            '<td><span class="status-badge" style="font-size:11px; background:var(--glass-bg-elevated); color:var(--text-secondary); border:1px solid var(--glass-border);">v' + (sub.version || 1) + '</span></td>' +
             '<td><span class="status-badge ' + statusInfo.className + '" style="font-size:11px;">' + statusInfo.label + '</span></td>' +
             '<td>' + gradeText + '</td>' +
             '<td>' + markedByHtml + '</td>' +
@@ -623,12 +624,12 @@ function renderAsstModalHistoryRows(filter) {
         }
 
         tr.innerHTML =
-            '<td><strong style="color:#1e293b; display:block;">' + escapeHtml(sub.student_name) + '</strong><span style="font-size:11px; color:#64748b;">' + escapeHtml(sub.student_email) + '</span></td>' +
-            '<td><strong style="color:#1e293b; display:block;">' + escapeHtml(sub.assignment_title) + '</strong><span style="font-size:11px; color:#64748b;">' + escapeHtml(sub.course_name) + '</span></td>' +
+            '<td><strong style="color:var(--text-primary); display:block;">' + escapeHtml(sub.student_name) + '</strong><span style="font-size:11px; color:var(--text-muted);">' + escapeHtml(sub.student_email) + '</span></td>' +
+            '<td><strong style="color:var(--text-primary); display:block;">' + escapeHtml(sub.assignment_title) + '</strong><span style="font-size:11px; color:var(--text-muted);">' + escapeHtml(sub.course_name) + '</span></td>' +
             '<td>' + gradeText + '</td>' +
-            '<td><span style="font-size:12px; color:#475569;">' + dateStr + '</span></td>' +
+            '<td><span style="font-size:12px; color:var(--text-secondary);">' + dateStr + '</span></td>' +
             '<td><span class="status-badge ' + statusInfo.className + '" style="font-size:11px;">' + statusInfo.label + '</span></td>' +
-            '<td><a href="review.html?id=' + sub.id + '" class="action-btn action-review" style="font-size:11px; padding:5px 10px; display:inline-flex; align-items:center; gap:4px; text-decoration:none;">✏️ Edit Grade</a></td>';
+            '<td><a href="review.html?id=' + sub.id + '" class="action-btn action-review" style="font-size:11px; padding:5px 10px; display:inline-flex; align-items:center; gap:4px; text-decoration:none;">Edit Grade</a></td>';
 
         tableBody.appendChild(tr);
     });

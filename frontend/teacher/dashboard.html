@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="../assets/css/dashboard.css">
     <link rel="stylesheet" href="../assets/css/responsive.css">
     <script>
-        (function(){var t=localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);})();
+        (function(){var t=localStorage.getItem('assignment_system_theme')||localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);})();
     </script>
 </head>
 <body>
@@ -193,10 +193,10 @@
                 </div>
 
                 <!-- History filter tabs -->
-                <div style="display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">
-                    <button type="button" class="modal-tab active" id="tab-all-history" style="padding: 6px 14px; font-size: 12px; border-radius: 6px; border: 1px solid #4f46e5; background: #4f46e5; color: #fff; cursor: pointer; font-weight: 600;">All Submissions (<span id="modal-count-all">0</span>)</button>
-                    <button type="button" class="modal-tab" id="tab-marked-history" style="padding: 6px 14px; font-size: 12px; border-radius: 6px; border: 1px solid #cbd5e1; background: #f8fafc; color: #334155; cursor: pointer; font-weight: 500;">✅ Marked Assignments (<span id="modal-count-marked">0</span>)</button>
-                    <button type="button" class="modal-tab" id="tab-pending-history" style="padding: 6px 14px; font-size: 12px; border-radius: 6px; border: 1px solid #cbd5e1; background: #f8fafc; color: #334155; cursor: pointer; font-weight: 500;">⏳ Pending Review (<span id="modal-count-pending">0</span>)</button>
+                <div style="display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid var(--glass-border); padding-bottom: 8px;">
+                    <button type="button" class="modal-tab active" id="tab-all-history" style="padding: 6px 14px; font-size: 12px; border-radius: 6px; border: 1px solid var(--role-teacher); background: var(--role-teacher); color: #fff; cursor: pointer; font-weight: 600;">All Submissions (<span id="modal-count-all">0</span>)</button>
+                    <button type="button" class="modal-tab" id="tab-marked-history" style="padding: 6px 14px; font-size: 12px; border-radius: 6px; border: 1px solid var(--glass-border); background: var(--glass-bg-elevated); color: var(--text-secondary); cursor: pointer; font-weight: 500;">Marked Assignments (<span id="modal-count-marked">0</span>)</button>
+                    <button type="button" class="modal-tab" id="tab-pending-history" style="padding: 6px 14px; font-size: 12px; border-radius: 6px; border: 1px solid var(--glass-border); background: var(--glass-bg-elevated); color: var(--text-secondary); cursor: pointer; font-weight: 500;">Pending Review (<span id="modal-count-pending">0</span>)</button>
                 </div>
 
                 <div id="modal-history-loading" style="display: none; text-align: center; padding: 30px; color: #64748b;">
@@ -245,18 +245,18 @@
                 <button type="button" id="close-asst-history-modal-btn" style="background: none; border: none; font-size: 24px; color: #94a3b8; cursor: pointer; line-height: 1;">&times;</button>
             </div>
             <div style="padding: 18px 24px; overflow-y: auto; flex: 1;">
-                <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 14px; padding: 12px 16px; background: #f5f3ff; border: 1px solid #ede9fe; border-radius: 8px; font-size: 13px; align-items: center;">
-                    <div><span style="color: #6b7280;">Assistant:</span> <strong id="modal-asst-name" style="color: #5b21b6;">—</strong></div>
-                    <div><span style="color: #6b7280;">Email:</span> <span id="modal-asst-email" style="color: #4c1d95;">—</span></div>
-                    <div><span class="status-badge" style="background: #ede9fe; color: #6d28d9; font-size: 11px; padding: 3px 9px;">🧑‍🏫 Teaching Assistant</span></div>
+                <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 14px; padding: 12px 16px; background: var(--glass-bg-elevated); border: 1px solid var(--glass-border); border-radius: 8px; font-size: 13px; align-items: center;">
+                    <div><span style="color: var(--text-muted);">Assistant:</span> <strong id="modal-asst-name" style="color: var(--text-primary);">—</strong></div>
+                    <div><span style="color: var(--text-muted);">Email:</span> <span id="modal-asst-email" style="color: var(--text-secondary);">—</span></div>
+                    <div><span class="status-badge status-review" style="font-size: 11px; padding: 3px 9px;">Teaching Assistant</span></div>
                 </div>
 
                 <!-- History filter tabs -->
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; border-bottom: 1px solid var(--glass-border); padding-bottom: 8px;">
                     <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                        <button type="button" class="modal-tab active" id="tab-asst-all-history" style="padding: 6px 14px; font-size: 12px; border-radius: 6px; border: 1px solid #7c3aed; background: #7c3aed; color: #fff; cursor: pointer; font-weight: 600;">All Marked Submissions (<span id="modal-asst-count-all">0</span>)</button>
-                        <button type="button" class="modal-tab" id="tab-asst-graded-history" style="padding: 6px 14px; font-size: 12px; border-radius: 6px; border: 1px solid #cbd5e1; background: #f8fafc; color: #334155; cursor: pointer; font-weight: 500;">✅ Graded &amp; Approved (<span id="modal-asst-count-graded">0</span>)</button>
-                        <button type="button" class="modal-tab" id="tab-asst-pending-history" style="padding: 6px 14px; font-size: 12px; border-radius: 6px; border: 1px solid #cbd5e1; background: #f8fafc; color: #334155; cursor: pointer; font-weight: 500;">⏳ Pending Approval (<span id="modal-asst-count-pending">0</span>)</button>
+                        <button type="button" class="modal-tab active" id="tab-asst-all-history" style="padding: 6px 14px; font-size: 12px; border-radius: 6px; border: 1px solid var(--role-assistant); background: var(--role-assistant); color: #fff; cursor: pointer; font-weight: 600;">All Marked Submissions (<span id="modal-asst-count-all">0</span>)</button>
+                        <button type="button" class="modal-tab" id="tab-asst-graded-history" style="padding: 6px 14px; font-size: 12px; border-radius: 6px; border: 1px solid var(--glass-border); background: var(--glass-bg-elevated); color: var(--text-secondary); cursor: pointer; font-weight: 500;">Graded &amp; Approved (<span id="modal-asst-count-graded">0</span>)</button>
+                        <button type="button" class="modal-tab" id="tab-asst-pending-history" style="padding: 6px 14px; font-size: 12px; border-radius: 6px; border: 1px solid var(--glass-border); background: var(--glass-bg-elevated); color: var(--text-secondary); cursor: pointer; font-weight: 500;">Pending Approval (<span id="modal-asst-count-pending">0</span>)</button>
                     </div>
                     <input type="text" id="asst-history-search" placeholder="Filter student or assignment..." style="padding: 6px 12px; font-size: 12px; border: 1px solid #cbd5e1; border-radius: 6px; width: 220px;">
                 </div>

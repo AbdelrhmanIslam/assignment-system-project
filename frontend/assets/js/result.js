@@ -49,7 +49,7 @@ function renderResult(data) {
     document.getElementById('courseName').textContent = assign.course_name;
     var teacherEl = document.getElementById('teacherName');
     if (teacherEl) {
-        teacherEl.textContent = '👨‍🏫 Teacher: ' + (assign.teacher_name || 'Lead Teacher');
+        teacherEl.textContent = 'Teacher: ' + (assign.teacher_name || 'Lead Teacher');
     }
     document.getElementById('maxGrade').textContent = assign.max_grade;
 

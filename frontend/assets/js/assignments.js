@@ -101,8 +101,8 @@ document.addEventListener('DOMContentLoaded', function () {
             // teacher cell
             var tdTeacher = document.createElement('td');
             var teacherSpan = document.createElement('span');
-            teacherSpan.style.cssText = 'font-weight: 600; color: #4338ca; display: inline-flex; align-items: center; gap: 4px;';
-            teacherSpan.textContent = '👨‍🏫 ' + (item.teacher_name || 'Instructor');
+            teacherSpan.style.cssText = 'font-weight: 600; color: var(--text-primary); display: inline-flex; align-items: center; gap: 4px;';
+            teacherSpan.textContent = item.teacher_name || 'Instructor';
             tdTeacher.appendChild(teacherSpan);
             tr.appendChild(tdTeacher);
 

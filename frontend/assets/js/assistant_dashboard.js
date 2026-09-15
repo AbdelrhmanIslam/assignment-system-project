@@ -94,7 +94,7 @@ function renderAssignedStudents(list) {
             '<td><span class="status-badge status-review" style="font-size:11px;">' + escapeHtml(st.grade_level) + '</span></td>' +
             '<td>' + escapeHtml(st.course_names) + '</td>' +
             '<td><span class="status-badge status-submitted" style="font-size:11px;">' + st.submission_count + ' submissions</span></td>' +
-            '<td><button type="button" class="action-btn action-review btn-student-history" data-id="' + st.id + '" data-name="' + escapeHtml(st.name) + '" data-email="' + escapeHtml(st.email) + '" data-grade="' + escapeHtml(st.grade_level) + '" style="border:none; cursor:pointer; font-size:12px; padding:5px 10px;">📜 History</button></td>';
+            '<td><button type="button" class="action-btn action-review btn-student-history" data-id="' + st.id + '" data-name="' + escapeHtml(st.name) + '" data-email="' + escapeHtml(st.email) + '" data-grade="' + escapeHtml(st.grade_level) + '" style="border:none; cursor:pointer; font-size:12px; padding:5px 10px;">History</button></td>';
         tbody.appendChild(row);
     });
 
@@ -171,10 +171,10 @@ function openStudentHistoryModal(studentId, name, email, grade) {
                         '<td><strong>' + escapeHtml(sub.assignment_title) + '</strong></td>' +
                         '<td>' + escapeHtml(sub.course_name) + '</td>' +
                         '<td>' + formatDate(sub.submitted_at) + '</td>' +
-                        '<td><span class="status-badge" style="font-size:11px; background:#f1f5f9; color:#475569;">v' + (sub.version || 1) + '</span></td>' +
+                        '<td><span class="status-badge" style="font-size:11px; background:var(--glass-bg-elevated); color:var(--text-secondary); border:1px solid var(--glass-border);">v' + (sub.version || 1) + '</span></td>' +
                         '<td><span class="status-badge ' + badgeClass + '" style="font-size:11px;">' + badgeLabel + '</span></td>' +
                         '<td>' + gradeText + '</td>' +
-                        '<td><a href="review.html?id=' + sub.id + '" class="action-btn action-review" style="font-size:12px; padding:5px 9px; text-decoration:none; display:inline-block;">✏️ Grade & Edit</a></td>';
+                        '<td><a href="review.html?id=' + sub.id + '" class="action-btn action-review" style="font-size:12px; padding:5px 9px; text-decoration:none; display:inline-block;">Grade & Edit</a></td>';
 
                     tableBody.appendChild(tr);
                 });

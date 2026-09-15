@@ -63,7 +63,7 @@ function renderTeacherCategoryTabs(teachers) {
         btn.type = 'button';
         btn.className = 'filter-tab' + (currentTeacherCategory === String(t.id) ? ' active' : '');
         btn.setAttribute('data-teacher-id', t.id);
-        btn.textContent = '👨‍🏫 ' + t.name + ' (' + count + ')';
+        btn.textContent = t.name + ' (' + count + ')';
         tabsContainer.appendChild(btn);
     });
 
@@ -133,7 +133,7 @@ function updateTeacherCategoryBanner(filtered) {
 
     banner.style.display = 'block';
     if (nameEl) {
-        nameEl.textContent = selectedTeacher ? '👨‍🏫 ' + selectedTeacher.name + ' (' + selectedTeacher.email + ')' : 'Selected Teacher';
+        nameEl.textContent = selectedTeacher ? selectedTeacher.name + ' (' + selectedTeacher.email + ')' : 'Selected Teacher';
     }
     if (countEl) {
         countEl.textContent = filtered.length + ' Assignment' + (filtered.length === 1 ? '' : 's');
@@ -169,13 +169,13 @@ function renderTable(assignments) {
 
         var subInfo =
             '<strong>' + a.total_submissions + '</strong> ' +
-            '<small style="color:#6b7280;">(' + a.graded_submissions + ' graded, ' + a.pending_submissions + ' pending)</small>';
+            '<small style="color:var(--text-muted);">(' + a.graded_submissions + ' graded, ' + a.pending_submissions + ' pending)</small>';
 
         row.innerHTML =
-            '<td><strong>' + escapeHtml(a.title) + '</strong></td>' +
+            '<td><strong style="color:var(--text-primary);">' + escapeHtml(a.title) + '</strong></td>' +
             '<td>' + escapeHtml(a.course_name) + '</td>' +
             '<td><span class="status-badge status-review" style="font-size:11px;">' + escapeHtml(a.grade_level || 'First Year of Middle School') + '</span></td>' +
-            '<td><strong style="color:#1e1b4b; display:inline-flex; align-items:center; gap:4px;">👨‍🏫 ' + escapeHtml(a.teacher_name) + '</strong></td>' +
+            '<td><strong style="display:inline-flex; align-items:center; gap:4px; color:var(--text-primary);">' + escapeHtml(a.teacher_name) + '</strong></td>' +
             '<td>' + a.max_grade + ' pts</td>' +
             '<td>' + formatDate(a.deadline) + '</td>' +
             '<td>' + subInfo + '</td>' +

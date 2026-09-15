@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="../assets/css/dashboard.css">
     <link rel="stylesheet" href="../assets/css/responsive.css">
     <script>
-        (function(){var t=localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);})();
+        (function(){var t=localStorage.getItem('assignment_system_theme')||localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);})();
     </script>
 </head>
 <body>
@@ -104,15 +104,17 @@
                 <p style="color: #6b7280; font-size: 14px; margin-bottom: 20px;">Approve assistant evaluation or request a recheck</p>
 
                 <!-- Official Assistant Evaluation Signature & Grade Indicator -->
-                <div id="assistant-notes-box" style="display: none; background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%); border: 1.5px dashed #16a34a; padding: 16px; margin-bottom: 20px; border-radius: 8px;">
+                <div id="assistant-notes-box" style="display: none; background: rgba(16, 185, 129, 0.08); border: 1.5px dashed var(--role-student, #10b981); padding: 16px; margin-bottom: 20px; border-radius: 8px;">
                     <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                        <span style="font-size: 20px;">✍️</span>
-                        <strong style="font-size: 14px; color: #166534;">Assistant Evaluation Signature</strong>
+                        <span style="display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:50%; background:rgba(16,185,129,0.18); color:#10b981; flex-shrink:0;">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"></path><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path></svg>
+                        </span>
+                        <strong style="font-size: 14px; color: var(--text-success, #10b981);">Assistant Evaluation Signature</strong>
                     </div>
-                    <div style="font-size: 13px; color: #14532d; line-height: 1.5; margin-left: 28px;">
+                    <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.5; margin-left: 36px;">
                         <div>Marked by: <strong id="assistant-name">—</strong> (<span id="assistant-email">—</span>)</div>
-                        <div style="margin-top: 4px;">Proposed Grade: <strong id="assistant-proposed-grade" style="font-size:15px; color:#166534;">—</strong></div>
-                        <div style="font-size: 12px; color: #15803d; margin-top: 4px;">Signed At: <span id="assistant-signed-at">—</span></div>
+                        <div style="margin-top: 4px;">Proposed Grade: <strong id="assistant-proposed-grade" style="font-size:15px; color:var(--text-success, #10b981);">—</strong></div>
+                        <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Signed At: <span id="assistant-signed-at">—</span></div>
                     </div>
                     <div id="assistant-corr-box" style="display: none; margin-top: 12px; margin-left: 28px;">
                         <a id="download-assistant-corr-btn" href="#" class="view-btn" style="background: #059669; font-size: 12px; padding: 6px 12px;">Download Assistant Correction File</a>
