@@ -442,14 +442,14 @@ function setModalTabActive(filter) {
         var el = tabs[key];
         if (el) {
             if (key === filter) {
-                el.style.background = '#4f46e5';
+                el.style.background = 'var(--role-teacher)';
                 el.style.color = '#ffffff';
-                el.style.borderColor = '#4f46e5';
+                el.style.borderColor = 'var(--role-teacher)';
                 el.style.fontWeight = '600';
             } else {
-                el.style.background = '#f8fafc';
-                el.style.color = '#334155';
-                el.style.borderColor = '#cbd5e1';
+                el.style.background = 'var(--glass-bg-elevated)';
+                el.style.color = 'var(--text-secondary)';
+                el.style.borderColor = 'var(--glass-border)';
                 el.style.fontWeight = '500';
             }
         }
@@ -646,14 +646,14 @@ function setAsstModalTabActive(filter) {
         var el = tabs[key];
         if (el) {
             if (key === filter) {
-                el.style.background = '#7c3aed';
+                el.style.background = 'var(--role-assistant)';
                 el.style.color = '#ffffff';
-                el.style.borderColor = '#7c3aed';
+                el.style.borderColor = 'var(--role-assistant)';
                 el.style.fontWeight = '600';
             } else {
-                el.style.background = '#f8fafc';
-                el.style.color = '#334155';
-                el.style.borderColor = '#cbd5e1';
+                el.style.background = 'var(--glass-bg-elevated)';
+                el.style.color = 'var(--text-secondary)';
+                el.style.borderColor = 'var(--glass-border)';
                 el.style.fontWeight = '500';
             }
         }

@@ -309,15 +309,15 @@ function showAlert(msg, type) {
     }
 
     if (type === 'success') {
-        toast.style.background = '#ecfdf5';
-        toast.style.color = '#047857';
-        toast.style.border = '1px solid #a7f3d0';
-        toast.innerHTML = '<span style="font-size: 16px;">&#10004;</span> ' + escapeHtml(msg);
+        toast.style.background = 'var(--success-bg)';
+        toast.style.color = 'var(--success-text)';
+        toast.style.border = '1px solid var(--success-border)';
+        toast.innerHTML = '<span style="font-size: 14px; font-weight: bold;">[OK]</span> ' + escapeHtml(msg);
     } else {
-        toast.style.background = '#fff1f2';
-        toast.style.color = '#be123c';
-        toast.style.border = '1px solid #fecdd3';
-        toast.innerHTML = '<span style="font-size: 16px;">&#9888;</span> ' + escapeHtml(msg);
+        toast.style.background = 'var(--danger-bg)';
+        toast.style.color = 'var(--danger-text)';
+        toast.style.border = '1px solid var(--danger-border)';
+        toast.innerHTML = '<span style="font-size: 14px; font-weight: bold;">[!]</span> ' + escapeHtml(msg);
     }
 
     setTimeout(function () {

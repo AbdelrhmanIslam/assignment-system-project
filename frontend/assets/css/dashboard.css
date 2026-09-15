@@ -938,9 +938,20 @@ a#btn-add-user {
    flex-shrink: 0;
 }
 
+.hierarchical-table-wrapper {
+   width: 100%;
+   overflow-x: auto;
+   -webkit-overflow-scrolling: touch;
+}
+
+.hierarchical-table-wrapper .assignments-table {
+   width: 100%;
+   min-width: 860px;
+}
+
 .hierarchical-table-wrapper .assignments-table th:nth-child(4),
 .hierarchical-table-wrapper .assignments-table td:nth-child(4) {
-   min-width: 380px;
+   min-width: 340px;
 }
 
 /* ==========================================================================

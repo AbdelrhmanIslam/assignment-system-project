@@ -67,8 +67,8 @@ function renderNotifications(notifications, unreadCount) {
             card.className = 'content-card';
             card.style.marginBottom = '14px';
             card.style.padding = '18px 22px';
-            card.style.borderLeft = n.is_read ? '4px solid #e5e7eb' : '4px solid #2563eb';
-            card.style.background = n.is_read ? '#ffffff' : '#f8faff';
+            card.style.borderLeft = n.is_read ? '4px solid var(--glass-border)' : '4px solid var(--role-teacher)';
+            card.style.background = n.is_read ? 'var(--glass-bg)' : 'var(--glass-bg-elevated)';
 
             var actionHtml = '';
             if (n.reference_id) {
