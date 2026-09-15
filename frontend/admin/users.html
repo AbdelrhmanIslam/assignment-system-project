@@ -209,26 +209,30 @@
             <div class="assignment-main">
                 <section class="assignments-section">
 
-                    <div class="filter-bar" style="display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
-
-                        <div class="filter-tabs">
-                            <button class="filter-tab active" data-role="all">All</button>
-                            <button class="filter-tab" data-role="student">Students</button>
-                            <button class="filter-tab" data-role="teacher">Teachers</button>
-                            <button class="filter-tab" data-role="assistant">Assistants</button>
-                            <button class="filter-tab" data-role="admin">Admins</button>
+                    <div class="user-mgmt-header-bar">
+                        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                            <div class="filter-tabs">
+                                <button class="filter-tab active" data-role="all">All</button>
+                                <button class="filter-tab" data-role="student">Students</button>
+                                <button class="filter-tab" data-role="teacher">Teachers</button>
+                                <button class="filter-tab" data-role="assistant">Assistants</button>
+                                <button class="filter-tab" data-role="admin">Admins</button>
+                            </div>
+                            <div style="display: flex; gap: 6px;">
+                                <button type="button" id="btn-expand-all" class="btn-accordion-control" title="Expand all category sections">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg> Expand All
+                                </button>
+                                <button type="button" id="btn-collapse-all" class="btn-accordion-control" title="Collapse all category sections">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"></polyline></svg> Collapse All
+                                </button>
+                            </div>
                         </div>
 
                         <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-                            <div style="display: flex; gap: 6px;">
-                                <button type="button" id="btn-expand-all" class="action-btn" title="Expand all category sections" style="background:#f1f5f9; color:#334155; border:1px solid #cbd5e1; border-radius:6px; font-size:12px; font-weight:600; padding:6px 12px; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
-                                    <span>▾</span> Expand All
-                                </button>
-                                <button type="button" id="btn-collapse-all" class="action-btn" title="Collapse all category sections" style="background:#f1f5f9; color:#334155; border:1px solid #cbd5e1; border-radius:6px; font-size:12px; font-weight:600; padding:6px 12px; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
-                                    <span>▸</span> Collapse All
-                                </button>
-                            </div>
-                            <input type="text" id="search-input" placeholder="Search name or email..." style="padding: 8px 14px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; width: 220px;">
+                            <input type="text" id="search-input" class="search-input" placeholder="Search name or email...">
+                            <a href="#add-user-section" class="btn-add-user" id="btn-add-user" title="Jump to Add User form">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg> Add New User
+                            </a>
                         </div>
                     </div>
 
@@ -323,7 +327,7 @@
                             <p style="font-size: 12px; color: #6b7280; margin-top: 4px;">Must be at least 8 characters long</p>
                         </div>
 
-                        <button type="submit" class="btn-primary" style="width: 100%; padding: 11px; font-size: 14px;">
+                        <button type="submit" class="btn-primary" style="height: 38px; width: auto; min-width: 170px; padding: 0 18px; font-size: 13.5px;">
                             Create User Account
                         </button>
                     </form>

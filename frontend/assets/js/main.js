@@ -5,13 +5,23 @@
 (function () {
     'use strict';
 
-    // Theme SVG icons
+    var STORAGE_KEY = 'assignment_system_theme';
+
+    // Clean inline SVG icons (No emojis)
     var SUN_ICON = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>';
     var MOON_ICON = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
 
-    // Get active theme: saved in localStorage or system preference
+    // Get active theme using assignment_system_theme key (with seamless fallback)
     function getPreferredTheme() {
-        var saved = localStorage.getItem('theme');
+        var saved = localStorage.getItem(STORAGE_KEY);
+        if (!saved) {
+            // Migrate legacy key if present
+            var legacy = localStorage.getItem('theme');
+            if (legacy === 'dark' || legacy === 'light') {
+                saved = legacy;
+                localStorage.setItem(STORAGE_KEY, saved);
+            }
+        }
         if (saved === 'dark' || saved === 'light') {
             return saved;
         }
@@ -48,7 +58,8 @@
     function toggleTheme() {
         var current = document.documentElement.getAttribute('data-theme') || getPreferredTheme();
         var next = (current === 'dark') ? 'light' : 'dark';
-        localStorage.setItem('theme', next);
+        localStorage.setItem(STORAGE_KEY, next);
+        localStorage.setItem('theme', next); // keep in sync for legacy checks
         applyTheme(next);
     }
 
@@ -68,7 +79,6 @@
             btn.type = 'button';
             btn.className = 'theme-toggle-btn';
             btn.addEventListener('click', toggleTheme);
-            // Insert before logout button if present, else prepend
             var logoutBtn = headerActions.querySelector('.logout-btn');
             if (logoutBtn) {
                 headerActions.insertBefore(btn, logoutBtn);
@@ -96,13 +106,13 @@
     // Listen to system preference changes if user hasn't set explicit preference
     if (window.matchMedia) {
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
-            if (!localStorage.getItem('theme')) {
+            if (!localStorage.getItem(STORAGE_KEY)) {
                 applyTheme(e.matches ? 'dark' : 'light');
             }
         });
     }
 
-    // Apply theme immediately as early as possible
+    // Apply theme immediately on script load
     var initialTheme = getPreferredTheme();
     document.documentElement.setAttribute('data-theme', initialTheme);
 
@@ -152,6 +162,5 @@
         }
     });
 
-    // Expose toggleTheme globally if needed
     window.toggleTheme = toggleTheme;
 })();

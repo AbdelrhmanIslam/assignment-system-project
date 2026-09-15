@@ -1,5 +1,5 @@
 /* ==========================================================================
-   AUTHENTICATION PAGES (LOGIN & REGISTER)
+   GLASS AUTHENTICATION PAGES (LOGIN & REGISTER)
    ========================================================================== */
 
 .auth-container {
@@ -7,67 +7,73 @@
    display: flex;
    align-items: center;
    justify-content: center;
-   padding: 24px;
-   background-color: var(--bg-canvas);
+   padding: 20px;
+   background: var(--canvas-mesh);
+   background-attachment: fixed;
+   background-color: var(--bg-page);
    position: relative;
    transition: background-color var(--transition-base);
 }
 
 .auth-theme-toggle {
    position: absolute;
-   top: 20px;
+   top: 18px;
    right: 20px;
 }
 
 .auth-card {
    width: 100%;
-   max-width: 460px;
-   background: var(--bg-surface);
-   padding: clamp(28px, 4vw, 40px) clamp(24px, 3.5vw, 36px);
+   max-width: 440px;
+   background: var(--glass-bg-elevated);
+   backdrop-filter: var(--glass-blur-lg);
+   -webkit-backdrop-filter: var(--glass-blur-lg);
+   padding: clamp(26px, 3.8vw, 36px) clamp(22px, 3.2vw, 32px);
    border-radius: var(--radius-lg);
-   border: 1px solid var(--border-color);
-   box-shadow: var(--shadow-lg);
+   border: 1px solid var(--glass-border-strong);
+   box-shadow: var(--shadow-modal);
    position: relative;
    transition: var(--transition-all);
 }
 
 .auth-card h1 {
-   margin: 0 0 6px;
+   margin: 0 0 5px;
    text-align: center;
-   font-size: clamp(22px, 2.8vw, 26px);
+   font-size: clamp(20px, 2.5vw, 24px);
    font-weight: 800;
-   color: var(--text-heading);
+   color: var(--text-primary);
    letter-spacing: -0.025em;
 }
 
 .auth-subtitle {
    text-align: center;
    color: var(--text-muted);
-   font-size: 14px;
-   margin-bottom: 26px;
+   font-size: 13.5px;
+   margin-bottom: 24px;
 }
 
 .form-group {
-   margin-bottom: 18px;
+   margin-bottom: 16px;
 }
 
 .form-group label {
    display: block;
-   margin-bottom: 7px;
-   font-size: 13px;
+   margin-bottom: 6px;
+   font-size: 12.5px;
    font-weight: 600;
-   color: var(--text-heading);
+   color: var(--text-primary);
 }
 
 .form-group input,
 .form-group select {
    width: 100%;
-   padding: 11px 14px;
-   border: 1px solid var(--border-color);
+   padding: 10px 13px;
+   border: 1px solid var(--input-border);
    border-radius: var(--radius-sm);
-   font-size: 14px;
-   color: var(--text-heading);
-   background: var(--bg-surface);
+   font-size: 13.5px;
+   color: var(--text-primary);
+   background: var(--input-bg);
+   backdrop-filter: var(--glass-blur-sm);
+   -webkit-backdrop-filter: var(--glass-blur-sm);
    outline: none;
    box-shadow: var(--shadow-xs);
    transition: border-color var(--transition-base), box-shadow var(--transition-base), background-color var(--transition-base);
@@ -76,8 +82,7 @@
 .form-group input:focus,
 .form-group select:focus {
    border-color: var(--border-focus);
-   background: var(--bg-surface);
-   box-shadow: 0 0 0 3px var(--primary-focus-ring);
+   box-shadow: var(--focus-ring);
 }
 
 .password-wrapper {
@@ -88,7 +93,7 @@
 }
 
 .password-wrapper input {
-   padding-right: 44px;
+   padding-right: 42px;
 }
 
 .toggle-password-btn {
@@ -99,7 +104,7 @@
    background: transparent;
    border: none;
    cursor: pointer;
-   padding: 6px;
+   padding: 5px;
    border-radius: var(--radius-xs);
    color: var(--text-muted);
    display: flex;
@@ -110,19 +115,19 @@
 }
 
 .toggle-password-btn:hover {
-   color: var(--text-heading);
-   background: var(--bg-muted);
+   color: var(--text-primary);
+   background: var(--glass-bg-hover);
 }
 
 .toggle-password-btn:focus-visible {
    outline: none;
-   box-shadow: 0 0 0 2px var(--primary-focus-ring);
+   box-shadow: var(--focus-ring);
 }
 
 .auth-link {
    text-align: center;
-   margin-top: 22px;
-   font-size: 13.5px;
+   margin-top: 20px;
+   font-size: 13px;
    color: var(--text-muted);
 }
 

@@ -257,11 +257,18 @@ function renderStudentRowHtml(u) {
     var statusBadge = renderStatusBadge(u.is_active);
     var actionButtons = renderActionButtons(u);
 
-    var sCoursesHtml = '<span style="font-size:12px; color:#9ca3af;">No assigned courses</span>';
+    var sCoursesHtml = '<span style="font-size:12px; color:var(--text-muted);">No assigned courses</span>';
     if (u.student_courses && u.student_courses.length > 0) {
-        sCoursesHtml = '<div style="display:flex; flex-direction:column; gap:4px;">' +
+        sCoursesHtml = '<div class="student-assignments-cell">' +
             u.student_courses.map(function (c) {
-                return '<span style="font-size:12px; color:#1e293b;">📘 <strong>' + escapeHtml(c.course_name) + '</strong> (<span style="color:#4f46e5; font-weight:500;">👨‍🏫 ' + escapeHtml(c.teacher_name) + '</span>)</span>';
+                return '<div class="student-course-tag">' +
+                    '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>' +
+                    '<span><strong>' + escapeHtml(c.course_name) + '</strong></span>' +
+                    '<span class="student-teacher-indicator">' +
+                        '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>' +
+                        escapeHtml(c.teacher_name) +
+                    '</span>' +
+                '</div>';
             }).join('') + '</div>';
     }
 
@@ -288,11 +295,15 @@ function renderTeacherRowHtml(u) {
             }).join('') + '</div>';
     }
 
-    var tCoursesHtml = '<span style="font-size:12px; color:#9ca3af;">0 courses</span>';
+    var tCoursesHtml = '<span style="font-size:12px; color:var(--text-muted);">0 courses</span>';
     if (u.teacher_courses && u.teacher_courses.length > 0) {
         tCoursesHtml = '<div style="display:flex; flex-direction:column; gap:4px;">' +
             u.teacher_courses.map(function (tc) {
-                return '<span style="font-size:12px; color:#1e293b;">📘 <strong>' + escapeHtml(tc.course_name) + '</strong> (<span style="color:#059669; font-weight:600;">' + tc.student_count + ' students</span>)</span>';
+                return '<div class="student-course-tag">' +
+                    '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>' +
+                    '<span><strong>' + escapeHtml(tc.course_name) + '</strong></span>' +
+                    '<span class="sub-count-badge">' + tc.student_count + ' students</span>' +
+                '</div>';
             }).join('') + '</div>';
     }
 
@@ -313,11 +324,13 @@ function renderAssistantRowHtml(u) {
     var statusBadge = renderStatusBadge(u.is_active);
     var actionButtons = renderActionButtons(u);
 
-    var asstForHtml = '<span style="font-size:12px; color:#9ca3af;">Unassigned</span>';
+    var asstForHtml = '<span style="font-size:12px; color:var(--text-muted);">Unassigned</span>';
     if (u.assigned_teachers && u.assigned_teachers.length > 0) {
         asstForHtml = '<div style="display:flex; flex-wrap:wrap; gap:4px;">' +
             u.assigned_teachers.map(function (t) {
-                return '<span class="status-badge status-submitted" style="font-size:11px;">🧑‍🏫 ' + escapeHtml(t.name) + '</span>';
+                return '<span class="status-badge status-submitted" style="font-size:11px;">' +
+                    '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> ' +
+                    escapeHtml(t.name) + '</span>';
             }).join('') + '</div>';
     }
 
@@ -414,21 +427,23 @@ function renderStudentsHierarchy(students) {
         gradeKeys.forEach(function (gk) { totalInTeacher += gradesObj[gk].length; });
 
         var headerBorderClass = tGroup.isUnassigned ? 'unassigned-cat' : 'teacher-cat';
-        var icon = tGroup.isUnassigned ? '👤' : '👨‍🏫';
+        var iconSvg = tGroup.isUnassigned
+            ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>'
+            : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>';
         var subtitle = tGroup.email ? escapeHtml(tGroup.email) : (tGroup.isUnassigned ? 'Students pending teacher assignment' : '');
 
         html += '<div class="user-category-card">';
         html += '  <div class="user-category-header ' + headerBorderClass + '" onclick="toggleCategoryCard(this)" title="Click to collapse / expand this teacher category">';
         html += '    <div style="display:flex; align-items:center; gap:10px;">';
-        html += '      <span style="font-size:22px;">' + icon + '</span>';
+        html += '      <span style="display:inline-flex; align-items:center; color:var(--primary);">' + iconSvg + '</span>';
         html += '      <div>';
         html += '        <h3 class="category-title">' + (tGroup.isUnassigned ? escapeHtml(tGroup.name) : ('Teacher: ' + escapeHtml(tGroup.name))) + '</h3>';
         if (subtitle) html += '        <span class="category-subtitle">' + subtitle + '</span>';
         html += '      </div>';
         html += '    </div>';
         html += '    <div style="display:flex; align-items:center; gap:10px;">';
-        html += '      <span class="count-badge">👥 ' + totalInTeacher + ' ' + (totalInTeacher === 1 ? 'Student' : 'Students') + '</span>';
-        html += '      <span class="accordion-toggle-icon" title="Toggle Section">▾</span>';
+        html += '      <span class="count-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg> ' + totalInTeacher + ' ' + (totalInTeacher === 1 ? 'Student' : 'Students') + '</span>';
+        html += '      <span class="accordion-toggle-icon" title="Toggle Section"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span>';
         html += '    </div>';
         html += '  </div>';
 
@@ -439,12 +454,12 @@ function renderStudentsHierarchy(students) {
             html += '    <div class="grade-subcategory-block">';
             html += '      <div class="grade-subcategory-header" onclick="toggleGradeSubcategory(this, event)" title="Click to collapse / expand this grade level">';
             html += '        <span style="display:flex; align-items:center; gap:8px;">';
-            html += '          <span>📚</span>';
+            html += '          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>';
             html += '          <span>' + escapeHtml(gk) + '</span>';
             html += '        </span>';
             html += '        <div style="display:flex; align-items:center; gap:6px;">';
             html += '          <span class="sub-count-badge">' + sList.length + ' ' + (sList.length === 1 ? 'Student' : 'Students') + '</span>';
-            html += '          <span class="sub-accordion-toggle-icon">▾</span>';
+            html += '          <span class="sub-accordion-toggle-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span>';
             html += '        </div>';
             html += '      </div>';
             html += '      <div class="hierarchical-table-wrapper">';
@@ -521,15 +536,15 @@ function renderTeachersHierarchy(teachers) {
         html += '<div class="user-category-card">';
         html += '  <div class="user-category-header ' + (isUn ? 'unassigned-cat' : 'grade-cat') + '" onclick="toggleCategoryCard(this)" title="Click to collapse / expand this grade level category">';
         html += '    <div style="display:flex; align-items:center; gap:10px;">';
-        html += '      <span style="font-size:22px;">🎓</span>';
+        html += '      <span style="display:inline-flex; align-items:center; color:var(--role-student);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg></span>';
         html += '      <div>';
         html += '        <h3 class="category-title">' + escapeHtml(gk) + '</h3>';
         html += '        <span class="category-subtitle">Teachers instructing courses in ' + escapeHtml(gk) + '</span>';
         html += '      </div>';
         html += '    </div>';
         html += '    <div style="display:flex; align-items:center; gap:10px;">';
-        html += '      <span class="count-badge">👨‍🏫 ' + tList.length + ' ' + (tList.length === 1 ? 'Teacher' : 'Teachers') + '</span>';
-        html += '      <span class="accordion-toggle-icon" title="Toggle Section">▾</span>';
+        html += '      <span class="count-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg> ' + tList.length + ' ' + (tList.length === 1 ? 'Teacher' : 'Teachers') + '</span>';
+        html += '      <span class="accordion-toggle-icon" title="Toggle Section"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span>';
         html += '    </div>';
         html += '  </div>';
 
@@ -618,15 +633,15 @@ function renderAssistantsHierarchy(assistants) {
         html += '<div class="user-category-card">';
         html += '  <div class="user-category-header ' + (tGroup.isUnassigned ? 'unassigned-cat' : 'assistant-cat') + '" onclick="toggleCategoryCard(this)" title="Click to collapse / expand this assistant category">';
         html += '    <div style="display:flex; align-items:center; gap:10px;">';
-        html += '      <span style="font-size:22px;">🧑‍🏫</span>';
+        html += '      <span style="display:inline-flex; align-items:center; color:var(--role-assistant);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg></span>';
         html += '      <div>';
         html += '        <h3 class="category-title">' + headerTitle + '</h3>';
         html += '        <span class="category-subtitle">' + headerSubtitle + '</span>';
         html += '      </div>';
         html += '    </div>';
         html += '    <div style="display:flex; align-items:center; gap:10px;">';
-        html += '      <span class="count-badge">🧑‍🏫 ' + aList.length + ' ' + (aList.length === 1 ? 'Assistant' : 'Assistants') + '</span>';
-        html += '      <span class="accordion-toggle-icon" title="Toggle Section">▾</span>';
+        html += '      <span class="count-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle></svg> ' + aList.length + ' ' + (aList.length === 1 ? 'Assistant' : 'Assistants') + '</span>';
+        html += '      <span class="accordion-toggle-icon" title="Toggle Section"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span>';
         html += '    </div>';
         html += '  </div>';
 
@@ -658,22 +673,22 @@ function renderAssistantsHierarchy(assistants) {
 
 function renderAdminsHierarchy(admins) {
     if (!admins || admins.length === 0) {
-        return '<div style="padding:20px; text-align:center; color:#64748b;">No administrators found.</div>';
+        return '<div style="padding:20px; text-align:center; color:var(--text-muted);">No administrators found.</div>';
     }
 
     var html = '';
     html += '<div class="user-category-card">';
     html += '  <div class="user-category-header admin-cat" onclick="toggleCategoryCard(this)" title="Click to collapse / expand administrators">';
     html += '    <div style="display:flex; align-items:center; gap:10px;">';
-    html += '      <span style="font-size:22px;">🛡️</span>';
+    html += '      <span style="display:inline-flex; align-items:center; color:var(--role-admin);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></span>';
     html += '      <div>';
     html += '        <h3 class="category-title">System Administrators</h3>';
     html += '        <span class="category-subtitle">Users with full administrative access and system privileges</span>';
     html += '      </div>';
     html += '    </div>';
     html += '    <div style="display:flex; align-items:center; gap:10px;">';
-    html += '      <span class="count-badge">🛡️ ' + admins.length + ' ' + (admins.length === 1 ? 'Admin' : 'Admins') + '</span>';
-    html += '      <span class="accordion-toggle-icon" title="Toggle Section">▾</span>';
+    html += '      <span class="count-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg> ' + admins.length + ' ' + (admins.length === 1 ? 'Admin' : 'Admins') + '</span>';
+    html += '      <span class="accordion-toggle-icon" title="Toggle Section"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span>';
     html += '    </div>';
     html += '  </div>';
 
@@ -732,22 +747,22 @@ function renderHierarchicalUsers(users) {
         var combinedHtml = '';
 
         if (students.length > 0) {
-            combinedHtml += '<div class="role-section-divider"><h2><span>👨‍🎓</span> Students (' + students.length + ')</h2><span style="font-size:12px; color:#6b7280;">Grouped by Teacher &amp; Academic Grade Level</span></div>';
+            combinedHtml += '<div class="role-section-divider"><h2><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg> Students (' + students.length + ')</h2><span style="font-size:12px; color:var(--text-muted);">Grouped by Teacher &amp; Academic Grade Level</span></div>';
             combinedHtml += renderStudentsHierarchy(students);
         }
 
         if (teachers.length > 0) {
-            combinedHtml += '<div class="role-section-divider"><h2><span>👨‍🏫</span> Teachers (' + teachers.length + ')</h2><span style="font-size:12px; color:#6b7280;">Grouped by Instructing Grade Level</span></div>';
+            combinedHtml += '<div class="role-section-divider"><h2><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg> Teachers (' + teachers.length + ')</h2><span style="font-size:12px; color:var(--text-muted);">Grouped by Instructing Grade Level</span></div>';
             combinedHtml += renderTeachersHierarchy(teachers);
         }
 
         if (assistants.length > 0) {
-            combinedHtml += '<div class="role-section-divider"><h2><span>🧑‍🏫</span> Teaching Assistants (' + assistants.length + ')</h2><span style="font-size:12px; color:#6b7280;">Grouped by Assigned Teacher</span></div>';
+            combinedHtml += '<div class="role-section-divider"><h2><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg> Teaching Assistants (' + assistants.length + ')</h2><span style="font-size:12px; color:var(--text-muted);">Grouped by Assigned Teacher</span></div>';
             combinedHtml += renderAssistantsHierarchy(assistants);
         }
 
         if (admins.length > 0) {
-            combinedHtml += '<div class="role-section-divider"><h2><span>🛡️</span> Administrators (' + admins.length + ')</h2><span style="font-size:12px; color:#6b7280;">System Administrative Accounts</span></div>';
+            combinedHtml += '<div class="role-section-divider"><h2><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg> Administrators (' + admins.length + ')</h2><span style="font-size:12px; color:var(--text-muted);">System Administrative Accounts</span></div>';
             combinedHtml += renderAdminsHierarchy(admins);
         }
 

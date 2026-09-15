@@ -1,204 +1,243 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 /* ==========================================================================
-   DESIGN TOKENS & ROOT VARIABLES (LIGHT THEME - DEFAULT)
+   GLASS DESIGN TOKENS & ROOT VARIABLES (LIGHT THEME - DEFAULT)
    ========================================================================== */
 :root {
    --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-   /* Brand & Primary */
-   --primary: #4f46e5;
-   --primary-hover: #4338ca;
-   --primary-active: #3730a3;
-   --primary-light: #eef2ff;
-   --primary-contrast: #ffffff;
-   --primary-focus-ring: rgba(79, 70, 229, 0.18);
-   --primary-glow: 0 2px 10px -1px rgba(79, 70, 229, 0.25);
+   /* Canvas & Mesh Backdrop */
+   --bg-page: #f1f5f9;
+   --canvas-mesh: radial-gradient(at 10% 10%, rgba(99, 102, 241, 0.06) 0px, transparent 45%),
+                  radial-gradient(at 90% 90%, rgba(14, 165, 233, 0.05) 0px, transparent 45%),
+                  #f1f5f9;
 
-   /* Canvas & Surfaces */
-   --bg-page: #f8fafc;
-   --bg-canvas: #f8fafc;
-   --bg-surface: #ffffff;
-   --bg-surface-elevated: #ffffff;
-   --bg-muted: #f1f5f9;
-   --bg-subtle: #f8fafc;
-   --card-bg: #ffffff;
+   /* Translucent Glass Surfaces */
+   --glass-bg: rgba(255, 255, 255, 0.72);
+   --glass-bg-elevated: rgba(255, 255, 255, 0.88);
+   --glass-bg-hover: rgba(255, 255, 255, 0.96);
+   --glass-bg-muted: rgba(241, 245, 249, 0.65);
+   --glass-bg-subtle: rgba(248, 250, 252, 0.6);
+   --card-bg: var(--glass-bg);
 
-   /* Borders & Dividers */
-   --border-subtle: #f1f5f9;
-   --border-color: #e2e8f0;
-   --border-strong: #cbd5e1;
+   /* Glass Borders & Separators */
+   --glass-border: rgba(226, 232, 240, 0.75);
+   --glass-border-strong: rgba(203, 213, 225, 0.9);
+   --glass-border-subtle: rgba(241, 245, 249, 0.7);
+   --border-color: var(--glass-border);
+   --border-strong: var(--glass-border-strong);
+   --border-subtle: var(--glass-border-subtle);
+
+   /* Glass Blur Levels */
+   --glass-blur-sm: blur(6px);
+   --glass-blur: blur(12px);
+   --glass-blur-lg: blur(20px);
+
+   /* High-Readability Typography */
+   --text-primary: #0f172a;
+   --text-secondary: #334155;
+   --text-muted: #64748b;
+   --text-disabled: #94a3b8;
+   --text-heading: var(--text-primary);
+   --text-body: var(--text-secondary);
+   --text-light: var(--text-disabled);
+
+   /* Form Controls & Inputs */
+   --input-bg: rgba(255, 255, 255, 0.8);
+   --input-border: rgba(203, 213, 225, 0.85);
+   --input-placeholder: #94a3b8;
+   --focus-ring: 0 0 0 3px rgba(79, 70, 229, 0.18);
    --border-focus: #4f46e5;
 
-   /* Typography Colors */
-   --text-heading: #0f172a;
-   --text-body: #334155;
-   --text-muted: #64748b;
-   --text-light: #94a3b8;
+   /* Table Glass Tokens */
+   --table-header-bg: rgba(248, 250, 252, 0.85);
+   --table-row-hover: rgba(241, 245, 249, 0.7);
+   --table-border: rgba(226, 232, 240, 0.75);
 
-   /* Multi-Level Shadow Hierarchy */
-   --shadow-xs: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
-   --shadow-sm: 0 1px 3px 0 rgba(15, 23, 42, 0.08), 0 1px 2px -1px rgba(15, 23, 42, 0.08);
-   --shadow-subtle: 0 1px 3px rgba(15, 23, 42, 0.04), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
-   --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
-   --shadow-hover: 0 10px 20px -3px rgba(15, 23, 42, 0.1), 0 4px 8px -2px rgba(15, 23, 42, 0.04);
-   --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.04);
-   --shadow-modal: 0 20px 25px -5px rgba(15, 23, 42, 0.16), 0 8px 10px -6px rgba(15, 23, 42, 0.08);
+   /* Modal Glass Backdrop & Card */
+   --overlay-bg: rgba(15, 23, 42, 0.45);
+   --modal-backdrop: var(--overlay-bg);
+
+   /* Refined Shadows */
+   --shadow-xs: 0 1px 2px 0 rgba(15, 23, 42, 0.04);
+   --shadow-sm: 0 1px 3px 0 rgba(15, 23, 42, 0.06), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
+   --shadow-glass: 0 4px 16px -2px rgba(15, 23, 42, 0.05), inset 0 1px 0 0 rgba(255, 255, 255, 0.7);
+   --shadow-glass-elevated: 0 10px 25px -4px rgba(15, 23, 42, 0.08), inset 0 1px 0 0 rgba(255, 255, 255, 0.8);
+   --shadow-modal: 0 20px 40px -10px rgba(15, 23, 42, 0.16), inset 0 1px 0 0 rgba(255, 255, 255, 0.6);
+   --shadow-subtle: var(--shadow-glass);
+   --shadow-md: var(--shadow-glass-elevated);
 
    /* Radii */
    --radius-xs: 4px;
-   --radius-sm: 6px;
-   --radius-md: 10px;
-   --radius-lg: 14px;
-   --radius-xl: 18px;
+   --radius-sm: 7px;
+   --radius-md: 11px;
+   --radius-lg: 16px;
+   --radius-xl: 20px;
    --radius-pill: 9999px;
 
-   /* Semantic Palette */
+   /* Role Identity Accents */
+   --role-admin: #dc2626;
+   --role-admin-bg: rgba(254, 242, 242, 0.8);
+   --role-admin-text: #991b1b;
+   --role-admin-border: rgba(254, 205, 211, 0.8);
+
+   --role-teacher: #4f46e5;
+   --role-teacher-bg: rgba(238, 242, 255, 0.8);
+   --role-teacher-text: #3730a3;
+   --role-teacher-border: rgba(199, 210, 254, 0.8);
+
+   --role-assistant: #0284c7;
+   --role-assistant-bg: rgba(224, 242, 254, 0.8);
+   --role-assistant-text: #0369a1;
+   --role-assistant-border: rgba(186, 230, 253, 0.8);
+
+   --role-student: #059669;
+   --role-student-bg: rgba(236, 253, 245, 0.8);
+   --role-student-text: #065f46;
+   --role-student-border: rgba(167, 243, 208, 0.8);
+
+   /* Semantic Actions */
+   --primary: #4f46e5;
+   --primary-hover: #4338ca;
+   --primary-contrast: #ffffff;
+
    --success: #059669;
-   --success-bg: #ecfdf5;
-   --success-border: #a7f3d0;
+   --success-bg: rgba(236, 253, 245, 0.85);
+   --success-border: rgba(167, 243, 208, 0.8);
    --success-text: #065f46;
 
    --warning: #d97706;
-   --warning-bg: #fffbeb;
-   --warning-border: #fde68a;
+   --warning-bg: rgba(255, 251, 235, 0.85);
+   --warning-border: rgba(253, 230, 138, 0.8);
    --warning-text: #92400e;
 
    --danger: #dc2626;
-   --danger-bg: #fef2f2;
-   --danger-border: #fecdd3;
+   --danger-bg: rgba(254, 242, 242, 0.85);
+   --danger-border: rgba(254, 205, 211, 0.8);
    --danger-text: #991b1b;
 
-   --info: #0284c7;
-   --info-bg: #f0f9ff;
-   --info-border: #bae6fd;
-   --info-text: #075985;
+   --neutral: #475569;
+   --neutral-bg: rgba(241, 245, 249, 0.85);
+   --neutral-border: rgba(226, 232, 240, 0.8);
+   --neutral-text: #334155;
 
-   /* Role Identity Badges */
-   --role-admin-bg: #fef2f2;
-   --role-admin-text: #991b1b;
-   --role-admin-border: #fecdd3;
-
-   --role-teacher-bg: #eef2ff;
-   --role-teacher-text: #3730a3;
-   --role-teacher-border: #c7d2fe;
-
-   --role-assistant-bg: #e0f2fe;
-   --role-assistant-text: #0369a1;
-   --role-assistant-border: #bae6fd;
-
-   --role-student-bg: #ecfdf5;
-   --role-student-text: #065f46;
-   --role-student-border: #a7f3d0;
-
-   /* Interaction & Transitions */
+   /* Transitions */
    --transition-fast: 120ms ease;
    --transition-base: 180ms ease;
    --transition-smooth: 220ms cubic-bezier(0.16, 1, 0.3, 1);
    --transition-all: background-color 180ms ease, color 180ms ease, border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
-
-   /* Table styling tokens */
-   --table-header-bg: #f8fafc;
-   --table-row-hover: #f8fafc;
-   --table-border: #f1f5f9;
-
-   /* Modal backdrop */
-   --modal-backdrop: rgba(15, 23, 42, 0.55);
 }
 
 /* ==========================================================================
-   DARK THEME VARIABLES ([data-theme="dark"])
+   GLASS DESIGN TOKENS (DARK THEME - [data-theme="dark"])
    ========================================================================== */
 [data-theme="dark"] {
-   /* Canvas & Surfaces - Refined deep slate / near-black */
+   /* Deep Slate / Near-Black Mesh Backdrop */
    --bg-page: #0b0f19;
-   --bg-canvas: #0b0f19;
-   --bg-surface: #111827;
-   --bg-surface-elevated: #1a2234;
-   --bg-muted: #1e293b;
-   --bg-subtle: #151d2e;
-   --card-bg: #111827;
+   --canvas-mesh: radial-gradient(at 10% 10%, rgba(99, 102, 241, 0.08) 0px, transparent 45%),
+                  radial-gradient(at 90% 90%, rgba(14, 165, 233, 0.06) 0px, transparent 45%),
+                  #0b0f19;
 
-   /* Brand & Primary (tuned for dark contrast) */
-   --primary: #6366f1;
-   --primary-hover: #4f46e5;
-   --primary-active: #818cf8;
-   --primary-light: rgba(99, 102, 241, 0.15);
-   --primary-contrast: #ffffff;
-   --primary-focus-ring: rgba(99, 102, 241, 0.28);
-   --primary-glow: 0 2px 10px -1px rgba(99, 102, 241, 0.35);
+   /* Translucent Deep Glass Surfaces */
+   --glass-bg: rgba(17, 24, 39, 0.74);
+   --glass-bg-elevated: rgba(26, 34, 52, 0.84);
+   --glass-bg-hover: rgba(33, 44, 68, 0.92);
+   --glass-bg-muted: rgba(24, 33, 50, 0.7);
+   --glass-bg-subtle: rgba(19, 27, 43, 0.65);
+   --card-bg: var(--glass-bg);
 
-   /* Borders & Dividers */
-   --border-subtle: #1e293b;
-   --border-color: #26334d;
-   --border-strong: #374763;
+   /* Glass Borders & Thin Dividers */
+   --glass-border: rgba(51, 65, 85, 0.65);
+   --glass-border-strong: rgba(71, 85, 105, 0.85);
+   --glass-border-subtle: rgba(38, 51, 77, 0.55);
+   --border-color: var(--glass-border);
+   --border-strong: var(--glass-border-strong);
+   --border-subtle: var(--glass-border-subtle);
+
+   /* High-Contrast WCAG-Friendly Text */
+   --text-primary: #f8fafc;
+   --text-secondary: #cbd5e1;
+   --text-muted: #94a3b8;
+   --text-disabled: #64748b;
+   --text-heading: var(--text-primary);
+   --text-body: var(--text-secondary);
+   --text-light: var(--text-disabled);
+
+   /* Form Controls & Inputs */
+   --input-bg: rgba(15, 23, 42, 0.65);
+   --input-border: rgba(51, 65, 85, 0.8);
+   --input-placeholder: #64748b;
+   --focus-ring: 0 0 0 3px rgba(99, 102, 241, 0.28);
    --border-focus: #6366f1;
 
-   /* Typography Colors */
-   --text-heading: #f8fafc;
-   --text-body: #cbd5e1;
-   --text-muted: #94a3b8;
-   --text-light: #64748b;
+   /* Table Glass Tokens */
+   --table-header-bg: rgba(21, 29, 46, 0.82);
+   --table-row-hover: rgba(30, 41, 59, 0.7);
+   --table-border: rgba(38, 51, 77, 0.65);
 
-   /* Multi-Level Shadow Hierarchy (tuned for dark surfaces) */
+   /* Modal Glass Backdrop & Card */
+   --overlay-bg: rgba(0, 0, 0, 0.7);
+   --modal-backdrop: var(--overlay-bg);
+
+   /* Refined Dark Depth with Top Edge Luminescence */
    --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.5), 0 1px 2px -1px rgba(0, 0, 0, 0.4);
-   --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.35), 0 4px 12px -2px rgba(0, 0, 0, 0.35);
-   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -2px rgba(0, 0, 0, 0.35);
-   --shadow-hover: 0 10px 20px -3px rgba(0, 0, 0, 0.6), 0 4px 8px -2px rgba(0, 0, 0, 0.4);
-   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.55), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
-   --shadow-modal: 0 25px 50px -12px rgba(0, 0, 0, 0.85);
+   --shadow-glass: 0 4px 18px -2px rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+   --shadow-glass-elevated: 0 10px 25px -4px rgba(0, 0, 0, 0.6), inset 0 1px 0 0 rgba(255, 255, 255, 0.12);
+   --shadow-modal: 0 25px 50px -12px rgba(0, 0, 0, 0.85), inset 0 1px 0 0 rgba(255, 255, 255, 0.12);
+   --shadow-subtle: var(--shadow-glass);
+   --shadow-md: var(--shadow-glass-elevated);
 
-   /* Semantic Palette (Dark Mode) */
-   --success: #10b981;
-   --success-bg: rgba(16, 185, 129, 0.14);
-   --success-border: rgba(16, 185, 129, 0.3);
-   --success-text: #6ee7b7;
-
-   --warning: #f59e0b;
-   --warning-bg: rgba(245, 158, 11, 0.14);
-   --warning-border: rgba(245, 158, 11, 0.3);
-   --warning-text: #fcd34d;
-
-   --danger: #ef4444;
-   --danger-bg: rgba(239, 68, 68, 0.14);
-   --danger-border: rgba(239, 68, 68, 0.3);
-   --danger-text: #fca5a5;
-
-   --info: #38bdf8;
-   --info-bg: rgba(56, 189, 248, 0.14);
-   --info-border: rgba(56, 189, 248, 0.3);
-   --info-text: #7dd3fc;
-
-   /* Role Identity Badges (Dark Mode) */
-   --role-admin-bg: rgba(220, 38, 38, 0.18);
+   /* Role Accents (Dark Mode) */
+   --role-admin: #ef4444;
+   --role-admin-bg: rgba(220, 38, 38, 0.2);
    --role-admin-text: #fca5a5;
    --role-admin-border: rgba(239, 68, 68, 0.35);
 
+   --role-teacher: #6366f1;
    --role-teacher-bg: rgba(79, 70, 229, 0.2);
    --role-teacher-text: #c7d2fe;
    --role-teacher-border: rgba(99, 102, 241, 0.35);
 
+   --role-assistant: #38bdf8;
    --role-assistant-bg: rgba(2, 132, 199, 0.2);
    --role-assistant-text: #7dd3fc;
    --role-assistant-border: rgba(56, 189, 248, 0.35);
 
+   --role-student: #10b981;
    --role-student-bg: rgba(5, 150, 105, 0.2);
    --role-student-text: #6ee7b7;
    --role-student-border: rgba(16, 185, 129, 0.35);
 
-   /* Table styling tokens (Dark Mode) */
-   --table-header-bg: #151d2e;
-   --table-row-hover: #172133;
-   --table-border: #1e293b;
+   /* Semantic Actions (Dark Mode) */
+   --primary: #6366f1;
+   --primary-hover: #4f46e5;
+   --primary-contrast: #ffffff;
 
-   /* Modal backdrop (Dark Mode) */
-   --modal-backdrop: rgba(0, 0, 0, 0.75);
+   --success: #10b981;
+   --success-bg: rgba(16, 185, 129, 0.18);
+   --success-border: rgba(16, 185, 129, 0.35);
+   --success-text: #6ee7b7;
+
+   --warning: #f59e0b;
+   --warning-bg: rgba(245, 158, 11, 0.18);
+   --warning-border: rgba(245, 158, 11, 0.35);
+   --warning-text: #fcd34d;
+
+   --danger: #ef4444;
+   --danger-bg: rgba(239, 68, 68, 0.18);
+   --danger-border: rgba(239, 68, 68, 0.35);
+   --danger-text: #fca5a5;
+
+   --neutral: #94a3b8;
+   --neutral-bg: rgba(30, 41, 59, 0.7);
+   --neutral-border: rgba(51, 65, 85, 0.7);
+   --neutral-text: #cbd5e1;
 }
 
 /* ==========================================================================
-   GLOBAL RESET & BASE STYLES
+   GLOBAL RESET & GLASS CANVAS
    ========================================================================== */
 *, *::before, *::after {
    box-sizing: border-box;
@@ -208,21 +247,15 @@ html {
    color-scheme: light dark;
 }
 
-[data-theme="light"] {
-   color-scheme: light;
-}
-
-[data-theme="dark"] {
-   color-scheme: dark;
-}
-
 body {
    margin: 0;
    font-family: var(--font-sans);
+   background: var(--canvas-mesh);
+   background-attachment: fixed;
    background-color: var(--bg-page);
    color: var(--text-body);
    line-height: 1.55;
-   font-size: 14px;
+   font-size: 13.5px;
    -webkit-font-smoothing: antialiased;
    -moz-osx-font-smoothing: grayscale;
    transition: background-color var(--transition-base), color var(--transition-base);
@@ -234,22 +267,23 @@ body {
 h1, h2, h3, h4, h5, h6 {
    color: var(--text-heading);
    font-weight: 700;
-   letter-spacing: -0.02em;
+   letter-spacing: -0.025em;
    margin-top: 0;
 }
 
-h1 { font-size: clamp(22px, 3vw, 28px); }
-h2 { font-size: clamp(18px, 2.4vw, 22px); }
-h3 { font-size: clamp(16px, 1.8vw, 18px); }
+h1 { font-size: clamp(20px, 2.5vw, 26px); font-weight: 800; }
+h2 { font-size: clamp(17px, 2vw, 21px); }
+h3 { font-size: clamp(15px, 1.6vw, 17px); }
 
 p {
-   margin: 0 0 12px;
+   margin: 0 0 10px;
+   color: var(--text-body);
 }
 
 a {
    color: var(--primary);
    text-decoration: none;
-   transition: color var(--transition-fast), opacity var(--transition-fast);
+   transition: color var(--transition-fast);
 }
 
 a:hover {
@@ -257,14 +291,14 @@ a:hover {
 }
 
 /* ==========================================================================
-   FORM CONTROLS & INPUTS
+   FORM CONTROLS & GLASS INPUTS
    ========================================================================== */
 button,
 input,
 select,
 textarea {
    font-family: inherit;
-   font-size: 14px;
+   font-size: 13.5px;
 }
 
 input[type="text"],
@@ -275,10 +309,12 @@ input[type="datetime-local"],
 select,
 textarea {
    width: 100%;
-   padding: 10px 14px;
-   border: 1px solid var(--border-color);
+   padding: 9px 13px;
+   border: 1px solid var(--input-border);
    border-radius: var(--radius-sm);
-   background-color: var(--bg-surface);
+   background-color: var(--input-bg);
+   backdrop-filter: var(--glass-blur-sm);
+   -webkit-backdrop-filter: var(--glass-blur-sm);
    color: var(--text-heading);
    outline: none;
    box-shadow: var(--shadow-xs);
@@ -290,7 +326,7 @@ input[type="email"]::placeholder,
 input[type="password"]::placeholder,
 input[type="number"]::placeholder,
 textarea::placeholder {
-   color: var(--text-light);
+   color: var(--input-placeholder);
 }
 
 input[type="text"]:focus,
@@ -301,17 +337,27 @@ input[type="datetime-local"]:focus,
 select:focus,
 textarea:focus {
    border-color: var(--border-focus);
-   box-shadow: 0 0 0 3px var(--primary-focus-ring);
+   box-shadow: var(--focus-ring);
 }
 
 select {
-   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
    background-repeat: no-repeat;
-   background-position: right 12px center;
-   background-size: 14px;
-   padding-right: 36px;
+   background-position: right 10px center;
+   background-size: 13px;
+   padding-right: 32px;
    appearance: none;
    -webkit-appearance: none;
+}
+
+[data-theme="dark"] select option {
+   background-color: #1e293b;
+   color: #f8fafc;
+}
+
+select option {
+   background-color: #ffffff;
+   color: #0f172a;
 }
 
 textarea {
@@ -320,54 +366,75 @@ textarea {
 }
 
 /* ==========================================================================
-   BUTTONS
+   BUTTON HIERARCHY
    ========================================================================== */
 .btn-primary {
    display: inline-flex;
    align-items: center;
    justify-content: center;
-   gap: 8px;
-   padding: 11px 20px;
+   gap: 7px;
+   padding: 9px 18px;
    border: 1px solid transparent;
    border-radius: var(--radius-sm);
    background-color: var(--primary);
    color: var(--primary-contrast);
    font-weight: 600;
-   font-size: 14px;
+   font-size: 13.5px;
    cursor: pointer;
    box-shadow: var(--shadow-sm);
-   transition: transform var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast);
+   transition: var(--transition-all);
+   white-space: nowrap;
 }
 
 .btn-primary:hover {
    background-color: var(--primary-hover);
    transform: translateY(-1px);
-   box-shadow: var(--shadow-md);
+   box-shadow: var(--shadow-glass);
 }
 
 .btn-primary:active {
-   background-color: var(--primary-active);
    transform: translateY(0);
 }
 
-.btn-primary:focus-visible {
-   outline: none;
-   box-shadow: 0 0 0 3px var(--primary-focus-ring);
+.btn-secondary {
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
+   gap: 7px;
+   padding: 9px 16px;
+   border: 1px solid var(--glass-border);
+   border-radius: var(--radius-sm);
+   background-color: var(--glass-bg);
+   backdrop-filter: var(--glass-blur-sm);
+   color: var(--text-heading);
+   font-weight: 600;
+   font-size: 13.5px;
+   cursor: pointer;
+   box-shadow: var(--shadow-xs);
+   transition: var(--transition-all);
+}
+
+.btn-secondary:hover {
+   background-color: var(--glass-bg-hover);
+   border-color: var(--glass-border-strong);
+   transform: translateY(-1px);
 }
 
 /* ==========================================================================
    NOTIFICATIONS & ALERTS
    ========================================================================== */
 .alert {
-   padding: 13px 16px;
+   padding: 12px 16px;
    border-radius: var(--radius-md);
    margin-bottom: 20px;
    white-space: pre-line;
    line-height: 1.5;
-   font-size: 13.5px;
+   font-size: 13px;
    font-weight: 500;
+   backdrop-filter: var(--glass-blur);
+   -webkit-backdrop-filter: var(--glass-blur);
    box-shadow: var(--shadow-xs);
-   animation: alertSlideIn 0.25s var(--transition-smooth);
+   animation: alertSlideIn 0.22s var(--transition-smooth);
 }
 
 .alert-error {
@@ -397,19 +464,19 @@ textarea {
    SCROLLBARS
    ========================================================================== */
 ::-webkit-scrollbar {
-   width: 8px;
-   height: 8px;
+   width: 7px;
+   height: 7px;
 }
 
 ::-webkit-scrollbar-track {
-   background: var(--bg-muted);
+   background: var(--glass-bg-muted);
 }
 
 ::-webkit-scrollbar-thumb {
-   background: var(--border-strong);
+   background: var(--glass-border-strong);
    border-radius: var(--radius-pill);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-   background: var(--text-light);
+   background: var(--text-muted);
 }
