@@ -23,8 +23,8 @@
                 <p>Monitor assignments across all departments and manage active status</p>
             </div>
             <div class="header-actions">
-                <span class="user-role" style="background: #fef2f2; color: #991b1b;">Admin</span>
-                <span id="admin-name" style="font-weight: 600; color: #374151;">Administrator</span>
+                <span class="user-role role-admin">Admin</span>
+                <span id="admin-name" style="font-weight: 600;">Administrator</span>
                 <a href="../../backend/auth/logout.php" class="logout-btn">Logout</a>
             </div>
         </header>
@@ -38,7 +38,7 @@
                     <p>Browse course assignments categorized by faculty instructor</p>
                 </div>
 
-                <input type="text" id="search-input" placeholder="Search title, course, or teacher..." style="padding: 8px 14px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; width: 280px;">
+                <input type="text" id="search-input" placeholder="Search title, course, or teacher..." style="padding: 8px 14px; border-radius: 6px; font-size: 14px; width: 280px;">
             </div>
 
             <!-- Teacher Category Filter Tabs -->
@@ -50,13 +50,13 @@
             </div>
 
             <!-- Teacher Category Banner -->
-            <div id="teacher-category-banner" style="display: none; padding: 12px 18px; background: #eff6ff; border: 1px solid #dbeafe; border-left: 4px solid #3b82f6; border-radius: 8px; margin-bottom: 18px; font-size: 13px;">
+            <div id="teacher-category-banner" class="category-banner" style="display: none; padding: 12px 18px; border-left: 4px solid var(--role-teacher); border-radius: 8px; margin-bottom: 18px; font-size: 13px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
                     <div>
-                        <span style="color: #6b7280; font-weight: 500;">Teacher Category:</span>
-                        <strong id="teacher-category-name" style="color: #1d4ed8; margin-left: 4px;">—</strong>
+                        <span style="color: var(--text-muted); font-weight: 500;">Teacher Category:</span>
+                        <strong id="teacher-category-name" style="color: var(--text-primary); margin-left: 4px;">—</strong>
                     </div>
-                    <div id="teacher-category-stats" style="color: #4b5563;">
+                    <div id="teacher-category-stats" style="color: var(--text-secondary);">
                         <span id="teacher-assignments-count" class="status-badge status-review" style="font-size: 11px;">0 Assignments</span>
                     </div>
                 </div>
@@ -90,7 +90,7 @@
         </section>
     </div>
 
-    <script src="../assets/js/main.js?v=2.0"></script>
-    <script src="../assets/js/admin_assignments.js?v=2.0"></script>
+    <script src="../assets/js/main.js?v=8.0"></script>
+    <script src="../assets/js/admin_assignments.js?v=8.0"></script>
 </body>
 </html>

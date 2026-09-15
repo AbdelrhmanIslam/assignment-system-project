@@ -23,8 +23,8 @@
                 <p>Manage curriculum subjects, faculty assignments, and enrollments</p>
             </div>
             <div class="header-actions">
-                <span class="user-role" style="background: #fef2f2; color: #991b1b;">Admin</span>
-                <span id="admin-name" style="font-weight: 600; color: #374151;">Administrator</span>
+                <span class="user-role role-admin">Admin</span>
+                <span id="admin-name" style="font-weight: 600;">Administrator</span>
                 <a href="../../backend/auth/logout.php" class="logout-btn">Logout</a>
             </div>
         </header>
@@ -40,7 +40,7 @@
                             <h2>Courses by Grade Level (Category)</h2>
                             <p>Browse courses organized by academic Grade Level categories and their instructors</p>
                         </div>
-                        <input type="text" id="course-search-input" placeholder="Search course or teacher..." style="padding: 8px 14px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; width: 220px;">
+                        <input type="text" id="course-search-input" placeholder="Search course or teacher..." style="padding: 8px 14px; border-radius: 6px; font-size: 14px; width: 220px;">
                     </div>
 
                     <div class="filter-bar" style="margin-bottom: 16px;">
@@ -53,15 +53,15 @@
                         </div>
                     </div>
 
-                    <div id="grade-category-banner" style="display: none; padding: 12px 18px; background: #f5f3ff; border: 1px solid #ede9fe; border-left: 4px solid #7c3aed; border-radius: 8px; margin-bottom: 18px; font-size: 13px;">
+                    <div id="grade-category-banner" class="category-banner" style="display: none; padding: 12px 18px; border-left: 4px solid var(--role-teacher); border-radius: 8px; margin-bottom: 18px; font-size: 13px;">
                         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
                             <div>
-                                <span style="color: #6b7280; font-weight: 500;">Grade Level Category:</span>
-                                <strong id="category-name-display" style="color: #5b21b6; margin-left: 4px;">—</strong>
+                                <span style="color: var(--text-muted); font-weight: 500;">Grade Level Category:</span>
+                                <strong id="category-name-display" style="color: var(--text-primary); margin-left: 4px;">—</strong>
                             </div>
-                            <div id="category-teachers-container" style="color: #4b5563;">
-                                <span style="color: #6b7280;">Instructors in this Grade Level:</span>
-                                <span id="category-teachers-list" style="font-weight: 600; color: #1e1b4b; margin-left: 4px;">—</span>
+                            <div id="category-teachers-container" style="color: var(--text-secondary);">
+                                <span style="color: var(--text-muted);">Instructors in this Grade Level:</span>
+                                <span id="category-teachers-list" style="font-weight: 600; color: var(--text-primary); margin-left: 4px;">—</span>
                             </div>
                         </div>
                     </div>
@@ -101,12 +101,12 @@
                     <form id="create-course-form">
                         <div class="form-group" style="margin-bottom: 15px;">
                             <label for="input-course-name" style="display: block; font-weight: 600; margin-bottom: 5px;">Course Title *</label>
-                            <input type="text" id="input-course-name" name="name" required placeholder="e.g. Mobile Application Development" style="width: 100%; padding: 9px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+                            <input type="text" id="input-course-name" name="name" required placeholder="e.g. Mobile Application Development" style="width: 100%; padding: 9px; border-radius: 6px; font-size: 14px;">
                         </div>
 
                         <div class="form-group" style="margin-bottom: 15px;">
                             <label for="select-course-grade" style="display: block; font-weight: 600; margin-bottom: 5px;">Target Grade Level *</label>
-                            <select id="select-course-grade" name="grade_level" required style="width: 100%; padding: 9px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+                            <select id="select-course-grade" name="grade_level" required style="width: 100%; padding: 9px; border-radius: 6px; font-size: 14px;">
                                 <option value="First Year of Middle School">First Year of Middle School</option>
                                 <option value="Second Year of Middle School">Second Year of Middle School</option>
                                 <option value="Third Year of Middle School">Third Year of Middle School</option>
@@ -116,22 +116,22 @@
 
                         <div class="form-group" style="margin-bottom: 15px;">
                             <label for="input-course-desc" style="display: block; font-weight: 600; margin-bottom: 5px;">Description</label>
-                            <textarea id="input-course-desc" name="description" rows="3" placeholder="Brief course syllabus and objectives..." style="width: 100%; padding: 9px; border: 1px solid #d1d5db; border-radius: 6px; font-family: inherit; font-size: 14px;"></textarea>
+                            <textarea id="input-course-desc" name="description" rows="3" placeholder="Brief course syllabus and objectives..." style="width: 100%; padding: 9px; border-radius: 6px; font-family: inherit; font-size: 14px;"></textarea>
                         </div>
 
                         <div class="form-group" style="margin-bottom: 15px;">
                             <label for="select-teacher" style="display: block; font-weight: 600; margin-bottom: 5px;">Lead Teacher *</label>
-                            <select id="select-teacher" name="teacher_id" required style="width: 100%; padding: 9px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+                            <select id="select-teacher" name="teacher_id" required style="width: 100%; padding: 9px; border-radius: 6px; font-size: 14px;">
                                 <option value="">Select Lead Teacher...</option>
                             </select>
                         </div>
 
                         <div class="form-group" style="margin-bottom: 20px;">
                             <label for="select-assistant" style="display: block; font-weight: 600; margin-bottom: 5px;">Teaching Assistant * (Dedicated to Selected Teacher)</label>
-                            <select id="select-assistant" name="assistant_id" required style="width: 100%; padding: 9px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+                            <select id="select-assistant" name="assistant_id" required style="width: 100%; padding: 9px; border-radius: 6px; font-size: 14px;">
                                 <option value="" disabled selected>Please select a Lead Teacher first...</option>
                             </select>
-                            <p id="assistant-help-text" style="font-size: 12px; color: #6b7280; margin-top: 4px;">Each teacher has their own isolated teaching assistants.</p>
+                            <p id="assistant-help-text" style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Each teacher has their own isolated teaching assistants.</p>
                         </div>
 
                         <button type="submit" class="btn-primary" style="width: 100%; padding: 11px; font-size: 14px;">
@@ -143,7 +143,7 @@
         </div>
     </div>
 
-    <script src="../assets/js/main.js?v=2.0"></script>
-    <script src="../assets/js/admin_courses.js?v=2.0"></script>
+    <script src="../assets/js/main.js?v=8.0"></script>
+    <script src="../assets/js/admin_courses.js?v=8.0"></script>
 </body>
 </html>

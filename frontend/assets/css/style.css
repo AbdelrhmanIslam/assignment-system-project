@@ -20,6 +20,9 @@
    --glass-bg-muted: rgba(241, 245, 249, 0.65);
    --glass-bg-subtle: rgba(248, 250, 252, 0.6);
    --card-bg: var(--glass-bg);
+   --bg-surface: var(--glass-bg-elevated);
+   --bg-muted: var(--glass-bg-muted);
+   --bg-subtle: var(--glass-bg-subtle);
 
    /* Glass Borders & Separators */
    --glass-border: rgba(226, 232, 240, 0.75);
@@ -146,6 +149,9 @@
    --glass-bg-muted: rgba(24, 33, 50, 0.7);
    --glass-bg-subtle: rgba(19, 27, 43, 0.65);
    --card-bg: var(--glass-bg);
+   --bg-surface: var(--glass-bg-elevated);
+   --bg-muted: var(--glass-bg-muted);
+   --bg-subtle: var(--glass-bg-subtle);
 
    /* Glass Borders & Thin Dividers */
    --glass-border: rgba(51, 65, 85, 0.65);
@@ -363,6 +369,24 @@ select option {
 textarea {
    resize: vertical;
    min-height: 80px;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+   -webkit-text-fill-color: var(--text-primary) !important;
+   caret-color: var(--text-primary) !important;
+   transition: background-color 5000s ease-in-out 0s;
+}
+
+[data-theme="dark"] input:-webkit-autofill,
+[data-theme="dark"] input:-webkit-autofill:hover, 
+[data-theme="dark"] input:-webkit-autofill:focus, 
+[data-theme="dark"] input:-webkit-autofill:active {
+   -webkit-box-shadow: 0 0 0 1000px #131b2e inset !important;
+   -webkit-text-fill-color: #f1f5f9 !important;
+   caret-color: #f1f5f9 !important;
 }
 
 /* ==========================================================================

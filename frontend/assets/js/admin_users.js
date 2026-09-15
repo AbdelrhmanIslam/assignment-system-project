@@ -297,7 +297,7 @@ function renderTeacherRowHtml(u) {
 
     var tCoursesHtml = '<span style="font-size:12px; color:var(--text-muted);">0 courses</span>';
     if (u.teacher_courses && u.teacher_courses.length > 0) {
-        tCoursesHtml = '<div style="display:flex; flex-direction:column; gap:4px;">' +
+        tCoursesHtml = '<div style="display:flex; flex-direction:row; flex-wrap:wrap; gap:6px;">' +
             u.teacher_courses.map(function (tc) {
                 return '<div class="student-course-tag">' +
                     '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>' +
