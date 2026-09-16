@@ -245,6 +245,114 @@ if (isPost()) {
         exit;
     }
 
+    if ($action === 'add_student_course') {
+        $targetUserId = isset($_POST['user_id']) ? (int) $_POST['user_id'] : 0;
+        $courseId = isset($_POST['course_id']) ? (int) $_POST['course_id'] : 0;
+        if ($targetUserId <= 0 || $courseId <= 0) {
+            echo json_encode(['success' => false, 'message' => 'Invalid student ID or course ID.']);
+            exit;
+        }
+        $chkStudent = mysqli_query($conn, "SELECT id, grade_level FROM users WHERE id = $targetUserId AND role = 'student' LIMIT 1");
+        $sRow = mysqli_fetch_assoc($chkStudent);
+        if (!$sRow) {
+            echo json_encode(['success' => false, 'message' => 'Target user is not a student.']);
+            exit;
+        }
+        $chkCourse = mysqli_query($conn, "SELECT id, name, teacher_id, grade_level FROM courses WHERE id = $courseId AND is_active = 1 LIMIT 1");
+        $cRow = mysqli_fetch_assoc($chkCourse);
+        if (!$cRow) {
+            echo json_encode(['success' => false, 'message' => 'Course not found or inactive.']);
+            exit;
+        }
+
+        // enforce that student can only be enrolled in courses of their assigned teachers
+        $teacherId = (int)$cRow['teacher_id'];
+        $allowedTeachers = getStudentTeacherIds($conn, $targetUserId);
+        if ($teacherId > 0 && !in_array($teacherId, $allowedTeachers)) {
+            echo json_encode(['success' => false, 'message' => 'Cannot enroll student in this course because it is not taught by any of the student\'s selected teachers.']);
+            exit;
+        }
+
+        $ins = mysqli_query($conn, "INSERT IGNORE INTO course_students (course_id, student_id, enrolled_at) VALUES ($courseId, $targetUserId, NOW())");
+        if ($ins) {
+            if ($teacherId > 0) {
+                mysqli_query($conn, "INSERT IGNORE INTO student_teachers (student_id, teacher_id) VALUES ($targetUserId, $teacherId)");
+            }
+            echo json_encode(['success' => true, 'message' => 'Course enrolled for student successfully!']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Failed to enroll course: ' . mysqli_error($conn)]);
+        }
+        exit;
+    }
+
+    if ($action === 'remove_student_course') {
+        $targetUserId = isset($_POST['user_id']) ? (int) $_POST['user_id'] : 0;
+        $courseId = isset($_POST['course_id']) ? (int) $_POST['course_id'] : 0;
+        if ($targetUserId <= 0 || $courseId <= 0) {
+            echo json_encode(['success' => false, 'message' => 'Invalid student ID or course ID.']);
+            exit;
+        }
+        $del = mysqli_query($conn, "DELETE FROM course_students WHERE course_id = $courseId AND student_id = $targetUserId");
+        if ($del) {
+            echo json_encode(['success' => true, 'message' => 'Course removed from student successfully.']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Failed to remove course: ' . mysqli_error($conn)]);
+        }
+        exit;
+    }
+
+    if ($action === 'add_teacher_course') {
+        $targetUserId = isset($_POST['user_id']) ? (int) $_POST['user_id'] : 0;
+        $courseId = isset($_POST['course_id']) ? (int) $_POST['course_id'] : 0;
+        if ($targetUserId <= 0 || $courseId <= 0) {
+            echo json_encode(['success' => false, 'message' => 'Invalid teacher ID or course ID.']);
+            exit;
+        }
+        $chkTeacher = mysqli_query($conn, "SELECT id FROM users WHERE id = $targetUserId AND role = 'teacher' LIMIT 1");
+        if (!mysqli_fetch_assoc($chkTeacher)) {
+            echo json_encode(['success' => false, 'message' => 'Target user is not a teacher.']);
+            exit;
+        }
+        $cQ = mysqli_query($conn, "SELECT id, grade_level, teacher_id FROM courses WHERE id = $courseId AND is_active = 1 LIMIT 1");
+        $cRow = mysqli_fetch_assoc($cQ);
+        if (!$cRow) {
+            echo json_encode(['success' => false, 'message' => 'Course not found or inactive.']);
+            exit;
+        }
+
+        // enforce that a course belonging to another teacher cannot be added
+        if (!empty($cRow['teacher_id']) && (int)$cRow['teacher_id'] > 0 && (int)$cRow['teacher_id'] !== $targetUserId) {
+            echo json_encode(['success' => false, 'message' => 'This course is already assigned to another teacher.']);
+            exit;
+        }
+
+        $upd = mysqli_query($conn, "UPDATE courses SET teacher_id = $targetUserId WHERE id = $courseId");
+        if ($upd) {
+            $gLvl = mysqli_real_escape_string($conn, $cRow['grade_level']);
+            mysqli_query($conn, "INSERT IGNORE INTO teacher_grade_levels (teacher_id, grade_level) VALUES ($targetUserId, '$gLvl')");
+            echo json_encode(['success' => true, 'message' => 'Course assigned to teacher successfully!']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Failed to assign course: ' . mysqli_error($conn)]);
+        }
+        exit;
+    }
+
+    if ($action === 'remove_teacher_course') {
+        $targetUserId = isset($_POST['user_id']) ? (int) $_POST['user_id'] : 0;
+        $courseId = isset($_POST['course_id']) ? (int) $_POST['course_id'] : 0;
+        if ($targetUserId <= 0 || $courseId <= 0) {
+            echo json_encode(['success' => false, 'message' => 'Invalid teacher ID or course ID.']);
+            exit;
+        }
+        $upd = mysqli_query($conn, "UPDATE courses SET teacher_id = 0 WHERE id = $courseId AND teacher_id = $targetUserId");
+        if ($upd) {
+            echo json_encode(['success' => true, 'message' => 'Course unassigned from teacher successfully.']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Failed to unassign course: ' . mysqli_error($conn)]);
+        }
+        exit;
+    }
+
     echo json_encode(['success' => false, 'message' => 'Invalid action specified.']);
     exit;
 }
@@ -355,6 +463,25 @@ if ($activeTeachersRes) {
     }
 }
 
+// query all active courses for modal dropdowns and course assignment
+$allCoursesRes = mysqli_query($conn, "SELECT c.id, c.name, c.grade_level, c.teacher_id, ut.name AS teacher_name
+                                      FROM courses c
+                                      LEFT JOIN users ut ON ut.id = c.teacher_id
+                                      WHERE c.is_active = 1
+                                      ORDER BY c.name ASC");
+$allCourses = [];
+if ($allCoursesRes) {
+    while ($cRow = mysqli_fetch_assoc($allCoursesRes)) {
+        $allCourses[] = [
+            'id' => (int) $cRow['id'],
+            'name' => $cRow['name'],
+            'grade_level' => $cRow['grade_level'],
+            'teacher_id' => (int) $cRow['teacher_id'],
+            'teacher_name' => $cRow['teacher_name'] ? $cRow['teacher_name'] : 'Unassigned'
+        ];
+    }
+}
+
 echo json_encode([
     'success' => true,
     'user' => [
@@ -362,5 +489,6 @@ echo json_encode([
         'role' => currentUserRole()
     ],
     'users' => $users,
-    'active_teachers' => $activeTeachers
+    'active_teachers' => $activeTeachers,
+    'all_courses' => $allCourses
 ]);

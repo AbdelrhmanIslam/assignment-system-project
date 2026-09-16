@@ -4,8 +4,8 @@ var currentRoleFilter = 'all';
 var searchQuery = '';
 
 var loadedUsers = [];
-
 var activeTeachers = [];
+var allActiveCourses = [];
 
 document.addEventListener('DOMContentLoaded', function () {
     loadUsers();
@@ -13,7 +13,26 @@ document.addEventListener('DOMContentLoaded', function () {
     setupCreateUserForm();
     setupEditUserForm();
     setupRoleChangeListeners();
+    setupCourseActionButtons();
 });
+
+function setupCourseActionButtons() {
+    var btnAddStudentCourse = document.getElementById('btn-add-student-course');
+    if (btnAddStudentCourse) {
+        btnAddStudentCourse.addEventListener('click', function () {
+            var userId = parseInt(document.getElementById('edit-user-id').value, 10);
+            if (userId) addCourseToStudent(userId);
+        });
+    }
+
+    var btnAddTeacherCourse = document.getElementById('btn-add-teacher-course');
+    if (btnAddTeacherCourse) {
+        btnAddTeacherCourse.addEventListener('click', function () {
+            var userId = parseInt(document.getElementById('edit-user-id').value, 10);
+            if (userId) addCourseToTeacher(userId);
+        });
+    }
+}
 
 function setupRoleChangeListeners() {
     var roleSelect = document.getElementById('input-role');
@@ -74,10 +93,33 @@ function loadTeachersForStudentModal(gradeLevel, containerId, inputName, selecte
                     lbl.style.cssText = 'font-size: 13px; font-weight: normal; cursor: pointer; display: flex; align-items: center; gap: 8px;';
                     var isChecked = !selectedIds || selectedIds.length === 0 || selectedIds.indexOf(t.id) !== -1;
                     lbl.innerHTML = '<input type="checkbox" name="' + inputName + '" value="' + t.id + '"' + (isChecked ? ' checked' : '') + '> ' + escapeHtml(t.name) + ' (' + escapeHtml(t.email) + ')';
+                    
+                    if (containerId === 'edit-student-teachers-list') {
+                        var cb = lbl.querySelector('input[type="checkbox"]');
+                        if (cb) {
+                            cb.addEventListener('change', function () {
+                                var userId = parseInt(document.getElementById('edit-user-id').value, 10);
+                                var u = loadedUsers.find(function(x) { return x.id === userId; });
+                                if (u) renderModalStudentCourses(u);
+                            });
+                        }
+                    }
+                    
                     container.appendChild(lbl);
                 });
+
+                if (containerId === 'edit-student-teachers-list') {
+                    var userId = parseInt(document.getElementById('edit-user-id').value, 10);
+                    var u = loadedUsers.find(function(x) { return x.id === userId; });
+                    if (u) renderModalStudentCourses(u);
+                }
             } else {
                 container.innerHTML = '<span style="font-size:12px; color:#b45309;">No teachers assigned to this grade level.</span>';
+                if (containerId === 'edit-student-teachers-list') {
+                    var userId = parseInt(document.getElementById('edit-user-id').value, 10);
+                    var u = loadedUsers.find(function(x) { return x.id === userId; });
+                    if (u) renderModalStudentCourses(u);
+                }
             }
         })
         .catch(function () {
@@ -102,7 +144,7 @@ function renderTeacherCheckboxes(containerId, inputName, selectedIds) {
     });
 }
 
-function loadUsers() {
+function loadUsers(callback) {
     var url = '../../backend/admin/users.php?role=' + encodeURIComponent(currentRoleFilter);
     if (searchQuery !== '') {
         url += '&search=' + encodeURIComponent(searchQuery);
@@ -127,12 +169,19 @@ function loadUsers() {
 
         if (data.active_teachers) {
             activeTeachers = data.active_teachers;
-            // update create form teacher checkboxes
             renderTeacherCheckboxes('create-assistant-teachers-list', 'teacher_ids[]', []);
+        }
+
+        if (data.all_courses) {
+            allActiveCourses = data.all_courses;
         }
 
         loadedUsers = data.users || [];
         renderHierarchicalUsers(loadedUsers);
+
+        if (typeof callback === 'function') {
+            callback();
+        }
     })
     .catch(function (error) {
         console.error('Fetch error:', error);
@@ -901,32 +950,42 @@ function openEditUserModal(userId) {
 
     var sEditGroup = document.getElementById('edit-student-grade-group');
     var stEditGroup = document.getElementById('edit-student-teacher-group');
+    var sCoursesGroup = document.getElementById('edit-student-courses-group');
     var tEditGroup = document.getElementById('edit-teacher-grade-group');
+    var tCoursesGroup = document.getElementById('edit-teacher-courses-group');
     var aEditGroup = document.getElementById('edit-assistant-teacher-group');
     var sEditSelect = document.getElementById('edit-student-grade');
 
     if (u.role === 'student') {
         if (sEditGroup) sEditGroup.style.display = 'block';
         if (stEditGroup) stEditGroup.style.display = 'block';
+        if (sCoursesGroup) sCoursesGroup.style.display = 'block';
         if (tEditGroup) tEditGroup.style.display = 'none';
+        if (tCoursesGroup) tCoursesGroup.style.display = 'none';
         if (aEditGroup) aEditGroup.style.display = 'none';
         if (sEditSelect && u.grade_level) {
             sEditSelect.value = u.grade_level;
             loadTeachersForStudentModal(u.grade_level, 'edit-student-teachers-list', 'student_teacher_ids[]', u.student_teacher_ids || []);
         }
+        renderModalStudentCourses(u);
     } else if (u.role === 'teacher') {
         if (sEditGroup) sEditGroup.style.display = 'none';
         if (stEditGroup) stEditGroup.style.display = 'none';
+        if (sCoursesGroup) sCoursesGroup.style.display = 'none';
         if (tEditGroup) tEditGroup.style.display = 'block';
+        if (tCoursesGroup) tCoursesGroup.style.display = 'block';
         if (aEditGroup) aEditGroup.style.display = 'none';
         var checkboxes = document.querySelectorAll('.edit-t-grade');
         checkboxes.forEach(function (cb) {
             cb.checked = u.teacher_grade_levels && u.teacher_grade_levels.indexOf(cb.value) !== -1;
         });
+        renderModalTeacherCourses(u);
     } else if (u.role === 'assistant') {
         if (sEditGroup) sEditGroup.style.display = 'none';
         if (stEditGroup) stEditGroup.style.display = 'none';
+        if (sCoursesGroup) sCoursesGroup.style.display = 'none';
         if (tEditGroup) tEditGroup.style.display = 'none';
+        if (tCoursesGroup) tCoursesGroup.style.display = 'none';
         if (aEditGroup) {
             aEditGroup.style.display = 'block';
             var selectedTeacherIds = (u.assigned_teachers || []).map(function (t) { return t.id; });
@@ -935,13 +994,305 @@ function openEditUserModal(userId) {
     } else {
         if (sEditGroup) sEditGroup.style.display = 'none';
         if (stEditGroup) stEditGroup.style.display = 'none';
+        if (sCoursesGroup) sCoursesGroup.style.display = 'none';
         if (tEditGroup) tEditGroup.style.display = 'none';
+        if (tCoursesGroup) tCoursesGroup.style.display = 'none';
         if (aEditGroup) aEditGroup.style.display = 'none';
     }
 
     if (modal) {
         modal.style.display = 'flex';
     }
+}
+
+// Render student courses inside the edit modal
+function renderModalStudentCourses(user) {
+    var container = document.getElementById('edit-student-courses-container');
+    var countBadge = document.getElementById('edit-student-course-count');
+    var addSelect = document.getElementById('edit-student-add-course-select');
+    var btnAdd = document.getElementById('btn-add-student-course');
+    if (!container || !addSelect) return;
+
+    var courses = user.student_courses || [];
+    if (countBadge) {
+        countBadge.textContent = courses.length + (courses.length === 1 ? ' Course' : ' Courses');
+    }
+
+    if (courses.length === 0) {
+        container.innerHTML = '<span style="font-size:12px; color:var(--text-muted);">No enrolled courses</span>';
+    } else {
+        container.innerHTML = courses.map(function (c) {
+            return '<div class="student-course-tag" style="padding: 5px 10px; gap: 6px; border-radius: var(--radius-pill);">' +
+                '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>' +
+                '<span><strong>' + escapeHtml(c.course_name) + '</strong></span>' +
+                '<span class="student-teacher-indicator">' + escapeHtml(c.teacher_name) + '</span>' +
+                '<button type="button" onclick="removeCourseFromStudent(' + user.id + ', ' + c.course_id + ')" title="Remove course from student" style="border:none; background:rgba(205,24,24,0.15); color:var(--danger); border-radius:9999px; width:20px; height:20px; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; padding:0; font-size:14px; font-weight:bold; margin-left:4px; line-height:1; transition:all 0.2s;">&times;</button>' +
+            '</div>';
+        }).join('');
+    }
+
+    // Determine current selected teacher IDs (from checked boxes in modal or user object)
+    var selectedTeacherBoxes = document.querySelectorAll('#edit-student-teachers-list input[name="student_teacher_ids[]"]:checked');
+    var studentTeacherIds = [];
+    if (selectedTeacherBoxes.length > 0) {
+        selectedTeacherBoxes.forEach(function (cb) {
+            var tid = parseInt(cb.value, 10);
+            if (tid) studentTeacherIds.push(tid);
+        });
+    } else if (user.student_teacher_ids && Array.isArray(user.student_teacher_ids)) {
+        studentTeacherIds = user.student_teacher_ids.map(function (id) { return parseInt(id, 10); });
+    }
+
+    var gradeSelect = document.getElementById('edit-student-grade');
+    var studentGrade = (gradeSelect && gradeSelect.value) ? gradeSelect.value : (user.grade_level || '');
+
+    var enrolledIds = courses.map(function (c) { return c.course_id; });
+
+    // Filter active courses: ONLY courses taught by student's selected teachers for their grade level
+    var eligibleCourses = allActiveCourses.filter(function (ac) {
+        var notEnrolled = enrolledIds.indexOf(ac.id) === -1;
+        var matchesTeacher = ac.teacher_id && studentTeacherIds.indexOf(ac.teacher_id) !== -1;
+        var matchesGrade = !studentGrade || ac.grade_level === studentGrade;
+        return notEnrolled && matchesTeacher && matchesGrade;
+    });
+
+    if (studentTeacherIds.length === 0) {
+        addSelect.innerHTML = '<option value="">-- No courses available (Select teachers first) --</option>';
+        if (btnAdd) btnAdd.disabled = true;
+    } else if (eligibleCourses.length === 0) {
+        addSelect.innerHTML = '<option value="">-- All assigned teachers\' courses are enrolled --</option>';
+        if (btnAdd) btnAdd.disabled = true;
+    } else {
+        if (btnAdd) btnAdd.disabled = false;
+        addSelect.innerHTML = '<option value="">-- Choose Course to Enroll (' + eligibleCourses.length + ' Available) --</option>';
+        eligibleCourses.forEach(function (ac) {
+            var opt = document.createElement('option');
+            opt.value = ac.id;
+            opt.textContent = ac.name + ' (' + ac.grade_level + ' - ' + ac.teacher_name + ')';
+            addSelect.appendChild(opt);
+        });
+    }
+}
+
+// Remove course from student
+function removeCourseFromStudent(studentId, courseId) {
+    if (!confirm('Are you sure you want to remove this course from this student?')) return;
+    
+    var formData = new FormData();
+    formData.append('action', 'remove_student_course');
+    formData.append('user_id', studentId);
+    formData.append('course_id', courseId);
+
+    fetch('../../backend/admin/users.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(function (res) { return res.json(); })
+    .then(function (data) {
+        if (!data.success) {
+            showAlert(data.message || 'Failed to remove course.', 'error');
+            return;
+        }
+        showAlert('Course removed from student successfully!', 'success');
+        loadUsers(function() {
+            var updatedU = loadedUsers.find(function (x) { return x.id === studentId; });
+            if (updatedU) {
+                renderModalStudentCourses(updatedU);
+            }
+        });
+    })
+    .catch(function (err) {
+        console.error('Error removing course:', err);
+        showAlert('Server error while removing course.', 'error');
+    });
+}
+
+// Add course to student
+function addCourseToStudent(studentId) {
+    var addSelect = document.getElementById('edit-student-add-course-select');
+    if (!addSelect || !addSelect.value) {
+        showAlert('Please select a course to enroll.', 'error');
+        return;
+    }
+    var courseId = parseInt(addSelect.value, 10);
+    if (!courseId) return;
+
+    var btn = document.getElementById('btn-add-student-course');
+    if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Enrolling...';
+    }
+
+    var formData = new FormData();
+    formData.append('action', 'add_student_course');
+    formData.append('user_id', studentId);
+    formData.append('course_id', courseId);
+
+    fetch('../../backend/admin/users.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(function (res) { return res.json(); })
+    .then(function (data) {
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = '+ Enroll';
+        }
+        if (!data.success) {
+            showAlert(data.message || 'Failed to enroll course.', 'error');
+            return;
+        }
+        showAlert('Course enrolled for student successfully!', 'success');
+        loadUsers(function() {
+            var updatedU = loadedUsers.find(function (x) { return x.id === studentId; });
+            if (updatedU) {
+                renderModalStudentCourses(updatedU);
+            }
+        });
+    })
+    .catch(function (err) {
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = '+ Enroll';
+        }
+        console.error('Error enrolling course:', err);
+        showAlert('Server error while enrolling course.', 'error');
+    });
+}
+
+// Render teacher courses inside the edit modal
+function renderModalTeacherCourses(user) {
+    var container = document.getElementById('edit-teacher-courses-container');
+    var countBadge = document.getElementById('edit-teacher-course-count');
+    var addSelect = document.getElementById('edit-teacher-add-course-select');
+    var btnAdd = document.getElementById('btn-add-teacher-course');
+    if (!container || !addSelect) return;
+
+    var courses = user.teacher_courses || [];
+    if (countBadge) {
+        countBadge.textContent = courses.length + (courses.length === 1 ? ' Course' : ' Courses');
+    }
+
+    if (courses.length === 0) {
+        container.innerHTML = '<span style="font-size:12px; color:var(--text-muted);">No assigned courses</span>';
+    } else {
+        container.innerHTML = courses.map(function (c) {
+            return '<div class="student-course-tag" style="padding: 5px 10px; gap: 6px; border-radius: var(--radius-pill);">' +
+                '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>' +
+                '<span><strong>' + escapeHtml(c.course_name) + '</strong></span>' +
+                '<span class="sub-count-badge" style="font-size:10px;">' + (c.student_count || 0) + ' students</span>' +
+                '<button type="button" onclick="removeCourseFromTeacher(' + user.id + ', ' + c.course_id + ')" title="Unassign course from teacher" style="border:none; background:rgba(205,24,24,0.15); color:var(--danger); border-radius:9999px; width:20px; height:20px; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; padding:0; font-size:14px; font-weight:bold; margin-left:4px; line-height:1; transition:all 0.2s;">&times;</button>' +
+            '</div>';
+        }).join('');
+    }
+
+    // Populate available courses in addSelect (ONLY unassigned courses that do not belong to any other teacher)
+    var assignedIds = courses.map(function (c) { return c.course_id; });
+    var unassignedCourses = allActiveCourses.filter(function (ac) {
+        var isUnassigned = !ac.teacher_id || ac.teacher_id === 0 || ac.teacher_name === 'Unassigned';
+        var notAlreadyAssigned = assignedIds.indexOf(ac.id) === -1;
+        return isUnassigned && notAlreadyAssigned;
+    });
+
+    if (unassignedCourses.length === 0) {
+        addSelect.innerHTML = '<option value="">-- No unassigned courses available --</option>';
+        if (btnAdd) btnAdd.disabled = true;
+    } else {
+        if (btnAdd) btnAdd.disabled = false;
+        addSelect.innerHTML = '<option value="">-- Choose Unassigned Course (' + unassignedCourses.length + ' Available) --</option>';
+        unassignedCourses.forEach(function (ac) {
+            var opt = document.createElement('option');
+            opt.value = ac.id;
+            opt.textContent = ac.name + ' (' + ac.grade_level + ')';
+            addSelect.appendChild(opt);
+        });
+    }
+}
+
+// Remove/unassign course from teacher
+function removeCourseFromTeacher(teacherId, courseId) {
+    if (!confirm('Are you sure you want to unassign this course from this teacher?')) return;
+
+    var formData = new FormData();
+    formData.append('action', 'remove_teacher_course');
+    formData.append('user_id', teacherId);
+    formData.append('course_id', courseId);
+
+    fetch('../../backend/admin/users.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(function (res) { return res.json(); })
+    .then(function (data) {
+        if (!data.success) {
+            showAlert(data.message || 'Failed to unassign course.', 'error');
+            return;
+        }
+        showAlert('Course unassigned from teacher successfully.', 'success');
+        loadUsers(function() {
+            var updatedU = loadedUsers.find(function (x) { return x.id === teacherId; });
+            if (updatedU) {
+                renderModalTeacherCourses(updatedU);
+            }
+        });
+    })
+    .catch(function (err) {
+        console.error('Error unassigning course:', err);
+        showAlert('Server error while unassigning course.', 'error');
+    });
+}
+
+// Add/assign course to teacher
+function addCourseToTeacher(teacherId) {
+    var addSelect = document.getElementById('edit-teacher-add-course-select');
+    if (!addSelect || !addSelect.value) {
+        showAlert('Please select a course to assign.', 'error');
+        return;
+    }
+    var courseId = parseInt(addSelect.value, 10);
+    if (!courseId) return;
+
+    var btn = document.getElementById('btn-add-teacher-course');
+    if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Assigning...';
+    }
+
+    var formData = new FormData();
+    formData.append('action', 'add_teacher_course');
+    formData.append('user_id', teacherId);
+    formData.append('course_id', courseId);
+
+    fetch('../../backend/admin/users.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(function (res) { return res.json(); })
+    .then(function (data) {
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = '+ Assign';
+        }
+        if (!data.success) {
+            showAlert(data.message || 'Failed to assign course.', 'error');
+            return;
+        }
+        showAlert('Course assigned to teacher successfully!', 'success');
+        loadUsers(function() {
+            var updatedU = loadedUsers.find(function (x) { return x.id === teacherId; });
+            if (updatedU) {
+                renderModalTeacherCourses(updatedU);
+            }
+        });
+    })
+    .catch(function (err) {
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = '+ Assign';
+        }
+        console.error('Error assigning course:', err);
+        showAlert('Server error while assigning course.', 'error');
+    });
 }
 
 function closeEditUserModal() {
