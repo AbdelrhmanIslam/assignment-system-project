@@ -88,12 +88,12 @@
    border-radius: 9999px !important;
    background: #007979 !important;
    color: #FFE2AF !important;
-   border: 2px solid #005f5f !important;
+   border: 2px solid #24B1B1 !important;
    font-size: 13px !important;
    font-weight: 700 !important;
    letter-spacing: 0.02em !important;
    cursor: pointer !important;
-   box-shadow: 0 4px 12px rgba(0, 121, 121, 0.25) !important;
+   box-shadow: 0 4px 14px rgba(0, 121, 121, 0.28) !important;
    transition: all 0.25s ease !important;
    user-select: none !important;
    white-space: nowrap !important;
@@ -101,10 +101,10 @@
 }
 
 .theme-toggle-btn:hover {
-   background: #005f5f !important;
+   background: #E37434 !important;
    color: #ffffff !important;
-   border-color: #24B1B1 !important;
-   box-shadow: 0 6px 16px rgba(0, 121, 121, 0.35) !important;
+   border-color: #FFE2AF !important;
+   box-shadow: 0 6px 18px rgba(227, 116, 52, 0.38) !important;
 }
 
 .theme-toggle-btn:active {
@@ -132,17 +132,17 @@
 }
 
 [data-theme="dark"] .theme-toggle-btn {
-   background: #116D6E !important;
+   background: #4E3636 !important;
    color: #FFE2AF !important;
-   border: 2px solid #24B1B1 !important;
-   box-shadow: 0 4px 14px rgba(17, 109, 110, 0.4) !important;
+   border: 2px solid #CD1818 !important;
+   box-shadow: 0 4px 14px rgba(205, 24, 24, 0.35) !important;
 }
 
 [data-theme="dark"] .theme-toggle-btn:hover {
-   background: #188384 !important;
+   background: #CD1818 !important;
    color: #ffffff !important;
-   border-color: #FFE2AF !important;
-   box-shadow: 0 6px 18px rgba(36, 177, 177, 0.45) !important;
+   border-color: #188384 !important;
+   box-shadow: 0 6px 20px rgba(205, 24, 24, 0.5) !important;
 }
 
 /* Logout Button */
@@ -527,7 +527,17 @@
 .filter-bar select:hover,
 #student-filter-select:hover,
 #course-filter-select:hover {
-   border-color: var(--primary) !important;
+   border-color: #007979 !important;
+   background-color: #fff6e5 !important;
+   box-shadow: 0 4px 14px rgba(0, 121, 121, 0.22) !important;
+}
+
+[data-theme="dark"] .filter-bar select:hover,
+[data-theme="dark"] #student-filter-select:hover,
+[data-theme="dark"] #course-filter-select:hover {
+   border-color: #188384 !important;
+   background-color: #4E3636 !important;
+   box-shadow: 0 4px 14px rgba(24, 131, 132, 0.3) !important;
 }
 
 .filter-bar select:focus,

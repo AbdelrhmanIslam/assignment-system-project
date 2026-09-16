@@ -388,7 +388,7 @@ select {
 }
 
 select:hover {
-   background-color: #ffffff !important;
+   background-color: #fff8eb !important;
    border-color: #E37434 !important;
    color: #007979 !important;
    box-shadow: 0 4px 14px rgba(227, 116, 52, 0.22) !important;
@@ -403,15 +403,15 @@ select:focus {
    background-color: #321E1E !important;
    border: 2px solid #116D6E !important;
    color: #fdf8f5 !important;
-   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2324B1B1' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23188384' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
 }
 
 [data-theme="dark"] select:hover {
-   background-color: #3d2424 !important;
-   border-color: #24B1B1 !important;
-   color: #ffffff !important;
-   box-shadow: 0 4px 14px rgba(36, 177, 177, 0.3) !important;
+   background-color: #4E3636 !important;
+   border-color: #188384 !important;
+   color: #fdf8f5 !important;
+   box-shadow: 0 4px 14px rgba(24, 131, 132, 0.35) !important;
 }
 
 [data-theme="dark"] select:focus {
@@ -420,11 +420,11 @@ select:focus {
 }
 
 select option {
-   background-color: #fff9ed !important;
-   color: #005757 !important;
-   padding: 12px 16px !important;
-   font-size: 13.5px !important;
-   font-weight: 600 !important;
+   background-color: #FFE2AF !important;
+   color: #007979 !important;
+   padding: 12px 18px !important;
+   font-size: 14px !important;
+   font-weight: 700 !important;
 }
 
 select option:hover,
@@ -434,16 +434,16 @@ select option:checked {
 }
 
 [data-theme="dark"] select option {
-   background-color: #321E1E !important;
-   color: #fdf8f5 !important;
-   padding: 12px 16px !important;
-   font-size: 13.5px !important;
-   font-weight: 600 !important;
+   background-color: #4E3636 !important;
+   color: #FFE2AF !important;
+   padding: 12px 18px !important;
+   font-size: 14px !important;
+   font-weight: 700 !important;
 }
 
 [data-theme="dark"] select option:hover,
 [data-theme="dark"] select option:checked {
-   background-color: #116D6E !important;
+   background-color: #CD1818 !important;
    color: #ffffff !important;
 }
 
@@ -460,12 +460,12 @@ select option:checked {
    border-radius: 9999px !important;
    background: #007979 !important;
    color: #FFE2AF !important;
-   border: 2px solid #005f5f !important;
+   border: 2px solid #24B1B1 !important;
    font-size: 13px !important;
    font-weight: 700 !important;
    letter-spacing: 0.02em !important;
    cursor: pointer !important;
-   box-shadow: 0 4px 12px rgba(0, 121, 121, 0.25) !important;
+   box-shadow: 0 4px 14px rgba(0, 121, 121, 0.28) !important;
    transition: all 0.25s ease !important;
    text-decoration: none !important;
    outline: none !important;
@@ -483,10 +483,10 @@ select option:checked {
 }
 
 .theme-toggle-btn:hover {
-   background: #005f5f !important;
+   background: #E37434 !important;
    color: #ffffff !important;
-   border-color: #24B1B1 !important;
-   box-shadow: 0 6px 16px rgba(0, 121, 121, 0.35) !important;
+   border-color: #FFE2AF !important;
+   box-shadow: 0 6px 18px rgba(227, 116, 52, 0.38) !important;
 }
 
 .theme-toggle-btn:hover svg {
@@ -497,18 +497,19 @@ select option:checked {
    transform: scale(0.97) !important;
 }
 
+/* Completely distinct dark mode toggle styling */
 [data-theme="dark"] .theme-toggle-btn {
-   background: #116D6E !important;
+   background: #4E3636 !important;
    color: #FFE2AF !important;
-   border: 2px solid #24B1B1 !important;
-   box-shadow: 0 4px 14px rgba(17, 109, 110, 0.4) !important;
+   border: 2px solid #CD1818 !important;
+   box-shadow: 0 4px 14px rgba(205, 24, 24, 0.35) !important;
 }
 
 [data-theme="dark"] .theme-toggle-btn:hover {
-   background: #188384 !important;
+   background: #CD1818 !important;
    color: #ffffff !important;
-   border-color: #FFE2AF !important;
-   box-shadow: 0 6px 18px rgba(36, 177, 177, 0.45) !important;
+   border-color: #188384 !important;
+   box-shadow: 0 6px 20px rgba(205, 24, 24, 0.5) !important;
 }
 
 textarea {
