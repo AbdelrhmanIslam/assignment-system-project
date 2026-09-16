@@ -367,36 +367,148 @@ textarea:focus {
 }
 
 select {
-   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23007979' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-   background-repeat: no-repeat;
-   background-position: right 12px center;
-   background-size: 14px;
-   padding-right: 36px;
-   appearance: none;
-   -webkit-appearance: none;
-   cursor: pointer;
-   border-radius: var(--radius-sm);
-   background-color: var(--input-bg);
-   color: var(--text-primary);
+   width: 100%;
+   padding: 10px 44px 10px 20px !important;
+   border-radius: var(--radius-pill) !important;
+   background-color: #fff9ed !important;
+   border: 2px solid #007979 !important;
+   color: #005757 !important;
+   font-weight: 600 !important;
+   font-size: 13.5px !important;
+   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23007979' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+   background-repeat: no-repeat !important;
+   background-position: right 16px center !important;
+   background-size: 16px !important;
+   appearance: none !important;
+   -webkit-appearance: none !important;
+   cursor: pointer !important;
+   outline: none !important;
+   box-shadow: 0 2px 8px rgba(0, 121, 121, 0.12) !important;
+   transition: all 0.25s ease !important;
+}
+
+select:hover {
+   background-color: #ffffff !important;
+   border-color: #E37434 !important;
+   color: #007979 !important;
+   box-shadow: 0 4px 14px rgba(227, 116, 52, 0.22) !important;
+}
+
+select:focus {
+   border-color: #007979 !important;
+   box-shadow: 0 0 0 4px rgba(0, 121, 121, 0.22) !important;
 }
 
 [data-theme="dark"] select {
-   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23116D6E' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-   background-color: rgba(50, 30, 30, 0.85);
-   border-color: rgba(110, 80, 80, 0.70);
-   color: #fdf8f5;
+   background-color: #321E1E !important;
+   border: 2px solid #116D6E !important;
+   color: #fdf8f5 !important;
+   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2324B1B1' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+[data-theme="dark"] select:hover {
+   background-color: #3d2424 !important;
+   border-color: #24B1B1 !important;
+   color: #ffffff !important;
+   box-shadow: 0 4px 14px rgba(36, 177, 177, 0.3) !important;
+}
+
+[data-theme="dark"] select:focus {
+   border-color: #24B1B1 !important;
+   box-shadow: 0 0 0 4px rgba(36, 177, 177, 0.3) !important;
 }
 
 select option {
    background-color: #fff9ed !important;
-   color: #102626 !important;
-   padding: 8px 12px;
+   color: #005757 !important;
+   padding: 12px 16px !important;
+   font-size: 13.5px !important;
+   font-weight: 600 !important;
+}
+
+select option:hover,
+select option:checked {
+   background-color: #007979 !important;
+   color: #FFE2AF !important;
 }
 
 [data-theme="dark"] select option {
    background-color: #321E1E !important;
    color: #fdf8f5 !important;
-   padding: 8px 12px;
+   padding: 12px 16px !important;
+   font-size: 13.5px !important;
+   font-weight: 600 !important;
+}
+
+[data-theme="dark"] select option:hover,
+[data-theme="dark"] select option:checked {
+   background-color: #116D6E !important;
+   color: #ffffff !important;
+}
+
+/* ==========================================================================
+   THEME TOGGLE BUTTON (MODERN OVAL SHAPE WITH VIVID COLOR & GLOW)
+   ========================================================================== */
+.theme-toggle-btn {
+   display: inline-flex !important;
+   align-items: center !important;
+   justify-content: center !important;
+   gap: 8px !important;
+   height: 38px !important;
+   padding: 0 22px !important;
+   border-radius: 9999px !important;
+   background: #007979 !important;
+   color: #FFE2AF !important;
+   border: 2px solid #005f5f !important;
+   font-size: 13px !important;
+   font-weight: 700 !important;
+   letter-spacing: 0.02em !important;
+   cursor: pointer !important;
+   box-shadow: 0 4px 12px rgba(0, 121, 121, 0.25) !important;
+   transition: all 0.25s ease !important;
+   text-decoration: none !important;
+   outline: none !important;
+}
+
+.theme-toggle-btn svg {
+   width: 16px !important;
+   height: 16px !important;
+   stroke: currentColor !important;
+   fill: none !important;
+   stroke-width: 2.2 !important;
+   stroke-linecap: round !important;
+   stroke-linejoin: round !important;
+   transition: transform 0.25s ease !important;
+}
+
+.theme-toggle-btn:hover {
+   background: #005f5f !important;
+   color: #ffffff !important;
+   border-color: #24B1B1 !important;
+   box-shadow: 0 6px 16px rgba(0, 121, 121, 0.35) !important;
+}
+
+.theme-toggle-btn:hover svg {
+   transform: rotate(15deg) !important;
+}
+
+.theme-toggle-btn:active {
+   transform: scale(0.97) !important;
+}
+
+[data-theme="dark"] .theme-toggle-btn {
+   background: #116D6E !important;
+   color: #FFE2AF !important;
+   border: 2px solid #24B1B1 !important;
+   box-shadow: 0 4px 14px rgba(17, 109, 110, 0.4) !important;
+}
+
+[data-theme="dark"] .theme-toggle-btn:hover {
+   background: #188384 !important;
+   color: #ffffff !important;
+   border-color: #FFE2AF !important;
+   box-shadow: 0 6px 18px rgba(36, 177, 177, 0.45) !important;
 }
 
 textarea {

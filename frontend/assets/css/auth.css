@@ -17,55 +17,66 @@
 
 .auth-theme-toggle {
    position: absolute;
-   top: 18px;
-   right: 20px;
-   z-index: 10;
+   top: 20px;
+   right: 24px;
+   z-index: 100;
 }
 
 .auth-theme-toggle .theme-toggle-btn {
-   display: inline-flex;
-   align-items: center;
-   justify-content: center;
-   gap: 7px;
-   height: 36px;
-   padding: 0 18px;
-   background: var(--glass-bg-elevated);
-   backdrop-filter: var(--glass-blur-sm);
-   -webkit-backdrop-filter: var(--glass-blur-sm);
-   border: 1.5px solid var(--glass-border-strong);
-   border-radius: var(--radius-pill);
-   color: var(--text-primary);
-   font-size: 13px;
-   font-weight: 600;
-   cursor: pointer;
-   box-shadow: none;
-   transition: var(--transition-all);
+   display: inline-flex !important;
+   align-items: center !important;
+   justify-content: center !important;
+   gap: 8px !important;
+   height: 38px !important;
+   padding: 0 22px !important;
+   border-radius: 9999px !important;
+   background: #007979 !important;
+   color: #FFE2AF !important;
+   border: 2px solid #005f5f !important;
+   font-size: 13px !important;
+   font-weight: 700 !important;
+   letter-spacing: 0.02em !important;
+   cursor: pointer !important;
+   box-shadow: 0 4px 14px rgba(0, 121, 121, 0.28) !important;
+   transition: all 0.25s ease !important;
+   text-decoration: none !important;
+   outline: none !important;
 }
 
 .auth-theme-toggle .theme-toggle-btn:hover {
-   background: var(--glass-bg-hover);
-   border-color: var(--primary);
-   color: var(--primary);
-}
-
-.auth-theme-toggle .theme-toggle-btn:focus-visible {
-   outline: none;
-   box-shadow: var(--focus-ring);
-}
-
-.auth-theme-toggle .theme-toggle-btn svg {
-   width: 15px;
-   height: 15px;
-   stroke: currentColor;
-   fill: none;
-   stroke-width: 2;
-   stroke-linecap: round;
-   stroke-linejoin: round;
-   transition: transform var(--transition-base);
+   background: #005f5f !important;
+   color: #ffffff !important;
+   border-color: #24B1B1 !important;
+   box-shadow: 0 6px 18px rgba(0, 121, 121, 0.38) !important;
 }
 
 .auth-theme-toggle .theme-toggle-btn:hover svg {
-   transform: rotate(12deg);
+   transform: rotate(15deg) !important;
+}
+
+.auth-theme-toggle .theme-toggle-btn svg {
+   width: 16px !important;
+   height: 16px !important;
+   stroke: currentColor !important;
+   fill: none !important;
+   stroke-width: 2.2 !important;
+   stroke-linecap: round !important;
+   stroke-linejoin: round !important;
+   transition: transform 0.25s ease !important;
+}
+
+[data-theme="dark"] .auth-theme-toggle .theme-toggle-btn {
+   background: #116D6E !important;
+   color: #FFE2AF !important;
+   border: 2px solid #24B1B1 !important;
+   box-shadow: 0 4px 14px rgba(17, 109, 110, 0.45) !important;
+}
+
+[data-theme="dark"] .auth-theme-toggle .theme-toggle-btn:hover {
+   background: #188384 !important;
+   color: #ffffff !important;
+   border-color: #FFE2AF !important;
+   box-shadow: 0 6px 20px rgba(36, 177, 177, 0.5) !important;
 }
 
 .auth-card {
@@ -110,10 +121,9 @@
    color: var(--text-primary);
 }
 
-.form-group input,
-.form-group select {
+.form-group input {
    width: 100%;
-   padding: 10px 13px;
+   padding: 10px 14px;
    border: 1px solid var(--input-border);
    border-radius: var(--radius-sm);
    font-size: 13.5px;
@@ -126,8 +136,7 @@
    transition: border-color var(--transition-base), box-shadow var(--transition-base), background-color var(--transition-base);
 }
 
-.form-group input:focus,
-.form-group select:focus {
+.form-group input:focus {
    border-color: var(--border-focus);
    box-shadow: var(--focus-ring);
 }

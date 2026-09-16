@@ -79,55 +79,70 @@
 
 /* Glass Theme Toggle Button */
 .theme-toggle-btn {
-   display: inline-flex;
-   align-items: center;
-   justify-content: center;
-   gap: 6px;
-   height: 34px;
-   padding: 0 16px;
-   border-radius: var(--radius-pill);
-   background: var(--glass-bg);
-   backdrop-filter: var(--glass-blur-sm);
-   -webkit-backdrop-filter: var(--glass-blur-sm);
-   color: var(--text-primary);
-   border: 1px solid var(--glass-border);
-   font-size: 12.5px;
-   font-weight: 600;
-   cursor: pointer;
-   box-shadow: none;
-   transition: var(--transition-all);
-   user-select: none;
-   white-space: nowrap;
+   display: inline-flex !important;
+   align-items: center !important;
+   justify-content: center !important;
+   gap: 8px !important;
+   height: 36px !important;
+   padding: 0 20px !important;
+   border-radius: 9999px !important;
+   background: #007979 !important;
+   color: #FFE2AF !important;
+   border: 2px solid #005f5f !important;
+   font-size: 13px !important;
+   font-weight: 700 !important;
+   letter-spacing: 0.02em !important;
+   cursor: pointer !important;
+   box-shadow: 0 4px 12px rgba(0, 121, 121, 0.25) !important;
+   transition: all 0.25s ease !important;
+   user-select: none !important;
+   white-space: nowrap !important;
+   outline: none !important;
 }
 
 .theme-toggle-btn:hover {
-   background: var(--glass-bg-hover);
-   border-color: var(--glass-border-strong);
-   color: var(--primary);
+   background: #005f5f !important;
+   color: #ffffff !important;
+   border-color: #24B1B1 !important;
+   box-shadow: 0 6px 16px rgba(0, 121, 121, 0.35) !important;
 }
 
 .theme-toggle-btn:active {
-   opacity: 0.9;
+   transform: scale(0.97) !important;
 }
 
 .theme-toggle-btn:focus-visible {
-   outline: none;
-   box-shadow: var(--focus-ring);
+   outline: none !important;
+   box-shadow: var(--focus-ring) !important;
 }
 
 .theme-toggle-btn svg {
-   width: 15px;
-   height: 15px;
-   stroke: currentColor;
-   fill: none;
-   stroke-width: 2;
-   stroke-linecap: round;
-   stroke-linejoin: round;
-   transition: transform var(--transition-base);
+   width: 15px !important;
+   height: 15px !important;
+   stroke: currentColor !important;
+   fill: none !important;
+   stroke-width: 2.2 !important;
+   stroke-linecap: round !important;
+   stroke-linejoin: round !important;
+   transition: transform 0.25s ease !important;
 }
 
 .theme-toggle-btn:hover svg {
-   transform: rotate(12deg);
+   transform: rotate(15deg) !important;
+}
+
+[data-theme="dark"] .theme-toggle-btn {
+   background: #116D6E !important;
+   color: #FFE2AF !important;
+   border: 2px solid #24B1B1 !important;
+   box-shadow: 0 4px 14px rgba(17, 109, 110, 0.4) !important;
+}
+
+[data-theme="dark"] .theme-toggle-btn:hover {
+   background: #188384 !important;
+   color: #ffffff !important;
+   border-color: #FFE2AF !important;
+   box-shadow: 0 6px 18px rgba(36, 177, 177, 0.45) !important;
 }
 
 /* Logout Button */
