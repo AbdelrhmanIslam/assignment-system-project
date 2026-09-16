@@ -57,7 +57,7 @@ function renderRecentUsers(users) {
     tbody.innerHTML = '';
 
     if (!users || users.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#6b7280;">No users registered yet.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">No users registered yet.</td></tr>';
         return;
     }
 
@@ -70,7 +70,7 @@ function renderRecentUsers(users) {
         else if (u.role === 'assistant') roleBadge = 'status-submitted';
         else if (u.role === 'student') roleBadge = 'status-graded';
 
-        var statusLabel = u.is_active ? '<span style="color:#166534; font-weight:600;">Active</span>' : '<span style="color:#991b1b; font-weight:600;">Inactive</span>';
+        var statusLabel = u.is_active ? '<span style="color:var(--success); font-weight:600;">Active</span>' : '<span style="color:var(--danger); font-weight:600;">Inactive</span>';
 
         row.innerHTML =
             '<td><strong>' + escapeHtml(u.name) + '</strong></td>' +
@@ -89,7 +89,7 @@ function renderRecentSubmissions(submissions) {
     tbody.innerHTML = '';
 
     if (!submissions || submissions.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#6b7280;">No submissions yet.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">No submissions yet.</td></tr>';
         return;
     }
 

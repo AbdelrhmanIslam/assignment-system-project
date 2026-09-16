@@ -77,18 +77,18 @@ function renderNotifications(notifications, unreadCount) {
 
             var markBtnHtml = '';
             if (!n.is_read) {
-                markBtnHtml = '<button onclick="markAsRead(' + n.id + ')" style="background:none; border:none; color:#2563eb; font-size:12px; font-weight:600; cursor:pointer; text-decoration:underline;">Mark as read</button>';
+                markBtnHtml = '<button onclick="markAsRead(' + n.id + ')" style="background:none; border:none; color:var(--primary); font-size:12px; font-weight:600; cursor:pointer; text-decoration:underline;">Mark as read</button>';
             }
 
             card.innerHTML =
                 '<div style="display:flex; justify-content:space-between; align-items:flex-start; gap:15px; flex-wrap:wrap;">' +
                     '<div style="flex:1;">' +
                         '<div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">' +
-                            '<strong style="font-size:15px; color:#111827;">' + escapeHtml(n.title) + '</strong>' +
-                            (!n.is_read ? '<span class="status-badge" style="background:#dbeafe; color:#1e40af; font-size:11px;">NEW</span>' : '') +
+                            '<strong style="font-size:15px; color:var(--text-primary);">' + escapeHtml(n.title) + '</strong>' +
+                            (!n.is_read ? '<span class="status-badge" style="background:var(--role-teacher-bg); color:var(--role-teacher-text); font-size:11px;">NEW</span>' : '') +
                         '</div>' +
-                        '<p style="margin:0 0 10px; color:#4b5563; font-size:14px; line-height:1.5;">' + escapeHtml(n.message) + '</p>' +
-                        '<span style="font-size:12px; color:#9ca3af;">' + formatDate(n.created_at) + '</span>' +
+                        '<p style="margin:0 0 10px; color:var(--text-body); font-size:14px; line-height:1.5;">' + escapeHtml(n.message) + '</p>' +
+                        '<span style="font-size:12px; color:var(--text-muted);">' + formatDate(n.created_at) + '</span>' +
                     '</div>' +
                     '<div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px;">' +
                         actionHtml +

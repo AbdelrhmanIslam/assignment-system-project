@@ -7,27 +7,37 @@
    --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-   /* Canvas & Mesh Backdrop */
-   --bg-page: #f1f5f9;
-   --canvas-mesh: radial-gradient(at 10% 10%, rgba(99, 102, 241, 0.06) 0px, transparent 45%),
-                  radial-gradient(at 90% 90%, rgba(14, 165, 233, 0.05) 0px, transparent 45%),
-                  #f1f5f9;
+   /* Design Palette Colors (Light Mode) */
+   --color-primary: #007979;
+   --color-primary-hover: #005f5f;
+   --color-primary-light: #24B1B1;
+   --color-secondary: #24B1B1;
+   --color-accent-warm: #FFE2AF;
+   --color-accent-orange: #E37434;
+
+   /* Canvas & Mesh Backdrop (Teal + warm cream + subtle orange) */
+   --bg-page: #f2f7f7;
+   --canvas-mesh: radial-gradient(at 10% 10%, rgba(0, 121, 121, 0.08) 0px, transparent 48%),
+                  radial-gradient(at 90% 15%, rgba(255, 226, 175, 0.35) 0px, transparent 45%),
+                  radial-gradient(at 85% 85%, rgba(36, 177, 177, 0.08) 0px, transparent 48%),
+                  radial-gradient(at 15% 90%, rgba(227, 116, 52, 0.05) 0px, transparent 45%),
+                  #f2f7f7;
 
    /* Translucent Glass Surfaces */
-   --glass-bg: rgba(255, 255, 255, 0.72);
-   --glass-bg-elevated: rgba(255, 255, 255, 0.88);
-   --glass-bg-hover: rgba(255, 255, 255, 0.96);
-   --glass-bg-muted: rgba(241, 245, 249, 0.65);
-   --glass-bg-subtle: rgba(248, 250, 252, 0.6);
+   --glass-bg: rgba(255, 255, 255, 0.75);
+   --glass-bg-elevated: rgba(255, 255, 255, 0.90);
+   --glass-bg-hover: rgba(255, 255, 255, 0.98);
+   --glass-bg-muted: rgba(240, 248, 248, 0.70);
+   --glass-bg-subtle: rgba(246, 251, 251, 0.65);
    --card-bg: var(--glass-bg);
    --bg-surface: var(--glass-bg-elevated);
    --bg-muted: var(--glass-bg-muted);
    --bg-subtle: var(--glass-bg-subtle);
 
    /* Glass Borders & Separators */
-   --glass-border: rgba(226, 232, 240, 0.75);
-   --glass-border-strong: rgba(203, 213, 225, 0.9);
-   --glass-border-subtle: rgba(241, 245, 249, 0.7);
+   --glass-border: rgba(0, 121, 121, 0.15);
+   --glass-border-strong: rgba(0, 121, 121, 0.30);
+   --glass-border-subtle: rgba(0, 121, 121, 0.08);
    --border-color: var(--glass-border);
    --border-strong: var(--glass-border-strong);
    --border-subtle: var(--glass-border-subtle);
@@ -38,36 +48,36 @@
    --glass-blur-lg: blur(20px);
 
    /* High-Readability Typography */
-   --text-primary: #0f172a;
-   --text-secondary: #334155;
-   --text-muted: #64748b;
-   --text-disabled: #94a3b8;
+   --text-primary: #0f2323;
+   --text-secondary: #274040;
+   --text-muted: #537171;
+   --text-disabled: #8ea5a5;
    --text-heading: var(--text-primary);
    --text-body: var(--text-secondary);
    --text-light: var(--text-disabled);
 
    /* Form Controls & Inputs */
-   --input-bg: rgba(255, 255, 255, 0.8);
-   --input-border: rgba(203, 213, 225, 0.85);
-   --input-placeholder: #94a3b8;
-   --focus-ring: 0 0 0 3px rgba(79, 70, 229, 0.18);
-   --border-focus: #4f46e5;
+   --input-bg: rgba(255, 255, 255, 0.85);
+   --input-border: rgba(0, 121, 121, 0.22);
+   --input-placeholder: #7c9898;
+   --focus-ring: 0 0 0 3px rgba(0, 121, 121, 0.20);
+   --border-focus: #007979;
 
    /* Table Glass Tokens */
-   --table-header-bg: rgba(248, 250, 252, 0.85);
-   --table-row-hover: rgba(241, 245, 249, 0.7);
-   --table-border: rgba(226, 232, 240, 0.75);
+   --table-header-bg: rgba(238, 247, 247, 0.85);
+   --table-row-hover: rgba(228, 242, 242, 0.65);
+   --table-border: rgba(0, 121, 121, 0.12);
 
    /* Modal Glass Backdrop & Card */
-   --overlay-bg: rgba(15, 23, 42, 0.45);
+   --overlay-bg: rgba(15, 35, 35, 0.45);
    --modal-backdrop: var(--overlay-bg);
 
    /* Refined Shadows */
-   --shadow-xs: 0 1px 2px 0 rgba(15, 23, 42, 0.04);
-   --shadow-sm: 0 1px 3px 0 rgba(15, 23, 42, 0.06), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
-   --shadow-glass: 0 4px 16px -2px rgba(15, 23, 42, 0.05), inset 0 1px 0 0 rgba(255, 255, 255, 0.7);
-   --shadow-glass-elevated: 0 10px 25px -4px rgba(15, 23, 42, 0.08), inset 0 1px 0 0 rgba(255, 255, 255, 0.8);
-   --shadow-modal: 0 20px 40px -10px rgba(15, 23, 42, 0.16), inset 0 1px 0 0 rgba(255, 255, 255, 0.6);
+   --shadow-xs: 0 1px 2px 0 rgba(0, 121, 121, 0.04);
+   --shadow-sm: 0 1px 3px 0 rgba(0, 121, 121, 0.06), 0 1px 2px -1px rgba(0, 121, 121, 0.04);
+   --shadow-glass: 0 4px 16px -2px rgba(15, 35, 35, 0.05), inset 0 1px 0 0 rgba(255, 255, 255, 0.7);
+   --shadow-glass-elevated: 0 10px 25px -4px rgba(15, 35, 35, 0.08), inset 0 1px 0 0 rgba(255, 255, 255, 0.8);
+   --shadow-modal: 0 20px 40px -10px rgba(15, 35, 35, 0.16), inset 0 1px 0 0 rgba(255, 255, 255, 0.6);
    --shadow-subtle: var(--shadow-glass);
    --shadow-md: var(--shadow-glass-elevated);
 
@@ -80,50 +90,50 @@
    --radius-pill: 9999px;
 
    /* Role Identity Accents */
-   --role-admin: #dc2626;
-   --role-admin-bg: rgba(254, 242, 242, 0.8);
-   --role-admin-text: #991b1b;
-   --role-admin-border: rgba(254, 205, 211, 0.8);
+   --role-admin: #CD1818;
+   --role-admin-bg: rgba(205, 24, 24, 0.10);
+   --role-admin-text: #a81010;
+   --role-admin-border: rgba(205, 24, 24, 0.28);
 
-   --role-teacher: #4f46e5;
-   --role-teacher-bg: rgba(238, 242, 255, 0.8);
-   --role-teacher-text: #3730a3;
-   --role-teacher-border: rgba(199, 210, 254, 0.8);
+   --role-teacher: #007979;
+   --role-teacher-bg: rgba(0, 121, 121, 0.10);
+   --role-teacher-text: #005a5a;
+   --role-teacher-border: rgba(0, 121, 121, 0.28);
 
-   --role-assistant: #0284c7;
-   --role-assistant-bg: rgba(224, 242, 254, 0.8);
-   --role-assistant-text: #0369a1;
-   --role-assistant-border: rgba(186, 230, 253, 0.8);
+   --role-assistant: #24B1B1;
+   --role-assistant-bg: rgba(36, 177, 177, 0.14);
+   --role-assistant-text: #0e6d6d;
+   --role-assistant-border: rgba(36, 177, 177, 0.35);
 
-   --role-student: #059669;
-   --role-student-bg: rgba(236, 253, 245, 0.8);
-   --role-student-text: #065f46;
-   --role-student-border: rgba(167, 243, 208, 0.8);
+   --role-student: #007979;
+   --role-student-bg: rgba(0, 121, 121, 0.10);
+   --role-student-text: #005a5a;
+   --role-student-border: rgba(36, 177, 177, 0.30);
 
-   /* Semantic Actions */
-   --primary: #4f46e5;
-   --primary-hover: #4338ca;
+   /* Semantic Actions (Light Mode) */
+   --primary: #007979;
+   --primary-hover: #005f5f;
    --primary-contrast: #ffffff;
 
-   --success: #059669;
-   --success-bg: rgba(236, 253, 245, 0.85);
-   --success-border: rgba(167, 243, 208, 0.8);
-   --success-text: #065f46;
+   --success: #007979;
+   --success-bg: rgba(0, 121, 121, 0.10);
+   --success-border: rgba(36, 177, 177, 0.32);
+   --success-text: #005a5a;
 
-   --warning: #d97706;
-   --warning-bg: rgba(255, 251, 235, 0.85);
-   --warning-border: rgba(253, 230, 138, 0.8);
-   --warning-text: #92400e;
+   --warning: #E37434;
+   --warning-bg: rgba(255, 226, 175, 0.45);
+   --warning-border: rgba(227, 116, 52, 0.35);
+   --warning-text: #8e3704;
 
-   --danger: #dc2626;
-   --danger-bg: rgba(254, 242, 242, 0.85);
-   --danger-border: rgba(254, 205, 211, 0.8);
-   --danger-text: #991b1b;
+   --danger: #CD1818;
+   --danger-bg: rgba(205, 24, 24, 0.10);
+   --danger-border: rgba(205, 24, 24, 0.28);
+   --danger-text: #a81010;
 
-   --neutral: #475569;
-   --neutral-bg: rgba(241, 245, 249, 0.85);
-   --neutral-border: rgba(226, 232, 240, 0.8);
-   --neutral-text: #334155;
+   --neutral: #537171;
+   --neutral-bg: rgba(240, 248, 248, 0.85);
+   --neutral-border: rgba(0, 121, 121, 0.15);
+   --neutral-text: #274040;
 
    /* Transitions */
    --transition-fast: 120ms ease;
@@ -134,56 +144,65 @@
 
 /* ==========================================================================
    GLASS DESIGN TOKENS (DARK THEME - [data-theme="dark"])
+   Exact Palette: Primary Teal #116D6E, Deep Brown #321E1E, Brown #4E3636, Red #CD1818
    ========================================================================== */
 [data-theme="dark"] {
-   /* Deep Slate / Near-Black Mesh Backdrop */
-   --bg-page: #0b0f19;
-   --canvas-mesh: radial-gradient(at 10% 10%, rgba(99, 102, 241, 0.08) 0px, transparent 45%),
-                  radial-gradient(at 90% 90%, rgba(14, 165, 233, 0.06) 0px, transparent 45%),
-                  #0b0f19;
+   /* Design Palette Colors (Dark Mode) */
+   --color-primary: #116D6E;
+   --color-primary-hover: #168687;
+   --color-surface-deep: #321E1E;
+   --color-surface-elevated: #4E3636;
+   --color-accent-danger: #CD1818;
 
-   /* Translucent Deep Glass Surfaces */
-   --glass-bg: rgba(17, 24, 39, 0.74);
-   --glass-bg-elevated: rgba(26, 34, 52, 0.84);
-   --glass-bg-hover: rgba(33, 44, 68, 0.92);
-   --glass-bg-muted: rgba(24, 33, 50, 0.7);
-   --glass-bg-subtle: rgba(19, 27, 43, 0.65);
+   /* Deep Brown & Teal Canvas Mesh */
+   --bg-page: #1a1010;
+   --canvas-mesh: radial-gradient(at 10% 10%, rgba(17, 109, 110, 0.20) 0px, transparent 50%),
+                  radial-gradient(at 90% 90%, rgba(78, 54, 54, 0.35) 0px, transparent 55%),
+                  radial-gradient(at 50% 50%, rgba(50, 30, 30, 0.45) 0px, transparent 60%),
+                  #1a1010;
+
+   /* Translucent Deep Brown & Elevated Brown Glass Surfaces */
+   --glass-bg: rgba(50, 30, 30, 0.72);
+   --glass-bg-elevated: rgba(78, 54, 54, 0.80);
+   --glass-bg-hover: rgba(94, 66, 66, 0.90);
+   --glass-bg-muted: rgba(45, 26, 26, 0.70);
+   --glass-bg-subtle: rgba(38, 22, 22, 0.60);
    --card-bg: var(--glass-bg);
    --bg-surface: var(--glass-bg-elevated);
    --bg-muted: var(--glass-bg-muted);
    --bg-subtle: var(--glass-bg-subtle);
 
    /* Glass Borders & Thin Dividers */
-   --glass-border: rgba(51, 65, 85, 0.65);
-   --glass-border-strong: rgba(71, 85, 105, 0.85);
-   --glass-border-subtle: rgba(38, 51, 77, 0.55);
+   --glass-border: rgba(110, 80, 80, 0.55);
+   --glass-border-strong: rgba(17, 109, 110, 0.65);
+   --glass-border-subtle: rgba(78, 54, 54, 0.45);
    --border-color: var(--glass-border);
    --border-strong: var(--glass-border-strong);
    --border-subtle: var(--glass-border-subtle);
 
    /* High-Contrast WCAG-Friendly Text */
-   --text-primary: #f8fafc;
-   --text-secondary: #cbd5e1;
-   --text-muted: #94a3b8;
-   --text-disabled: #64748b;
+   --text-primary: #fdf8f5;
+   --text-secondary: #e2d5ce;
+   --text-muted: #af9c95;
+   --text-disabled: #7e6c66;
    --text-heading: var(--text-primary);
    --text-body: var(--text-secondary);
    --text-light: var(--text-disabled);
 
    /* Form Controls & Inputs */
-   --input-bg: rgba(15, 23, 42, 0.65);
-   --input-border: rgba(51, 65, 85, 0.8);
-   --input-placeholder: #64748b;
-   --focus-ring: 0 0 0 3px rgba(99, 102, 241, 0.28);
-   --border-focus: #6366f1;
+   --input-bg: rgba(32, 18, 18, 0.75);
+   --input-border: rgba(95, 68, 68, 0.80);
+   --input-placeholder: #8e7a74;
+   --focus-ring: 0 0 0 3px rgba(17, 109, 110, 0.35);
+   --border-focus: #116D6E;
 
    /* Table Glass Tokens */
-   --table-header-bg: rgba(21, 29, 46, 0.82);
-   --table-row-hover: rgba(30, 41, 59, 0.7);
-   --table-border: rgba(38, 51, 77, 0.65);
+   --table-header-bg: rgba(60, 38, 38, 0.85);
+   --table-row-hover: rgba(78, 54, 54, 0.65);
+   --table-border: rgba(95, 68, 68, 0.60);
 
    /* Modal Glass Backdrop & Card */
-   --overlay-bg: rgba(0, 0, 0, 0.7);
+   --overlay-bg: rgba(15, 8, 8, 0.75);
    --modal-backdrop: var(--overlay-bg);
 
    /* Refined Dark Depth with Top Edge Luminescence */
@@ -196,50 +215,50 @@
    --shadow-md: var(--shadow-glass-elevated);
 
    /* Role Accents (Dark Mode) */
-   --role-admin: #ef4444;
-   --role-admin-bg: rgba(220, 38, 38, 0.2);
-   --role-admin-text: #fca5a5;
-   --role-admin-border: rgba(239, 68, 68, 0.35);
+   --role-admin: #CD1818;
+   --role-admin-bg: rgba(205, 24, 24, 0.22);
+   --role-admin-text: #ff8e8e;
+   --role-admin-border: rgba(205, 24, 24, 0.45);
 
-   --role-teacher: #6366f1;
-   --role-teacher-bg: rgba(79, 70, 229, 0.2);
-   --role-teacher-text: #c7d2fe;
-   --role-teacher-border: rgba(99, 102, 241, 0.35);
+   --role-teacher: #116D6E;
+   --role-teacher-bg: rgba(17, 109, 110, 0.28);
+   --role-teacher-text: #96eaea;
+   --role-teacher-border: rgba(17, 109, 110, 0.50);
 
-   --role-assistant: #38bdf8;
-   --role-assistant-bg: rgba(2, 132, 199, 0.2);
-   --role-assistant-text: #7dd3fc;
-   --role-assistant-border: rgba(56, 189, 248, 0.35);
+   --role-assistant: #24B1B1;
+   --role-assistant-bg: rgba(36, 177, 177, 0.25);
+   --role-assistant-text: #a4f4f4;
+   --role-assistant-border: rgba(36, 177, 177, 0.45);
 
-   --role-student: #10b981;
-   --role-student-bg: rgba(5, 150, 105, 0.2);
-   --role-student-text: #6ee7b7;
-   --role-student-border: rgba(16, 185, 129, 0.35);
+   --role-student: #116D6E;
+   --role-student-bg: rgba(17, 109, 110, 0.25);
+   --role-student-text: #8ee5e6;
+   --role-student-border: rgba(17, 109, 110, 0.45);
 
    /* Semantic Actions (Dark Mode) */
-   --primary: #6366f1;
-   --primary-hover: #4f46e5;
+   --primary: #116D6E;
+   --primary-hover: #168687;
    --primary-contrast: #ffffff;
 
-   --success: #10b981;
-   --success-bg: rgba(16, 185, 129, 0.18);
-   --success-border: rgba(16, 185, 129, 0.35);
-   --success-text: #6ee7b7;
+   --success: #116D6E;
+   --success-bg: rgba(17, 109, 110, 0.25);
+   --success-border: rgba(17, 109, 110, 0.45);
+   --success-text: #96eaea;
 
-   --warning: #f59e0b;
-   --warning-bg: rgba(245, 158, 11, 0.18);
-   --warning-border: rgba(245, 158, 11, 0.35);
-   --warning-text: #fcd34d;
+   --warning: #E37434;
+   --warning-bg: rgba(227, 116, 52, 0.22);
+   --warning-border: rgba(227, 116, 52, 0.45);
+   --warning-text: #ffbe98;
 
-   --danger: #ef4444;
-   --danger-bg: rgba(239, 68, 68, 0.18);
-   --danger-border: rgba(239, 68, 68, 0.35);
-   --danger-text: #fca5a5;
+   --danger: #CD1818;
+   --danger-bg: rgba(205, 24, 24, 0.22);
+   --danger-border: rgba(205, 24, 24, 0.45);
+   --danger-text: #ff8e8e;
 
-   --neutral: #94a3b8;
-   --neutral-bg: rgba(30, 41, 59, 0.7);
-   --neutral-border: rgba(51, 65, 85, 0.7);
-   --neutral-text: #cbd5e1;
+   --neutral: #af9c95;
+   --neutral-bg: rgba(50, 30, 30, 0.70);
+   --neutral-border: rgba(95, 68, 68, 0.70);
+   --neutral-text: #e2d5ce;
 }
 
 /* ==========================================================================

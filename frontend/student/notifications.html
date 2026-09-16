@@ -19,15 +19,15 @@
             <div>
                 <div style="display:flex; align-items:center; gap:10px;">
                     <h1>Notifications</h1>
-                    <span id="unreadBadge" class="status-badge" style="background:#ef4444; color:#fff; display:none;">0 New</span>
+                    <span id="unreadBadge" class="status-badge" style="background:var(--danger); color:#fff; display:none;">0 New</span>
                 </div>
                 <p>Updates on assignment evaluations, deadlines, and grades</p>
             </div>
             <div class="header-actions">
                 <a href="dashboard.html" class="back-btn" style="margin-bottom:0;">← Back to Dashboard</a>
-                <button id="markAllReadBtn" class="view-btn" style="background:#4b5563; font-size:13px; border:none; cursor:pointer;">Mark All Read</button>
+                <button id="markAllReadBtn" class="action-btn action-view" style="font-size:13px; cursor:pointer;">Mark All Read</button>
                 <span class="user-role">Student</span>
-                <span id="userName" style="font-weight: 600; color: #374151;">Loading...</span>
+                <span id="userName" style="font-weight: 600; color: var(--text-primary);">Loading...</span>
                 <a href="../../backend/auth/logout.php" class="logout-btn">Logout</a>
             </div>
         </header>

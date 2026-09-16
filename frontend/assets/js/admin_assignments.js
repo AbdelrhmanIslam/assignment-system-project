@@ -165,7 +165,7 @@ function renderTable(assignments) {
             '<span class="status-badge status-closed">Archived</span>';
 
         var toggleLabel = a.is_active ? 'Archive' : 'Activate';
-        var toggleClass = a.is_active ? 'background:#ef4444;' : 'background:#10b981;';
+        var toggleClass = a.is_active ? 'background:var(--danger);' : 'background:var(--success);';
 
         var subInfo =
             '<strong>' + a.total_submissions + '</strong> ' +
@@ -185,7 +185,7 @@ function renderTable(assignments) {
                     '<button onclick="toggleAssignmentStatus(' + a.id + ', this)" class="view-btn" style="' + toggleClass + ' font-size:12px; padding:6px 10px; border:none; cursor:pointer; border-radius:4px;">' +
                         toggleLabel +
                     '</button>' +
-                    '<button onclick="deleteAssignment(' + a.id + ', this)" class="view-btn" style="background:#dc2626; font-size:12px; padding:6px 10px; border:none; cursor:pointer; border-radius:4px;">' +
+                    '<button onclick="deleteAssignment(' + a.id + ', this)" class="view-btn" style="background:var(--danger); font-size:12px; padding:6px 10px; border:none; cursor:pointer; border-radius:4px;">' +
                         'Delete' +
                     '</button>' +
                 '</div>' +

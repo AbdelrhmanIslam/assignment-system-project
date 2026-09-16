@@ -23,7 +23,7 @@
         </div>
 
         <div class="header-actions">
-            <span class="user-role" style="background: #e0e7ff; color: #3730a3;">Teacher</span>
+            <span class="user-role">Teacher</span>
 
             <a href="../../backend/auth/logout.php" class="logout-btn">Logout</a>
         </div>
@@ -39,7 +39,7 @@
         <a href="submissions.html" class="action-btn action-review" style="padding: 10px 18px; font-size: 14px;">
             View Submissions Queue
         </a>
-        <a href="notifications.html" class="action-btn" style="background:#4b5563; color:#fff; padding: 10px 18px; font-size: 14px; text-decoration:none;">
+        <a href="notifications.html" class="action-btn action-view" style="padding: 10px 18px; font-size: 14px; text-decoration:none;">
             Notifications
         </a>
     </div>
@@ -52,7 +52,7 @@
 
         <div class="stat-card">
             <span class="stat-label">Enrolled Students</span>
-            <strong class="stat-number" id="stat-students" style="color: #2563eb;">0</strong>
+            <strong class="stat-number" id="stat-students" style="color: var(--primary);">0</strong>
         </div>
 
         <div class="stat-card">
@@ -62,17 +62,17 @@
 
         <div class="stat-card">
             <span class="stat-label">Teaching Assistants</span>
-            <strong class="stat-number" id="stat-assistants" style="color: #7c3aed;">0</strong>
+            <strong class="stat-number" id="stat-assistants" style="color: var(--color-secondary);">0</strong>
         </div>
 
         <div class="stat-card">
             <span class="stat-label">Pending Reviews</span>
-            <strong class="stat-number" id="stat-pending" style="color: #d97706;">0</strong>
+            <strong class="stat-number" id="stat-pending" style="color: var(--warning);">0</strong>
         </div>
 
         <div class="stat-card">
             <span class="stat-label">Graded Submissions</span>
-            <strong class="stat-number" id="stat-graded" style="color: #16a34a;">0</strong>
+            <strong class="stat-number" id="stat-graded" style="color: var(--success);">0</strong>
         </div>
     </section>
 

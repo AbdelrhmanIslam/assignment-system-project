@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', function () {
             var tr = document.createElement('tr');
 
             var tdStudent = document.createElement('td');
-            tdStudent.innerHTML = '<strong>' + escapeHtml(sub.student_name) + '</strong><br><small style="color: #6b7280;">' + escapeHtml(sub.student_email) + '</small>';
+            tdStudent.innerHTML = '<strong>' + escapeHtml(sub.student_name) + '</strong><br><small style="color: var(--text-muted);">' + escapeHtml(sub.student_email) + '</small>';
             tr.appendChild(tdStudent);
 
             var tdAssignment = document.createElement('td');
@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 hour: '2-digit',
                 minute: '2-digit'
             });
-            tdDate.innerHTML = dateStr + ' <span class="status-badge" style="background: #f3f4f6; font-size: 11px;">v' + sub.version + '</span>';
+            tdDate.innerHTML = dateStr + ' <span class="status-badge" style="background: var(--glass-bg-elevated); color: var(--text-secondary); border: 1px solid var(--glass-border); font-size: 11px;">v' + sub.version + '</span>';
             tr.appendChild(tdDate);
 
             var tdStatus = document.createElement('td');
@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             var tdGrade = document.createElement('td');
             if (sub.status === 'graded' && sub.grade !== null) {
-                tdGrade.innerHTML = '<strong style="color: #16a34a;">' + sub.grade + ' / ' + sub.max_grade + '</strong>';
+                tdGrade.innerHTML = '<strong style="color: var(--success);">' + sub.grade + ' / ' + sub.max_grade + '</strong>';
             } else {
                 tdGrade.textContent = '—';
             }

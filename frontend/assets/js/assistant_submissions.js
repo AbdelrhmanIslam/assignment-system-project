@@ -193,7 +193,7 @@ function renderTable(submissions) {
         var gradeDisplay = (sub.grade !== null) ? (sub.grade + ' / ' + sub.max_grade) : '—';
 
         row.innerHTML =
-            '<td><strong>' + escapeHtml(sub.student_name) + '</strong><br><small style="color:#6b7280;">' + escapeHtml(sub.student_email) + '</small></td>' +
+            '<td><strong>' + escapeHtml(sub.student_name) + '</strong><br><small style="color:var(--text-muted);">' + escapeHtml(sub.student_email) + '</small></td>' +
             '<td>' + escapeHtml(sub.assignment_title) + '</td>' +
             '<td>' + escapeHtml(sub.course_name) + '</td>' +
             '<td>' + formatDate(sub.submitted_at) + ' (v' + sub.version + ')</td>' +

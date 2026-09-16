@@ -400,14 +400,14 @@ function renderModalHistoryRows(filter) {
 
         var gradeText = '—';
         if (sub.grade !== null && sub.grade !== undefined && sub.grade !== '') {
-            gradeText = '<strong style="color:#15803d;">' + sub.grade + '</strong> / ' + sub.max_grade;
+            gradeText = '<strong style="color:var(--success);">' + sub.grade + '</strong> / ' + sub.max_grade;
         }
 
         // Evaluator Signature display
         var markedByHtml = '—';
         if (sub.status === 'graded') {
             if (sub.assistant_name) {
-                markedByHtml = '<span style="font-weight:600; color:var(--text-success, #10b981); display:block;">' + escapeHtml(sub.assistant_name) + '</span>' +
+                markedByHtml = '<span style="font-weight:600; color:var(--success); display:block;">' + escapeHtml(sub.assistant_name) + '</span>' +
                                '<span style="font-size:11px; color:var(--text-muted);">' + escapeHtml(sub.assistant_email || 'Teaching Assistant') + '</span>';
             } else {
                 markedByHtml = '<span style="font-weight:600; color:var(--role-teacher);">Teacher</span>';

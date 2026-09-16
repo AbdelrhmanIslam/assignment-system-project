@@ -440,13 +440,13 @@
 }
 
 .action-review {
-   background: rgba(124, 58, 237, 0.88);
+   background: var(--color-secondary);
    color: #ffffff;
-   border: 1px solid rgba(124, 58, 237, 0.5);
+   border: 1px solid var(--color-secondary);
 }
 
 .action-review:hover {
-   background: rgb(109, 40, 217);
+   background: var(--primary-hover);
    transform: translateY(-1px);
    box-shadow: var(--shadow-sm);
    color: #ffffff;
@@ -458,7 +458,7 @@
 }
 
 .action-result:hover {
-   background: #047857;
+   background: var(--primary-hover);
    transform: translateY(-1px);
    box-shadow: var(--shadow-sm);
    color: #ffffff;
@@ -1250,8 +1250,8 @@ button[id^="close-"]:hover {
 }
 
 [data-theme="dark"] .student-course-tag {
-   background: rgba(30, 41, 59, 0.7);
-   border-color: rgba(51, 65, 85, 0.8);
+   background: rgba(78, 54, 54, 0.70);
+   border-color: rgba(110, 80, 80, 0.60);
    color: var(--text-primary);
 }
 
@@ -1323,8 +1323,8 @@ button[id^="close-"]:hover {
 }
 
 [data-theme="dark"] select option {
-   background-color: #0f172a !important;
-   color: #f8fafc !important;
+   background-color: #321E1E !important;
+   color: #fdf8f5 !important;
 }
 
 [data-theme="dark"] .category-banner,

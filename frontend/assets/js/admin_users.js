@@ -241,7 +241,7 @@ function renderStatusBadge(isActive) {
 
 function renderActionButtons(u) {
     var toggleBtnLabel = u.is_active ? 'Deactivate' : 'Activate';
-    var toggleBtnClass = u.is_active ? 'background:#ef4444;' : 'background:#10b981;';
+    var toggleBtnClass = u.is_active ? 'background:var(--danger);' : 'background:var(--success);';
 
     return '<div style="display:inline-flex; gap:6px; align-items:center;">' +
         '<button onclick="openEditUserModal(' + u.id + ')" class="action-btn action-view" style="font-size:12px; padding:6px 12px; border:none; cursor:pointer;">' +

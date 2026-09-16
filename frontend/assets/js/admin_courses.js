@@ -136,7 +136,7 @@ function updateAssistantDropdown(teacherId) {
         assistantSelect.disabled = true;
         if (helpText) {
             helpText.textContent = 'Each teacher has their own isolated teaching assistants.';
-            helpText.style.color = '#6b7280';
+            helpText.style.color = 'var(--text-muted)';
         }
         return;
     }
@@ -159,13 +159,13 @@ function updateAssistantDropdown(teacherId) {
         assistantSelect.disabled = true;
         if (helpText) {
             helpText.textContent = 'This teacher has no teaching assistants. Please assign an assistant in Manage Users first.';
-            helpText.style.color = '#dc2626';
+            helpText.style.color = 'var(--danger)';
         }
     } else {
         assistantSelect.disabled = false;
         if (helpText) {
             helpText.textContent = 'Showing assistants dedicated exclusively to this teacher (' + filtered.length + ' available).';
-            helpText.style.color = '#059669';
+            helpText.style.color = 'var(--success)';
         }
 
         var placeholderOpt = document.createElement('option');
@@ -269,7 +269,7 @@ function renderCoursesTable(courses) {
             '<span class="status-badge status-closed">Archived</span>';
 
         var toggleLabel = c.is_active ? 'Archive' : 'Activate';
-        var toggleClass = c.is_active ? 'background:#ef4444;' : 'background:#10b981;';
+        var toggleClass = c.is_active ? 'background:var(--danger);' : 'background:var(--success);';
 
         var gradeLevelBadge = '<span class="status-badge status-review" style="font-size:11px;">' + escapeHtml(c.grade_level || 'First Year of Middle School') + '</span>';
 
@@ -286,7 +286,7 @@ function renderCoursesTable(courses) {
                     '<button onclick="toggleCourseStatus(' + c.id + ', this)" class="view-btn" style="' + toggleClass + ' font-size:12px; padding:6px 10px; border:none; cursor:pointer; border-radius:4px;">' +
                         toggleLabel +
                     '</button>' +
-                    '<button onclick="deleteCourse(' + c.id + ', this)" class="view-btn" style="background:#dc2626; font-size:12px; padding:6px 10px; border:none; cursor:pointer; border-radius:4px;">' +
+                    '<button onclick="deleteCourse(' + c.id + ', this)" class="view-btn" style="background:var(--danger); font-size:12px; padding:6px 10px; border:none; cursor:pointer; border-radius:4px;">' +
                         'Delete' +
                     '</button>' +
                 '</div>' +
