@@ -7,7 +7,7 @@
    --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-   /* Design Palette Colors (Light Mode) */
+   /* Design Palette Colors (Light Mode - Completely Isolated from Dark Mode) */
    --color-primary: #007979;
    --color-primary-hover: #005f5f;
    --color-primary-light: #24B1B1;
@@ -15,29 +15,29 @@
    --color-accent-warm: #FFE2AF;
    --color-accent-orange: #E37434;
 
-   /* Canvas & Mesh Backdrop (Teal + warm cream + subtle orange) */
-   --bg-page: #f2f7f7;
-   --canvas-mesh: radial-gradient(at 10% 10%, rgba(0, 121, 121, 0.08) 0px, transparent 48%),
-                  radial-gradient(at 90% 15%, rgba(255, 226, 175, 0.35) 0px, transparent 45%),
-                  radial-gradient(at 85% 85%, rgba(36, 177, 177, 0.08) 0px, transparent 48%),
-                  radial-gradient(at 15% 90%, rgba(227, 116, 52, 0.05) 0px, transparent 45%),
-                  #f2f7f7;
+   /* Main Canvas Backdrop (Anchored in #FFE2AF - Warm Apricot / Cream Glass) */
+   --bg-page: #FFE2AF;
+   --canvas-mesh: radial-gradient(at 12% 12%, rgba(0, 121, 121, 0.12) 0px, transparent 46%),
+                  radial-gradient(at 88% 18%, rgba(227, 116, 52, 0.10) 0px, transparent 44%),
+                  radial-gradient(at 85% 82%, rgba(36, 177, 177, 0.12) 0px, transparent 48%),
+                  radial-gradient(at 15% 88%, rgba(0, 121, 121, 0.08) 0px, transparent 45%),
+                  #FFE2AF;
 
-   /* Translucent Glass Surfaces */
-   --glass-bg: rgba(255, 255, 255, 0.75);
-   --glass-bg-elevated: rgba(255, 255, 255, 0.90);
-   --glass-bg-hover: rgba(255, 255, 255, 0.98);
-   --glass-bg-muted: rgba(240, 248, 248, 0.70);
-   --glass-bg-subtle: rgba(246, 251, 251, 0.65);
+   /* Translucent Warm Glass Surfaces (Warm Apricot-tinted glass, never stark white) */
+   --glass-bg: rgba(255, 248, 235, 0.78);
+   --glass-bg-elevated: rgba(255, 251, 242, 0.88);
+   --glass-bg-hover: rgba(255, 253, 247, 0.94);
+   --glass-bg-muted: rgba(247, 226, 188, 0.60);
+   --glass-bg-subtle: rgba(252, 236, 206, 0.52);
    --card-bg: var(--glass-bg);
    --bg-surface: var(--glass-bg-elevated);
    --bg-muted: var(--glass-bg-muted);
    --bg-subtle: var(--glass-bg-subtle);
 
-   /* Glass Borders & Separators */
-   --glass-border: rgba(0, 121, 121, 0.15);
-   --glass-border-strong: rgba(0, 121, 121, 0.30);
-   --glass-border-subtle: rgba(0, 121, 121, 0.08);
+   /* Glass Borders & Fine Dividers */
+   --glass-border: rgba(0, 121, 121, 0.16);
+   --glass-border-strong: rgba(0, 121, 121, 0.32);
+   --glass-border-subtle: rgba(0, 121, 121, 0.09);
    --border-color: var(--glass-border);
    --border-strong: var(--glass-border-strong);
    --border-subtle: var(--glass-border-subtle);
@@ -47,53 +47,54 @@
    --glass-blur: blur(12px);
    --glass-blur-lg: blur(20px);
 
-   /* High-Readability Typography */
-   --text-primary: #0f2323;
-   --text-secondary: #274040;
-   --text-muted: #537171;
+   /* High-Readability Typography (Deep Teal-Charcoal for high contrast on #FFE2AF) */
+   --text-primary: #102626;
+   --text-secondary: #233c3c;
+   --text-muted: #526e6e;
    --text-disabled: #8ea5a5;
    --text-heading: var(--text-primary);
    --text-body: var(--text-secondary);
    --text-light: var(--text-disabled);
 
    /* Form Controls & Inputs */
-   --input-bg: rgba(255, 255, 255, 0.85);
+   --input-bg: rgba(255, 252, 245, 0.88);
    --input-border: rgba(0, 121, 121, 0.22);
    --input-placeholder: #7c9898;
-   --focus-ring: 0 0 0 3px rgba(0, 121, 121, 0.20);
+   --focus-ring: 0 0 0 3px rgba(0, 121, 121, 0.18);
    --border-focus: #007979;
 
    /* Table Glass Tokens */
-   --table-header-bg: rgba(238, 247, 247, 0.85);
-   --table-row-hover: rgba(228, 242, 242, 0.65);
-   --table-border: rgba(0, 121, 121, 0.12);
+   --table-header-bg: rgba(247, 226, 188, 0.75);
+   --table-row-hover: rgba(243, 218, 175, 0.55);
+   --table-border: rgba(0, 121, 121, 0.14);
 
    /* Modal Glass Backdrop & Card */
-   --overlay-bg: rgba(15, 35, 35, 0.45);
+   --overlay-bg: rgba(18, 36, 36, 0.45);
    --modal-backdrop: var(--overlay-bg);
 
-   /* Refined Shadows */
-   --shadow-xs: 0 1px 2px 0 rgba(0, 121, 121, 0.04);
-   --shadow-sm: 0 1px 3px 0 rgba(0, 121, 121, 0.06), 0 1px 2px -1px rgba(0, 121, 121, 0.04);
-   --shadow-glass: 0 4px 16px -2px rgba(15, 35, 35, 0.05), inset 0 1px 0 0 rgba(255, 255, 255, 0.7);
-   --shadow-glass-elevated: 0 10px 25px -4px rgba(15, 35, 35, 0.08), inset 0 1px 0 0 rgba(255, 255, 255, 0.8);
-   --shadow-modal: 0 20px 40px -10px rgba(15, 35, 35, 0.16), inset 0 1px 0 0 rgba(255, 255, 255, 0.6);
-   --shadow-subtle: var(--shadow-glass);
-   --shadow-md: var(--shadow-glass-elevated);
+   /* Minimal / Disappearing Box Shadows */
+   --shadow-xs: none;
+   --shadow-sm: none;
+   --shadow-glass: 0 1px 2px rgba(18, 36, 36, 0.03);
+   --shadow-glass-elevated: 0 1px 4px rgba(18, 36, 36, 0.05);
+   --shadow-modal: 0 4px 16px rgba(18, 36, 36, 0.10);
+   --shadow-subtle: none;
+   --shadow-md: none;
 
-   /* Radii */
+   /* Radii - Oval Shape for All Buttons & Toggles */
    --radius-xs: 4px;
-   --radius-sm: 7px;
-   --radius-md: 11px;
-   --radius-lg: 16px;
-   --radius-xl: 20px;
+   --radius-sm: 8px;
+   --radius-md: 12px;
+   --radius-lg: 18px;
+   --radius-xl: 24px;
    --radius-pill: 9999px;
+   --radius-btn: 9999px;
 
-   /* Role Identity Accents */
-   --role-admin: #CD1818;
-   --role-admin-bg: rgba(205, 24, 24, 0.10);
-   --role-admin-text: #a81010;
-   --role-admin-border: rgba(205, 24, 24, 0.28);
+   /* Role Identity Accents (Light Mode - Fully Isolated from Dark Mode) */
+   --role-admin: #b33618;
+   --role-admin-bg: rgba(179, 54, 24, 0.10);
+   --role-admin-text: #8c260e;
+   --role-admin-border: rgba(179, 54, 24, 0.30);
 
    --role-teacher: #007979;
    --role-teacher-bg: rgba(0, 121, 121, 0.10);
@@ -101,7 +102,7 @@
    --role-teacher-border: rgba(0, 121, 121, 0.28);
 
    --role-assistant: #24B1B1;
-   --role-assistant-bg: rgba(36, 177, 177, 0.14);
+   --role-assistant-bg: rgba(36, 177, 177, 0.15);
    --role-assistant-text: #0e6d6d;
    --role-assistant-border: rgba(36, 177, 177, 0.35);
 
@@ -121,33 +122,33 @@
    --success-text: #005a5a;
 
    --warning: #E37434;
-   --warning-bg: rgba(255, 226, 175, 0.45);
+   --warning-bg: rgba(255, 226, 175, 0.50);
    --warning-border: rgba(227, 116, 52, 0.35);
-   --warning-text: #8e3704;
+   --warning-text: #8a3503;
 
-   --danger: #CD1818;
-   --danger-bg: rgba(205, 24, 24, 0.10);
-   --danger-border: rgba(205, 24, 24, 0.28);
-   --danger-text: #a81010;
+   --danger: #b33618;
+   --danger-bg: rgba(179, 54, 24, 0.10);
+   --danger-border: rgba(179, 54, 24, 0.30);
+   --danger-text: #8c260e;
 
-   --neutral: #537171;
-   --neutral-bg: rgba(240, 248, 248, 0.85);
-   --neutral-border: rgba(0, 121, 121, 0.15);
-   --neutral-text: #274040;
+   --neutral: #526e6e;
+   --neutral-bg: rgba(247, 226, 188, 0.65);
+   --neutral-border: rgba(0, 121, 121, 0.16);
+   --neutral-text: #233c3c;
 
    /* Transitions */
    --transition-fast: 120ms ease;
    --transition-base: 180ms ease;
    --transition-smooth: 220ms cubic-bezier(0.16, 1, 0.3, 1);
-   --transition-all: background-color 180ms ease, color 180ms ease, border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+   --transition-all: background-color 180ms ease, color 180ms ease, border-color 180ms ease, opacity 180ms ease;
 }
 
 /* ==========================================================================
    GLASS DESIGN TOKENS (DARK THEME - [data-theme="dark"])
-   Exact Palette: Primary Teal #116D6E, Deep Brown #321E1E, Brown #4E3636, Red #CD1818
+   Completely Isolated: Primary Teal #116D6E, Deep Brown #321E1E, Brown #4E3636, Red #CD1818
    ========================================================================== */
 [data-theme="dark"] {
-   /* Design Palette Colors (Dark Mode) */
+   /* Design Palette Colors (Dark Mode - 100% Isolated) */
    --color-primary: #116D6E;
    --color-primary-hover: #168687;
    --color-surface-deep: #321E1E;
@@ -156,9 +157,9 @@
 
    /* Deep Brown & Teal Canvas Mesh */
    --bg-page: #1a1010;
-   --canvas-mesh: radial-gradient(at 10% 10%, rgba(17, 109, 110, 0.20) 0px, transparent 50%),
-                  radial-gradient(at 90% 90%, rgba(78, 54, 54, 0.35) 0px, transparent 55%),
-                  radial-gradient(at 50% 50%, rgba(50, 30, 30, 0.45) 0px, transparent 60%),
+   --canvas-mesh: radial-gradient(at 10% 10%, rgba(17, 109, 110, 0.22) 0px, transparent 50%),
+                  radial-gradient(at 90% 90%, rgba(78, 54, 54, 0.40) 0px, transparent 55%),
+                  radial-gradient(at 50% 50%, rgba(50, 30, 30, 0.50) 0px, transparent 60%),
                   #1a1010;
 
    /* Translucent Deep Brown & Elevated Brown Glass Surfaces */
@@ -205,16 +206,16 @@
    --overlay-bg: rgba(15, 8, 8, 0.75);
    --modal-backdrop: var(--overlay-bg);
 
-   /* Refined Dark Depth with Top Edge Luminescence */
-   --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
-   --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.5), 0 1px 2px -1px rgba(0, 0, 0, 0.4);
-   --shadow-glass: 0 4px 18px -2px rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
-   --shadow-glass-elevated: 0 10px 25px -4px rgba(0, 0, 0, 0.6), inset 0 1px 0 0 rgba(255, 255, 255, 0.12);
-   --shadow-modal: 0 25px 50px -12px rgba(0, 0, 0, 0.85), inset 0 1px 0 0 rgba(255, 255, 255, 0.12);
-   --shadow-subtle: var(--shadow-glass);
-   --shadow-md: var(--shadow-glass-elevated);
+   /* Minimal / Disappearing Box Shadows */
+   --shadow-xs: none;
+   --shadow-sm: none;
+   --shadow-glass: 0 1px 2px rgba(0, 0, 0, 0.15);
+   --shadow-glass-elevated: 0 2px 4px rgba(0, 0, 0, 0.25);
+   --shadow-modal: 0 4px 20px rgba(0, 0, 0, 0.50);
+   --shadow-subtle: none;
+   --shadow-md: none;
 
-   /* Role Accents (Dark Mode) */
+   /* Role Accents (Dark Mode - 100% Isolated) */
    --role-admin: #CD1818;
    --role-admin-bg: rgba(205, 24, 24, 0.22);
    --role-admin-text: #ff8e8e;
@@ -225,17 +226,17 @@
    --role-teacher-text: #96eaea;
    --role-teacher-border: rgba(17, 109, 110, 0.50);
 
-   --role-assistant: #24B1B1;
-   --role-assistant-bg: rgba(36, 177, 177, 0.25);
+   --role-assistant: #188384;
+   --role-assistant-bg: rgba(24, 131, 132, 0.25);
    --role-assistant-text: #a4f4f4;
-   --role-assistant-border: rgba(36, 177, 177, 0.45);
+   --role-assistant-border: rgba(24, 131, 132, 0.45);
 
    --role-student: #116D6E;
    --role-student-bg: rgba(17, 109, 110, 0.25);
    --role-student-text: #8ee5e6;
    --role-student-border: rgba(17, 109, 110, 0.45);
 
-   /* Semantic Actions (Dark Mode) */
+   /* Semantic Actions (Dark Mode - Isolated) */
    --primary: #116D6E;
    --primary-hover: #168687;
    --primary-contrast: #ffffff;
@@ -245,9 +246,9 @@
    --success-border: rgba(17, 109, 110, 0.45);
    --success-text: #96eaea;
 
-   --warning: #E37434;
-   --warning-bg: rgba(227, 116, 52, 0.22);
-   --warning-border: rgba(227, 116, 52, 0.45);
+   --warning: #c2571a;
+   --warning-bg: rgba(194, 87, 26, 0.22);
+   --warning-border: rgba(194, 87, 26, 0.45);
    --warning-text: #ffbe98;
 
    --danger: #CD1818;
@@ -416,27 +417,26 @@ input:-webkit-autofill:active {
    align-items: center;
    justify-content: center;
    gap: 7px;
-   padding: 9px 18px;
+   padding: 9px 22px;
    border: 1px solid transparent;
-   border-radius: var(--radius-sm);
+   border-radius: var(--radius-pill);
    background-color: var(--primary);
    color: var(--primary-contrast);
    font-weight: 600;
    font-size: 13.5px;
    cursor: pointer;
-   box-shadow: var(--shadow-sm);
+   box-shadow: none;
    transition: var(--transition-all);
    white-space: nowrap;
 }
 
 .btn-primary:hover {
    background-color: var(--primary-hover);
-   transform: translateY(-1px);
-   box-shadow: var(--shadow-glass);
+   opacity: 0.93;
 }
 
 .btn-primary:active {
-   transform: translateY(0);
+   opacity: 1;
 }
 
 .btn-secondary {
@@ -444,23 +444,22 @@ input:-webkit-autofill:active {
    align-items: center;
    justify-content: center;
    gap: 7px;
-   padding: 9px 16px;
+   padding: 9px 20px;
    border: 1px solid var(--glass-border);
-   border-radius: var(--radius-sm);
+   border-radius: var(--radius-pill);
    background-color: var(--glass-bg);
    backdrop-filter: var(--glass-blur-sm);
    color: var(--text-heading);
    font-weight: 600;
    font-size: 13.5px;
    cursor: pointer;
-   box-shadow: var(--shadow-xs);
+   box-shadow: none;
    transition: var(--transition-all);
 }
 
 .btn-secondary:hover {
    background-color: var(--glass-bg-hover);
    border-color: var(--glass-border-strong);
-   transform: translateY(-1px);
 }
 
 /* ==========================================================================
