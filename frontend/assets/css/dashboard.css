@@ -907,7 +907,7 @@ a#btn-add-user {
 }
 
 /* ==========================================================================
-   STUDENT TABLE: REDESIGNED ASSIGNED COURSES & OWN TEACHER CHIPS (HORIZONTAL)
+   STUDENT TABLE: REDESIGNED ASSIGNED COURSES & OWN TEACHER CHIPS (HORIZONTAL ROW)
    ========================================================================== */
 .student-assignments-cell {
    display: flex !important;
@@ -915,72 +915,74 @@ a#btn-add-user {
    flex-wrap: wrap !important;
    align-items: center !important;
    gap: 6px 8px !important;
-   width: 100%;
+   min-width: 580px !important;
+   width: 100% !important;
 }
 
 .student-courses-list {
    display: flex !important;
    flex-direction: row !important;
    flex-wrap: wrap !important;
-   gap: 6px;
+   gap: 6px !important;
 }
 
 .student-course-tag {
    display: inline-flex !important;
    flex-direction: row !important;
    align-items: center !important;
-   gap: 5px;
-   padding: 3px 8px;
-   border-radius: var(--radius-xs);
-   background: var(--glass-bg-elevated);
-   backdrop-filter: var(--glass-blur-sm);
-   -webkit-backdrop-filter: var(--glass-blur-sm);
-   border: 1px solid var(--glass-border);
-   font-size: 11px;
-   color: var(--text-primary);
-   line-height: 1.3;
-   white-space: nowrap;
-   box-shadow: var(--shadow-xs);
-   transition: var(--transition-fast);
+   gap: 6px !important;
+   padding: 4px 10px 4px 8px !important;
+   border-radius: var(--radius-pill) !important;
+   background: var(--glass-bg-elevated) !important;
+   backdrop-filter: var(--glass-blur-sm) !important;
+   -webkit-backdrop-filter: var(--glass-blur-sm) !important;
+   border: 1px solid var(--glass-border-strong) !important;
+   font-size: 11.5px !important;
+   color: var(--text-primary) !important;
+   line-height: 1.2 !important;
+   white-space: nowrap !important;
+   box-shadow: none !important;
+   transition: var(--transition-fast) !important;
+   flex-shrink: 0 !important;
 }
 
 .student-course-tag:hover {
-   background: var(--glass-bg-hover);
-   border-color: var(--glass-border-strong);
+   background: var(--glass-bg-hover) !important;
+   border-color: var(--primary) !important;
 }
 
 .student-course-tag svg {
-   width: 11px;
-   height: 11px;
-   stroke: var(--primary);
-   fill: none;
-   stroke-width: 2;
-   flex-shrink: 0;
+   width: 12px !important;
+   height: 12px !important;
+   stroke: var(--primary) !important;
+   fill: none !important;
+   stroke-width: 2 !important;
+   flex-shrink: 0 !important;
 }
 
 .student-teacher-indicator {
    display: inline-flex !important;
    flex-direction: row !important;
    align-items: center !important;
-   gap: 3px;
-   padding: 1px 6px;
-   border-radius: var(--radius-pill);
-   background: var(--role-teacher-bg);
-   border: 1px solid var(--role-teacher-border);
-   font-size: 10.5px;
-   font-weight: 600;
-   color: var(--role-teacher-text);
-   margin-left: 2px;
-   white-space: nowrap;
+   gap: 3px !important;
+   padding: 2px 8px !important;
+   border-radius: var(--radius-pill) !important;
+   background: var(--role-teacher-bg) !important;
+   border: 1px solid var(--role-teacher-border) !important;
+   font-size: 10.5px !important;
+   font-weight: 600 !important;
+   color: var(--role-teacher-text) !important;
+   margin-left: 2px !important;
+   white-space: nowrap !important;
 }
 
 .student-teacher-indicator svg {
-   width: 10px;
-   height: 10px;
-   stroke: currentColor;
-   fill: none;
-   stroke-width: 2;
-   flex-shrink: 0;
+   width: 10px !important;
+   height: 10px !important;
+   stroke: currentColor !important;
+   fill: none !important;
+   stroke-width: 2 !important;
+   flex-shrink: 0 !important;
 }
 
 .hierarchical-table-wrapper {
@@ -991,12 +993,13 @@ a#btn-add-user {
 
 .hierarchical-table-wrapper .assignments-table {
    width: 100%;
-   min-width: 860px;
+   min-width: 1300px !important;
 }
 
 .hierarchical-table-wrapper .assignments-table th:nth-child(4),
 .hierarchical-table-wrapper .assignments-table td:nth-child(4) {
-   min-width: 340px;
+   min-width: 680px !important;
+   width: auto !important;
 }
 
 /* ==========================================================================
