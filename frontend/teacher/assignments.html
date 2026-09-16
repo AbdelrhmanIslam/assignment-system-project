@@ -17,7 +17,7 @@
 <div class="dashboard-page">
 
     <a href="dashboard.html" class="back-btn">
-        &larr; Back to Dashboard
+        Back to Dashboard
     </a>
 
     <header class="dashboard-header">
@@ -44,7 +44,7 @@
 
                 <div class="form-group">
                     <label for="assignment-course">Course *</label>
-                    <select id="assignment-course" name="course_id" required style="width: 100%; padding: 11px; border: 1px solid #d1d5db; border-radius: 8px;">
+                    <select id="assignment-course" name="course_id" required>
                         <option value="">Loading courses...</option>
                     </select>
                 </div>
@@ -56,7 +56,7 @@
 
                 <div class="form-group">
                     <label for="assignment-grade-level">Target Grade Level *</label>
-                    <select id="assignment-grade-level" name="grade_level" required style="width: 100%; padding: 11px; border: 1px solid #d1d5db; border-radius: 8px;">
+                    <select id="assignment-grade-level" name="grade_level" required>
                         <option value="First Year of Middle School">First Year of Middle School (Grade 7 / 1st Prep)</option>
                         <option value="Second Year of Middle School">Second Year of Middle School (Grade 8 / 2nd Prep)</option>
                         <option value="Third Year of Middle School">Third Year of Middle School (Grade 9 / 3rd Prep)</option>
@@ -77,7 +77,7 @@
 
             <div class="form-group" style="margin-bottom: 18px;">
                 <label for="assignment-description">Instructions & Description *</label>
-                <textarea id="assignment-description" name="description" rows="4" style="width: 100%; padding: 11px; border: 1px solid #d1d5db; border-radius: 8px; font-family: inherit;" placeholder="Detailed requirements and grading criteria..." required></textarea>
+                <textarea id="assignment-description" name="description" rows="4" placeholder="Detailed requirements and grading criteria..." required></textarea>
             </div>
 
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; margin-bottom: 22px;">
@@ -94,7 +94,7 @@
 
                 <div class="form-group">
                     <label for="assignment-resub">Allow Resubmission?</label>
-                    <select id="assignment-resub" name="allow_resubmission" style="width: 100%; padding: 11px; border: 1px solid #d1d5db; border-radius: 8px;">
+                    <select id="assignment-resub" name="allow_resubmission">
                         <option value="1">Yes - Allow students to replace submissions</option>
                         <option value="0">No - Single submission only</option>
                     </select>

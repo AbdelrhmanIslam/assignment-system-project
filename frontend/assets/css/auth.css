@@ -19,6 +19,53 @@
    position: absolute;
    top: 18px;
    right: 20px;
+   z-index: 10;
+}
+
+.auth-theme-toggle .theme-toggle-btn {
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
+   gap: 7px;
+   height: 36px;
+   padding: 0 18px;
+   background: var(--glass-bg-elevated);
+   backdrop-filter: var(--glass-blur-sm);
+   -webkit-backdrop-filter: var(--glass-blur-sm);
+   border: 1.5px solid var(--glass-border-strong);
+   border-radius: var(--radius-pill);
+   color: var(--text-primary);
+   font-size: 13px;
+   font-weight: 600;
+   cursor: pointer;
+   box-shadow: none;
+   transition: var(--transition-all);
+}
+
+.auth-theme-toggle .theme-toggle-btn:hover {
+   background: var(--glass-bg-hover);
+   border-color: var(--primary);
+   color: var(--primary);
+}
+
+.auth-theme-toggle .theme-toggle-btn:focus-visible {
+   outline: none;
+   box-shadow: var(--focus-ring);
+}
+
+.auth-theme-toggle .theme-toggle-btn svg {
+   width: 15px;
+   height: 15px;
+   stroke: currentColor;
+   fill: none;
+   stroke-width: 2;
+   stroke-linecap: round;
+   stroke-linejoin: round;
+   transition: transform var(--transition-base);
+}
+
+.auth-theme-toggle .theme-toggle-btn:hover svg {
+   transform: rotate(12deg);
 }
 
 .auth-card {

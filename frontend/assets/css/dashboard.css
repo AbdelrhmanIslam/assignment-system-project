@@ -470,22 +470,57 @@
 .back-btn {
    display: inline-flex;
    align-items: center;
-   gap: 5px;
+   justify-content: center;
    text-decoration: none;
-   color: var(--text-muted);
+   color: var(--text-primary);
    font-size: 13px;
    font-weight: 600;
-   margin-bottom: 16px;
-   padding: 6px 14px;
+   margin-bottom: 18px;
+   padding: 7px 20px;
    border-radius: var(--radius-pill);
-   border: 1px solid transparent;
+   border: 1.5px solid var(--glass-border-strong);
+   background: var(--glass-bg);
+   backdrop-filter: var(--glass-blur-sm);
+   -webkit-backdrop-filter: var(--glass-blur-sm);
+   box-shadow: none;
    transition: var(--transition-all);
 }
 
 .back-btn:hover {
-   background: var(--glass-bg);
-   color: var(--text-primary);
-   border-color: var(--glass-border);
+   background: var(--glass-bg-hover);
+   color: var(--primary);
+   border-color: var(--primary);
+}
+
+/* Trendy filter selects */
+.filter-bar select,
+#student-filter-select,
+#course-filter-select {
+   padding: 7px 36px 7px 16px !important;
+   border-radius: var(--radius-pill) !important;
+   font-size: 13px;
+   font-weight: 500;
+   height: 36px;
+   cursor: pointer;
+   border: 1.5px solid var(--glass-border-strong) !important;
+   background-color: var(--glass-bg-elevated) !important;
+   color: var(--text-primary) !important;
+   box-shadow: none !important;
+   transition: var(--transition-all);
+}
+
+.filter-bar select:hover,
+#student-filter-select:hover,
+#course-filter-select:hover {
+   border-color: var(--primary) !important;
+}
+
+.filter-bar select:focus,
+#student-filter-select:focus,
+#course-filter-select:focus {
+   border-color: var(--border-focus) !important;
+   box-shadow: var(--focus-ring) !important;
+   outline: none;
 }
 
 /* ==========================================================================

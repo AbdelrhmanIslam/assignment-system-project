@@ -15,7 +15,7 @@
 <body>
     <div class="dashboard-page">
 
-        <a href="dashboard.html" class="back-btn">&larr; Back to Dashboard</a>
+        <a href="dashboard.html" class="back-btn">Back to Dashboard</a>
 
         <header class="dashboard-header">
             <div>
@@ -106,7 +106,7 @@
 
                         <div class="form-group" style="margin-bottom: 15px;">
                             <label for="select-course-grade" style="display: block; font-weight: 600; margin-bottom: 5px;">Target Grade Level *</label>
-                            <select id="select-course-grade" name="grade_level" required style="width: 100%; padding: 9px; border-radius: 6px; font-size: 14px;">
+                            <select id="select-course-grade" name="grade_level" required>
                                 <option value="First Year of Middle School">First Year of Middle School</option>
                                 <option value="Second Year of Middle School">Second Year of Middle School</option>
                                 <option value="Third Year of Middle School">Third Year of Middle School</option>
@@ -116,19 +116,19 @@
 
                         <div class="form-group" style="margin-bottom: 15px;">
                             <label for="input-course-desc" style="display: block; font-weight: 600; margin-bottom: 5px;">Description</label>
-                            <textarea id="input-course-desc" name="description" rows="3" placeholder="Brief course syllabus and objectives..." style="width: 100%; padding: 9px; border-radius: 6px; font-family: inherit; font-size: 14px;"></textarea>
+                            <textarea id="input-course-desc" name="description" rows="3" placeholder="Brief course syllabus and objectives..."></textarea>
                         </div>
 
                         <div class="form-group" style="margin-bottom: 15px;">
                             <label for="select-teacher" style="display: block; font-weight: 600; margin-bottom: 5px;">Lead Teacher *</label>
-                            <select id="select-teacher" name="teacher_id" required style="width: 100%; padding: 9px; border-radius: 6px; font-size: 14px;">
+                            <select id="select-teacher" name="teacher_id" required>
                                 <option value="">Select Lead Teacher...</option>
                             </select>
                         </div>
 
                         <div class="form-group" style="margin-bottom: 20px;">
                             <label for="select-assistant" style="display: block; font-weight: 600; margin-bottom: 5px;">Teaching Assistant * (Dedicated to Selected Teacher)</label>
-                            <select id="select-assistant" name="assistant_id" required style="width: 100%; padding: 9px; border-radius: 6px; font-size: 14px;">
+                            <select id="select-assistant" name="assistant_id" required>
                                 <option value="" disabled selected>Please select a Lead Teacher first...</option>
                             </select>
                             <p id="assistant-help-text" style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Each teacher has their own isolated teaching assistants.</p>
