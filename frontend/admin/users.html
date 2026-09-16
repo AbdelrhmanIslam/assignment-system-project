@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Users - Admin</title>
 
-    <link rel="stylesheet" href="../assets/css/style.css">
-    <link rel="stylesheet" href="../assets/css/dashboard.css">
-    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <link rel="stylesheet" href="../assets/css/style.css?v=9.1">
+    <link rel="stylesheet" href="../assets/css/dashboard.css?v=9.1">
+    <link rel="stylesheet" href="../assets/css/responsive.css?v=9.1">
     <script>
         (function(){var t=localStorage.getItem('assignment_system_theme')||localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);})();
     </script>
@@ -404,10 +404,10 @@
                         <span style="font-size: 12px; color: var(--text-muted);">No enrolled courses</span>
                     </div>
                     <div style="display: flex; gap: 8px; align-items: center;">
-                        <select id="edit-student-add-course-select" style="flex: 1; border-radius: var(--radius-pill); font-size: 13px; height: 36px;">
+                        <select id="edit-student-add-course-select" style="flex: 1; border-radius: var(--radius-pill); font-size: 13px; height: 38px; line-height: 34px;">
                             <option value="">-- Choose Course to Enroll --</option>
                         </select>
-                        <button type="button" id="btn-add-student-course" class="btn-primary" style="height: 36px; padding: 0 16px; font-size: 13px; white-space: nowrap; border-radius: var(--radius-pill);">
+                        <button type="button" id="btn-add-student-course" class="btn-primary" style="height: 38px; padding: 0 16px; font-size: 13px; white-space: nowrap; border-radius: var(--radius-pill); display: inline-flex; align-items: center; justify-content: center;">
                             + Enroll
                         </button>
                     </div>
@@ -441,10 +441,10 @@
                         <span style="font-size: 12px; color: var(--text-muted);">No assigned courses</span>
                     </div>
                     <div style="display: flex; gap: 8px; align-items: center;">
-                        <select id="edit-teacher-add-course-select" style="flex: 1; border-radius: var(--radius-pill); font-size: 13px; height: 36px;">
+                        <select id="edit-teacher-add-course-select" style="flex: 1; border-radius: var(--radius-pill); font-size: 13px; height: 38px; line-height: 34px;">
                             <option value="">-- Choose Unassigned Course --</option>
                         </select>
-                        <button type="button" id="btn-add-teacher-course" class="btn-primary" style="height: 36px; padding: 0 16px; font-size: 13px; white-space: nowrap; border-radius: var(--radius-pill);">
+                        <button type="button" id="btn-add-teacher-course" class="btn-primary" style="height: 38px; padding: 0 16px; font-size: 13px; white-space: nowrap; border-radius: var(--radius-pill); display: inline-flex; align-items: center; justify-content: center;">
                             + Assign
                         </button>
                     </div>
@@ -469,7 +469,7 @@
         </div>
     </div>
 
-    <script src="../assets/js/main.js"></script>
-    <script src="../assets/js/admin_users.js?v=9.0"></script>
+    <script src="../assets/js/main.js?v=9.1"></script>
+    <script src="../assets/js/admin_users.js?v=9.1"></script>
 </body>
 </html>

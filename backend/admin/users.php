@@ -344,7 +344,7 @@ if (isPost()) {
             echo json_encode(['success' => false, 'message' => 'Invalid teacher ID or course ID.']);
             exit;
         }
-        $upd = mysqli_query($conn, "UPDATE courses SET teacher_id = 0 WHERE id = $courseId AND teacher_id = $targetUserId");
+        $upd = mysqli_query($conn, "UPDATE courses SET teacher_id = NULL WHERE id = $courseId AND teacher_id = $targetUserId");
         if ($upd) {
             echo json_encode(['success' => true, 'message' => 'Course unassigned from teacher successfully.']);
         } else {
