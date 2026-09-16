@@ -1026,7 +1026,7 @@ function renderModalStudentCourses(user) {
                 '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>' +
                 '<span><strong>' + escapeHtml(c.course_name) + '</strong></span>' +
                 '<span class="student-teacher-indicator">' + escapeHtml(c.teacher_name) + '</span>' +
-                '<button type="button" class="btn-remove-course-pill" onclick="event.preventDefault(); event.stopPropagation(); removeCourseFromStudent(' + user.id + ', ' + c.course_id + ')" title="Remove course from student" style="border:none; background:rgba(205,24,24,0.18); color:var(--danger); border-radius:9999px; width:22px; height:22px; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; padding:0; font-size:15px; font-weight:bold; margin-left:6px; line-height:1; transition:all 0.2s;">&times;</button>' +
+                '<button type="button" class="btn-remove-course-pill" onclick="window.removeCourseFromStudent(' + user.id + ', ' + c.course_id + ')" title="Remove course from student" style="border:none; background:rgba(205,24,24,0.18); color:var(--danger); border-radius:9999px; width:22px; height:22px; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; padding:0; font-size:15px; font-weight:bold; margin-left:6px; line-height:1; transition:all 0.2s;">&times;</button>' +
             '</div>';
         }).join('');
     }
@@ -1076,7 +1076,18 @@ function renderModalStudentCourses(user) {
 
 // Remove course from student
 function removeCourseFromStudent(studentId, courseId) {
-    if (!confirm('Are you sure you want to remove this course from this student?')) return;
+    var u = null;
+    for (var i = 0; i < loadedUsers.length; i++) {
+        if (loadedUsers[i].id === studentId) {
+            u = loadedUsers[i];
+            break;
+        }
+    }
+    // Optimistically remove from local array and re-render immediately
+    if (u && u.student_courses) {
+        u.student_courses = u.student_courses.filter(function (c) { return c.course_id !== courseId; });
+        renderModalStudentCourses(u);
+    }
     
     var formData = new FormData();
     formData.append('action', 'remove_student_course');
@@ -1091,6 +1102,16 @@ function removeCourseFromStudent(studentId, courseId) {
     .then(function (data) {
         if (!data.success) {
             showAlert(data.message || 'Failed to remove course.', 'error');
+            loadUsers(function() {
+                var updatedU = null;
+                for (var i = 0; i < loadedUsers.length; i++) {
+                    if (loadedUsers[i].id === studentId) {
+                        updatedU = loadedUsers[i];
+                        break;
+                    }
+                }
+                if (updatedU) renderModalStudentCourses(updatedU);
+            });
             return;
         }
         showAlert('Course removed from student successfully!', 'success');
@@ -1110,6 +1131,7 @@ function removeCourseFromStudent(studentId, courseId) {
     .catch(function (err) {
         console.error('Error removing course:', err);
         showAlert('Server error while removing course.', 'error');
+        loadUsers();
     });
 }
 
@@ -1193,7 +1215,7 @@ function renderModalTeacherCourses(user) {
                 '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>' +
                 '<span><strong>' + escapeHtml(c.course_name) + '</strong></span>' +
                 '<span class="sub-count-badge" style="font-size:10px;">' + (c.student_count || 0) + ' students</span>' +
-                '<button type="button" class="btn-remove-course-pill" onclick="event.preventDefault(); event.stopPropagation(); removeCourseFromTeacher(' + user.id + ', ' + c.course_id + ')" title="Unassign course from teacher" style="border:none; background:rgba(205,24,24,0.18); color:var(--danger); border-radius:9999px; width:22px; height:22px; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; padding:0; font-size:15px; font-weight:bold; margin-left:6px; line-height:1; transition:all 0.2s;">&times;</button>' +
+                '<button type="button" class="btn-remove-course-pill" onclick="window.removeCourseFromTeacher(' + user.id + ', ' + c.course_id + ')" title="Unassign course from teacher" style="border:none; background:rgba(205,24,24,0.18); color:var(--danger); border-radius:9999px; width:22px; height:22px; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; padding:0; font-size:15px; font-weight:bold; margin-left:6px; line-height:1; transition:all 0.2s;">&times;</button>' +
             '</div>';
         }).join('');
     }
@@ -1223,7 +1245,25 @@ function renderModalTeacherCourses(user) {
 
 // Remove/unassign course from teacher
 function removeCourseFromTeacher(teacherId, courseId) {
-    if (!confirm('Are you sure you want to unassign this course from this teacher?')) return;
+    var u = null;
+    for (var i = 0; i < loadedUsers.length; i++) {
+        if (loadedUsers[i].id === teacherId) {
+            u = loadedUsers[i];
+            break;
+        }
+    }
+    // Optimistically update local data and re-render
+    if (u && u.teacher_courses) {
+        u.teacher_courses = u.teacher_courses.filter(function (c) { return c.course_id !== courseId; });
+        for (var j = 0; j < allActiveCourses.length; j++) {
+            if (allActiveCourses[j].id === courseId) {
+                allActiveCourses[j].teacher_id = 0;
+                allActiveCourses[j].teacher_name = 'Unassigned';
+                break;
+            }
+        }
+        renderModalTeacherCourses(u);
+    }
 
     var formData = new FormData();
     formData.append('action', 'remove_teacher_course');
@@ -1238,6 +1278,16 @@ function removeCourseFromTeacher(teacherId, courseId) {
     .then(function (data) {
         if (!data.success) {
             showAlert(data.message || 'Failed to unassign course.', 'error');
+            loadUsers(function() {
+                var updatedU = null;
+                for (var i = 0; i < loadedUsers.length; i++) {
+                    if (loadedUsers[i].id === teacherId) {
+                        updatedU = loadedUsers[i];
+                        break;
+                    }
+                }
+                if (updatedU) renderModalTeacherCourses(updatedU);
+            });
             return;
         }
         showAlert('Course unassigned from teacher successfully.', 'success');
@@ -1257,6 +1307,7 @@ function removeCourseFromTeacher(teacherId, courseId) {
     .catch(function (err) {
         console.error('Error unassigning course:', err);
         showAlert('Server error while unassigning course.', 'error');
+        loadUsers();
     });
 }
 

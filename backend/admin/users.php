@@ -181,10 +181,11 @@ if (isPost()) {
             "email = '$escapedEmail'"
         ];
 
-        // get current role
-        $roleQuery = mysqli_query($conn, "SELECT role FROM users WHERE id = $targetUserId LIMIT 1");
+        // get current role and grade level
+        $roleQuery = mysqli_query($conn, "SELECT role, grade_level FROM users WHERE id = $targetUserId LIMIT 1");
         $targetUserRow = mysqli_fetch_assoc($roleQuery);
         $targetRole = $targetUserRow ? $targetUserRow['role'] : '';
+        $oldGrade = $targetUserRow ? (string)$targetUserRow['grade_level'] : '';
 
         // update grade level and teachers if student
         if ($targetRole === 'student') {
@@ -198,8 +199,10 @@ if (isPost()) {
                 if (in_array($updatedGrade, getAllowedGradeLevels())) {
                     $escapedUpdatedGrade = mysqli_real_escape_string($conn, $updatedGrade);
                     $setClauses[] = "grade_level = '$escapedUpdatedGrade'";
-                    $currTeacherIds = getStudentTeacherIds($conn, $targetUserId);
-                    enrollStudentInGradeLevelCourses($conn, $targetUserId, $updatedGrade, $currTeacherIds);
+                    if ($updatedGrade !== $oldGrade) {
+                        $currTeacherIds = getStudentTeacherIds($conn, $targetUserId);
+                        enrollStudentInGradeLevelCourses($conn, $targetUserId, $updatedGrade, $currTeacherIds);
+                    }
                 }
             }
         }
