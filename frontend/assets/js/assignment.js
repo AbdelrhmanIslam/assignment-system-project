@@ -68,7 +68,14 @@ document.addEventListener('DOMContentLoaded', function () {
             var maxAttempts = data.max_attempts !== undefined ? parseInt(data.max_attempts, 10) : (resubmissionAllowed ? 3 : 1);
             var attemptsCount = data.attempts_count !== undefined ? parseInt(data.attempts_count, 10) : (submission ? 1 : 0);
 
-            setElementText('allow-resubmission', resubmissionAllowed ? 'Allowed' : 'Not Allowed');
+            var policyElem = document.getElementById('allow-resubmission');
+            if (policyElem) {
+                if (resubmissionAllowed) {
+                    policyElem.innerHTML = '<span style="color: var(--success, #10b981);">Permitted</span> <small style="display:block; font-size:11.5px; font-weight:normal; color:var(--text-muted); margin-top:2px;">(Multiple attempts &amp; 24h late reopening permitted)</small>';
+                } else {
+                    policyElem.innerHTML = '<span style="color: var(--danger, #ef4444);">Not Permitted</span> <small style="display:block; font-size:11.5px; font-weight:normal; color:var(--text-muted); margin-top:2px;">(Single submission only — Late reopening disabled)</small>';
+                }
+            }
 
             var permittedAttemptsText = '1 Attempt (Single submission)';
             if (resubmissionAllowed) {
@@ -236,7 +243,11 @@ document.addEventListener('DOMContentLoaded', function () {
                         submissionNotice.style.background = 'rgba(239, 68, 68, 0.08)';
                         submissionNotice.style.border = '1px solid rgba(239, 68, 68, 0.3)';
                         submissionNotice.style.color = 'var(--danger, #ef4444)';
-                        submissionNotice.innerHTML = '<strong>Submissions Closed:</strong> The deadline for this assignment has passed (' + deadlineFormatted + '). Late submissions are strictly disabled.';
+                        if (!resubmissionAllowed) {
+                            submissionNotice.innerHTML = '<strong>Submissions Closed &amp; Resubmission Disabled:</strong> The deadline for this assignment has passed (' + deadlineFormatted + '). The teacher has disabled resubmissions for this assignment, so late reopening cannot be granted.';
+                        } else {
+                            submissionNotice.innerHTML = '<strong>Submissions Closed:</strong> The deadline for this assignment has passed (' + deadlineFormatted + '). Late submissions are locked unless your teacher grants a 24-hour reopening exception.';
+                        }
                     } else if (data.has_reached_max_attempts) {
                         if (submitBtn) submitBtn.textContent = 'Max Tries Reached (' + attemptsCount + '/' + maxAttempts + ') — Closed';
                         submissionNotice.className = 'notice-box';

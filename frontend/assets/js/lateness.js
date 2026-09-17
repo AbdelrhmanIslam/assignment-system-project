@@ -227,9 +227,15 @@ document.addEventListener('DOMContentLoaded', function () {
             tdCourse.textContent = item.course_name;
             tr.appendChild(tdCourse);
 
-            // 4. Assignment Title
+            // 4. Assignment Title & Policy
             var tdAssign = document.createElement('td');
-            tdAssign.innerHTML = '<strong>' + escapeHtml(item.assignment_title) + '</strong>';
+            var policyBadge = '';
+            if (parseInt(item.allow_resubmission, 10) === 0) {
+                policyBadge = '<div style="margin-top: 4px;"><span style="font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 4px; background: rgba(239, 68, 68, 0.12); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3);">Policy: Resubmission Disabled</span></div>';
+            } else {
+                policyBadge = '<div style="margin-top: 4px;"><span style="font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 4px; background: rgba(16, 185, 129, 0.12); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3);">Policy: Resubmissions Permitted</span></div>';
+            }
+            tdAssign.innerHTML = '<strong>' + escapeHtml(item.assignment_title) + '</strong>' + policyBadge;
             tr.appendChild(tdAssign);
 
             // 5. Original Deadline
@@ -245,7 +251,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
             tr.appendChild(tdDeadline);
 
-            // 6. Missed Count for this Teacher
+            // 6. Missed Count for this Teacher & Specific Missed Assignment Titles
             var tdCount = document.createElement('td');
             var mCount = parseInt(item.student_missed_count, 10) || 1;
             var pill = document.createElement('span');
@@ -253,6 +259,22 @@ document.addEventListener('DOMContentLoaded', function () {
             pill.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg> ' +
                              mCount + (mCount === 1 ? ' missed for you' : ' missed for you');
             tdCount.appendChild(pill);
+
+            if (item.student_missed_titles && item.student_missed_titles.length > 0) {
+                var titlesList = document.createElement('div');
+                titlesList.style.cssText = 'margin-top: 6px; display: flex; flex-direction: column; gap: 3px; max-width: 220px;';
+                for (var tIdx = 0; tIdx < item.student_missed_titles.length; tIdx++) {
+                    var mTitle = item.student_missed_titles[tIdx];
+                    var isCurrentRow = (mTitle === item.assignment_title);
+                    var tChip = document.createElement('span');
+                    tChip.style.cssText = 'font-size: 11.5px; border-radius: 4px; padding: 2px 6px; display: inline-flex; align-items: center; gap: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; ' +
+                        (isCurrentRow ? 'background: rgba(217, 119, 6, 0.12); color: #d97706; font-weight: 600; border: 1px solid rgba(217, 119, 6, 0.3);' : 'background: var(--glass-bg, rgba(0,0,0,0.04)); color: var(--text-secondary); border: 1px solid var(--border-color);');
+                    tChip.title = mTitle;
+                    tChip.innerHTML = '<span style="color:' + (isCurrentRow ? '#d97706' : '#ef4444') + '; font-weight:bold;">&bull;</span> ' + escapeHtml(mTitle);
+                    titlesList.appendChild(tChip);
+                }
+                tdCount.appendChild(titlesList);
+            }
             tr.appendChild(tdCount);
 
             // 7. Exception Status
@@ -266,26 +288,37 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // 8. Action Column
             var tdAction = document.createElement('td');
+            tdAction.style.textAlign = 'right';
+            tdAction.style.whiteSpace = 'nowrap';
+            tdAction.style.minWidth = '220px';
 
             if (canReopen) {
                 // Teacher view
                 if (item.has_active_exception) {
                     var actSpan = document.createElement('span');
                     actSpan.className = 'status-badge';
-                    actSpan.style.cssText = 'font-size: 11.5px; padding: 4px 10px; background: rgba(245, 158, 11, 0.16); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.4); font-weight: 600;';
+                    actSpan.style.cssText = 'font-size: 11.5px; padding: 5px 12px; background: rgba(245, 158, 11, 0.16); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.4); font-weight: 600; white-space: nowrap;';
                     actSpan.textContent = 'Active (24h Window)';
                     tdAction.appendChild(actSpan);
                 } else if (item.late_submission_id) {
                     var viewSubBtn = document.createElement('a');
                     viewSubBtn.href = 'submissions.html?assignment_id=' + item.assignment_id;
                     viewSubBtn.className = 'action-btn action-review';
-                    viewSubBtn.style.cssText = 'font-size: 12px; padding: 5px 12px; text-decoration: none; border-radius: var(--radius-pill);';
+                    viewSubBtn.style.cssText = 'font-size: 12px; padding: 5px 12px; text-decoration: none; border-radius: var(--radius-pill); white-space: nowrap;';
                     viewSubBtn.textContent = 'View Submission';
                     tdAction.appendChild(viewSubBtn);
+                } else if (parseInt(item.allow_resubmission, 10) === 0) {
+                    // Resubmission not permitted by policy
+                    var disabledSpan = document.createElement('span');
+                    disabledSpan.className = 'status-badge';
+                    disabledSpan.style.cssText = 'background: rgba(239, 68, 68, 0.12); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.35); font-size: 11.5px; font-weight: 600; padding: 6px 12px; border-radius: var(--radius-pill); white-space: nowrap; display: inline-flex; align-items: center; gap: 5px;';
+                    disabledSpan.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg> Resubmission Not Permitted';
+                    tdAction.appendChild(disabledSpan);
                 } else {
                     var reopenBtn = document.createElement('button');
                     reopenBtn.className = 'reopen-btn';
-                    reopenBtn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> Reopen (24h / 1 Try)';
+                    reopenBtn.style.cssText = 'white-space: nowrap !important; word-break: keep-all !important;';
+                    reopenBtn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="flex-shrink: 0;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg><span style="white-space: nowrap !important; word-break: keep-all !important;">Reopen (24h / 1 Try)</span>';
                     
                     (function (rec) {
                         reopenBtn.addEventListener('click', function () {
@@ -298,7 +331,7 @@ document.addEventListener('DOMContentLoaded', function () {
             } else {
                 // Assistant view (Read-only authority)
                 var asstNotice = document.createElement('span');
-                asstNotice.style.cssText = 'font-size: 12px; color: var(--text-muted); font-weight: 500; font-style: italic;';
+                asstNotice.style.cssText = 'font-size: 12px; color: var(--text-muted); font-weight: 500; font-style: italic; white-space: nowrap;';
                 asstNotice.textContent = 'Teacher Authority Only';
                 tdAction.appendChild(asstNotice);
             }
@@ -329,6 +362,24 @@ document.addEventListener('DOMContentLoaded', function () {
         if (modalMissedCount) {
             var mCount = parseInt(item.student_missed_count, 10) || 1;
             modalMissedCount.textContent = mCount + (mCount === 1 ? ' missed assignment' : ' missed assignments');
+        }
+
+        var modalMissedList = document.getElementById('modal-missed-titles-list');
+        if (modalMissedList) {
+            modalMissedList.innerHTML = '';
+            if (item.student_missed_titles && item.student_missed_titles.length > 0) {
+                for (var k = 0; k < item.student_missed_titles.length; k++) {
+                    var tName = item.student_missed_titles[k];
+                    var isSelectedAssign = (tName === item.assignment_title);
+                    var itemDiv = document.createElement('div');
+                    itemDiv.style.cssText = 'font-size: 12px; padding: 3px 8px; border-radius: 4px; ' +
+                        (isSelectedAssign ? 'background: rgba(217, 119, 6, 0.15); color: #d97706; font-weight: 700; border: 1px solid rgba(217, 119, 6, 0.35);' : 'background: rgba(0,0,0,0.04); color: var(--text-primary); border: 1px solid var(--border-color);');
+                    itemDiv.textContent = (isSelectedAssign ? '★ ' : '• ') + tName + (isSelectedAssign ? ' (Reopening This)' : '');
+                    modalMissedList.appendChild(itemDiv);
+                }
+            } else {
+                modalMissedList.innerHTML = '<span style="font-size:12px; color:var(--text-muted);">' + escapeHtml(item.assignment_title) + '</span>';
+            }
         }
 
         if (reopenModal) reopenModal.style.display = 'flex';

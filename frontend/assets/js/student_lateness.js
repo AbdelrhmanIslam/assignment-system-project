@@ -163,10 +163,14 @@ document.addEventListener('DOMContentLoaded', function () {
             tdCourse.textContent = item.course_name;
             tr.appendChild(tdCourse);
 
-            // 3. Assignment Title & Max Grade
+            // 3. Assignment Title & Max Grade & Resubmission Policy
             var tdAssign = document.createElement('td');
+            var policyTag = (parseInt(item.allow_resubmission, 10) === 1)
+                ? '<div style="margin-top:4px;"><span style="font-size:11px; font-weight:600; padding:2px 7px; border-radius:4px; background:rgba(16,185,129,0.12); color:#10b981; border:1px solid rgba(16,185,129,0.25);">Policy: Resubmissions Permitted</span></div>'
+                : '<div style="margin-top:4px;"><span style="font-size:11px; font-weight:600; padding:2px 7px; border-radius:4px; background:rgba(239,68,68,0.12); color:#ef4444; border:1px solid rgba(239,68,68,0.25);">Policy: Resubmission Disabled</span></div>';
             tdAssign.innerHTML = '<strong>' + escapeHtml(item.assignment_title) + '</strong><br>' +
-                                 '<small style="color: var(--text-muted);">' + item.max_grade + ' pts max</small>';
+                                 '<small style="color: var(--text-muted);">' + item.max_grade + ' pts max</small>' +
+                                 policyTag;
             tr.appendChild(tdAssign);
 
             // 4. Original Deadline
@@ -201,8 +205,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 tdStatus.innerHTML = '<span class="status-badge status-closed">24h Exception Expired</span>' +
                                      '<div style="margin-top:4px; font-size:11.5px; color:var(--text-muted);">Window closed without submission</div>';
             } else {
-                tdStatus.innerHTML = '<span class="status-badge status-closed">Deadline Passed (Closed)</span>' +
-                                     '<div style="margin-top:4px; font-size:11.5px; color:var(--text-muted);">Submissions locked</div>';
+                var closedPolicyNotice = (parseInt(item.allow_resubmission, 10) === 0)
+                    ? '<div style="margin-top:4px; font-size:11.5px; color:#ef4444; font-weight:600;">Resubmission Not Permitted</div>'
+                    : '<div style="margin-top:4px; font-size:11.5px; color:var(--text-muted);">Reopening subject to teacher permission</div>';
+                tdStatus.innerHTML = '<span class="status-badge status-closed">Deadline Passed (Closed)</span>' + closedPolicyNotice;
             }
             tr.appendChild(tdStatus);
 

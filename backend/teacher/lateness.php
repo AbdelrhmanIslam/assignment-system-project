@@ -120,7 +120,7 @@ if (isPost()) {
         }
 
         // verify assignment belongs to this teacher and deadline is past
-        $assignSql = "SELECT a.id, a.title, a.deadline, a.course_id, c.name AS course_name, c.teacher_id
+        $assignSql = "SELECT a.id, a.title, a.deadline, a.allow_resubmission, a.course_id, c.name AS course_name, c.teacher_id
                       FROM assignments a
                       INNER JOIN courses c ON c.id = a.course_id
                       WHERE a.id = $assignmentId AND c.teacher_id = $teacherId AND a.is_active = 1
@@ -131,6 +131,16 @@ if (isPost()) {
         if (!$assignment) {
             http_response_code(400);
             echo json_encode(['success' => false, 'message' => 'Assignment not found or does not belong to your courses.']);
+            exit;
+        }
+
+        // Policy check: if resubmission was disabled during posting, reopening is strictly forbidden!
+        if ((int) $assignment['allow_resubmission'] === 0) {
+            http_response_code(400);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Resubmission is not permitted for this assignment as per its posting policy. Late reopening cannot be granted.'
+            ]);
             exit;
         }
 
@@ -272,6 +282,7 @@ $missedSql = "SELECT
     a.deadline,
     a.max_grade,
     a.grade_level AS assignment_grade_level,
+    a.allow_resubmission,
     c.id AS course_id,
     c.name AS course_name,
     u.id AS student_id,
@@ -292,6 +303,20 @@ $missedSql = "SELECT
           AND (a_cnt.grade_level = u.grade_level OR a_cnt.grade_level = '' OR u.grade_level = '')
           AND (SELECT COUNT(*) FROM submissions s_chk WHERE s_chk.assignment_id = a_cnt.id AND s_chk.student_id = u.id AND s_chk.is_late = 0) = 0
     ) AS student_missed_count,
+
+    -- specific missed assignment titles for this student under this teacher
+    (
+        SELECT GROUP_CONCAT(DISTINCT a_cnt.title ORDER BY a_cnt.deadline ASC SEPARATOR '|||')
+        FROM assignments a_cnt
+        INNER JOIN courses c_cnt ON c_cnt.id = a_cnt.course_id AND c_cnt.teacher_id = $teacherId
+        INNER JOIN course_students cs_cnt ON cs_cnt.course_id = c_cnt.id AND cs_cnt.student_id = u.id
+        INNER JOIN student_teachers st_cnt ON st_cnt.student_id = u.id AND st_cnt.teacher_id = $teacherId
+        WHERE a_cnt.is_active = 1
+          AND a_cnt.deadline IS NOT NULL
+          AND a_cnt.deadline < NOW()
+          AND (a_cnt.grade_level = u.grade_level OR a_cnt.grade_level = '' OR u.grade_level = '')
+          AND (SELECT COUNT(*) FROM submissions s_chk WHERE s_chk.assignment_id = a_cnt.id AND s_chk.student_id = u.id AND s_chk.is_late = 0) = 0
+    ) AS student_missed_titles,
 
     -- latest exception details
     ae.id AS exception_id,
@@ -393,6 +418,9 @@ if ($missedRes) {
         $row['time_left_seconds'] = $timeLeftSeconds;
         $row['time_left_human'] = $timeLeftHuman;
         $row['student_missed_count'] = (int) $row['student_missed_count'];
+        $row['allow_resubmission'] = (int) ($row['allow_resubmission'] ?? 0);
+        $titlesStr = trim($row['student_missed_titles'] ?? '');
+        $row['student_missed_titles'] = $titlesStr !== '' ? explode('|||', $titlesStr) : [];
 
         $missedList[] = $row;
     }

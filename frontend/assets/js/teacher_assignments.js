@@ -53,13 +53,22 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (resubSelect && maxAttemptsSelect && !resubSelect.dataset.hasListener) {
                     resubSelect.dataset.hasListener = 'true';
                     resubSelect.addEventListener('change', function () {
+                        var hint = document.getElementById('resub-policy-hint');
                         if (this.value === '0') {
                             maxAttemptsSelect.value = '1';
                             maxAttemptsSelect.disabled = true;
+                            if (hint) {
+                                hint.textContent = 'Resubmission disabled: Students have 1 attempt only, and late reopening will NOT be permitted if missed.';
+                                hint.style.color = '#ef4444';
+                            }
                         } else {
                             maxAttemptsSelect.disabled = false;
                             if (maxAttemptsSelect.value === '1') {
                                 maxAttemptsSelect.value = '3';
+                            }
+                            if (hint) {
+                                hint.textContent = 'When permitted, students can resubmit within attempts limit, and you can reopen missed assignments for a 24h window.';
+                                hint.style.color = 'var(--text-muted)';
                             }
                         }
                     });
@@ -143,7 +152,11 @@ document.addEventListener('DOMContentLoaded', function () {
                             tr.appendChild(tdSubs);
 
                             var tdResub = document.createElement('td');
-                            tdResub.textContent = (parseInt(a.allow_resubmission, 10) === 1) ? 'Yes' : 'No';
+                            if (parseInt(a.allow_resubmission, 10) === 1) {
+                                tdResub.innerHTML = '<span class="status-badge status-open" style="font-size: 11px;">Permitted</span>';
+                            } else {
+                                tdResub.innerHTML = '<span class="status-badge" style="font-size: 11px; background: rgba(239, 68, 68, 0.12); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3);">Not Permitted</span>';
+                            }
                             tr.appendChild(tdResub);
 
                             var tdAction = document.createElement('td');

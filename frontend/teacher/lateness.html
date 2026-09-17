@@ -28,7 +28,7 @@
         .reopen-btn {
             background: #d97706;
             color: #fff;
-            padding: 7px 14px;
+            padding: 8px 18px;
             border-radius: var(--radius-pill, 9999px);
             font-size: 12.5px;
             font-weight: 600;
@@ -36,7 +36,12 @@
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            justify-content: center;
+            gap: 7px;
+            white-space: nowrap !important;
+            word-break: keep-all !important;
+            flex-shrink: 0;
+            line-height: 1.2;
             transition: var(--transition-all, 0.2s ease);
         }
         .reopen-btn:hover {
@@ -241,7 +246,7 @@
                         <th>Original Deadline</th>
                         <th>Teacher Lateness Count</th>
                         <th>Exception Status</th>
-                        <th>Action</th>
+                        <th style="text-align: right; white-space: nowrap; min-width: 220px;">Action</th>
                     </tr>
                 </thead>
                 <tbody id="missed-table-body">
@@ -272,6 +277,10 @@
             <div><strong>Course:</strong> <span id="modal-course-name">—</span></div>
             <div><strong>Original Deadline:</strong> <span id="modal-original-deadline">—</span></div>
             <div><strong>Total Missed for You:</strong> <span id="modal-missed-count" class="missed-count-pill" style="margin-left: 4px;">—</span></div>
+            <div style="margin-top: 6px;" id="modal-missed-titles-section">
+                <strong>Missed Assignments for You:</strong>
+                <div id="modal-missed-titles-list" style="margin-top: 5px; display: flex; flex-direction: column; gap: 4px; max-height: 110px; overflow-y: auto;"></div>
+            </div>
         </div>
 
         <div class="modal-constraints-box">
