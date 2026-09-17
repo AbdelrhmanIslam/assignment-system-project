@@ -216,7 +216,7 @@ $assignmentsQuery = "SELECT
                      WHERE a.is_active = 1
                        AND (a.grade_level = '$escapedStudentGrade' OR '$escapedStudentGrade' = '')
 
-                     ORDER BY a.deadline ASC";
+                      ORDER BY CASE WHEN a.deadline IS NULL THEN 1 ELSE 0 END, a.deadline ASC";
 
 $assignmentsResult = mysqli_query($conn, $assignmentsQuery);
 
@@ -235,7 +235,8 @@ $assignments = [];
 
 while ($assignment = mysqli_fetch_assoc($assignmentsResult)) {
     $status = 'not_submitted';
-    $isPastDeadline = strtotime($assignment['deadline']) < time();
+    $hasDeadline = !empty($assignment['deadline']);
+    $isPastDeadline = $hasDeadline && (strtotime($assignment['deadline']) < time());
 
     if (!empty($assignment['submission_id'])) {
         switch ($assignment['status']) {

@@ -65,6 +65,33 @@ document.addEventListener('DOMContentLoaded', function () {
                     });
                 }
 
+                var noDeadlineToggle = document.getElementById('no-deadline-toggle');
+                var deadlineInput = document.getElementById('assignment-deadline');
+                var deadlineReqMark = document.getElementById('deadline-required-mark');
+                var noDeadlineHelp = document.getElementById('no-deadline-help');
+
+                if (noDeadlineToggle && deadlineInput && !noDeadlineToggle.dataset.hasListener) {
+                    noDeadlineToggle.dataset.hasListener = 'true';
+                    noDeadlineToggle.addEventListener('change', function () {
+                        if (this.checked) {
+                            deadlineInput.value = '';
+                            deadlineInput.required = false;
+                            deadlineInput.disabled = true;
+                            deadlineInput.style.opacity = '0.5';
+                            deadlineInput.style.cursor = 'not-allowed';
+                            if (deadlineReqMark) deadlineReqMark.style.display = 'none';
+                            if (noDeadlineHelp) noDeadlineHelp.style.display = 'block';
+                        } else {
+                            deadlineInput.disabled = false;
+                            deadlineInput.required = true;
+                            deadlineInput.style.opacity = '1';
+                            deadlineInput.style.cursor = '';
+                            if (deadlineReqMark) deadlineReqMark.style.display = 'inline';
+                            if (noDeadlineHelp) noDeadlineHelp.style.display = 'none';
+                        }
+                    });
+                }
+
                 // render assignments table
                 if (data.assignments && data.assignments.length > 0) {
                     if (tableContainer) tableContainer.style.display = 'block';
@@ -93,14 +120,18 @@ document.addEventListener('DOMContentLoaded', function () {
                             tr.appendChild(tdGradeLevel);
 
                             var tdDeadline = document.createElement('td');
-                            var dDate = new Date(a.deadline);
-                            tdDeadline.textContent = dDate.toLocaleString('en-US', {
-                                month: 'short',
-                                day: '2-digit',
-                                year: 'numeric',
-                                hour: '2-digit',
-                                minute: '2-digit'
-                            });
+                            if (a.deadline) {
+                                var dDate = new Date(a.deadline);
+                                tdDeadline.textContent = dDate.toLocaleString('en-US', {
+                                    month: 'short',
+                                    day: '2-digit',
+                                    year: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                });
+                            } else {
+                                tdDeadline.innerHTML = '<span class="status-badge status-open" style="font-size: 11px;">No Deadline</span>';
+                            }
                             tr.appendChild(tdDeadline);
 
                             var tdGrade = document.createElement('td');
@@ -158,6 +189,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (res && res.success) {
                         showAlert('success', res.message);
                         createForm.reset();
+                        if (deadlineInput) {
+                            deadlineInput.disabled = false;
+                            deadlineInput.required = true;
+                            deadlineInput.style.opacity = '1';
+                            deadlineInput.style.cursor = '';
+                        }
+                        if (deadlineReqMark) deadlineReqMark.style.display = 'inline';
+                        if (noDeadlineHelp) noDeadlineHelp.style.display = 'none';
                         loadAssignments();
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                     } else {

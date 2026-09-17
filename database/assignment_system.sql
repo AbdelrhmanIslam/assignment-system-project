@@ -51,7 +51,7 @@ CREATE TABLE `assignments` (
   `description` text NOT NULL,
   `grade_level` varchar(60) NOT NULL DEFAULT 'First Year of Middle School',
   `max_grade` decimal(6,2) NOT NULL DEFAULT 100.00,
-  `deadline` datetime NOT NULL,
+  `deadline` datetime DEFAULT NULL,
   `allow_resubmission` tinyint(1) NOT NULL DEFAULT 0,
   `max_attempts` int(10) UNSIGNED NOT NULL DEFAULT 1,
   `allowed_extensions` varchar(255) NOT NULL DEFAULT 'pdf,doc,docx,zip',

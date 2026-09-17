@@ -116,15 +116,19 @@ document.addEventListener('DOMContentLoaded', function () {
             tr.appendChild(tdGradeLevel);
 
             var tdDeadline = document.createElement('td');
-            var deadlineDate = new Date(item.deadline);
-            tdDeadline.textContent = deadlineDate.toLocaleString('en-US', {
-                month: 'short',
-                day: '2-digit',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: true
-            });
+            if (item.deadline) {
+                var deadlineDate = new Date(item.deadline);
+                tdDeadline.textContent = deadlineDate.toLocaleString('en-US', {
+                    month: 'short',
+                    day: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true
+                });
+            } else {
+                tdDeadline.innerHTML = '<span class="status-badge status-open" style="font-size: 11px;">No Deadline</span>';
+            }
             tr.appendChild(tdDeadline);
 
             var tdStatus = document.createElement('td');

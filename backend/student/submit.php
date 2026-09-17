@@ -58,8 +58,9 @@ if (!empty($studentGrade) && !empty($assignment['grade_level']) && $assignment['
     redirect(BASE_URL . '/frontend/student/dashboard.html?error=' . urlencode('This assignment is not intended for your grade level.'));
 }
 
-// check if deadline has passed
-$isPastDeadline = strtotime($assignment['deadline']) < time();
+// check if deadline has passed (only if a deadline is set)
+$hasDeadline = !empty($assignment['deadline']);
+$isPastDeadline = $hasDeadline && (strtotime($assignment['deadline']) < time());
 if ($isPastDeadline) {
     redirect(BASE_URL . '/frontend/student/assignment.html?id=' . $assignmentId . '&error=' . urlencode('Submissions are closed because the deadline for this assignment has passed. Late submissions cannot be accepted.'));
     exit;

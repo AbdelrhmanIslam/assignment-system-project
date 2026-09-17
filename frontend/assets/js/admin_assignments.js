@@ -276,7 +276,7 @@ function deleteAssignment(assignId, btn) {
 }
 
 function formatDate(dateStr) {
-    if (!dateStr) return '—';
+    if (!dateStr) return '<span class="status-badge status-open" style="font-size: 11px;">No Deadline</span>';
     var d = new Date(dateStr);
     return d.toLocaleDateString('en-US', {
         month: 'short',

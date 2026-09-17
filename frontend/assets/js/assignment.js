@@ -49,15 +49,18 @@ document.addEventListener('DOMContentLoaded', function () {
             setElementText('max-file-size', assignment.max_file_size_mb + ' MB');
 
             // format deadline date
-            var deadlineDate = new Date(assignment.deadline);
-            var deadlineFormatted = deadlineDate.toLocaleString('en-US', {
-                month: 'short',
-                day: '2-digit',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: true
-            });
+            var deadlineFormatted = 'No Deadline (Open-ended)';
+            if (assignment.deadline) {
+                var deadlineDate = new Date(assignment.deadline);
+                deadlineFormatted = deadlineDate.toLocaleString('en-US', {
+                    month: 'short',
+                    day: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true
+                });
+            }
             setElementText('deadline', deadlineFormatted);
 
             // resubmission rule text and permitted attempts
@@ -89,6 +92,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 } else if (data.has_reached_max_attempts) {
                     deadlineBadge.className = 'status-badge status-closed';
                     deadlineBadge.textContent = 'Max Attempts Reached (Closed)';
+                    deadlineBadge.style.display = 'inline-block';
+                } else if (!assignment.deadline) {
+                    deadlineBadge.className = 'status-badge status-open';
+                    deadlineBadge.textContent = 'No Deadline (Open)';
                     deadlineBadge.style.display = 'inline-block';
                 } else {
                     deadlineBadge.className = 'status-badge status-open';

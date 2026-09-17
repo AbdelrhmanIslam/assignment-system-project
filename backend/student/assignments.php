@@ -56,7 +56,7 @@ LEFT JOIN submissions s ON s.id = (
 LEFT JOIN grades g ON g.submission_id = s.id
 WHERE a.is_active = 1
   AND (a.grade_level = '$escapedGrade' OR '$escapedGrade' = '')
-ORDER BY a.deadline ASC";
+ORDER BY CASE WHEN a.deadline IS NULL THEN 1 ELSE 0 END, a.deadline ASC, a.id DESC";
 
 $result = mysqli_query($conn, $sql);
 $assignments = [];
@@ -64,7 +64,8 @@ $assignments = [];
 if ($result) {
     while ($row = mysqli_fetch_assoc($result)) {
         $row['id'] = (int) $row['id'];
-        $isPastDeadline = strtotime($row['deadline']) < time();
+        $hasDeadline = !empty($row['deadline']);
+        $isPastDeadline = $hasDeadline && (strtotime($row['deadline']) < time());
         $attemptsCount = (int) ($row['attempts_count'] ?? 0);
         $maxAttempts = isset($row['max_attempts']) ? (int) $row['max_attempts'] : ((int)$row['allow_resubmission'] === 1 ? 3 : 1);
         if ((int)$row['allow_resubmission'] === 0) {

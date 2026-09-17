@@ -113,8 +113,9 @@ if ($allowResubmission === 0) {
 }
 $assignment['max_attempts'] = $maxAttempts;
 
-// determine if current time is past the deadline
-$isPastDeadline = strtotime($assignment['deadline']) < time();
+// determine if current time is past the deadline (only if deadline is set)
+$hasDeadline = !empty($assignment['deadline']);
+$isPastDeadline = $hasDeadline && (strtotime($assignment['deadline']) < time());
 
 // determine if student has reached max attempts
 $hasReachedMaxAttempts = false;

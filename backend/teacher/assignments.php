@@ -53,14 +53,20 @@ if (isPost()) {
         $maxGrade = 100.00;
     }
 
-    if ($deadline === '' || strtotime($deadline) === false) {
-        http_response_code(400);
-        echo json_encode(['success' => false, 'message' => 'Please provide a valid deadline date and time.']);
-        exit;
-    }
+    $hasNoDeadline = (isset($_POST['has_no_deadline']) && ($_POST['has_no_deadline'] === '1' || $_POST['has_no_deadline'] === 'true' || $_POST['has_no_deadline'] === 'on')) || (trim((string)$deadline) === '');
+    $formattedDeadline = null;
+    $deadlineSql = "NULL";
 
-    // format deadline to mysql datetime format
-    $formattedDeadline = date('Y-m-d H:i:s', strtotime($deadline));
+    if (!$hasNoDeadline) {
+        if ($deadline === '' || strtotime($deadline) === false) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Please provide a valid deadline date and time, or select "No Deadline".']);
+            exit;
+        }
+        // format deadline to mysql datetime format
+        $formattedDeadline = date('Y-m-d H:i:s', strtotime($deadline));
+        $deadlineSql = "'$formattedDeadline'";
+    }
 
     // validate grade level
     $gradeLevel = post('grade_level', 'First Year of Middle School');
@@ -100,7 +106,7 @@ if (isPost()) {
         '$escapedDesc',
         '$escapedGradeLevel',
         $maxGrade,
-        '$formattedDeadline',
+        $deadlineSql,
         $allowResubmission,
         $maxAttempts,
         '$escapedExt',
@@ -119,8 +125,9 @@ if (isPost()) {
         $cNameRow = mysqli_fetch_assoc($cNameRes);
         $courseName = $cNameRow ? $cNameRow['name'] : 'Course';
 
+        $deadlineInfo = $formattedDeadline ? "Deadline: {$formattedDeadline}." : "No Deadline (Open-ended).";
         $notifTitle = mysqli_real_escape_string($conn, 'New Assignment Posted');
-        $notifMsg = mysqli_real_escape_string($conn, "A new assignment '{$title}' was posted in {$courseName}. Deadline: {$formattedDeadline}.");
+        $notifMsg = mysqli_real_escape_string($conn, "A new assignment '{$title}' was posted in {$courseName}. {$deadlineInfo}");
 
         $stRes = mysqli_query($conn, "SELECT cs.student_id 
                                        FROM course_students cs 
@@ -170,7 +177,7 @@ INNER JOIN courses c ON c.id = a.course_id
 LEFT JOIN submissions s ON s.assignment_id = a.id
 WHERE c.teacher_id = $teacherId
 GROUP BY a.id
-ORDER BY a.deadline DESC";
+ORDER BY a.id DESC";
 
 $assignmentsRes = mysqli_query($conn, $assignmentsSql);
 $assignments = [];
@@ -178,7 +185,8 @@ $assignments = [];
 if ($assignmentsRes) {
     while ($row = mysqli_fetch_assoc($assignmentsRes)) {
         $row['id'] = (int) $row['id'];
-        $row['is_past_deadline'] = strtotime($row['deadline']) < time();
+        $hasDl = !empty($row['deadline']);
+        $row['is_past_deadline'] = $hasDl && (strtotime($row['deadline']) < time());
         $assignments[] = $row;
     }
 }

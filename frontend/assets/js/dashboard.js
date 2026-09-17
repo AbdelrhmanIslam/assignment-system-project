@@ -317,6 +317,9 @@ function getStatusClass(status) {
 }
 
 function formatDate(dateString) {
+  if (!dateString) {
+    return "No Deadline";
+  }
   var date = new Date(dateString.replace(" ", "T"));
 
   if (isNaN(date.getTime())) {
