@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Assignments - Teacher</title>
 
-    <link rel="stylesheet" href="../assets/css/style.css">
-    <link rel="stylesheet" href="../assets/css/dashboard.css">
-    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <link rel="stylesheet" href="../assets/css/style.css?v=9.5">
+    <link rel="stylesheet" href="../assets/css/dashboard.css?v=9.5">
+    <link rel="stylesheet" href="../assets/css/responsive.css?v=9.5">
     <script>
         (function(){var t=localStorage.getItem('assignment_system_theme')||localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);})();
     </script>
@@ -35,7 +35,8 @@
 
     <div id="alert-box" style="display: none;"></div>
 
-    <section class="content-card" id="create-modal" style="margin-bottom: 30px;">
+    <section class="content-card" id="create-assignment-section" style="margin-bottom: 30px;">
+        <span id="create-modal"></span>
         <h2>Create New Assignment</h2>
         <p style="color: #6b7280; margin-bottom: 20px; font-size: 14px;">Fill in the details to publish a new assignment for enrolled students</p>
 
@@ -143,8 +144,8 @@
 
 </div>
 
-<script src="../assets/js/main.js"></script>
-<script src="../assets/js/teacher_assignments.js"></script>
+<script src="../assets/js/main.js?v=9.5"></script>
+<script src="../assets/js/teacher_assignments.js?v=9.5"></script>
 
 </body>
 </html>
