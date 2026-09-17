@@ -271,8 +271,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Teacher view
                 if (item.has_active_exception) {
                     var actSpan = document.createElement('span');
-                    actSpan.className = 'status-badge status-review';
-                    actSpan.style.cssText = 'font-size: 11px; padding: 4px 10px; background: rgba(217, 119, 6, 0.12); color: #b45309; border: 1px solid rgba(217, 119, 6, 0.3);';
+                    actSpan.className = 'status-badge';
+                    actSpan.style.cssText = 'font-size: 11.5px; padding: 4px 10px; background: rgba(245, 158, 11, 0.16); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.4); font-weight: 600;';
                     actSpan.textContent = 'Active (24h Window)';
                     tdAction.appendChild(actSpan);
                 } else if (item.late_submission_id) {

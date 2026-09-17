@@ -4,21 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Missed Submissions &amp; Lateness - Teacher Portal</title>
-    <link rel="stylesheet" href="../assets/css/main.css?v=9.6">
+    <link rel="stylesheet" href="../assets/css/style.css?v=9.7">
+    <link rel="stylesheet" href="../assets/css/dashboard.css?v=9.7">
+    <link rel="stylesheet" href="../assets/css/responsive.css?v=9.7">
+    <script>
+        (function(){var t=localStorage.getItem('assignment_system_theme')||localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);})();
+    </script>
     <style>
         .lateness-card {
-            background: var(--surface);
-            border-radius: var(--radius-lg);
+            background: var(--glass-bg-elevated, #ffffff);
+            border-radius: var(--radius-lg, 16px);
             padding: 24px;
             box-shadow: var(--shadow-sm);
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--glass-border, var(--border-color));
             margin-bottom: 24px;
+            backdrop-filter: var(--glass-blur, blur(12px));
+        }
+        [data-theme="dark"] .lateness-card {
+            background: rgba(17, 28, 43, 0.85);
+            border-color: rgba(36, 177, 177, 0.22);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
         }
         .reopen-btn {
             background: #d97706;
             color: #fff;
             padding: 7px 14px;
-            border-radius: var(--radius-pill);
+            border-radius: var(--radius-pill, 9999px);
             font-size: 12.5px;
             font-weight: 600;
             border: none;
@@ -26,7 +37,7 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            transition: var(--transition-all);
+            transition: var(--transition-all, 0.2s ease);
         }
         .reopen-btn:hover {
             background: #b45309;
@@ -39,9 +50,9 @@
         }
         .missed-count-pill {
             background: rgba(239, 68, 68, 0.12);
-            color: #b91c1c;
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            border-radius: var(--radius-pill);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.35);
+            border-radius: var(--radius-pill, 9999px);
             padding: 3px 9px;
             font-size: 11.5px;
             font-weight: 700;
@@ -49,15 +60,20 @@
             align-items: center;
             gap: 4px;
         }
-        /* Modal Styles */
+        [data-theme="dark"] .missed-count-pill {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+            border-color: rgba(239, 68, 68, 0.45);
+        }
+        /* Modal Styles with Full Theme Adaptation */
         .modal-backdrop {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(4px);
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(6px);
             z-index: 9999;
             display: none;
             align-items: center;
@@ -65,14 +81,63 @@
             padding: 20px;
         }
         .modal-box {
-            background: var(--surface, #fff);
+            background: var(--glass-bg-elevated, #ffffff);
+            color: var(--text-primary, #1e293b);
             border-radius: var(--radius-lg, 16px);
             max-width: 520px;
             width: 100%;
             padding: 28px;
-            box-shadow: var(--shadow-lg, 0 20px 25px -5px rgba(0,0,0,0.2));
-            border: 1px solid var(--border-color, #e2e8f0);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border, var(--border-color, #e2e8f0));
             animation: modalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        [data-theme="dark"] .modal-box {
+            background: #111c2b;
+            color: #f8fafc;
+            border-color: rgba(36, 177, 177, 0.25);
+            box-shadow: 0 20px 35px -5px rgba(0, 0, 0, 0.65);
+        }
+        .modal-box input, .modal-box textarea {
+            background: var(--input-bg, rgba(255, 255, 255, 0.9));
+            color: var(--text-primary, inherit);
+            border: 1px solid var(--glass-border, #cbd5e1);
+        }
+        [data-theme="dark"] .modal-box input, [data-theme="dark"] .modal-box textarea {
+            background: rgba(15, 23, 42, 0.85);
+            color: #f8fafc;
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+        .modal-constraints-box {
+            background: rgba(217, 119, 6, 0.08);
+            border: 1px solid rgba(217, 119, 6, 0.3);
+            border-radius: 8px;
+            padding: 12px 14px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #92400e;
+        }
+        [data-theme="dark"] .modal-constraints-box {
+            background: rgba(217, 119, 6, 0.18);
+            border-color: rgba(245, 158, 11, 0.4);
+            color: #fcd34d;
+        }
+        .modal-cancel-btn {
+            background: var(--glass-bg-hover, #e2e8f0);
+            color: var(--text-primary, #334155);
+            border: 1px solid var(--glass-border, transparent);
+            padding: 9px 18px;
+            border-radius: var(--radius-pill, 9999px);
+            font-size: 13px;
+            cursor: pointer;
+            transition: var(--transition-all, 0.2s ease);
+        }
+        [data-theme="dark"] .modal-cancel-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e2e8f0;
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+        .modal-cancel-btn:hover {
+            opacity: 0.85;
         }
         @keyframes modalPop {
             from { transform: scale(0.95); opacity: 0; }
@@ -201,7 +266,7 @@
             </div>
         </div>
 
-        <div style="background: rgba(0,0,0,0.03); border: 1px solid var(--border-color); border-radius: var(--radius-md, 10px); padding: 14px 16px; margin-bottom: 18px; font-size: 13.5px; line-height: 1.6;">
+        <div style="background: var(--glass-bg, rgba(0,0,0,0.03)); border: 1px solid var(--glass-border, var(--border-color)); border-radius: var(--radius-md, 10px); padding: 14px 16px; margin-bottom: 18px; font-size: 13.5px; line-height: 1.6; color: var(--text-primary);">
             <div><strong>Student:</strong> <span id="modal-student-name">—</span> (<span id="modal-student-email">—</span>)</div>
             <div><strong>Assignment:</strong> <span id="modal-assignment-title">—</span></div>
             <div><strong>Course:</strong> <span id="modal-course-name">—</span></div>
@@ -209,7 +274,7 @@
             <div><strong>Total Missed for You:</strong> <span id="modal-missed-count" class="missed-count-pill" style="margin-left: 4px;">—</span></div>
         </div>
 
-        <div style="background: rgba(217, 119, 6, 0.08); border: 1px solid rgba(217, 119, 6, 0.3); border-radius: 8px; padding: 12px 14px; margin-bottom: 20px; font-size: 13px; color: #92400e;">
+        <div class="modal-constraints-box">
             <strong>Exception Constraints:</strong>
             <ul style="margin: 6px 0 0 18px; padding: 0;">
                 <li>The student will receive a <strong>strict 24-hour window</strong> starting immediately.</li>
@@ -220,7 +285,7 @@
         </div>
 
         <div style="display: flex; justify-content: flex-end; gap: 10px;">
-            <button type="button" id="modal-cancel-btn" class="action-btn" style="background: #e2e8f0; color: #334155; border: none; padding: 9px 18px; border-radius: var(--radius-pill); font-size: 13px; cursor: pointer;">
+            <button type="button" id="modal-cancel-btn" class="modal-cancel-btn">
                 Cancel
             </button>
             <button type="button" id="modal-confirm-btn" class="reopen-btn" style="padding: 9px 20px; font-size: 13px;">

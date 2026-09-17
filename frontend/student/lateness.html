@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Missed Submissions &amp; Lateness - Student Portal</title>
+    <link rel="stylesheet" href="../assets/css/style.css?v=9.7">
+    <link rel="stylesheet" href="../assets/css/dashboard.css?v=9.7">
+    <link rel="stylesheet" href="../assets/css/responsive.css?v=9.7">
+    <script>
+        (function(){var t=localStorage.getItem('assignment_system_theme')||localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);})();
+    </script>
+    <style>
+        .lateness-card {
+            background: var(--glass-bg-elevated, #ffffff);
+            border-radius: var(--radius-lg, 16px);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--glass-border, var(--border-color));
+            margin-bottom: 24px;
+            backdrop-filter: var(--glass-blur, blur(12px));
+        }
+        [data-theme="dark"] .lateness-card {
+            background: rgba(17, 28, 43, 0.85);
+            border-color: rgba(36, 177, 177, 0.22);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+        .reopen-action-btn {
+            background: #d97706;
+            color: #ffffff !important;
+            padding: 8px 16px;
+            border-radius: var(--radius-pill, 9999px);
+            font-size: 12.5px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            box-shadow: 0 2px 8px rgba(217, 119, 6, 0.35);
+            transition: var(--transition-all, 0.2s ease);
+        }
+        .reopen-action-btn:hover {
+            background: #b45309;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(217, 119, 6, 0.45);
+        }
+        .status-reopened-badge {
+            background: rgba(245, 158, 11, 0.15);
+            color: #d97706;
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            border-radius: var(--radius-pill, 9999px);
+            padding: 4px 11px;
+            font-size: 11.5px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        [data-theme="dark"] .status-reopened-badge {
+            background: rgba(245, 158, 11, 0.22);
+            color: #fbbf24;
+            border-color: rgba(245, 158, 11, 0.5);
+        }
+        .teacher-filter-btn {
+            background: var(--glass-bg, rgba(255, 255, 255, 0.7));
+            border: 1px solid var(--glass-border, #e2e8f0);
+            color: var(--text-secondary, #334155);
+            padding: 8px 16px;
+            border-radius: var(--radius-pill, 9999px);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition-all, 0.2s ease);
+        }
+        .teacher-filter-btn:hover {
+            background: var(--glass-bg-hover, rgba(255, 255, 255, 0.95));
+            color: var(--text-primary, #0f172a);
+            transform: translateY(-1px);
+        }
+        .teacher-filter-btn.active {
+            background: var(--primary, #007979);
+            color: #ffffff;
+            border-color: var(--primary, #007979);
+            box-shadow: 0 2px 8px rgba(0, 121, 121, 0.3);
+        }
+        [data-theme="dark"] .teacher-filter-btn {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.12);
+            color: #cbd5e1;
+        }
+        [data-theme="dark"] .teacher-filter-btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: #ffffff;
+        }
+        [data-theme="dark"] .teacher-filter-btn.active {
+            background: #007979;
+            color: #ffffff;
+            border-color: #24B1B1;
+        }
+        .teacher-count-tag {
+            background: rgba(0, 0, 0, 0.08);
+            border-radius: var(--radius-pill, 9999px);
+            padding: 2px 7px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .teacher-filter-btn.active .teacher-count-tag {
+            background: rgba(255, 255, 255, 0.25);
+            color: #ffffff;
+        }
+        [data-theme="dark"] .teacher-count-tag {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        .reopen-banner-hint {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.35);
+            border-radius: var(--radius-md, 10px);
+            padding: 14px 18px;
+            margin-bottom: 22px;
+            font-size: 13.5px;
+            color: #92400e;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        [data-theme="dark"] .reopen-banner-hint {
+            background: rgba(245, 158, 11, 0.18);
+            border-color: rgba(245, 158, 11, 0.45);
+            color: #fde68a;
+        }
+    </style>
+</head>
+<body>
+
+<div class="dashboard-page">
+
+    <a href="dashboard.html" class="back-btn">
+        &larr; Back to Dashboard
+    </a>
+
+    <header class="dashboard-header">
+        <div>
+            <h1>Missed Submissions &amp; Lateness</h1>
+            <p>Track missed assignments and submit assignments reopened for resubmission by your teachers.</p>
+        </div>
+
+        <div class="header-actions">
+            <a href="notifications.html" class="view-btn" style="background: var(--glass-bg-hover); color: var(--text-primary); border: 1px solid var(--glass-border); font-size: 13px; text-decoration: none; padding: 7px 14px;">Notifications</a>
+            <span class="user-role" id="user-role-badge">Student</span>
+            <a href="../../backend/auth/logout.php" class="logout-btn">Logout</a>
+        </div>
+    </header>
+
+    <div id="alert-box" style="display: none;"></div>
+
+    <!-- Active Permission Highlight Banner (conditionally displayed if any active reopen) -->
+    <div id="active-permission-banner" class="reopen-banner-hint" style="display: none;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="flex-shrink: 0;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        <div>
+            <strong style="font-size: 14px; display: block; margin-bottom: 2px;">Active Late Submission Window Available!</strong>
+            <span id="active-permission-banner-text">One or more teachers have granted you a single-attempt 24-hour exception to submit your work. Click the submission button on the assignment before the timer expires.</span>
+        </div>
+    </div>
+
+    <!-- statistics overview -->
+    <section class="stats-grid" style="margin-bottom: 25px;">
+        <div class="stat-card">
+            <span class="stat-label">Total Missed Deadlines</span>
+            <strong class="stat-number" id="stat-total-missed" style="color: var(--danger);">0</strong>
+        </div>
+
+        <div class="stat-card">
+            <span class="stat-label">Reopened with Permission</span>
+            <strong class="stat-number" id="stat-active-exceptions" style="color: #d97706;">0</strong>
+        </div>
+
+        <div class="stat-card">
+            <span class="stat-label">Submitted Late (Permission Used)</span>
+            <strong class="stat-number" id="stat-submitted-late" style="color: var(--success);">0</strong>
+        </div>
+
+        <div class="stat-card">
+            <span class="stat-label">Enrolled Teachers</span>
+            <strong class="stat-number" id="stat-teachers-count" style="color: var(--primary);">0</strong>
+        </div>
+    </section>
+
+    <!-- Teacher Buttons & Missed Assignments Section -->
+    <section class="lateness-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+            <div>
+                <h2 style="margin: 0 0 4px; font-size: 18px;">Missed Assignments by Enrolled Teacher</h2>
+                <p style="margin: 0; font-size: 13px; color: var(--text-muted);">
+                    Select a teacher button to filter their specific missed assignments and resubmission permissions.
+                </p>
+            </div>
+            <div>
+                <input
+                    type="text"
+                    id="search-input"
+                    class="search-input"
+                    placeholder="Search assignment or course..."
+                    style="max-width: 260px;"
+                >
+            </div>
+        </div>
+
+        <!-- Teacher Filter Buttons (populated dynamically for each teacher student is enrolled with) -->
+        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 20px;" id="teacher-filter-buttons">
+            <button class="teacher-filter-btn active" data-teacher-id="all">
+                All Teachers <span class="teacher-count-tag" id="tag-all-count">0</span>
+            </button>
+        </div>
+
+        <!-- empty state -->
+        <div id="missed-empty" class="empty-state" style="display: none; padding: 45px 20px; text-align: center;">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-bottom: 12px; opacity: 0.5; color: var(--success);"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            <h3 style="margin-bottom: 6px;">No Missed Submissions</h3>
+            <p style="color: var(--text-muted); font-size: 14px; margin: 0;">You have no past-deadline missed assignments for this selection.</p>
+        </div>
+
+        <!-- missed assignments table -->
+        <div class="table-container" id="missed-table-container">
+            <table class="assignments-table">
+                <thead>
+                    <tr>
+                        <th>Teacher</th>
+                        <th>Course</th>
+                        <th>Assignment</th>
+                        <th>Original Deadline</th>
+                        <th>Permission &amp; Status</th>
+                        <th style="text-align: right;">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="missed-table-body"></tbody>
+            </table>
+        </div>
+    </section>
+
+</div>
+
+<script src="../assets/js/main.js?v=9.7"></script>
+<script src="../assets/js/student_lateness.js?v=9.7"></script>
+
+</body>
+</html>
