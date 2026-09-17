@@ -60,16 +60,35 @@ document.addEventListener('DOMContentLoaded', function () {
             });
             setElementText('deadline', deadlineFormatted);
 
-            // resubmission rule text
-            var resubmissionText = (parseInt(assignment.allow_resubmission, 10) === 1) ? 'Allowed' : 'Not Allowed';
-            setElementText('allow-resubmission', resubmissionText);
+            // resubmission rule text and permitted attempts
+            var resubmissionAllowed = (parseInt(assignment.allow_resubmission, 10) === 1);
+            var maxAttempts = data.max_attempts !== undefined ? parseInt(data.max_attempts, 10) : (resubmissionAllowed ? 3 : 1);
+            var attemptsCount = data.attempts_count !== undefined ? parseInt(data.attempts_count, 10) : (submission ? 1 : 0);
+
+            setElementText('allow-resubmission', resubmissionAllowed ? 'Allowed' : 'Not Allowed');
+
+            var permittedAttemptsText = '1 Attempt (Single submission)';
+            if (resubmissionAllowed) {
+                permittedAttemptsText = (maxAttempts === 0) ? 'Unlimited Attempts' : (maxAttempts + ' Attempts');
+            }
+            setElementText('permitted-attempts', permittedAttemptsText);
+
+            var attemptsUsedText = attemptsCount + ' of ' + (maxAttempts === 0 ? 'Unlimited' : maxAttempts);
+            if (attemptsCount > 0 && maxAttempts > 0 && attemptsCount >= maxAttempts) {
+                attemptsUsedText += ' (Max reached)';
+            }
+            setElementText('attempts-used', attemptsUsedText);
 
             // deadline badge indicator
             var deadlineBadge = document.getElementById('deadline-badge');
             if (deadlineBadge) {
                 if (data.is_past_deadline) {
                     deadlineBadge.className = 'status-badge status-closed';
-                    deadlineBadge.textContent = 'Deadline Passed';
+                    deadlineBadge.textContent = 'Deadline Passed (Closed)';
+                    deadlineBadge.style.display = 'inline-block';
+                } else if (data.has_reached_max_attempts) {
+                    deadlineBadge.className = 'status-badge status-closed';
+                    deadlineBadge.textContent = 'Max Attempts Reached (Closed)';
                     deadlineBadge.style.display = 'inline-block';
                 } else {
                     deadlineBadge.className = 'status-badge status-open';
@@ -92,7 +111,10 @@ document.addEventListener('DOMContentLoaded', function () {
             // render submission status section
             var submissionCard = document.getElementById('submission-details-card');
             var uploadCard = document.getElementById('upload-card');
+            var uploadTitle = document.getElementById('upload-card-title');
+            var submitBtn = document.getElementById('submit-assignment-btn');
             var submissionNotice = document.getElementById('submission-notice');
+            var submissionForm = document.getElementById('submission-form');
 
             if (submission) {
                 // show existing submission info
@@ -157,30 +179,103 @@ document.addEventListener('DOMContentLoaded', function () {
                 } else if (gradeCard) {
                     gradeCard.style.display = 'none';
                 }
-
-                // update upload card title to indicate resubmission
-                var uploadTitle = document.getElementById('upload-card-title');
-                if (uploadTitle) {
-                    uploadTitle.textContent = 'Submit New Version (Replace)';
-                }
             } else if (submissionCard) {
                 submissionCard.style.display = 'none';
             }
 
-            // display or hide upload form based on can_submit flag
-            if (data.can_submit) {
-                if (uploadCard) uploadCard.style.display = 'block';
-                if (submissionNotice) submissionNotice.style.display = 'none';
-            } else {
-                if (uploadCard) uploadCard.style.display = 'none';
+            // Always show the upload card container so students can see the status & disabled button clearly
+            if (uploadCard) uploadCard.style.display = 'block';
+
+            // Check submission eligibility and manage submit button state
+            if (!data.can_submit) {
+                // Disable submit button and file input
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.style.opacity = '0.55';
+                    submitBtn.style.cursor = 'not-allowed';
+                    submitBtn.style.pointerEvents = 'none';
+                    submitBtn.style.background = 'var(--text-muted, #94a3b8)';
+                }
+                if (fileInput) {
+                    fileInput.disabled = true;
+                    fileInput.style.cursor = 'not-allowed';
+                }
+
                 if (submissionNotice) {
                     submissionNotice.style.display = 'block';
                     if (data.is_past_deadline) {
-                        submissionNotice.textContent = 'Submissions are closed because the deadline has passed.';
-                    } else if (submission && parseInt(assignment.allow_resubmission, 10) === 0) {
-                        submissionNotice.textContent = 'You have already submitted this assignment. Resubmission is not permitted.';
+                        if (submitBtn) submitBtn.textContent = 'Deadline Passed — Submissions Closed';
+                        submissionNotice.className = 'notice-box';
+                        submissionNotice.style.background = 'rgba(239, 68, 68, 0.08)';
+                        submissionNotice.style.border = '1px solid rgba(239, 68, 68, 0.3)';
+                        submissionNotice.style.color = 'var(--danger, #ef4444)';
+                        submissionNotice.innerHTML = '<strong>Submissions Closed:</strong> The deadline for this assignment has passed (' + deadlineFormatted + '). Late submissions are strictly disabled.';
+                    } else if (data.has_reached_max_attempts) {
+                        if (submitBtn) submitBtn.textContent = 'Max Tries Reached (' + attemptsCount + '/' + maxAttempts + ') — Closed';
+                        submissionNotice.className = 'notice-box';
+                        submissionNotice.style.background = 'rgba(245, 158, 11, 0.08)';
+                        submissionNotice.style.border = '1px solid rgba(245, 158, 11, 0.3)';
+                        submissionNotice.style.color = 'var(--warning, #d97706)';
+                        submissionNotice.innerHTML = '<strong>Max Attempts Reached:</strong> You have used all permitted attempts (' + attemptsCount + ' of ' + maxAttempts + '). Further submissions are locked.';
                     }
                 }
+            } else {
+                // Student CAN submit or resubmit
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.style.opacity = '1';
+                    submitBtn.style.cursor = 'pointer';
+                    submitBtn.style.pointerEvents = 'auto';
+                    submitBtn.style.background = '';
+                }
+                if (fileInput) {
+                    fileInput.disabled = false;
+                    fileInput.style.cursor = '';
+                }
+
+                if (submission) {
+                    var nextAttempt = attemptsCount + 1;
+                    var totalAttemptsLabel = (maxAttempts === 0) ? 'Unlimited' : maxAttempts;
+                    if (uploadTitle) uploadTitle.textContent = 'Submit New Version (Attempt ' + nextAttempt + ' of ' + totalAttemptsLabel + ')';
+                    if (submitBtn) submitBtn.textContent = 'Upload & Submit Version ' + nextAttempt;
+
+                    if (submissionNotice) {
+                        submissionNotice.className = 'notice-box';
+                        submissionNotice.style.display = 'block';
+                        submissionNotice.style.background = 'rgba(0, 121, 121, 0.08)';
+                        submissionNotice.style.border = '1px solid rgba(0, 121, 121, 0.25)';
+                        submissionNotice.style.color = 'var(--primary, #007979)';
+                        submissionNotice.innerHTML = 'You have used <strong>' + attemptsCount + '</strong> of <strong>' + totalAttemptsLabel + '</strong> allowed attempts. Submitting a new file will replace your previous version.';
+                    }
+                } else {
+                    if (uploadTitle) uploadTitle.textContent = 'Submit Assignment';
+                    if (submitBtn) submitBtn.textContent = 'Upload & Submit';
+
+                    if (submissionNotice) {
+                        submissionNotice.className = 'notice-box';
+                        submissionNotice.style.display = 'block';
+                        submissionNotice.style.background = 'rgba(0, 121, 121, 0.08)';
+                        submissionNotice.style.border = '1px solid rgba(0, 121, 121, 0.25)';
+                        submissionNotice.style.color = 'var(--primary, #007979)';
+                        if (maxAttempts === 1) {
+                            submissionNotice.innerHTML = '<strong>Single submission only:</strong> You will only have 1 attempt to submit this assignment.';
+                        } else {
+                            submissionNotice.innerHTML = 'You have <strong>' + (maxAttempts === 0 ? 'Unlimited' : maxAttempts) + '</strong> permitted attempts for this assignment.';
+                        }
+                    }
+                }
+            }
+
+            // Double check submit form event to guarantee no submission if disabled
+            if (submissionForm && !submissionForm.dataset.hasListener) {
+                submissionForm.dataset.hasListener = 'true';
+                submissionForm.addEventListener('submit', function (e) {
+                    if (!data.can_submit) {
+                        e.preventDefault();
+                        alert('Submissions for this assignment are closed.');
+                        return false;
+                    }
+                });
             }
         })
         .catch(function (err) {

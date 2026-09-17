@@ -235,6 +235,7 @@ $assignments = [];
 
 while ($assignment = mysqli_fetch_assoc($assignmentsResult)) {
     $status = 'not_submitted';
+    $isPastDeadline = strtotime($assignment['deadline']) < time();
 
     if (!empty($assignment['submission_id'])) {
         switch ($assignment['status']) {
@@ -256,9 +257,12 @@ while ($assignment = mysqli_fetch_assoc($assignmentsResult)) {
                 $status = 'submitted';
                 break;
         }
+    } elseif ($isPastDeadline) {
+        $status = 'deadline_passed';
     }
 
     $assignment['display_status'] = $status;
+    $assignment['is_past_deadline'] = $isPastDeadline;
     if ($status !== 'graded') {
         $assignment['grade'] = null;
     }

@@ -35,6 +35,7 @@ $assignmentSql = "SELECT
     a.max_grade,
     a.deadline,
     a.allow_resubmission,
+    a.max_attempts,
     a.allowed_extensions,
     a.max_file_size_mb,
     c.name AS course_name,
@@ -98,22 +99,54 @@ if ($submission && $submission['status'] !== 'graded') {
     $submission['correction_file_name'] = null;
 }
 
+// count total attempts by this student for this assignment
+$attemptsSql = "SELECT COUNT(*) AS total_attempts, MAX(version) AS max_version FROM submissions WHERE assignment_id = $assignmentId AND student_id = $studentId";
+$attemptsRes = mysqli_query($conn, $attemptsSql);
+$attemptsData = mysqli_fetch_assoc($attemptsRes);
+$attemptsCount = (int) ($attemptsData['total_attempts'] ?? 0);
+
+// max allowed attempts
+$allowResubmission = (int) $assignment['allow_resubmission'];
+$maxAttempts = isset($assignment['max_attempts']) ? (int) $assignment['max_attempts'] : ($allowResubmission === 1 ? 3 : 1);
+if ($allowResubmission === 0) {
+    $maxAttempts = 1;
+}
+$assignment['max_attempts'] = $maxAttempts;
+
 // determine if current time is past the deadline
 $isPastDeadline = strtotime($assignment['deadline']) < time();
 
-// determine if student can submit or resubmit
-$canSubmit = false;
-if (!$isPastDeadline) {
-    if (!$submission || (int) $assignment['allow_resubmission'] === 1) {
-        $canSubmit = true;
-    }
+// determine if student has reached max attempts
+$hasReachedMaxAttempts = false;
+if ($maxAttempts > 0 && $attemptsCount >= $maxAttempts) {
+    $hasReachedMaxAttempts = true;
 }
+if ($allowResubmission === 0 && $attemptsCount >= 1) {
+    $hasReachedMaxAttempts = true;
+}
+
+// can student submit? Strict: must be before deadline AND not reached max attempts
+$canSubmit = (!$isPastDeadline && !$hasReachedMaxAttempts);
+
+$disableReason = null;
+if ($isPastDeadline) {
+    $disableReason = 'deadline_passed';
+} elseif ($hasReachedMaxAttempts) {
+    $disableReason = 'max_attempts_reached';
+}
+
+$attemptsLeft = ($maxAttempts > 0) ? max(0, $maxAttempts - $attemptsCount) : null;
 
 echo json_encode([
     'success' => true,
     'assignment' => $assignment,
     'submission' => $submission,
     'is_past_deadline' => $isPastDeadline,
-    'can_submit' => $canSubmit
+    'attempts_count' => $attemptsCount,
+    'max_attempts' => $maxAttempts,
+    'attempts_left' => $attemptsLeft,
+    'has_reached_max_attempts' => $hasReachedMaxAttempts,
+    'can_submit' => $canSubmit,
+    'disable_reason' => $disableReason
 ]);
 exit;

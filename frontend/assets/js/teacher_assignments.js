@@ -48,6 +48,23 @@ document.addEventListener('DOMContentLoaded', function () {
                     });
                 }
 
+                var resubSelect = document.getElementById('assignment-resub');
+                var maxAttemptsSelect = document.getElementById('assignment-max-attempts');
+                if (resubSelect && maxAttemptsSelect && !resubSelect.dataset.hasListener) {
+                    resubSelect.dataset.hasListener = 'true';
+                    resubSelect.addEventListener('change', function () {
+                        if (this.value === '0') {
+                            maxAttemptsSelect.value = '1';
+                            maxAttemptsSelect.disabled = true;
+                        } else {
+                            maxAttemptsSelect.disabled = false;
+                            if (maxAttemptsSelect.value === '1') {
+                                maxAttemptsSelect.value = '3';
+                            }
+                        }
+                    });
+                }
+
                 // render assignments table
                 if (data.assignments && data.assignments.length > 0) {
                     if (tableContainer) tableContainer.style.display = 'block';
@@ -124,7 +141,11 @@ document.addEventListener('DOMContentLoaded', function () {
         createForm.addEventListener('submit', function (e) {
             e.preventDefault();
 
+            var maxAttemptsSelect = document.getElementById('assignment-max-attempts');
+            var wasDisabled = maxAttemptsSelect && maxAttemptsSelect.disabled;
+            if (wasDisabled) maxAttemptsSelect.disabled = false;
             var formData = new FormData(createForm);
+            if (wasDisabled) maxAttemptsSelect.disabled = true;
 
             fetch('../../backend/teacher/assignments.php', {
                 method: 'POST',

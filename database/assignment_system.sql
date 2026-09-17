@@ -53,6 +53,7 @@ CREATE TABLE `assignments` (
   `max_grade` decimal(6,2) NOT NULL DEFAULT 100.00,
   `deadline` datetime NOT NULL,
   `allow_resubmission` tinyint(1) NOT NULL DEFAULT 0,
+  `max_attempts` int(10) UNSIGNED NOT NULL DEFAULT 1,
   `allowed_extensions` varchar(255) NOT NULL DEFAULT 'pdf,doc,docx,zip',
   `max_file_size_mb` int(10) UNSIGNED NOT NULL DEFAULT 10,
   `created_by` int(10) UNSIGNED NOT NULL,

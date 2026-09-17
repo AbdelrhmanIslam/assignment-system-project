@@ -32,6 +32,8 @@ $sql = "SELECT
     a.deadline,
     a.max_grade,
     a.allow_resubmission,
+    a.max_attempts,
+    (SELECT COUNT(*) FROM submissions s_cnt WHERE s_cnt.assignment_id = a.id AND s_cnt.student_id = $studentId) AS attempts_count,
     c.name AS course_name,
     ut.name AS teacher_name,
     s.id AS submission_id,
@@ -63,14 +65,28 @@ if ($result) {
     while ($row = mysqli_fetch_assoc($result)) {
         $row['id'] = (int) $row['id'];
         $isPastDeadline = strtotime($row['deadline']) < time();
+        $attemptsCount = (int) ($row['attempts_count'] ?? 0);
+        $maxAttempts = isset($row['max_attempts']) ? (int) $row['max_attempts'] : ((int)$row['allow_resubmission'] === 1 ? 3 : 1);
+        if ((int)$row['allow_resubmission'] === 0) {
+            $maxAttempts = 1;
+        }
+        $hasReachedMaxAttempts = ($maxAttempts > 0 && $attemptsCount >= $maxAttempts);
+        $canSubmit = (!$isPastDeadline && !$hasReachedMaxAttempts);
 
         // determine status classification and action button properties
         if (empty($row['submission_id'])) {
             $statusKey = 'not_submitted';
-            $statusLabel = 'Not Submitted';
-            $statusClass = 'status-not-submitted';
-            $actionLabel = $isPastDeadline ? 'View' : 'Submit';
-            $actionClass = $isPastDeadline ? 'action-view' : 'action-submit';
+            if ($isPastDeadline) {
+                $statusLabel = 'Deadline Passed';
+                $statusClass = 'status-closed';
+                $actionLabel = 'View Details';
+                $actionClass = 'action-view';
+            } else {
+                $statusLabel = 'Not Submitted';
+                $statusClass = 'status-not-submitted';
+                $actionLabel = 'Submit';
+                $actionClass = 'action-submit';
+            }
         } else if ($row['submission_status'] === 'graded') {
             $statusKey = 'graded';
             $statusLabel = 'Graded';
@@ -90,6 +106,10 @@ if ($result) {
         $row['status_label'] = $statusLabel;
         $row['status_class'] = $statusClass;
         $row['is_past_deadline'] = $isPastDeadline;
+        $row['attempts_count'] = $attemptsCount;
+        $row['max_attempts'] = $maxAttempts;
+        $row['can_submit'] = $canSubmit;
+        $row['has_reached_max_attempts'] = $hasReachedMaxAttempts;
         $row['action_label'] = $actionLabel;
         $row['action_class'] = $actionClass;
 

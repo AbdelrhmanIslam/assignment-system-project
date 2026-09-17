@@ -31,6 +31,7 @@ $assignmentSql = "SELECT
     a.max_grade,
     a.deadline,
     a.allow_resubmission,
+    a.max_attempts,
     a.allowed_extensions,
     a.max_file_size_mb,
     a.grade_level,
@@ -60,26 +61,38 @@ if (!empty($studentGrade) && !empty($assignment['grade_level']) && $assignment['
 // check if deadline has passed
 $isPastDeadline = strtotime($assignment['deadline']) < time();
 if ($isPastDeadline) {
-    redirect(BASE_URL . '/frontend/student/assignment.html?id=' . $assignmentId . '&error=' . urlencode('Submissions are closed because the deadline has passed.'));
+    redirect(BASE_URL . '/frontend/student/assignment.html?id=' . $assignmentId . '&error=' . urlencode('Submissions are closed because the deadline for this assignment has passed. Late submissions cannot be accepted.'));
+    exit;
 }
 
 // check previous submissions for this student and assignment
-$checkSubSql = "SELECT id, version FROM submissions
-WHERE assignment_id = $assignmentId AND student_id = $studentId
-ORDER BY version DESC, id DESC
-LIMIT 1";
+$checkSubSql = "SELECT COUNT(*) AS total_attempts, MAX(version) AS max_version FROM submissions
+WHERE assignment_id = $assignmentId AND student_id = $studentId";
 
 $checkSubResult = mysqli_query($conn, $checkSubSql);
-$lastSubmission = mysqli_fetch_assoc($checkSubResult);
+$subStats = mysqli_fetch_assoc($checkSubResult);
+$attemptsCount = (int) ($subStats['total_attempts'] ?? 0);
+$lastVersion = (int) ($subStats['max_version'] ?? 0);
 
-// determine version number and verify resubmission policy
-$version = 1;
-if ($lastSubmission) {
-    if ((int) $assignment['allow_resubmission'] !== 1) {
-        redirect(BASE_URL . '/frontend/student/assignment.html?id=' . $assignmentId . '&error=' . urlencode('You have already submitted this assignment. Resubmission is not permitted.'));
-    }
-    $version = (int) $lastSubmission['version'] + 1;
+$allowResubmission = (int) $assignment['allow_resubmission'];
+$maxAttempts = isset($assignment['max_attempts']) ? (int) $assignment['max_attempts'] : ($allowResubmission === 1 ? 3 : 1);
+if ($allowResubmission === 0) {
+    $maxAttempts = 1;
 }
+
+// verify resubmission policy and max attempts
+if ($allowResubmission === 0 && $attemptsCount >= 1) {
+    redirect(BASE_URL . '/frontend/student/assignment.html?id=' . $assignmentId . '&error=' . urlencode('You have already submitted this assignment. Resubmission is not permitted.'));
+    exit;
+}
+
+if ($maxAttempts > 0 && $attemptsCount >= $maxAttempts) {
+    redirect(BASE_URL . '/frontend/student/assignment.html?id=' . $assignmentId . '&error=' . urlencode("You have already used all permitted attempts ({$attemptsCount} of {$maxAttempts}) for this assignment. Further submissions are closed."));
+    exit;
+}
+
+// determine version number for this submission
+$version = $lastVersion + 1;
 
 // validate file upload existence and check for upload errors
 if (!isset($_FILES['submission_file']) || $_FILES['submission_file']['error'] !== UPLOAD_ERR_OK) {

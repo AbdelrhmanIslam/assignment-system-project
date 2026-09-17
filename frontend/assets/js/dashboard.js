@@ -248,6 +248,8 @@ function getActionLabel(status) {
   switch (status) {
     case "not_submitted":
       return "Submit";
+    case "deadline_passed":
+      return "View Details";
     case "graded":
       return "View Result";
     default:
@@ -259,6 +261,8 @@ function getActionClass(status) {
   switch (status) {
     case "not_submitted":
       return "action-submit";
+    case "deadline_passed":
+      return "action-view";
     case "graded":
       return "action-result";
     case "under_review":
@@ -272,6 +276,9 @@ function getStatusLabel(status) {
   switch (status) {
     case "not_submitted":
       return "Not Submitted";
+
+    case "deadline_passed":
+      return "Deadline Passed";
 
     case "submitted":
       return "Submitted";
@@ -291,6 +298,9 @@ function getStatusClass(status) {
   switch (status) {
     case "not_submitted":
       return "status-not-submitted";
+
+    case "deadline_passed":
+      return "status-closed";
 
     case "submitted":
       return "status-submitted";

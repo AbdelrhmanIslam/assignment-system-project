@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Assignment Details - Assignment System</title>
 
-    <link rel="stylesheet" href="../assets/css/style.css">
-    <link rel="stylesheet" href="../assets/css/dashboard.css">
-    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <link rel="stylesheet" href="../assets/css/style.css?v=9.5">
+    <link rel="stylesheet" href="../assets/css/dashboard.css?v=9.5">
+    <link rel="stylesheet" href="../assets/css/responsive.css?v=9.5">
     <script>
         (function(){var t=localStorage.getItem('assignment_system_theme')||localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);})();
     </script>
@@ -79,6 +79,16 @@
                         <span>Resubmission</span>
                         <strong id="allow-resubmission">—</strong>
                     </div>
+
+                    <div class="meta-item">
+                        <span>Permitted Tries</span>
+                        <strong id="permitted-attempts">—</strong>
+                    </div>
+
+                    <div class="meta-item">
+                        <span>Your Attempts</span>
+                        <strong id="attempts-used">—</strong>
+                    </div>
                 </div>
 
                 <h3>Instructions</h3>
@@ -149,31 +159,31 @@
             <section id="upload-card" class="content-card" style="display: none;">
                 <h2 id="upload-card-title">Submit Assignment</h2>
 
+                <!-- notice box for deadline/attempt limits or remaining attempts -->
+                <div id="submission-notice" class="notice-box" style="display: none; margin-bottom: 16px;"></div>
+
                 <!-- upload form connected to backend submit handler -->
-                <form method="POST" action="../../backend/student/submit.php" enctype="multipart/form-data">
+                <form id="submission-form" method="POST" action="../../backend/student/submit.php" enctype="multipart/form-data">
                     <input type="hidden" name="assignment_id" id="form-assignment-id" value="">
 
                     <div class="upload-form-group">
-                        <label for="submission-file-input">Choose Submission File</label>
+                        <label for="submission-file-input" id="submission-file-label">Choose Submission File</label>
                         <input
                             type="file"
                             id="submission-file-input"
                             name="submission_file"
                             required
                         >
-                        <p class="upload-help">
+                        <p class="upload-help" id="submission-upload-help">
                             Ensure file matches allowed extensions and size limit.
                         </p>
                     </div>
 
-                    <button type="submit" class="btn-primary">
-                        Upload & Submit
+                    <button type="submit" id="submit-assignment-btn" class="btn-primary" style="width: 100%; border-radius: var(--radius-pill); font-size: 14px; padding: 11px 20px; transition: var(--transition-all);">
+                        Upload &amp; Submit
                     </button>
                 </form>
             </section>
-
-            <!-- closed or not allowed notice -->
-            <div id="submission-notice" class="notice-box" style="display: none;"></div>
 
         </div>
 
@@ -181,8 +191,8 @@
 
 </div>
 
-<script src="../assets/js/main.js"></script>
-<script src="../assets/js/assignment.js?v=3"></script>
+<script src="../assets/js/main.js?v=9.5"></script>
+<script src="../assets/js/assignment.js?v=9.5"></script>
 
 </body>
 </html>

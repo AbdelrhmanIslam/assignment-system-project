@@ -25,6 +25,10 @@ if (isPost()) {
     $maxGrade = isset($_POST['max_grade']) ? (float) $_POST['max_grade'] : 100.00;
     $deadline = post('deadline');
     $allowResubmission = isset($_POST['allow_resubmission']) ? (int) $_POST['allow_resubmission'] : 0;
+    $maxAttempts = 1;
+    if ($allowResubmission === 1) {
+        $maxAttempts = isset($_POST['max_attempts']) ? max(0, (int) $_POST['max_attempts']) : 3;
+    }
     $allowedExtensions = post('allowed_extensions', 'pdf,doc,docx,zip');
     $maxFileSizeMb = isset($_POST['max_file_size_mb']) ? (int) $_POST['max_file_size_mb'] : 10;
 
@@ -85,6 +89,7 @@ if (isPost()) {
         max_grade,
         deadline,
         allow_resubmission,
+        max_attempts,
         allowed_extensions,
         max_file_size_mb,
         created_by,
@@ -97,6 +102,7 @@ if (isPost()) {
         $maxGrade,
         '$formattedDeadline',
         $allowResubmission,
+        $maxAttempts,
         '$escapedExt',
         $maxFileSizeMb,
         $teacherId,
@@ -151,6 +157,7 @@ $assignmentsSql = "SELECT
     a.max_grade,
     a.deadline,
     a.allow_resubmission,
+    a.max_attempts,
     a.allowed_extensions,
     a.max_file_size_mb,
     a.is_active,
