@@ -126,14 +126,38 @@ if ($allowResubmission === 0 && $attemptsCount >= 1) {
     $hasReachedMaxAttempts = true;
 }
 
-// can student submit? Strict: must be before deadline AND not reached max attempts
-$canSubmit = (!$isPastDeadline && !$hasReachedMaxAttempts);
+// check if student has an active 24-hour late exception granted by the teacher
+$activeException = null;
+$hasActiveException = false;
+$excSql = "SELECT ae.*, u.name AS teacher_name 
+           FROM assignment_exceptions ae 
+           LEFT JOIN users u ON u.id = ae.granted_by 
+           WHERE ae.assignment_id = $assignmentId 
+             AND ae.student_id = $studentId 
+             AND ae.status = 'active' 
+             AND ae.expires_at > NOW() 
+           ORDER BY ae.id DESC LIMIT 1";
+$excRes = mysqli_query($conn, $excSql);
+if ($excRes && mysqli_num_rows($excRes) > 0) {
+    $activeException = mysqli_fetch_assoc($excRes);
+    $hasActiveException = true;
+}
 
-$disableReason = null;
-if ($isPastDeadline) {
-    $disableReason = 'deadline_passed';
-} elseif ($hasReachedMaxAttempts) {
-    $disableReason = 'max_attempts_reached';
+// can student submit? Strict: must be before deadline AND not reached max attempts (unless active exception granted)
+$isPastOriginalDeadline = $isPastDeadline;
+if ($hasActiveException) {
+    // 24-hour exception overrides past deadline for a single submission
+    $canSubmit = true;
+    $disableReason = null;
+} else {
+    $canSubmit = (!$isPastDeadline && !$hasReachedMaxAttempts);
+
+    $disableReason = null;
+    if ($isPastDeadline) {
+        $disableReason = 'deadline_passed';
+    } elseif ($hasReachedMaxAttempts) {
+        $disableReason = 'max_attempts_reached';
+    }
 }
 
 $attemptsLeft = ($maxAttempts > 0) ? max(0, $maxAttempts - $attemptsCount) : null;
@@ -143,6 +167,9 @@ echo json_encode([
     'assignment' => $assignment,
     'submission' => $submission,
     'is_past_deadline' => $isPastDeadline,
+    'is_past_original_deadline' => $isPastOriginalDeadline,
+    'has_active_exception' => $hasActiveException,
+    'active_exception' => $activeException,
     'attempts_count' => $attemptsCount,
     'max_attempts' => $maxAttempts,
     'attempts_left' => $attemptsLeft,

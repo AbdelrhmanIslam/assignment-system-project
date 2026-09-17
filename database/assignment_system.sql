@@ -79,6 +79,32 @@ INSERT INTO `assignments` (`id`, `course_id`, `title`, `description`, `max_grade
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `assignment_exceptions`
+--
+
+CREATE TABLE `assignment_exceptions` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `assignment_id` int(10) UNSIGNED NOT NULL,
+  `student_id` int(10) UNSIGNED NOT NULL,
+  `teacher_id` int(10) UNSIGNED NOT NULL,
+  `granted_by` int(10) UNSIGNED NOT NULL,
+  `granted_at` datetime NOT NULL,
+  `expires_at` datetime NOT NULL,
+  `max_attempts` int(10) UNSIGNED NOT NULL DEFAULT 1,
+  `status` enum('active','used','expired') NOT NULL DEFAULT 'active',
+  `submission_id` int(10) UNSIGNED DEFAULT NULL,
+  `notes` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `idx_assign_student` (`assignment_id`, `student_id`),
+  KEY `idx_expires` (`expires_at`),
+  KEY `idx_teacher` (`teacher_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `courses`
 --
 

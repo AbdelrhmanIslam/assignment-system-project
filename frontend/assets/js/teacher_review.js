@@ -65,6 +65,42 @@ document.addEventListener('DOMContentLoaded', function () {
                 statusBadge.className = 'status-badge ' + (sub.status === 'graded' ? 'status-graded' : 'status-review');
             }
 
+            // Late submission / 24-hour exception indicator
+            var lateBanner = document.getElementById('late-exception-banner');
+            if (parseInt(sub.is_late, 10) === 1 || sub.exception_id) {
+                var notesText = sub.exception_notes ? ('<div style="margin-top: 5px; font-style: italic; opacity: 0.95;">Teacher Notes: "' + escapeHtml(sub.exception_notes) + '"</div>') : '';
+                if (!lateBanner) {
+                    lateBanner = document.createElement('div');
+                    lateBanner.id = 'late-exception-banner';
+                    lateBanner.style.background = 'rgba(234, 88, 12, 0.12)';
+                    lateBanner.style.border = '1px solid rgba(234, 88, 12, 0.35)';
+                    lateBanner.style.color = '#c2410c';
+                    lateBanner.style.padding = '12px 16px';
+                    lateBanner.style.borderRadius = '8px';
+                    lateBanner.style.marginBottom = '18px';
+                    lateBanner.style.fontSize = '13.5px';
+                    lateBanner.style.lineHeight = '1.5';
+
+                    var mainCard = document.querySelector('.assignment-main .content-card');
+                    if (mainCard) {
+                        mainCard.insertBefore(lateBanner, mainCard.children[1] || null);
+                    }
+                }
+                lateBanner.innerHTML = '<strong style="display: block; font-size: 14px; margin-bottom: 3px;">&#9888;&#65039; Late Submission (Reopened via 24-Hour Exception)</strong>' +
+                    '<span>This student missed the original deadline and submitted under a single-submission 24-hour exception.</span>' + notesText;
+
+                if (statusBadge && !document.getElementById('late-badge')) {
+                    var lateBadge = document.createElement('span');
+                    lateBadge.id = 'late-badge';
+                    lateBadge.className = 'status-badge';
+                    lateBadge.style.background = '#ea580c';
+                    lateBadge.style.color = '#fff';
+                    lateBadge.style.marginLeft = '8px';
+                    lateBadge.textContent = 'Late (24h Exception)';
+                    statusBadge.parentNode.insertBefore(lateBadge, statusBadge.nextSibling);
+                }
+            }
+
             var descBox = document.getElementById('assignment-description');
             if (descBox && sub.assignment_description) {
                 descBox.textContent = sub.assignment_description;
@@ -196,5 +232,12 @@ document.addEventListener('DOMContentLoaded', function () {
         var sizes = ['B', 'KB', 'MB', 'GB'];
         var i = Math.floor(Math.log(bytes) / Math.log(k));
         return (bytes / Math.pow(k, i)).toFixed(1) + ' ' + sizes[i];
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        var div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
     }
 });

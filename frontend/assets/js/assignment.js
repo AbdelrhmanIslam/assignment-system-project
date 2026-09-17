@@ -85,7 +85,13 @@ document.addEventListener('DOMContentLoaded', function () {
             // deadline badge indicator
             var deadlineBadge = document.getElementById('deadline-badge');
             if (deadlineBadge) {
-                if (data.is_past_deadline) {
+                if (data.has_active_exception) {
+                    deadlineBadge.className = 'status-badge';
+                    deadlineBadge.style.background = '#f59e0b';
+                    deadlineBadge.style.color = '#ffffff';
+                    deadlineBadge.textContent = 'Reopened (Late Exception Active)';
+                    deadlineBadge.style.display = 'inline-block';
+                } else if (data.is_past_deadline) {
                     deadlineBadge.className = 'status-badge status-closed';
                     deadlineBadge.textContent = 'Deadline Passed (Closed)';
                     deadlineBadge.style.display = 'inline-block';
@@ -149,6 +155,20 @@ document.addEventListener('DOMContentLoaded', function () {
                     var statusInfo = getAssignmentStatusInfo(submission);
                     statusBadge.className = 'status-badge ' + statusInfo.className;
                     statusBadge.textContent = statusInfo.label;
+
+                    if (parseInt(submission.is_late, 10) === 1) {
+                        var lateBadge = document.getElementById('submission-late-badge');
+                        if (!lateBadge && statusBadge.parentNode) {
+                            lateBadge = document.createElement('span');
+                            lateBadge.id = 'submission-late-badge';
+                            lateBadge.className = 'status-badge';
+                            lateBadge.style.background = '#ea580c';
+                            lateBadge.style.color = '#fff';
+                            lateBadge.style.marginLeft = '8px';
+                            lateBadge.textContent = 'Submitted Late';
+                            statusBadge.parentNode.insertBefore(lateBadge, statusBadge.nextSibling);
+                        }
+                    }
                 }
 
                 // render download submission link
@@ -240,7 +260,29 @@ document.addEventListener('DOMContentLoaded', function () {
                     fileInput.style.cursor = '';
                 }
 
-                if (submission) {
+                if (data.has_active_exception) {
+                    var exc = data.active_exception || {};
+                    var teacherGranted = exc.teacher_name ? 'Teacher ' + exc.teacher_name : 'Your teacher';
+                    var expiresAt = exc.expires_at ? new Date(exc.expires_at).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '24 hours';
+
+                    if (uploadTitle) uploadTitle.textContent = 'Submit Late Assignment (Reopened)';
+                    if (submitBtn) {
+                        submitBtn.textContent = 'Upload & Submit Late Assignment';
+                        submitBtn.style.background = '#d97706';
+                    }
+
+                    if (submissionNotice) {
+                        submissionNotice.className = 'notice-box';
+                        submissionNotice.style.display = 'block';
+                        submissionNotice.style.background = 'rgba(245, 158, 11, 0.12)';
+                        submissionNotice.style.border = '1px solid rgba(245, 158, 11, 0.4)';
+                        submissionNotice.style.color = '#92400e';
+                        var notesSnippet = exc.notes ? ('<div style="margin-top: 6px; font-size: 13px; font-style: italic; color: #78350f;"><strong>Teacher Note:</strong> "' + exc.notes + '"</div>') : '';
+                        submissionNotice.innerHTML = '<div style="font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">' +
+                            '<span>&#9888;&#65039; 24-Hour Late Submission Window Granted</span></div>' +
+                            '<div>' + teacherGranted + ' has reopened this assignment specifically for you. You are allowed <strong>1 single attempt</strong> valid until <strong>' + expiresAt + '</strong>. This submission will be formally recorded and flagged as <strong>Late</strong> for your teacher and assistants.</div>' + notesSnippet;
+                    }
+                } else if (submission) {
                     var nextAttempt = attemptsCount + 1;
                     var totalAttemptsLabel = (maxAttempts === 0) ? 'Unlimited' : maxAttempts;
                     if (uploadTitle) uploadTitle.textContent = 'Submit New Version (Attempt ' + nextAttempt + ' of ' + totalAttemptsLabel + ')';

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Missed Submissions &amp; Lateness - Teacher Portal</title>
+    <link rel="stylesheet" href="../assets/css/main.css?v=9.6">
+    <style>
+        .lateness-card {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+            margin-bottom: 24px;
+        }
+        .reopen-btn {
+            background: #d97706;
+            color: #fff;
+            padding: 7px 14px;
+            border-radius: var(--radius-pill);
+            font-size: 12.5px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition-all);
+        }
+        .reopen-btn:hover {
+            background: #b45309;
+            transform: translateY(-1px);
+        }
+        .reopen-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .missed-count-pill {
+            background: rgba(239, 68, 68, 0.12);
+            color: #b91c1c;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: var(--radius-pill);
+            padding: 3px 9px;
+            font-size: 11.5px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        /* Modal Styles */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal-box {
+            background: var(--surface, #fff);
+            border-radius: var(--radius-lg, 16px);
+            max-width: 520px;
+            width: 100%;
+            padding: 28px;
+            box-shadow: var(--shadow-lg, 0 20px 25px -5px rgba(0,0,0,0.2));
+            border: 1px solid var(--border-color, #e2e8f0);
+            animation: modalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes modalPop {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="dashboard-page">
+
+    <a href="dashboard.html" class="back-btn">
+        &larr; Back to Dashboard
+    </a>
+
+    <header class="dashboard-header">
+        <div>
+            <h1>Missed Submissions &amp; Lateness</h1>
+            <p>Monitor students who missed assignment deadlines and grant 24-hour single-submission reopen exceptions.</p>
+        </div>
+
+        <div class="header-actions">
+            <span class="user-role" id="user-role-badge">Teacher</span>
+            <a href="../../backend/auth/logout.php" class="logout-btn">Logout</a>
+        </div>
+    </header>
+
+    <div id="alert-box" class="alert" style="display: none; margin-bottom: 20px;"></div>
+
+    <!-- statistics overview -->
+    <section class="stats-grid" style="margin-bottom: 25px;">
+        <div class="stat-card">
+            <span class="stat-label">Missed Submissions</span>
+            <strong class="stat-number" id="stat-total-missed" style="color: var(--danger);">0</strong>
+        </div>
+
+        <div class="stat-card">
+            <span class="stat-label">Students with Delays</span>
+            <strong class="stat-number" id="stat-students-count" style="color: #ea580c;">0</strong>
+        </div>
+
+        <div class="stat-card">
+            <span class="stat-label">Active 24h Exceptions</span>
+            <strong class="stat-number" id="stat-active-exceptions" style="color: #d97706;">0</strong>
+        </div>
+
+        <div class="stat-card">
+            <span class="stat-label">Submitted Late</span>
+            <strong class="stat-number" id="stat-submitted-late" style="color: var(--success);">0</strong>
+        </div>
+    </section>
+
+    <!-- filter & classes section -->
+    <section class="lateness-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+            <div>
+                <h2 style="margin: 0 0 4px; font-size: 18px;">Your Registered Classes &amp; Grade Levels</h2>
+                <p style="margin: 0; font-size: 13px; color: var(--text-muted);">
+                    Showing only grade levels registered to your teaching profile. Select a class to filter missed work.
+                </p>
+            </div>
+            <div id="teacher-selector-container" style="display: none;">
+                <label for="teacher-select" style="font-size: 13px; font-weight: 600; margin-right: 6px;">Teacher:</label>
+                <select id="teacher-select" style="padding: 6px 12px; border-radius: var(--radius-pill); font-size: 13px; border: 1px solid var(--border-color);"></select>
+            </div>
+        </div>
+
+        <!-- Grade level pills (populated dynamically with ONLY teacher registered grades) -->
+        <div class="filter-bar" style="border: none; padding: 0; margin-bottom: 18px;">
+            <div class="filter-tabs" id="grade-level-tabs">
+                <button class="filter-tab active" data-grade="all" id="tab-all-grades">All Registered Classes</button>
+                <!-- Dynamic tabs injected by lateness.js -->
+            </div>
+
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <input
+                    type="text"
+                    id="search-input"
+                    class="search-input"
+                    placeholder="Search by student, assignment, course..."
+                    style="max-width: 320px;"
+                >
+            </div>
+        </div>
+
+        <!-- Empty state -->
+        <div id="missed-empty" class="empty-state" style="display: none;">
+            <h3>No Missed Submissions</h3>
+            <p>Great news! No students currently have unsubmitted past-deadline assignments for the selected class.</p>
+        </div>
+
+        <!-- Table container -->
+        <div id="missed-table-container" class="table-container" style="display: none;">
+            <table class="assignments-table">
+                <thead>
+                    <tr>
+                        <th>Student Name &amp; Email</th>
+                        <th>Class / Grade Level</th>
+                        <th>Course</th>
+                        <th>Assignment</th>
+                        <th>Original Deadline</th>
+                        <th>Teacher Lateness Count</th>
+                        <th>Exception Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="missed-table-body">
+                    <!-- Populated dynamically by lateness.js -->
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+</div>
+
+<!-- Reopen confirmation modal -->
+<div id="reopen-modal" class="modal-backdrop">
+    <div class="modal-box">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+            <div style="width: 44px; height: 44px; border-radius: 50%; background: rgba(217, 119, 6, 0.15); display: flex; align-items: center; justify-content: center; color: #d97706;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            </div>
+            <div>
+                <h3 style="margin: 0; font-size: 18px; color: var(--text-primary);">Reopen Assignment for Student</h3>
+                <p style="margin: 2px 0 0; font-size: 13px; color: var(--text-muted);">Grant a 24-hour single-submission late exception</p>
+            </div>
+        </div>
+
+        <div style="background: rgba(0,0,0,0.03); border: 1px solid var(--border-color); border-radius: var(--radius-md, 10px); padding: 14px 16px; margin-bottom: 18px; font-size: 13.5px; line-height: 1.6;">
+            <div><strong>Student:</strong> <span id="modal-student-name">—</span> (<span id="modal-student-email">—</span>)</div>
+            <div><strong>Assignment:</strong> <span id="modal-assignment-title">—</span></div>
+            <div><strong>Course:</strong> <span id="modal-course-name">—</span></div>
+            <div><strong>Original Deadline:</strong> <span id="modal-original-deadline">—</span></div>
+            <div><strong>Total Missed for You:</strong> <span id="modal-missed-count" class="missed-count-pill" style="margin-left: 4px;">—</span></div>
+        </div>
+
+        <div style="background: rgba(217, 119, 6, 0.08); border: 1px solid rgba(217, 119, 6, 0.3); border-radius: 8px; padding: 12px 14px; margin-bottom: 20px; font-size: 13px; color: #92400e;">
+            <strong>Exception Constraints:</strong>
+            <ul style="margin: 6px 0 0 18px; padding: 0;">
+                <li>The student will receive a <strong>strict 24-hour window</strong> starting immediately.</li>
+                <li>Valid for a <strong>single submission attempt (1 try)</strong>.</li>
+                <li>The submission will be recorded and marked as <strong>Late</strong> during grading.</li>
+                <li><strong>Automatic notifications</strong> will be sent to the Student, Teacher, and Course Assistants.</li>
+            </ul>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+            <button type="button" id="modal-cancel-btn" class="action-btn" style="background: #e2e8f0; color: #334155; border: none; padding: 9px 18px; border-radius: var(--radius-pill); font-size: 13px; cursor: pointer;">
+                Cancel
+            </button>
+            <button type="button" id="modal-confirm-btn" class="reopen-btn" style="padding: 9px 20px; font-size: 13px;">
+                Confirm &amp; Reopen for 24h
+            </button>
+        </div>
+    </div>
+</div>
+
+<script src="../assets/js/main.js?v=9.6"></script>
+<script src="../assets/js/lateness.js?v=9.6"></script>
+
+</body>
+</html>

@@ -51,13 +51,18 @@ $sql = "SELECT
     g.correction_stored_name,
     g.graded_at,
     ast.name AS assistant_name,
-    ast.email AS assistant_email
+    ast.email AS assistant_email,
+    ae.id AS exception_id,
+    ae.granted_at AS exception_granted_at,
+    ae.expires_at AS exception_expires_at,
+    ae.notes AS exception_notes
 FROM submissions s
 INNER JOIN users u ON u.id = s.student_id
 INNER JOIN assignments a ON a.id = s.assignment_id
 INNER JOIN courses c ON c.id = a.course_id
 LEFT JOIN grades g ON g.submission_id = s.id
 LEFT JOIN users ast ON ast.id = g.assistant_id
+LEFT JOIN assignment_exceptions ae ON ae.submission_id = s.id
 WHERE s.id = $submissionId AND c.teacher_id = $teacherId
 LIMIT 1";
 

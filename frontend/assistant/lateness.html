@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Missed Submissions &amp; Lateness - Assistant View</title>
+    <link rel="stylesheet" href="../assets/css/main.css?v=9.6">
+    <style>
+        .lateness-card {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+            margin-bottom: 24px;
+        }
+        .missed-count-pill {
+            background: rgba(239, 68, 68, 0.12);
+            color: #b91c1c;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: var(--radius-pill);
+            padding: 3px 9px;
+            font-size: 11.5px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .permission-notice {
+            background: rgba(2, 132, 199, 0.08);
+            border: 1px solid rgba(2, 132, 199, 0.25);
+            border-radius: var(--radius-md, 10px);
+            padding: 14px 18px;
+            margin-bottom: 22px;
+            font-size: 13.5px;
+            color: #0369a1;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="dashboard-page">
+
+    <a href="dashboard.html" class="back-btn">
+        &larr; Back to Dashboard
+    </a>
+
+    <header class="dashboard-header">
+        <div>
+            <h1>Missed Submissions &amp; Lateness</h1>
+            <p>Monitor students who missed assignment deadlines across your assigned teachers and courses.</p>
+        </div>
+
+        <div class="header-actions">
+            <span class="user-role" id="user-role-badge">Assistant (View Only)</span>
+            <a href="../../backend/auth/logout.php" class="logout-btn">Logout</a>
+        </div>
+    </header>
+
+    <div class="permission-notice">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="flex-shrink: 0;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+        <div>
+            <strong>Assistant Permission Notice:</strong> You can view all student delays, class levels, and 24-hour exception statuses across your assigned teachers. The authority to reopen an assignment for a student is restricted exclusively to the course teacher.
+        </div>
+    </div>
+
+    <div id="alert-box" class="alert" style="display: none; margin-bottom: 20px;"></div>
+
+    <!-- statistics overview -->
+    <section class="stats-grid" style="margin-bottom: 25px;">
+        <div class="stat-card">
+            <span class="stat-label">Missed Submissions</span>
+            <strong class="stat-number" id="stat-total-missed" style="color: var(--danger);">0</strong>
+        </div>
+
+        <div class="stat-card">
+            <span class="stat-label">Students with Delays</span>
+            <strong class="stat-number" id="stat-students-count" style="color: #ea580c;">0</strong>
+        </div>
+
+        <div class="stat-card">
+            <span class="stat-label">Active 24h Exceptions</span>
+            <strong class="stat-number" id="stat-active-exceptions" style="color: #d97706;">0</strong>
+        </div>
+
+        <div class="stat-card">
+            <span class="stat-label">Submitted Late</span>
+            <strong class="stat-number" id="stat-submitted-late" style="color: var(--success);">0</strong>
+        </div>
+    </section>
+
+    <!-- filter & classes section -->
+    <section class="lateness-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+            <div>
+                <h2 style="margin: 0 0 4px; font-size: 18px;">Teacher Classes &amp; Registered Grade Levels</h2>
+                <p style="margin: 0; font-size: 13px; color: var(--text-muted);">
+                    Showing only grade levels registered to the selected teacher.
+                </p>
+            </div>
+            <div id="teacher-selector-container" style="display: none; align-items: center; gap: 8px;">
+                <label for="teacher-select" style="font-size: 13px; font-weight: 600;">Assigned Teacher:</label>
+                <select id="teacher-select" style="padding: 6px 14px; border-radius: var(--radius-pill); font-size: 13px; border: 1px solid var(--border-color); background: var(--surface); color: var(--text-primary);"></select>
+            </div>
+        </div>
+
+        <!-- Grade level pills (populated dynamically with ONLY teacher registered grades) -->
+        <div class="filter-bar" style="border: none; padding: 0; margin-bottom: 18px;">
+            <div class="filter-tabs" id="grade-level-tabs">
+                <button class="filter-tab active" data-grade="all" id="tab-all-grades">All Registered Classes</button>
+                <!-- Dynamic tabs injected by lateness.js -->
+            </div>
+
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <input
+                    type="text"
+                    id="search-input"
+                    class="search-input"
+                    placeholder="Search by student, assignment, course..."
+                    style="max-width: 320px;"
+                >
+            </div>
+        </div>
+
+        <!-- Empty state -->
+        <div id="missed-empty" class="empty-state" style="display: none;">
+            <h3>No Missed Submissions</h3>
+            <p>No students currently have unsubmitted past-deadline assignments for the selected class.</p>
+        </div>
+
+        <!-- Table container -->
+        <div id="missed-table-container" class="table-container" style="display: none;">
+            <table class="assignments-table">
+                <thead>
+                    <tr>
+                        <th>Student Name &amp; Email</th>
+                        <th>Class / Grade Level</th>
+                        <th>Course</th>
+                        <th>Assignment</th>
+                        <th>Original Deadline</th>
+                        <th>Teacher Lateness Count</th>
+                        <th>Exception Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="missed-table-body">
+                    <!-- Populated dynamically by lateness.js -->
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+</div>
+
+<script src="../assets/js/main.js?v=9.6"></script>
+<script src="../assets/js/lateness.js?v=9.6"></script>
+
+</body>
+</html>

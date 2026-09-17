@@ -158,6 +158,18 @@ document.addEventListener('DOMContentLoaded', function () {
             badge.className = 'status-badge ' + statusInfo.className;
             badge.textContent = statusInfo.label;
             tdStatus.appendChild(badge);
+
+            if (parseInt(sub.is_late, 10) === 1) {
+                var lateBadge = document.createElement('span');
+                lateBadge.className = 'status-badge';
+                lateBadge.style.background = '#ea580c';
+                lateBadge.style.color = '#ffffff';
+                lateBadge.style.marginLeft = '6px';
+                lateBadge.style.fontSize = '11px';
+                lateBadge.textContent = 'Late';
+                tdStatus.appendChild(lateBadge);
+            }
+
             tr.appendChild(tdStatus);
 
             var tdGrade = document.createElement('td');

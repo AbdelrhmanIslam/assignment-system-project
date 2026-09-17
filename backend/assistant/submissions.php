@@ -85,6 +85,7 @@ $sql = "SELECT
             s.submitted_at,
             s.version,
             s.status,
+            s.is_late,
             u.name AS student_name,
             u.email AS student_email,
             a.id AS assignment_id,
@@ -121,6 +122,7 @@ if ($result) {
             'submitted_at' => $row['submitted_at'],
             'version' => (int) $row['version'],
             'status' => $row['status'],
+            'is_late' => (int) $row['is_late'],
             'grade' => $row['grade'] !== null ? (float) $row['grade'] : null,
             'max_grade' => (float) $row['max_grade']
         ];

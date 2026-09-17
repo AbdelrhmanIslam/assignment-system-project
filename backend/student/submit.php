@@ -61,9 +61,25 @@ if (!empty($studentGrade) && !empty($assignment['grade_level']) && $assignment['
 // check if deadline has passed (only if a deadline is set)
 $hasDeadline = !empty($assignment['deadline']);
 $isPastDeadline = $hasDeadline && (strtotime($assignment['deadline']) < time());
+$activeException = null;
+$isSubmittedUnderException = false;
+
 if ($isPastDeadline) {
-    redirect(BASE_URL . '/frontend/student/assignment.html?id=' . $assignmentId . '&error=' . urlencode('Submissions are closed because the deadline for this assignment has passed. Late submissions cannot be accepted.'));
-    exit;
+    // check if student has an active 24-hour exception granted by the teacher
+    $excSql = "SELECT * FROM assignment_exceptions 
+               WHERE assignment_id = $assignmentId 
+                 AND student_id = $studentId 
+                 AND status = 'active' 
+                 AND expires_at > NOW() 
+               ORDER BY id DESC LIMIT 1";
+    $excRes = mysqli_query($conn, $excSql);
+    if ($excRes && mysqli_num_rows($excRes) > 0) {
+        $activeException = mysqli_fetch_assoc($excRes);
+        $isSubmittedUnderException = true;
+    } else {
+        redirect(BASE_URL . '/frontend/student/assignment.html?id=' . $assignmentId . '&error=' . urlencode('Submissions are closed because the deadline for this assignment has passed. Late submissions cannot be accepted without a teacher exception.'));
+        exit;
+    }
 }
 
 // check previous submissions for this student and assignment
@@ -148,6 +164,8 @@ $escapedStoredName = mysqli_real_escape_string($conn, $storedFileName);
 $escapedFilePath = mysqli_real_escape_string($conn, $relativeFilePath);
 $escapedFileType = mysqli_real_escape_string($conn, $fileType);
 
+$isLateValue = ($isPastDeadline || $isSubmittedUnderException) ? 1 : 0;
+
 // insert submission record into database
 $insertSql = "INSERT INTO submissions (
     assignment_id,
@@ -171,7 +189,7 @@ $insertSql = "INSERT INTO submissions (
     '$escapedFileType',
     $version,
     NOW(),
-    0,
+    $isLateValue,
     'submitted'
 )";
 
@@ -182,8 +200,28 @@ if ($insertResult) {
     $studentName = currentUserName();
     $courseId = (int) $assignment['course_id'];
     $assignTitle = mysqli_real_escape_string($conn, $assignment['title']);
-    $notifTitle = mysqli_real_escape_string($conn, 'New Submission Received');
-    $notifMsg = mysqli_real_escape_string($conn, "Student {$studentName} has submitted assignment '{$assignTitle}'.");
+
+    // mark active exception as used
+    if ($isSubmittedUnderException && !empty($activeException['id'])) {
+        $excId = (int) $activeException['id'];
+        mysqli_query($conn, "UPDATE assignment_exceptions 
+                             SET status = 'used', submission_id = $newSubId 
+                             WHERE id = $excId");
+    }
+
+    if ($isSubmittedUnderException) {
+        $notifTitle = mysqli_real_escape_string($conn, 'Late Submission Received (24h Exception)');
+        $notifMsg = mysqli_real_escape_string($conn, "Student {$studentName} has submitted late assignment '{$assignTitle}' under the 24-hour exception window.");
+
+        // notify student
+        $notifTitleStud = mysqli_real_escape_string($conn, 'Late Submission Confirmed');
+        $notifMsgStud = mysqli_real_escape_string($conn, "Your late submission for '{$assignTitle}' under the 24-hour exception was successfully received.");
+        mysqli_query($conn, "INSERT INTO notifications (user_id, title, message, type, reference_id, is_read, created_at)
+                             VALUES ($studentId, '$notifTitleStud', '$notifMsgStud', 'submission', $newSubId, 0, NOW())");
+    } else {
+        $notifTitle = mysqli_real_escape_string($conn, 'New Submission Received');
+        $notifMsg = mysqli_real_escape_string($conn, "Student {$studentName} has submitted assignment '{$assignTitle}'.");
+    }
 
     // notify assigned assistants
     $asstRes = mysqli_query($conn, "SELECT assistant_id FROM course_assistants WHERE course_id = $courseId");
@@ -206,7 +244,11 @@ if ($insertResult) {
         }
     }
 
-    redirect(BASE_URL . '/frontend/student/assignment.html?id=' . $assignmentId . '&success=' . urlencode('Assignment submitted successfully!'));
+    $successMsg = $isSubmittedUnderException ? 
+        'Late assignment submitted successfully under the 24-hour exception window!' : 
+        'Assignment submitted successfully!';
+
+    redirect(BASE_URL . '/frontend/student/assignment.html?id=' . $assignmentId . '&success=' . urlencode($successMsg));
 } else {
     redirect(BASE_URL . '/frontend/student/assignment.html?id=' . $assignmentId . '&error=' . urlencode('Database error while recording your submission.'));
 }

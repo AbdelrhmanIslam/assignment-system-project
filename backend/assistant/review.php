@@ -42,11 +42,16 @@ $sql = "SELECT
             a.max_grade,
             a.deadline,
             c.id AS course_id,
-            c.name AS course_name
+            c.name AS course_name,
+            ae.id AS exception_id,
+            ae.granted_at AS exception_granted_at,
+            ae.expires_at AS exception_expires_at,
+            ae.notes AS exception_notes
         FROM submissions s
         INNER JOIN assignments a ON a.id = s.assignment_id
         INNER JOIN courses c ON c.id = a.course_id
         INNER JOIN users u ON u.id = s.student_id
+        LEFT JOIN assignment_exceptions ae ON ae.submission_id = s.id
         LEFT JOIN course_assistants ca ON ca.course_id = c.id AND ca.assistant_id = $assistantId
         LEFT JOIN teacher_assistants ta ON ta.teacher_id = c.teacher_id AND ta.assistant_id = $assistantId
         WHERE s.id = $submissionId AND (ca.id IS NOT NULL OR ta.id IS NOT NULL)

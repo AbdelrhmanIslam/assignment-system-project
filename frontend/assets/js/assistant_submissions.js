@@ -191,13 +191,14 @@ function renderTable(submissions) {
         }
 
         var gradeDisplay = (sub.grade !== null) ? (sub.grade + ' / ' + sub.max_grade) : '—';
+        var lateBadgeHtml = (parseInt(sub.is_late, 10) === 1) ? ' <span class="status-badge" style="background:#ea580c;color:#fff;margin-left:5px;font-size:11px;">Late</span>' : '';
 
         row.innerHTML =
             '<td><strong>' + escapeHtml(sub.student_name) + '</strong><br><small style="color:var(--text-muted);">' + escapeHtml(sub.student_email) + '</small></td>' +
             '<td>' + escapeHtml(sub.assignment_title) + '</td>' +
             '<td>' + escapeHtml(sub.course_name) + '</td>' +
             '<td>' + formatDate(sub.submitted_at) + ' (v' + sub.version + ')</td>' +
-            '<td><span class="status-badge ' + badgeClass + '">' + badgeLabel + '</span></td>' +
+            '<td><span class="status-badge ' + badgeClass + '">' + badgeLabel + '</span>' + lateBadgeHtml + '</td>' +
             '<td><strong>' + gradeDisplay + '</strong></td>' +
             '<td><a href="review.html?id=' + sub.id + '" class="action-btn ' + actionClass + '">' + actionLabel + '</a></td>';
 
