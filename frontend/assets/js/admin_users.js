@@ -322,12 +322,12 @@ function renderStudentRowHtml(u) {
     }
 
     return '<tr>' +
-        '<td><strong>' + escapeHtml(u.name) + '</strong></td>' +
-        '<td>' + escapeHtml(u.email) + '</td>' +
+        '<td style="white-space:nowrap;"><strong>' + escapeHtml(u.name) + '</strong></td>' +
+        '<td style="white-space:nowrap;">' + escapeHtml(u.email) + '</td>' +
         '<td style="white-space:nowrap;"><span class="status-badge status-submitted" style="font-size:11px; white-space:nowrap;">' + escapeHtml(u.grade_level || 'First Year of Middle School') + '</span></td>' +
         '<td>' + sCoursesHtml + '</td>' +
         '<td style="white-space:nowrap;">' + statusBadge + '</td>' +
-        '<td style="white-space:nowrap; font-size:12.5px;">' + formatDate(u.created_at) + '</td>' +
+        '<td style="white-space:nowrap; font-size:12.5px;"><span style="white-space:nowrap; display:inline-block;">' + formatDate(u.created_at) + '</span></td>' +
         '<td style="text-align:right; white-space:nowrap;">' + actionButtons + '</td>' +
     '</tr>';
 }
@@ -336,35 +336,35 @@ function renderTeacherRowHtml(u) {
     var statusBadge = renderStatusBadge(u.is_active);
     var actionButtons = renderActionButtons(u);
 
-    var tGradesHtml = '—';
+    var tGradesHtml = '<span style="color:var(--text-muted); font-size:12px;">—</span>';
     if (u.teacher_grade_levels && u.teacher_grade_levels.length > 0) {
-        tGradesHtml = '<div style="display:inline-flex; flex-direction:row; flex-wrap:wrap; gap:5px; align-items:center;">' +
+        tGradesHtml = '<div class="teacher-grades-row" style="display:inline-flex !important; flex-direction:row !important; flex-wrap:nowrap !important; align-items:center !important; gap:6px !important; white-space:nowrap !important; max-width:340px !important; overflow-x:auto !important; padding-bottom:3px !important; -webkit-overflow-scrolling:touch !important;">' +
             u.teacher_grade_levels.map(function (gl) {
-                return '<span class="status-badge status-review" style="font-size:11px; white-space:nowrap; display:inline-flex; align-items:center; padding:3px 8px;">' + escapeHtml(gl) + '</span>';
+                return '<span class="status-badge status-review grade-badge-pill" style="white-space:nowrap !important; flex-shrink:0 !important; display:inline-flex !important; align-items:center !important; font-size:11px !important; font-weight:600 !important; padding:4px 10px !important; border-radius:var(--radius-pill) !important; line-height:1.2 !important;">' + escapeHtml(gl) + '</span>';
             }).join('') + '</div>';
     }
 
     var tCoursesHtml = '<span style="font-size:12px; color:var(--text-muted);">0 courses</span>';
     if (u.teacher_courses && u.teacher_courses.length > 0) {
-        tCoursesHtml = '<div style="display:inline-flex; flex-direction:row; flex-wrap:wrap; gap:6px; align-items:center;">' +
+        tCoursesHtml = '<div class="teacher-courses-row" style="display:inline-flex !important; flex-direction:row !important; flex-wrap:nowrap !important; align-items:center !important; gap:8px !important; white-space:nowrap !important; max-width:620px !important; overflow-x:auto !important; padding-bottom:4px !important; padding-top:2px !important; -webkit-overflow-scrolling:touch !important;">' +
             u.teacher_courses.map(function (tc) {
-                return '<div class="student-course-tag" style="display:inline-flex; flex-direction:row; align-items:center; gap:6px; white-space:nowrap; padding:4px 10px;">' +
+                return '<div class="student-course-tag teacher-course-tag-pill" style="display:inline-flex !important; flex-direction:row !important; align-items:center !important; gap:6px !important; white-space:nowrap !important; flex-shrink:0 !important; padding:4px 10px 4px 8px !important; border-radius:var(--radius-pill) !important; line-height:1.2 !important;">' +
                     '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>' +
                     '<span><strong>' + escapeHtml(tc.course_name) + '</strong></span>' +
-                    '<span class="sub-count-badge" style="display:inline-flex; align-items:center; font-size:10px; margin-left:2px;">' + tc.student_count + ' students</span>' +
+                    '<span class="sub-count-badge" style="display:inline-flex; align-items:center; font-size:10px; margin-left:2px; white-space:nowrap !important;">' + tc.student_count + ' students</span>' +
                 '</div>';
             }).join('') + '</div>';
     }
 
     return '<tr>' +
-        '<td><strong>' + escapeHtml(u.name) + '</strong></td>' +
-        '<td>' + escapeHtml(u.email) + '</td>' +
-        '<td style="white-space:nowrap;">' + tGradesHtml + '</td>' +
-        '<td style="text-align:center; white-space:nowrap;"><span class="status-badge status-review" style="font-size:11px; font-weight:600; white-space:nowrap;">' + (u.courses_count || 0) + ' Courses</span></td>' +
-        '<td>' + tCoursesHtml + '</td>' +
-        '<td style="white-space:nowrap;">' + statusBadge + '</td>' +
-        '<td style="white-space:nowrap; font-size:12.5px;">' + formatDate(u.created_at) + '</td>' +
-        '<td style="text-align:right; white-space:nowrap;">' + actionButtons + '</td>' +
+        '<td style="white-space:nowrap; vertical-align:middle;"><strong>' + escapeHtml(u.name) + '</strong></td>' +
+        '<td style="white-space:nowrap; vertical-align:middle;">' + escapeHtml(u.email) + '</td>' +
+        '<td style="white-space:nowrap; vertical-align:middle;">' + tGradesHtml + '</td>' +
+        '<td style="text-align:center; white-space:nowrap; vertical-align:middle;"><span class="status-badge status-review" style="font-size:11px; font-weight:600; white-space:nowrap;">' + (u.courses_count || 0) + ' Courses</span></td>' +
+        '<td style="white-space:nowrap; vertical-align:middle;">' + tCoursesHtml + '</td>' +
+        '<td style="white-space:nowrap; vertical-align:middle;">' + statusBadge + '</td>' +
+        '<td style="white-space:nowrap !important; font-size:12.5px !important; vertical-align:middle; min-width:130px !important;"><span style="white-space:nowrap !important; display:inline-block !important;">' + formatDate(u.created_at) + '</span></td>' +
+        '<td style="text-align:right; white-space:nowrap; vertical-align:middle;">' + actionButtons + '</td>' +
     '</tr>';
 }
 
@@ -375,21 +375,21 @@ function renderAssistantRowHtml(u) {
 
     var asstForHtml = '<span style="font-size:12px; color:var(--text-muted);">Unassigned</span>';
     if (u.assigned_teachers && u.assigned_teachers.length > 0) {
-        asstForHtml = '<div style="display:inline-flex; flex-direction:row; flex-wrap:wrap; gap:4px; align-items:center;">' +
+        asstForHtml = '<div style="display:inline-flex; flex-direction:row; flex-wrap:nowrap; gap:5px; align-items:center; white-space:nowrap;">' +
             u.assigned_teachers.map(function (t) {
-                return '<span class="status-badge status-submitted" style="font-size:11px; white-space:nowrap; display:inline-flex; align-items:center; gap:3px;">' +
+                return '<span class="status-badge status-submitted" style="font-size:11px; white-space:nowrap; display:inline-flex; align-items:center; gap:3px; flex-shrink:0;">' +
                     '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> ' +
                     escapeHtml(t.name) + '</span>';
             }).join('') + '</div>';
     }
 
     return '<tr>' +
-        '<td><strong>' + escapeHtml(u.name) + '</strong></td>' +
-        '<td>' + escapeHtml(u.email) + '</td>' +
-        '<td><span class="status-badge ' + roleBadge + '">' + u.role.toUpperCase() + '</span></td>' +
-        '<td>' + asstForHtml + '</td>' +
+        '<td style="white-space:nowrap;"><strong>' + escapeHtml(u.name) + '</strong></td>' +
+        '<td style="white-space:nowrap;">' + escapeHtml(u.email) + '</td>' +
+        '<td style="white-space:nowrap;"><span class="status-badge ' + roleBadge + '">' + u.role.toUpperCase() + '</span></td>' +
+        '<td style="white-space:nowrap;">' + asstForHtml + '</td>' +
         '<td style="white-space:nowrap;">' + statusBadge + '</td>' +
-        '<td style="white-space:nowrap; font-size:12.5px;">' + formatDate(u.created_at) + '</td>' +
+        '<td style="white-space:nowrap; font-size:12.5px;"><span style="white-space:nowrap; display:inline-block;">' + formatDate(u.created_at) + '</span></td>' +
         '<td style="text-align:right; white-space:nowrap;">' + actionButtons + '</td>' +
     '</tr>';
 }
@@ -400,11 +400,11 @@ function renderAdminRowHtml(u) {
     var actionButtons = renderActionButtons(u);
 
     return '<tr>' +
-        '<td><strong>' + escapeHtml(u.name) + '</strong></td>' +
-        '<td>' + escapeHtml(u.email) + '</td>' +
-        '<td><span class="status-badge ' + roleBadge + '">' + u.role.toUpperCase() + '</span></td>' +
+        '<td style="white-space:nowrap;"><strong>' + escapeHtml(u.name) + '</strong></td>' +
+        '<td style="white-space:nowrap;">' + escapeHtml(u.email) + '</td>' +
+        '<td style="white-space:nowrap;"><span class="status-badge ' + roleBadge + '">' + u.role.toUpperCase() + '</span></td>' +
         '<td style="white-space:nowrap;">' + statusBadge + '</td>' +
-        '<td style="white-space:nowrap; font-size:12.5px;">' + formatDate(u.created_at) + '</td>' +
+        '<td style="white-space:nowrap; font-size:12.5px;"><span style="white-space:nowrap; display:inline-block;">' + formatDate(u.created_at) + '</span></td>' +
         '<td style="text-align:right; white-space:nowrap;">' + actionButtons + '</td>' +
     '</tr>';
 }
@@ -601,14 +601,14 @@ function renderTeachersHierarchy(teachers) {
         html += '    <table class="assignments-table teacher-assignments-table">';
         html += '      <thead>';
         html += '        <tr>';
-        html += '          <th style="min-width:160px;">Teacher Name</th>';
-        html += '          <th style="min-width:180px;">Email</th>';
-        html += '          <th style="min-width:240px; white-space:nowrap;">Grade Level(s)</th>';
-        html += '          <th style="min-width:140px; text-align:center; white-space:nowrap;">Number of Courses</th>';
-        html += '          <th style="min-width:460px;">Courses &amp; Students Assigned</th>';
-        html += '          <th style="min-width:100px; white-space:nowrap;">Status</th>';
-        html += '          <th style="min-width:130px; white-space:nowrap;">Joined</th>';
-        html += '          <th style="min-width:160px; text-align:right; white-space:nowrap;">Action</th>';
+        html += '          <th style="min-width:160px; white-space:nowrap !important;">Teacher Name</th>';
+        html += '          <th style="min-width:180px; white-space:nowrap !important;">Email</th>';
+        html += '          <th style="min-width:240px; white-space:nowrap !important;">Grade Level(s)</th>';
+        html += '          <th style="min-width:140px; text-align:center; white-space:nowrap !important;">Number of Courses</th>';
+        html += '          <th style="min-width:460px; white-space:nowrap !important;">Courses &amp; Students Assigned</th>';
+        html += '          <th style="min-width:100px; white-space:nowrap !important;">Status</th>';
+        html += '          <th style="min-width:130px; white-space:nowrap !important;">Joined</th>';
+        html += '          <th style="min-width:160px; text-align:right; white-space:nowrap !important;">Action</th>';
         html += '        </tr>';
         html += '      </thead>';
         html += '      <tbody>';
@@ -1439,11 +1439,12 @@ function setupEditUserForm() {
 function formatDate(dateStr) {
     if (!dateStr) return '—';
     var d = new Date(dateStr);
-    return d.toLocaleDateString('en-US', {
+    var str = d.toLocaleDateString('en-US', {
         month: 'short',
         day: 'numeric',
         year: 'numeric'
     });
+    return str.replace(/\s+/g, '\u00A0');
 }
 
 function escapeHtml(str) {

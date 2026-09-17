@@ -1004,7 +1004,7 @@ a#btn-add-user {
 
 .hierarchical-table-wrapper .teacher-assignments-table th:nth-child(3),
 .hierarchical-table-wrapper .teacher-assignments-table td:nth-child(3) {
-   min-width: 240px !important;
+   min-width: 260px !important;
    width: auto !important;
    white-space: nowrap !important;
 }
@@ -1019,12 +1019,114 @@ a#btn-add-user {
 
 .hierarchical-table-wrapper .teacher-assignments-table th:nth-child(5),
 .hierarchical-table-wrapper .teacher-assignments-table td:nth-child(5) {
-   min-width: 460px !important;
+   min-width: 420px !important;
    width: auto !important;
+   white-space: nowrap !important;
+}
+
+.hierarchical-table-wrapper .teacher-assignments-table th:nth-child(7),
+.hierarchical-table-wrapper .teacher-assignments-table td:nth-child(7),
+.hierarchical-table-wrapper .assignments-table th:nth-child(6),
+.hierarchical-table-wrapper .assignments-table td:nth-child(6) {
+   min-width: 125px !important;
+   white-space: nowrap !important;
 }
 
 .hierarchical-table-wrapper .assignments-table td {
    vertical-align: middle !important;
+}
+
+/* ==========================================================================
+   TEACHER TABLE: HORIZONTAL GRADE LEVELS & HORIZONTAL COURSES ROW
+   ========================================================================== */
+.teacher-grades-row {
+   display: inline-flex !important;
+   flex-direction: row !important;
+   flex-wrap: nowrap !important;
+   align-items: center !important;
+   gap: 6px !important;
+   white-space: nowrap !important;
+   max-width: 340px !important;
+   overflow-x: auto !important;
+   padding-bottom: 3px !important;
+   -webkit-overflow-scrolling: touch !important;
+}
+
+.teacher-grades-row::-webkit-scrollbar {
+   height: 4px !important;
+}
+.teacher-grades-row::-webkit-scrollbar-track {
+   background: rgba(0, 0, 0, 0.05) !important;
+   border-radius: 4px !important;
+}
+.teacher-grades-row::-webkit-scrollbar-thumb {
+   background: rgba(0, 121, 121, 0.4) !important;
+   border-radius: 4px !important;
+}
+[data-theme="dark"] .teacher-grades-row::-webkit-scrollbar-track {
+   background: rgba(255, 255, 255, 0.05) !important;
+}
+[data-theme="dark"] .teacher-grades-row::-webkit-scrollbar-thumb {
+   background: rgba(24, 131, 132, 0.5) !important;
+}
+
+.teacher-grades-row .grade-badge-pill {
+   display: inline-flex !important;
+   flex-direction: row !important;
+   align-items: center !important;
+   white-space: nowrap !important;
+   flex-shrink: 0 !important;
+   font-size: 11px !important;
+   font-weight: 600 !important;
+   padding: 4px 10px !important;
+   border-radius: var(--radius-pill) !important;
+   line-height: 1.2 !important;
+}
+
+.teacher-courses-row {
+   display: inline-flex !important;
+   flex-direction: row !important;
+   flex-wrap: nowrap !important;
+   align-items: center !important;
+   gap: 8px !important;
+   white-space: nowrap !important;
+   max-width: 620px !important;
+   overflow-x: auto !important;
+   padding-bottom: 3px !important;
+   padding-top: 1px !important;
+   -webkit-overflow-scrolling: touch !important;
+}
+
+.teacher-courses-row .student-course-tag,
+.teacher-course-tag-pill {
+   display: inline-flex !important;
+   flex-direction: row !important;
+   align-items: center !important;
+   gap: 6px !important;
+   white-space: nowrap !important;
+   flex-shrink: 0 !important;
+   padding: 4px 10px 4px 8px !important;
+   border-radius: var(--radius-pill) !important;
+   line-height: 1.2 !important;
+}
+
+/* Slim modern scrollbar for teacher courses row */
+.teacher-courses-row::-webkit-scrollbar {
+   height: 4px !important;
+}
+.teacher-courses-row::-webkit-scrollbar-track {
+   background: rgba(0, 0, 0, 0.05) !important;
+   border-radius: 4px !important;
+}
+.teacher-courses-row::-webkit-scrollbar-thumb {
+   background: rgba(0, 121, 121, 0.4) !important;
+   border-radius: 4px !important;
+}
+[data-theme="dark"] .teacher-courses-row::-webkit-scrollbar-track {
+   background: rgba(255, 255, 255, 0.05) !important;
+}
+[data-theme="dark"] .teacher-courses-row::-webkit-scrollbar-thumb {
+   background: rgba(24, 131, 132, 0.5) !important;
 }
 
 /* ==========================================================================
