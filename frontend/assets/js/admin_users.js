@@ -308,12 +308,12 @@ function renderStudentRowHtml(u) {
 
     var sCoursesHtml = '<span style="font-size:12px; color:var(--text-muted);">No assigned courses</span>';
     if (u.student_courses && u.student_courses.length > 0) {
-        sCoursesHtml = '<div class="student-assignments-cell">' +
+        sCoursesHtml = '<div style="display:inline-flex; flex-direction:row; flex-wrap:wrap; gap:6px; align-items:center;">' +
             u.student_courses.map(function (c) {
-                return '<div class="student-course-tag">' +
+                return '<div class="student-course-tag" style="display:inline-flex; flex-direction:row; align-items:center; gap:6px; white-space:nowrap; padding:4px 10px;">' +
                     '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>' +
                     '<span><strong>' + escapeHtml(c.course_name) + '</strong></span>' +
-                    '<span class="student-teacher-indicator">' +
+                    '<span class="student-teacher-indicator" style="display:inline-flex; align-items:center; gap:3px; white-space:nowrap;">' +
                         '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>' +
                         escapeHtml(c.teacher_name) +
                     '</span>' +
@@ -324,11 +324,11 @@ function renderStudentRowHtml(u) {
     return '<tr>' +
         '<td><strong>' + escapeHtml(u.name) + '</strong></td>' +
         '<td>' + escapeHtml(u.email) + '</td>' +
-        '<td><span class="status-badge status-submitted" style="font-size:11px;">' + escapeHtml(u.grade_level || 'First Year of Middle School') + '</span></td>' +
+        '<td style="white-space:nowrap;"><span class="status-badge status-submitted" style="font-size:11px; white-space:nowrap;">' + escapeHtml(u.grade_level || 'First Year of Middle School') + '</span></td>' +
         '<td>' + sCoursesHtml + '</td>' +
-        '<td>' + statusBadge + '</td>' +
-        '<td>' + formatDate(u.created_at) + '</td>' +
-        '<td>' + actionButtons + '</td>' +
+        '<td style="white-space:nowrap;">' + statusBadge + '</td>' +
+        '<td style="white-space:nowrap; font-size:12.5px;">' + formatDate(u.created_at) + '</td>' +
+        '<td style="text-align:right; white-space:nowrap;">' + actionButtons + '</td>' +
     '</tr>';
 }
 
@@ -338,20 +338,20 @@ function renderTeacherRowHtml(u) {
 
     var tGradesHtml = '—';
     if (u.teacher_grade_levels && u.teacher_grade_levels.length > 0) {
-        tGradesHtml = '<div style="display:flex; flex-wrap:wrap; gap:3px;">' +
+        tGradesHtml = '<div style="display:inline-flex; flex-direction:row; flex-wrap:wrap; gap:5px; align-items:center;">' +
             u.teacher_grade_levels.map(function (gl) {
-                return '<span class="status-badge status-review" style="font-size:10px;">' + escapeHtml(gl) + '</span>';
+                return '<span class="status-badge status-review" style="font-size:11px; white-space:nowrap; display:inline-flex; align-items:center; padding:3px 8px;">' + escapeHtml(gl) + '</span>';
             }).join('') + '</div>';
     }
 
     var tCoursesHtml = '<span style="font-size:12px; color:var(--text-muted);">0 courses</span>';
     if (u.teacher_courses && u.teacher_courses.length > 0) {
-        tCoursesHtml = '<div style="display:flex; flex-direction:row; flex-wrap:wrap; gap:6px;">' +
+        tCoursesHtml = '<div style="display:inline-flex; flex-direction:row; flex-wrap:wrap; gap:6px; align-items:center;">' +
             u.teacher_courses.map(function (tc) {
-                return '<div class="student-course-tag">' +
+                return '<div class="student-course-tag" style="display:inline-flex; flex-direction:row; align-items:center; gap:6px; white-space:nowrap; padding:4px 10px;">' +
                     '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>' +
                     '<span><strong>' + escapeHtml(tc.course_name) + '</strong></span>' +
-                    '<span class="sub-count-badge">' + tc.student_count + ' students</span>' +
+                    '<span class="sub-count-badge" style="display:inline-flex; align-items:center; font-size:10px; margin-left:2px;">' + tc.student_count + ' students</span>' +
                 '</div>';
             }).join('') + '</div>';
     }
@@ -359,12 +359,12 @@ function renderTeacherRowHtml(u) {
     return '<tr>' +
         '<td><strong>' + escapeHtml(u.name) + '</strong></td>' +
         '<td>' + escapeHtml(u.email) + '</td>' +
-        '<td>' + tGradesHtml + '</td>' +
-        '<td><span class="status-badge status-review" style="font-size:11px; font-weight:600;">' + (u.courses_count || 0) + ' Courses</span></td>' +
+        '<td style="white-space:nowrap;">' + tGradesHtml + '</td>' +
+        '<td style="text-align:center; white-space:nowrap;"><span class="status-badge status-review" style="font-size:11px; font-weight:600; white-space:nowrap;">' + (u.courses_count || 0) + ' Courses</span></td>' +
         '<td>' + tCoursesHtml + '</td>' +
-        '<td>' + statusBadge + '</td>' +
-        '<td>' + formatDate(u.created_at) + '</td>' +
-        '<td>' + actionButtons + '</td>' +
+        '<td style="white-space:nowrap;">' + statusBadge + '</td>' +
+        '<td style="white-space:nowrap; font-size:12.5px;">' + formatDate(u.created_at) + '</td>' +
+        '<td style="text-align:right; white-space:nowrap;">' + actionButtons + '</td>' +
     '</tr>';
 }
 
@@ -375,9 +375,9 @@ function renderAssistantRowHtml(u) {
 
     var asstForHtml = '<span style="font-size:12px; color:var(--text-muted);">Unassigned</span>';
     if (u.assigned_teachers && u.assigned_teachers.length > 0) {
-        asstForHtml = '<div style="display:flex; flex-wrap:wrap; gap:4px;">' +
+        asstForHtml = '<div style="display:inline-flex; flex-direction:row; flex-wrap:wrap; gap:4px; align-items:center;">' +
             u.assigned_teachers.map(function (t) {
-                return '<span class="status-badge status-submitted" style="font-size:11px;">' +
+                return '<span class="status-badge status-submitted" style="font-size:11px; white-space:nowrap; display:inline-flex; align-items:center; gap:3px;">' +
                     '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> ' +
                     escapeHtml(t.name) + '</span>';
             }).join('') + '</div>';
@@ -388,9 +388,9 @@ function renderAssistantRowHtml(u) {
         '<td>' + escapeHtml(u.email) + '</td>' +
         '<td><span class="status-badge ' + roleBadge + '">' + u.role.toUpperCase() + '</span></td>' +
         '<td>' + asstForHtml + '</td>' +
-        '<td>' + statusBadge + '</td>' +
-        '<td>' + formatDate(u.created_at) + '</td>' +
-        '<td>' + actionButtons + '</td>' +
+        '<td style="white-space:nowrap;">' + statusBadge + '</td>' +
+        '<td style="white-space:nowrap; font-size:12.5px;">' + formatDate(u.created_at) + '</td>' +
+        '<td style="text-align:right; white-space:nowrap;">' + actionButtons + '</td>' +
     '</tr>';
 }
 
@@ -403,9 +403,9 @@ function renderAdminRowHtml(u) {
         '<td><strong>' + escapeHtml(u.name) + '</strong></td>' +
         '<td>' + escapeHtml(u.email) + '</td>' +
         '<td><span class="status-badge ' + roleBadge + '">' + u.role.toUpperCase() + '</span></td>' +
-        '<td>' + statusBadge + '</td>' +
-        '<td>' + formatDate(u.created_at) + '</td>' +
-        '<td>' + actionButtons + '</td>' +
+        '<td style="white-space:nowrap;">' + statusBadge + '</td>' +
+        '<td style="white-space:nowrap; font-size:12.5px;">' + formatDate(u.created_at) + '</td>' +
+        '<td style="text-align:right; white-space:nowrap;">' + actionButtons + '</td>' +
     '</tr>';
 }
 
@@ -512,16 +512,16 @@ function renderStudentsHierarchy(students) {
             html += '        </div>';
             html += '      </div>';
             html += '      <div class="hierarchical-table-wrapper">';
-            html += '        <table class="assignments-table">';
+            html += '        <table class="assignments-table student-assignments-table">';
             html += '          <thead>';
             html += '            <tr>';
-            html += '              <th>Student Name</th>';
-            html += '              <th>Email</th>';
-            html += '              <th>Grade Level</th>';
-            html += '              <th>Assigned Courses &amp; Own Teacher</th>';
-            html += '              <th>Status</th>';
-            html += '              <th>Joined</th>';
-            html += '              <th>Action</th>';
+            html += '              <th style="min-width:160px;">Student Name</th>';
+            html += '              <th style="min-width:180px;">Email</th>';
+            html += '              <th style="min-width:200px; white-space:nowrap;">Grade Level</th>';
+            html += '              <th style="min-width:460px;">Assigned Courses &amp; Own Teacher</th>';
+            html += '              <th style="min-width:100px; white-space:nowrap;">Status</th>';
+            html += '              <th style="min-width:130px; white-space:nowrap;">Joined</th>';
+            html += '              <th style="min-width:160px; text-align:right; white-space:nowrap;">Action</th>';
             html += '            </tr>';
             html += '          </thead>';
             html += '          <tbody>';
@@ -598,17 +598,17 @@ function renderTeachersHierarchy(teachers) {
         html += '  </div>';
 
         html += '  <div class="hierarchical-table-wrapper">';
-        html += '    <table class="assignments-table">';
+        html += '    <table class="assignments-table teacher-assignments-table">';
         html += '      <thead>';
         html += '        <tr>';
-        html += '          <th>Teacher Name</th>';
-        html += '          <th>Email</th>';
-        html += '          <th>Grade Level(s)</th>';
-        html += '          <th>Number of Courses</th>';
-        html += '          <th>Courses &amp; Students Assigned</th>';
-        html += '          <th>Status</th>';
-        html += '          <th>Joined</th>';
-        html += '          <th>Action</th>';
+        html += '          <th style="min-width:160px;">Teacher Name</th>';
+        html += '          <th style="min-width:180px;">Email</th>';
+        html += '          <th style="min-width:240px; white-space:nowrap;">Grade Level(s)</th>';
+        html += '          <th style="min-width:140px; text-align:center; white-space:nowrap;">Number of Courses</th>';
+        html += '          <th style="min-width:460px;">Courses &amp; Students Assigned</th>';
+        html += '          <th style="min-width:100px; white-space:nowrap;">Status</th>';
+        html += '          <th style="min-width:130px; white-space:nowrap;">Joined</th>';
+        html += '          <th style="min-width:160px; text-align:right; white-space:nowrap;">Action</th>';
         html += '        </tr>';
         html += '      </thead>';
         html += '      <tbody>';

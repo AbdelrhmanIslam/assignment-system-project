@@ -996,10 +996,35 @@ a#btn-add-user {
    min-width: 1300px !important;
 }
 
-.hierarchical-table-wrapper .assignments-table th:nth-child(4),
-.hierarchical-table-wrapper .assignments-table td:nth-child(4) {
-   min-width: 680px !important;
+.hierarchical-table-wrapper .student-assignments-table th:nth-child(4),
+.hierarchical-table-wrapper .student-assignments-table td:nth-child(4) {
+   min-width: 460px !important;
    width: auto !important;
+}
+
+.hierarchical-table-wrapper .teacher-assignments-table th:nth-child(3),
+.hierarchical-table-wrapper .teacher-assignments-table td:nth-child(3) {
+   min-width: 240px !important;
+   width: auto !important;
+   white-space: nowrap !important;
+}
+
+.hierarchical-table-wrapper .teacher-assignments-table th:nth-child(4),
+.hierarchical-table-wrapper .teacher-assignments-table td:nth-child(4) {
+   min-width: 140px !important;
+   width: 140px !important;
+   text-align: center !important;
+   white-space: nowrap !important;
+}
+
+.hierarchical-table-wrapper .teacher-assignments-table th:nth-child(5),
+.hierarchical-table-wrapper .teacher-assignments-table td:nth-child(5) {
+   min-width: 460px !important;
+   width: auto !important;
+}
+
+.hierarchical-table-wrapper .assignments-table td {
+   vertical-align: middle !important;
 }
 
 /* ==========================================================================
