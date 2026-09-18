@@ -245,6 +245,7 @@
                         <th>Assignment</th>
                         <th>Original Deadline</th>
                         <th>Teacher Lateness Count</th>
+                        <th>Resubmission Policy</th>
                         <th>Exception Status</th>
                         <th style="text-align: right; white-space: nowrap; min-width: 220px;">Action</th>
                     </tr>
@@ -260,35 +261,58 @@
 
 <!-- Reopen confirmation modal -->
 <div id="reopen-modal" class="modal-backdrop">
-    <div class="modal-box">
+    <div class="modal-box" style="max-width: 580px;">
         <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
-            <div style="width: 44px; height: 44px; border-radius: 50%; background: rgba(217, 119, 6, 0.15); display: flex; align-items: center; justify-content: center; color: #d97706;">
+            <div style="width: 44px; height: 44px; border-radius: 50%; background: rgba(217, 119, 6, 0.15); display: flex; align-items: center; justify-content: center; color: #d97706; flex-shrink: 0;">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
             </div>
             <div>
-                <h3 style="margin: 0; font-size: 18px; color: var(--text-primary);">Reopen Assignment for Student</h3>
-                <p style="margin: 2px 0 0; font-size: 13px; color: var(--text-muted);">Grant a 24-hour single-submission late exception</p>
+                <h3 style="margin: 0; font-size: 18px; color: var(--text-primary);">Reopen Assignment(s) for Student</h3>
+                <p style="margin: 2px 0 0; font-size: 13px; color: var(--text-muted);">Grant a 24-hour single-submission late exception window</p>
             </div>
         </div>
 
-        <div style="background: var(--glass-bg, rgba(0,0,0,0.03)); border: 1px solid var(--glass-border, var(--border-color)); border-radius: var(--radius-md, 10px); padding: 14px 16px; margin-bottom: 18px; font-size: 13.5px; line-height: 1.6; color: var(--text-primary);">
-            <div><strong>Student:</strong> <span id="modal-student-name">—</span> (<span id="modal-student-email">—</span>)</div>
-            <div><strong>Assignment:</strong> <span id="modal-assignment-title">—</span></div>
-            <div><strong>Course:</strong> <span id="modal-course-name">—</span></div>
-            <div><strong>Original Deadline:</strong> <span id="modal-original-deadline">—</span></div>
-            <div><strong>Total Missed for You:</strong> <span id="modal-missed-count" class="missed-count-pill" style="margin-left: 4px;">—</span></div>
-            <div style="margin-top: 6px;" id="modal-missed-titles-section">
-                <strong>Missed Assignments for You:</strong>
-                <div id="modal-missed-titles-list" style="margin-top: 5px; display: flex; flex-direction: column; gap: 4px; max-height: 110px; overflow-y: auto;"></div>
+        <!-- Student & Context Info -->
+        <div style="background: var(--glass-bg, rgba(0,0,0,0.03)); border: 1px solid var(--glass-border, var(--border-color)); border-radius: var(--radius-md, 10px); padding: 12px 16px; margin-bottom: 16px; font-size: 13.5px; line-height: 1.6; color: var(--text-primary);">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                <div>
+                    <strong>Student:</strong> <span id="modal-student-name">—</span> (<span id="modal-student-email">—</span>)
+                </div>
+                <div>
+                    <span id="modal-missed-count" class="missed-count-pill">—</span>
+                </div>
             </div>
+            <div style="margin-top: 2px; font-size: 13px; color: var(--text-muted);">
+                <strong>Course Context:</strong> <span id="modal-course-name">—</span>
+            </div>
+        </div>
+
+        <!-- Interactive Assignment Selection (Pick 1st, 2nd, 3rd, or All) -->
+        <div style="background: var(--glass-bg, rgba(0,0,0,0.02)); border: 1px solid var(--border-color); border-radius: var(--radius-md, 10px); padding: 14px 16px; margin-bottom: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 6px;">
+                <strong style="font-size: 13.5px; color: var(--text-primary);">Choose Overdue Assignment(s) to Reopen:</strong>
+                <div style="font-size: 12px; display: flex; gap: 8px;">
+                    <button type="button" id="modal-select-all-btn" style="background: none; border: none; color: var(--primary, #007979); font-weight: 600; cursor: pointer; text-decoration: underline; padding: 0;">Select All Eligible</button>
+                    <span style="color: var(--border-color);">|</span>
+                    <button type="button" id="modal-deselect-all-btn" style="background: none; border: none; color: var(--text-muted); cursor: pointer; text-decoration: underline; padding: 0;">Deselect All</button>
+                </div>
+            </div>
+
+            <div id="modal-assignment-checklist" style="display: flex; flex-direction: column; gap: 8px; max-height: 200px; overflow-y: auto; padding-right: 4px;">
+                <!-- Populated dynamically by lateness.js with interactive checkboxes -->
+            </div>
+
+            <p style="font-size: 11.5px; color: var(--text-muted); margin: 8px 0 0; line-height: 1.4;">
+                Select any combination of missed assignments (first only, second only, third only, or all of them). Reopening is only available for assignments where resubmission was permitted during posting.
+            </p>
         </div>
 
         <div class="modal-constraints-box">
             <strong>Exception Constraints:</strong>
             <ul style="margin: 6px 0 0 18px; padding: 0;">
-                <li>The student will receive a <strong>strict 24-hour window</strong> starting immediately.</li>
-                <li>Valid for a <strong>single submission attempt (1 try)</strong>.</li>
-                <li>The submission will be recorded and marked as <strong>Late</strong> during grading.</li>
+                <li>The student will receive a <strong>strict 24-hour window</strong> starting immediately for each selected assignment.</li>
+                <li>Valid for a <strong>single submission attempt (1 try)</strong> per reopened assignment.</li>
+                <li>Submissions will be recorded and marked as <strong>Late</strong> during grading.</li>
                 <li><strong>Automatic notifications</strong> will be sent to the Student, Teacher, and Course Assistants.</li>
             </ul>
         </div>
@@ -297,7 +321,7 @@
             <button type="button" id="modal-cancel-btn" class="modal-cancel-btn">
                 Cancel
             </button>
-            <button type="button" id="modal-confirm-btn" class="reopen-btn" style="padding: 9px 20px; font-size: 13px;">
+            <button type="button" id="modal-confirm-btn" class="reopen-btn" style="padding: 9px 22px; font-size: 13px;">
                 Confirm &amp; Reopen for 24h
             </button>
         </div>

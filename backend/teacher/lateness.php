@@ -110,37 +110,36 @@ if (isPost()) {
             exit;
         }
 
-        $assignmentId = isset($_POST['assignment_id']) ? (int) $_POST['assignment_id'] : 0;
         $studentId = isset($_POST['student_id']) ? (int) $_POST['student_id'] : 0;
 
-        if ($assignmentId <= 0 || $studentId <= 0) {
-            http_response_code(400);
-            echo json_encode(['success' => false, 'message' => 'Invalid assignment or student identifier.']);
-            exit;
+        // Accept multiple assignment IDs (array, JSON, or comma-separated) or single assignment_id
+        $rawAssignmentIds = [];
+        if (isset($_POST['assignment_ids'])) {
+            if (is_array($_POST['assignment_ids'])) {
+                $rawAssignmentIds = $_POST['assignment_ids'];
+            } else {
+                $decoded = json_decode($_POST['assignment_ids'], true);
+                if (is_array($decoded)) {
+                    $rawAssignmentIds = $decoded;
+                } else {
+                    $rawAssignmentIds = explode(',', (string) $_POST['assignment_ids']);
+                }
+            }
+        } elseif (isset($_POST['assignment_id'])) {
+            $rawAssignmentIds = [$_POST['assignment_id']];
         }
 
-        // verify assignment belongs to this teacher and deadline is past
-        $assignSql = "SELECT a.id, a.title, a.deadline, a.allow_resubmission, a.course_id, c.name AS course_name, c.teacher_id
-                      FROM assignments a
-                      INNER JOIN courses c ON c.id = a.course_id
-                      WHERE a.id = $assignmentId AND c.teacher_id = $teacherId AND a.is_active = 1
-                      LIMIT 1";
-        $assignRes = mysqli_query($conn, $assignSql);
-        $assignment = mysqli_fetch_assoc($assignRes);
-
-        if (!$assignment) {
-            http_response_code(400);
-            echo json_encode(['success' => false, 'message' => 'Assignment not found or does not belong to your courses.']);
-            exit;
+        $assignmentIds = [];
+        foreach ($rawAssignmentIds as $aid) {
+            $aid = (int) trim($aid);
+            if ($aid > 0 && !in_array($aid, $assignmentIds)) {
+                $assignmentIds[] = $aid;
+            }
         }
 
-        // Policy check: if resubmission was disabled during posting, reopening is strictly forbidden!
-        if ((int) $assignment['allow_resubmission'] === 0) {
+        if (empty($assignmentIds) || $studentId <= 0) {
             http_response_code(400);
-            echo json_encode([
-                'success' => false,
-                'message' => 'Resubmission is not permitted for this assignment as per its posting policy. Late reopening cannot be granted.'
-            ]);
+            echo json_encode(['success' => false, 'message' => 'Please select at least one assignment to reopen.']);
             exit;
         }
 
@@ -159,82 +158,124 @@ if (isPost()) {
             exit;
         }
 
-        // calculate 24-hour expiration window
         $grantedAt = date('Y-m-d H:i:s');
         $expiresAt = date('Y-m-d H:i:s', time() + (24 * 3600));
         $formattedExpires = date('M d, Y h:i A', strtotime($expiresAt));
 
-        // expire any existing active exception for this student & assignment
-        mysqli_query($conn, "UPDATE assignment_exceptions 
-                             SET status = 'expired' 
-                             WHERE assignment_id = $assignmentId AND student_id = $studentId AND status = 'active'");
+        $reopenedList = [];
+        $skippedList = [];
 
-        // insert new 24-hour exception record
-        $insExcSql = "INSERT INTO assignment_exceptions (
-            assignment_id,
-            student_id,
-            teacher_id,
-            granted_by,
-            granted_at,
-            expires_at,
-            max_attempts,
-            status,
-            notes
-        ) VALUES (
-            $assignmentId,
-            $studentId,
-            $teacherId,
-            $teacherId,
-            '$grantedAt',
-            '$expiresAt',
-            1,
-            'active',
-            'Teacher granted 24-hour late submission exception'
-        )";
+        foreach ($assignmentIds as $assignId) {
+            // verify assignment belongs to this teacher and deadline is past
+            $assignSql = "SELECT a.id, a.title, a.deadline, a.allow_resubmission, a.course_id, c.name AS course_name, c.teacher_id
+                          FROM assignments a
+                          INNER JOIN courses c ON c.id = a.course_id
+                          WHERE a.id = $assignId AND c.teacher_id = $teacherId AND a.is_active = 1
+                          LIMIT 1";
+            $assignRes = mysqli_query($conn, $assignSql);
+            $assignment = mysqli_fetch_assoc($assignRes);
 
-        if (mysqli_query($conn, $insExcSql)) {
-            $exceptionId = mysqli_insert_id($conn);
-            $assignTitle = mysqli_real_escape_string($conn, $assignment['title']);
-            $studName = mysqli_real_escape_string($conn, $student['name']);
-            $tName = mysqli_real_escape_string($conn, $teacherName);
+            if (!$assignment) {
+                $skippedList[] = "Assignment #{$assignId} not found or does not belong to your courses.";
+                continue;
+            }
 
-            // 1. Notify Student
-            $notifTitleStud = mysqli_real_escape_string($conn, 'Assignment Reopened (24h Exception)');
-            $notifMsgStud = mysqli_real_escape_string($conn, "Teacher {$tName} has reopened assignment '{$assignTitle}' for you with a 24-hour window. You have 1 attempt to submit before {$formattedExpires}. Submission will be marked as Late.");
-            mysqli_query($conn, "INSERT INTO notifications (user_id, title, message, type, reference_id, is_read, created_at)
-                                 VALUES ($studentId, '$notifTitleStud', '$notifMsgStud', 'assignment', $assignmentId, 0, NOW())");
+            // Policy check: if resubmission was disabled during posting, reopening is strictly forbidden!
+            if ((int) $assignment['allow_resubmission'] === 0) {
+                $skippedList[] = "'{$assignment['title']}': Resubmission not permitted by policy.";
+                continue;
+            }
 
-            // 2. Notify Teacher
-            $notifTitleTeach = mysqli_real_escape_string($conn, '24h Late Exception Reopened');
-            $notifMsgTeach = mysqli_real_escape_string($conn, "You reopened assignment '{$assignTitle}' for student {$studName}. Valid for a single submission within 24 hours (until {$formattedExpires}).");
-            mysqli_query($conn, "INSERT INTO notifications (user_id, title, message, type, reference_id, is_read, created_at)
-                                 VALUES ($teacherId, '$notifTitleTeach', '$notifMsgTeach', 'exception', $exceptionId, 0, NOW())");
+            // expire any existing active exception for this student & assignment
+            mysqli_query($conn, "UPDATE assignment_exceptions 
+                                 SET status = 'expired' 
+                                 WHERE assignment_id = $assignId AND student_id = $studentId AND status = 'active'");
 
-            // 3. Notify Assistants of Teacher / Course
-            $courseId = (int) $assignment['course_id'];
-            $asstRes = mysqli_query($conn, "SELECT DISTINCT assistant_id FROM teacher_assistants WHERE teacher_id = $teacherId 
-                                            UNION 
-                                            SELECT DISTINCT assistant_id FROM course_assistants WHERE course_id = $courseId");
-            if ($asstRes) {
-                $notifTitleAsst = mysqli_real_escape_string($conn, 'Late Exception Granted by Teacher');
-                $notifMsgAsst = mysqli_real_escape_string($conn, "Teacher {$tName} reopened assignment '{$assignTitle}' for student {$studName}. Valid for 1 submission within 24 hours (until {$formattedExpires}).");
-                while ($asstRow = mysqli_fetch_assoc($asstRes)) {
-                    $asstId = (int) $asstRow['assistant_id'];
-                    mysqli_query($conn, "INSERT INTO notifications (user_id, title, message, type, reference_id, is_read, created_at)
-                                         VALUES ($asstId, '$notifTitleAsst', '$notifMsgAsst', 'exception', $exceptionId, 0, NOW())");
+            // insert new 24-hour exception record
+            $insExcSql = "INSERT INTO assignment_exceptions (
+                assignment_id,
+                student_id,
+                teacher_id,
+                granted_by,
+                granted_at,
+                expires_at,
+                max_attempts,
+                status,
+                notes
+            ) VALUES (
+                $assignId,
+                $studentId,
+                $teacherId,
+                $teacherId,
+                '$grantedAt',
+                '$expiresAt',
+                1,
+                'active',
+                'Teacher granted 24-hour late submission exception'
+            )";
+
+            if (mysqli_query($conn, $insExcSql)) {
+                $exceptionId = mysqli_insert_id($conn);
+                $assignTitle = mysqli_real_escape_string($conn, $assignment['title']);
+                $studName = mysqli_real_escape_string($conn, $student['name']);
+                $tName = mysqli_real_escape_string($conn, $teacherName);
+
+                // 1. Notify Student
+                $notifTitleStud = mysqli_real_escape_string($conn, 'Assignment Reopened (24h Exception)');
+                $notifMsgStud = mysqli_real_escape_string($conn, "Teacher {$tName} has reopened assignment '{$assignTitle}' for you with a 24-hour window. You have 1 attempt to submit before {$formattedExpires}. Submission will be marked as Late.");
+                mysqli_query($conn, "INSERT INTO notifications (user_id, title, message, type, reference_id, is_read, created_at)
+                                     VALUES ($studentId, '$notifTitleStud', '$notifMsgStud', 'assignment', $assignId, 0, NOW())");
+
+                // 2. Notify Teacher
+                $notifTitleTeach = mysqli_real_escape_string($conn, '24h Late Exception Reopened');
+                $notifMsgTeach = mysqli_real_escape_string($conn, "You reopened assignment '{$assignTitle}' for student {$studName}. Valid for a single submission within 24 hours (until {$formattedExpires}).");
+                mysqli_query($conn, "INSERT INTO notifications (user_id, title, message, type, reference_id, is_read, created_at)
+                                     VALUES ($teacherId, '$notifTitleTeach', '$notifMsgTeach', 'exception', $exceptionId, 0, NOW())");
+
+                // 3. Notify Assistants of Teacher / Course
+                $courseId = (int) $assignment['course_id'];
+                $asstRes = mysqli_query($conn, "SELECT DISTINCT assistant_id FROM teacher_assistants WHERE teacher_id = $teacherId 
+                                                UNION 
+                                                SELECT DISTINCT assistant_id FROM course_assistants WHERE course_id = $courseId");
+                if ($asstRes) {
+                    $notifTitleAsst = mysqli_real_escape_string($conn, 'Late Exception Granted by Teacher');
+                    $notifMsgAsst = mysqli_real_escape_string($conn, "Teacher {$tName} reopened assignment '{$assignTitle}' for student {$studName}. Valid for 1 submission within 24 hours (until {$formattedExpires}).");
+                    while ($asstRow = mysqli_fetch_assoc($asstRes)) {
+                        $asstId = (int) $asstRow['assistant_id'];
+                        mysqli_query($conn, "INSERT INTO notifications (user_id, title, message, type, reference_id, is_read, created_at)
+                                             VALUES ($asstId, '$notifTitleAsst', '$notifMsgAsst', 'exception', $exceptionId, 0, NOW())");
+                    }
                 }
+
+                $reopenedList[] = $assignment['title'];
+            } else {
+                $skippedList[] = "Database error reopening '{$assignment['title']}'.";
+            }
+        }
+
+        if (!empty($reopenedList)) {
+            $msg = (count($reopenedList) === 1)
+                ? "Reopened '{$reopenedList[0]}' for {$student['name']}. Valid for 1 submission until {$formattedExpires}."
+                : "Successfully reopened " . count($reopenedList) . " assignments (" . implode(', ', $reopenedList) . ") for {$student['name']}. Valid for 1 submission each until {$formattedExpires}.";
+
+            if (!empty($skippedList)) {
+                $msg .= " Note: " . implode(' ', $skippedList);
             }
 
             echo json_encode([
                 'success' => true,
-                'message' => "Assignment reopened for {$student['name']}. Valid for 1 submission until {$formattedExpires}.",
-                'exception_id' => $exceptionId,
+                'message' => $msg,
+                'reopened_count' => count($reopenedList),
+                'reopened_titles' => $reopenedList,
                 'expires_at' => $expiresAt,
                 'formatted_expires' => $formattedExpires
             ]);
         } else {
-            http_response_code(500);
-            echo json_encode(['success' => false, 'message' => 'Database error while granting exception.']);
+            http_response_code(400);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Unable to reopen selected assignments: ' . implode(' ', $skippedList)
+            ]);
         }
         exit;
     }
@@ -317,6 +358,24 @@ $missedSql = "SELECT
           AND (a_cnt.grade_level = u.grade_level OR a_cnt.grade_level = '' OR u.grade_level = '')
           AND (SELECT COUNT(*) FROM submissions s_chk WHERE s_chk.assignment_id = a_cnt.id AND s_chk.student_id = u.id AND s_chk.is_late = 0) = 0
     ) AS student_missed_titles,
+
+    -- detailed missed assignments (id, title, allow_resubmission, deadline, course_name)
+    (
+        SELECT GROUP_CONCAT(
+            DISTINCT CONCAT(a_cnt.id, ':::;', a_cnt.title, ':::;', a_cnt.allow_resubmission, ':::;', IFNULL(a_cnt.deadline, ''), ':::;', c_cnt.name)
+            ORDER BY a_cnt.deadline ASC
+            SEPARATOR '|||'
+        )
+        FROM assignments a_cnt
+        INNER JOIN courses c_cnt ON c_cnt.id = a_cnt.course_id AND c_cnt.teacher_id = $teacherId
+        INNER JOIN course_students cs_cnt ON cs_cnt.course_id = c_cnt.id AND cs_cnt.student_id = u.id
+        INNER JOIN student_teachers st_cnt ON st_cnt.student_id = u.id AND st_cnt.teacher_id = $teacherId
+        WHERE a_cnt.is_active = 1
+          AND a_cnt.deadline IS NOT NULL
+          AND a_cnt.deadline < NOW()
+          AND (a_cnt.grade_level = u.grade_level OR a_cnt.grade_level = '' OR u.grade_level = '')
+          AND (SELECT COUNT(*) FROM submissions s_chk WHERE s_chk.assignment_id = a_cnt.id AND s_chk.student_id = u.id AND s_chk.is_late = 0) = 0
+    ) AS student_missed_assignments_raw,
 
     -- latest exception details
     ae.id AS exception_id,
@@ -421,6 +480,47 @@ if ($missedRes) {
         $row['allow_resubmission'] = (int) ($row['allow_resubmission'] ?? 0);
         $titlesStr = trim($row['student_missed_titles'] ?? '');
         $row['student_missed_titles'] = $titlesStr !== '' ? explode('|||', $titlesStr) : [];
+
+        // Parse detailed missed assignments for this student
+        $rawMissed = trim($row['student_missed_assignments_raw'] ?? '');
+        $parsedMissedList = [];
+        if ($rawMissed !== '') {
+            $items = explode('|||', $rawMissed);
+            foreach ($items as $itm) {
+                $parts = explode(':::;', $itm);
+                if (count($parts) >= 5) {
+                    $mId = (int) $parts[0];
+                    $mTitle = $parts[1];
+                    $mResub = (int) $parts[2];
+                    $mDeadline = $parts[3];
+                    $mCourse = $parts[4];
+
+                    // Check if active exception exists for this student + assignment
+                    $mHasActExc = false;
+                    $mTimeLeftHuman = '';
+                    $mExcCheck = mysqli_query($conn, "SELECT id, expires_at FROM assignment_exceptions WHERE assignment_id = $mId AND student_id = {$row['student_id']} AND status = 'active' AND expires_at > NOW() ORDER BY id DESC LIMIT 1");
+                    if ($mExcCheck && ($mExcRow = mysqli_fetch_assoc($mExcCheck))) {
+                        $mHasActExc = true;
+                        $diffSec = max(0, strtotime($mExcRow['expires_at']) - $nowTimestamp);
+                        $hLeft = floor($diffSec / 3600);
+                        $mLeft = floor(($diffSec % 3600) / 60);
+                        $mTimeLeftHuman = "{$hLeft}h {$mLeft}m left";
+                    }
+
+                    $parsedMissedList[] = [
+                        'assignment_id' => $mId,
+                        'assignment_title' => $mTitle,
+                        'course_name' => $mCourse,
+                        'deadline' => $mDeadline,
+                        'allow_resubmission' => $mResub,
+                        'has_active_exception' => $mHasActExc,
+                        'time_left_human' => $mTimeLeftHuman,
+                        'can_reopen' => ($mResub === 1 && !$mHasActExc)
+                    ];
+                }
+            }
+        }
+        $row['student_missed_assignments'] = $parsedMissedList;
 
         $missedList[] = $row;
     }

@@ -233,7 +233,7 @@ The system database name is `assignment_system`. The schema consists of 9 relati
                                │
                                ▼
 ┌─────────────────────────────────────────────────────────────┐
-│ 3. ASSISTANT EVALUATION                                     │
+│ 3. ASSISTANT EVLUATION                                     │
 │    Draft score + constructive feedback + correction file    │
 │    Status transitions to: 'pending_teacher'                 │
 │    (Draft grade kept HIDDEN from student)                   │

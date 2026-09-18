@@ -227,15 +227,9 @@ document.addEventListener('DOMContentLoaded', function () {
             tdCourse.textContent = item.course_name;
             tr.appendChild(tdCourse);
 
-            // 4. Assignment Title & Policy
+            // 4. Assignment Title
             var tdAssign = document.createElement('td');
-            var policyBadge = '';
-            if (parseInt(item.allow_resubmission, 10) === 0) {
-                policyBadge = '<div style="margin-top: 4px;"><span style="font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 4px; background: rgba(239, 68, 68, 0.12); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3);">Policy: Resubmission Disabled</span></div>';
-            } else {
-                policyBadge = '<div style="margin-top: 4px;"><span style="font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 4px; background: rgba(16, 185, 129, 0.12); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3);">Policy: Resubmissions Permitted</span></div>';
-            }
-            tdAssign.innerHTML = '<strong>' + escapeHtml(item.assignment_title) + '</strong>' + policyBadge;
+            tdAssign.innerHTML = '<strong>' + escapeHtml(item.assignment_title) + '</strong>';
             tr.appendChild(tdAssign);
 
             // 5. Original Deadline
@@ -277,7 +271,16 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             tr.appendChild(tdCount);
 
-            // 7. Exception Status
+            // 7. Resubmission Policy Column (Placed directly after Teacher Lateness Count)
+            var tdPolicy = document.createElement('td');
+            if (parseInt(item.allow_resubmission, 10) === 0) {
+                tdPolicy.innerHTML = '<span class="status-badge" style="background: rgba(239, 68, 68, 0.12); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.35); font-size: 11.5px; font-weight: 600; padding: 5px 11px; border-radius: var(--radius-pill); white-space: nowrap; display: inline-flex; align-items: center; gap: 4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg> Policy: Resubmission Disabled</span>';
+            } else {
+                tdPolicy.innerHTML = '<span class="status-badge" style="background: rgba(16, 185, 129, 0.12); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.35); font-size: 11.5px; font-weight: 600; padding: 5px 11px; border-radius: var(--radius-pill); white-space: nowrap; display: inline-flex; align-items: center; gap: 4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> Policy: Resubmissions Permitted</span>';
+            }
+            tr.appendChild(tdPolicy);
+
+            // 8. Exception Status
             var tdStatus = document.createElement('td');
             var statBadge = document.createElement('span');
             statBadge.className = 'status-badge ' + item.exception_status_class;
@@ -286,7 +289,7 @@ document.addEventListener('DOMContentLoaded', function () {
             tdStatus.appendChild(statBadge);
             tr.appendChild(tdStatus);
 
-            // 8. Action Column
+            // 9. Action Column
             var tdAction = document.createElement('td');
             tdAction.style.textAlign = 'right';
             tdAction.style.whiteSpace = 'nowrap';
@@ -341,48 +344,134 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // open reopen confirmation modal
+    // open reopen confirmation modal with granular selection (1st, 2nd, 3rd, or all)
     function openReopenModal(item) {
         activeModalPayload = item;
         if (modalStudentName) modalStudentName.textContent = item.student_name;
         if (modalStudentEmail) modalStudentEmail.textContent = item.student_email;
-        if (modalAssignmentTitle) modalAssignmentTitle.textContent = item.assignment_title;
         if (modalCourseName) modalCourseName.textContent = item.course_name;
-        if (modalOriginalDeadline) {
-            var dDate = new Date(item.deadline);
-            modalOriginalDeadline.textContent = dDate.toLocaleString('en-US', {
-                month: 'short',
-                day: '2-digit',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: true
-            });
-        }
         if (modalMissedCount) {
             var mCount = parseInt(item.student_missed_count, 10) || 1;
             modalMissedCount.textContent = mCount + (mCount === 1 ? ' missed assignment' : ' missed assignments');
         }
 
-        var modalMissedList = document.getElementById('modal-missed-titles-list');
-        if (modalMissedList) {
-            modalMissedList.innerHTML = '';
-            if (item.student_missed_titles && item.student_missed_titles.length > 0) {
-                for (var k = 0; k < item.student_missed_titles.length; k++) {
-                    var tName = item.student_missed_titles[k];
-                    var isSelectedAssign = (tName === item.assignment_title);
-                    var itemDiv = document.createElement('div');
-                    itemDiv.style.cssText = 'font-size: 12px; padding: 3px 8px; border-radius: 4px; ' +
-                        (isSelectedAssign ? 'background: rgba(217, 119, 6, 0.15); color: #d97706; font-weight: 700; border: 1px solid rgba(217, 119, 6, 0.35);' : 'background: rgba(0,0,0,0.04); color: var(--text-primary); border: 1px solid var(--border-color);');
-                    itemDiv.textContent = (isSelectedAssign ? '★ ' : '• ') + tName + (isSelectedAssign ? ' (Reopening This)' : '');
-                    modalMissedList.appendChild(itemDiv);
-                }
-            } else {
-                modalMissedList.innerHTML = '<span style="font-size:12px; color:var(--text-muted);">' + escapeHtml(item.assignment_title) + '</span>';
+        var checklistContainer = document.getElementById('modal-assignment-checklist');
+        if (checklistContainer) {
+            checklistContainer.innerHTML = '';
+            var missedAssignments = item.student_missed_assignments || [];
+            if (missedAssignments.length === 0) {
+                missedAssignments = [{
+                    assignment_id: item.assignment_id,
+                    assignment_title: item.assignment_title,
+                    course_name: item.course_name,
+                    deadline: item.deadline,
+                    allow_resubmission: item.allow_resubmission,
+                    has_active_exception: item.has_active_exception,
+                    time_left_human: item.time_left_human,
+                    can_reopen: (parseInt(item.allow_resubmission, 10) === 1 && !item.has_active_exception)
+                }];
             }
+
+            for (var k = 0; k < missedAssignments.length; k++) {
+                var ma = missedAssignments[k];
+                var isRowAssignment = (parseInt(ma.assignment_id, 10) === parseInt(item.assignment_id, 10));
+                var isEligible = !!ma.can_reopen;
+
+                var itemLabel = document.createElement('label');
+                itemLabel.style.cssText = 'display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border-color); cursor: ' + (isEligible ? 'pointer;' : 'default;') + ' transition: all 0.15s ease; background: ' + (isRowAssignment && isEligible ? 'rgba(217, 119, 6, 0.09); border-color: rgba(217, 119, 6, 0.35);' : 'var(--glass-bg, rgba(0,0,0,0.02));');
+
+                var leftBox = document.createElement('div');
+                leftBox.style.cssText = 'display: flex; align-items: center; gap: 10px;';
+
+                var checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'reopen-assignment-checkbox';
+                checkbox.value = ma.assignment_id;
+                checkbox.disabled = !isEligible;
+                // Check by default if it's the current clicked assignment or if eligible
+                checkbox.checked = isRowAssignment && isEligible;
+                checkbox.dataset.title = ma.assignment_title;
+
+                checkbox.addEventListener('change', function () {
+                    updateModalConfirmButtonState();
+                });
+
+                var textDiv = document.createElement('div');
+                var dText = ma.deadline ? new Date(ma.deadline).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'No deadline';
+                textDiv.innerHTML = '<strong style="font-size: 13px; color: var(--text-primary);">' + (k + 1) + '. ' + escapeHtml(ma.assignment_title) + '</strong>' +
+                                    '<div style="font-size: 11.5px; color: var(--text-muted);">' + escapeHtml(ma.course_name) + ' &bull; Deadline: ' + dText + '</div>';
+
+                leftBox.appendChild(checkbox);
+                leftBox.appendChild(textDiv);
+
+                var rightStatus = document.createElement('div');
+                if (parseInt(ma.allow_resubmission, 10) === 0) {
+                    rightStatus.innerHTML = '<span class="status-badge" style="background: rgba(239, 68, 68, 0.12); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: var(--radius-pill); white-space: nowrap;">Policy: Disabled</span>';
+                } else if (ma.has_active_exception) {
+                    rightStatus.innerHTML = '<span class="status-badge" style="background: rgba(245, 158, 11, 0.16); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.4); font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: var(--radius-pill); white-space: nowrap;">Active (' + (ma.time_left_human || '24h') + ')</span>';
+                } else {
+                    rightStatus.innerHTML = '<span class="status-badge status-open" style="font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: var(--radius-pill); white-space: nowrap;">Eligible for Reopen</span>';
+                }
+
+                itemLabel.appendChild(leftBox);
+                itemLabel.appendChild(rightStatus);
+                checklistContainer.appendChild(itemLabel);
+            }
+
+            updateModalConfirmButtonState();
+        }
+
+        // Setup Select All / Deselect All listeners
+        var selectAllBtn = document.getElementById('modal-select-all-btn');
+        if (selectAllBtn && !selectAllBtn.dataset.hasListener) {
+            selectAllBtn.dataset.hasListener = 'true';
+            selectAllBtn.addEventListener('click', function () {
+                var cbs = document.querySelectorAll('.reopen-assignment-checkbox:not(:disabled)');
+                for (var c = 0; c < cbs.length; c++) {
+                    cbs[c].checked = true;
+                }
+                updateModalConfirmButtonState();
+            });
+        }
+
+        var deselectAllBtn = document.getElementById('modal-deselect-all-btn');
+        if (deselectAllBtn && !deselectAllBtn.dataset.hasListener) {
+            deselectAllBtn.dataset.hasListener = 'true';
+            deselectAllBtn.addEventListener('click', function () {
+                var cbs = document.querySelectorAll('.reopen-assignment-checkbox');
+                for (var c = 0; c < cbs.length; c++) {
+                    cbs[c].checked = false;
+                }
+                updateModalConfirmButtonState();
+            });
         }
 
         if (reopenModal) reopenModal.style.display = 'flex';
+    }
+
+    function updateModalConfirmButtonState() {
+        if (!modalConfirmBtn) return;
+        var checkedCbs = document.querySelectorAll('.reopen-assignment-checkbox:checked');
+        var eligibleCbs = document.querySelectorAll('.reopen-assignment-checkbox:not(:disabled)');
+        var count = checkedCbs.length;
+
+        if (count === 0) {
+            modalConfirmBtn.disabled = true;
+            modalConfirmBtn.textContent = 'Select at least 1 assignment';
+            modalConfirmBtn.style.opacity = '0.6';
+        } else if (count === 1) {
+            modalConfirmBtn.disabled = false;
+            modalConfirmBtn.style.opacity = '1';
+            modalConfirmBtn.textContent = 'Confirm & Reopen 1 Assignment (24h)';
+        } else if (count === eligibleCbs.length && count > 1) {
+            modalConfirmBtn.disabled = false;
+            modalConfirmBtn.style.opacity = '1';
+            modalConfirmBtn.textContent = 'Confirm & Reopen All (' + count + ') Assignments (24h)';
+        } else {
+            modalConfirmBtn.disabled = false;
+            modalConfirmBtn.style.opacity = '1';
+            modalConfirmBtn.textContent = 'Confirm & Reopen ' + count + ' Assignments (24h)';
+        }
     }
 
     function closeReopenModal() {
@@ -402,17 +491,28 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // handle confirm reopen action
+    // handle confirm reopen action (single or multiple chosen assignments)
     if (modalConfirmBtn) {
         modalConfirmBtn.addEventListener('click', function () {
             if (!activeModalPayload) return;
 
+            var checkedCbs = document.querySelectorAll('.reopen-assignment-checkbox:checked');
+            if (checkedCbs.length === 0) {
+                showAlert('error', 'Please select at least one overdue assignment to reopen.');
+                return;
+            }
+
+            var selectedIds = [];
+            for (var s = 0; s < checkedCbs.length; s++) {
+                selectedIds.push(parseInt(checkedCbs[s].value, 10));
+            }
+
             modalConfirmBtn.disabled = true;
-            modalConfirmBtn.textContent = 'Granting Exception...';
+            modalConfirmBtn.textContent = 'Granting Exception(s)...';
 
             var formData = new FormData();
             formData.append('action', 'reopen');
-            formData.append('assignment_id', activeModalPayload.assignment_id);
+            formData.append('assignment_ids', JSON.stringify(selectedIds));
             formData.append('student_id', activeModalPayload.student_id);
             if (currentTeacherId > 0) formData.append('teacher_id', currentTeacherId);
 
@@ -425,22 +525,20 @@ document.addEventListener('DOMContentLoaded', function () {
                 })
                 .then(function (data) {
                     modalConfirmBtn.disabled = false;
-                    modalConfirmBtn.textContent = 'Confirm & Reopen for 24h';
                     closeReopenModal();
 
                     if (data && data.success) {
                         showAlert('success', data.message);
                         loadLatenessData();
                     } else {
-                        showAlert('error', data ? data.message : 'Failed to reopen assignment.');
+                        showAlert('error', data ? data.message : 'Failed to reopen assignment(s).');
                     }
                 })
                 .catch(function (err) {
                     modalConfirmBtn.disabled = false;
-                    modalConfirmBtn.textContent = 'Confirm & Reopen for 24h';
                     closeReopenModal();
                     console.error('Error:', err);
-                    showAlert('error', 'Network error while attempting to reopen assignment.');
+                    showAlert('error', 'Network error while attempting to reopen assignment(s).');
                 });
         });
     }
