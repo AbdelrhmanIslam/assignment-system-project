@@ -558,14 +558,123 @@ $multiAsstRes = mysqli_query($conn, "
 $multiAsstCount = mysqli_num_rows($multiAsstRes);
 record_test('ASSISTANT_RULES', 'No assistant is assigned to more than one teacher', $multiAsstCount === 0, "Violating assistants: $multiAsstCount");
 
-// 6.4 Business Rule: Single teacher can have multiple assistants
-$mRedaAssts = getTeacherAssistants($conn, $mReda);
-record_test('ASSISTANT_RULES', 'A single teacher can have multiple assistants', count($mRedaAssts) >= 2, "Mr. Mohamed Reda has " . count($mRedaAssts) . " assistants: " . implode(', ', array_column($mRedaAssts, 'name')));
+// 6.4 Business Rule: Every single teacher has AT LEAST 2 assistants
+$tAsstCheckRes = mysqli_query($conn, "
+    SELECT u.id, u.name, COUNT(ta.assistant_id) as asst_cnt
+    FROM users u
+    LEFT JOIN teacher_assistants ta ON u.id = ta.teacher_id
+    WHERE u.role = 'teacher' AND u.is_active = 1
+    GROUP BY u.id
+    HAVING asst_cnt < 2
+");
+$teachersUnderTwoAssts = [];
+while ($row = mysqli_fetch_assoc($tAsstCheckRes)) {
+    $teachersUnderTwoAssts[] = "{$row['name']} ({$row['asst_cnt']} assistants)";
+}
+record_test('ASSISTANT_RULES', 'Every teacher has at least two assistants', count($teachersUnderTwoAssts) === 0,
+    count($teachersUnderTwoAssts) > 0 ? "Deficient teachers: " . implode('; ', $teachersUnderTwoAssts) : "All 23 teachers have 2+ assistants");
 
 // 6.5 Schema: UNIQUE KEY uq_assistant_single_teacher exists on teacher_assistants
 $asstIdxRes = mysqli_query($conn, "SHOW INDEX FROM teacher_assistants WHERE Key_name = 'uq_assistant_single_teacher'");
 $hasAsstIdx = ($asstIdxRes && mysqli_num_rows($asstIdxRes) > 0);
 record_test('ASSISTANT_RULES', 'UNIQUE KEY uq_assistant_single_teacher enforced in database', $hasAsstIdx, "Unique key active on assistant_id");
+
+// 6.6 Business Rule: No teacher uses 'Dr.' in their name
+$drTeachersRes = mysqli_query($conn, "SELECT id, name FROM users WHERE role = 'teacher' AND name LIKE '%Dr.%'");
+$drTeachers = [];
+while ($row = mysqli_fetch_assoc($drTeachersRes)) {
+    $drTeachers[] = $row['name'];
+}
+record_test('TEACHER_RULES', 'All teachers use Mr./Ms. titles (No Dr. titles)', count($drTeachers) === 0,
+    count($drTeachers) > 0 ? "Found Dr. titles: " . implode(', ', $drTeachers) : "All 23 teachers cleanly named with Mr./Ms.");
+
+// 6.7 Business Rule: Every teacher has AT LEAST 2 enrolled students
+$tStudentCheckRes = mysqli_query($conn, "
+    SELECT u.id, u.name, COUNT(DISTINCT st.student_id) as student_cnt
+    FROM users u
+    LEFT JOIN student_teachers st ON u.id = st.teacher_id
+    WHERE u.role = 'teacher' AND u.is_active = 1
+    GROUP BY u.id
+    HAVING student_cnt < 2
+");
+$teachersUnderTwoStudents = [];
+while ($row = mysqli_fetch_assoc($tStudentCheckRes)) {
+    $teachersUnderTwoStudents[] = "{$row['name']} ({$row['student_cnt']} students)";
+}
+record_test('STUDENT_RULES', 'Every teacher has at least two students', count($teachersUnderTwoStudents) === 0,
+    count($teachersUnderTwoStudents) > 0 ? "Deficient teachers: " . implode('; ', $teachersUnderTwoStudents) : "All 23 teachers have 2+ students");
+
+// 6.8 Teacher-Created Assignment Isolation: Appears ONLY to their students for that course grade
+$allCoursesRes = mysqli_query($conn, "
+    SELECT c.id, c.name, c.grade_level, c.subject, c.teacher_id, u.name as teacher_name 
+    FROM courses c
+    JOIN users u ON c.teacher_id = u.id
+    WHERE c.is_active = 1
+");
+$assignmentIsolationFailures = [];
+while ($cRow = mysqli_fetch_assoc($allCoursesRes)) {
+    $testCourseId = (int)$cRow['id'];
+    $testGrade = $cRow['grade_level'];
+    $testSubject = $cRow['subject'];
+    $curTId = (int)$cRow['teacher_id'];
+    $teacherName = $cRow['teacher_name'];
+
+    // Get students in this grade level who chose this teacher for this subject
+    $enrolledStudentsRes = mysqli_query($conn, "
+        SELECT st.student_id 
+        FROM student_teachers st
+        JOIN users u ON st.student_id = u.id
+        WHERE st.teacher_id = $curTId AND st.subject = '$testSubject' AND u.grade_level = '$testGrade' AND u.is_active = 1
+    ");
+    $enrolledStudentIds = [];
+    while ($er = mysqli_fetch_assoc($enrolledStudentsRes)) { $enrolledStudentIds[] = (int)$er['student_id']; }
+
+    // Get other students in SAME grade level who did NOT choose this teacher for this subject
+    $otherStudentsRes = mysqli_query($conn, "
+        SELECT DISTINCT u.id 
+        FROM users u
+        WHERE u.role = 'student' AND u.grade_level = '$testGrade' AND u.is_active = 1
+        AND u.id NOT IN (
+            SELECT student_id FROM student_teachers WHERE teacher_id = $curTId AND subject = '$testSubject'
+        )
+    ");
+    $otherStudentIds = [];
+    while ($or = mysqli_fetch_assoc($otherStudentsRes)) { $otherStudentIds[] = (int)$or['id']; }
+
+    // Verify enrolled students are in course_students
+    foreach ($enrolledStudentIds as $esId) {
+        $csRes = mysqli_query($conn, "SELECT id FROM course_students WHERE course_id = $testCourseId AND student_id = $esId");
+        if (!$csRes || mysqli_num_rows($csRes) === 0) {
+            $assignmentIsolationFailures[] = "Student $esId not enrolled in $teacherName's course $testCourseId ($testGrade)";
+        }
+    }
+    // Verify other students in same grade are NOT in course_students
+    foreach ($otherStudentIds as $osId) {
+        $csOtherRes = mysqli_query($conn, "SELECT id FROM course_students WHERE course_id = $testCourseId AND student_id = $osId");
+        if ($csOtherRes && mysqli_num_rows($csOtherRes) > 0) {
+            $assignmentIsolationFailures[] = "Other Student $osId leaked into $teacherName's course $testCourseId ($testGrade)";
+        }
+    }
+}
+record_test('TEACHER_ISOLATION', 'Teacher-created assignments appear ONLY to their students across all 39 courses', 
+    count($assignmentIsolationFailures) === 0,
+    count($assignmentIsolationFailures) > 0 ? implode('; ', array_slice($assignmentIsolationFailures, 0, 3)) : "Strict isolation verified across all 39 courses for all 23 teachers");
+
+
+// 6.9 Course Naming: No repeated teacher name in course titles
+$dupCourseNameRes = mysqli_query($conn, "
+    SELECT c.id, c.name, u.name as teacher_name
+    FROM courses c
+    JOIN users u ON c.teacher_id = u.id
+    WHERE c.name LIKE CONCAT('%', u.name, '%')
+");
+$dupCourseNames = [];
+while ($row = mysqli_fetch_assoc($dupCourseNameRes)) {
+    $dupCourseNames[] = "Course {$row['id']}: {$row['name']}";
+}
+record_test('COURSE_NAMING', 'No course name contains repeated teacher name', count($dupCourseNames) === 0,
+    count($dupCourseNames) > 0 ? "Repeated names found: " . implode(', ', $dupCourseNames) : "All 39 course names are clean (e.g. 'English (1st Prep)')");
+
 
 
 // =================================================================
@@ -674,7 +783,7 @@ while ($row = mysqli_fetch_assoc($asstRes)) {
     $asstLinks[] = $row;
     $distinctAssts[$row['assistant_id']] = true;
 }
-record_test('ADMIN_USERS', 'All 7 assistants correctly linked to lead teacher(s)', count($distinctAssts) === 7, "Found " . count($distinctAssts) . " distinct assistants across " . count($asstLinks) . " links");
+record_test('ADMIN_USERS', 'All 46 assistants correctly linked to lead teacher(s)', count($distinctAssts) === 46, "Found " . count($distinctAssts) . " distinct assistants across " . count($asstLinks) . " links");
 
 
 // =================================================================

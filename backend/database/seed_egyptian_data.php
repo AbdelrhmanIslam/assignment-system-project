@@ -1,42 +1,41 @@
 <?php
 /**
- * Database Seeder: Egyptian Educational Model
+ * Realistic Egyptian Educational System Database Seeder
  * 
- * - Preserves Admin Account (admin@test.com)
- * - 4 Supported Grade Levels:
- *     1. First Year of Middle School (1st Preparatory)
- *     2. Second Year of Middle School (2nd Preparatory)
- *     3. Third Year of Middle School (3rd Preparatory)
- *     4. First Year of High School (1st Secondary)
- * - Preparatory Subjects (5): Arabic, English, Mathematics, Science, Social Studies
- * - Secondary Subjects (6): Arabic, First Foreign Language, History, Mathematics, Integrated Sciences, Philosophy & Logic
- * - Teachers with single subject and single-stage grade spans (all permutations)
- * - Overlapping teachers per grade and subject
- * - Assistants, Students, Courses, Assignments, Submissions, Grades
+ * Rules Enforced:
+ * 1. Preparatory Stage (1st, 2nd, 3rd Prep):
+ *    - Exactly 5 Subjects: Arabic, English, Mathematics, Science, Social Studies.
+ *    - All 7 grade combination subsets populated.
+ *    - Multiple overlapping teachers per subject & grade.
+ * 2. Secondary Stage (1st Secondary):
+ *    - Exactly 6 Subjects: Arabic, First Foreign Language, History, Mathematics, Integrated Sciences, Philosophy & Logic.
+ * 3. Strict Educational Stage Separation (No teacher crosses between Prep and Sec).
+ * 4. Teachers do not use 'Dr.' in their names (teachers, not doctors).
+ * 5. Every teacher has at least TWO teaching assistants assigned.
+ * 6. Assistant Rule: 1 Assistant is assigned to exactly 1 Lead Teacher. 1 Teacher has multiple Assistants.
+ * 7. Every teacher has at least TWO enrolled students.
+ * 8. Course names do NOT append teacher names (e.g. 'English (1st Prep)' instead of 'English (1st Prep) - Mr. Tarek Shawky').
  */
 
-require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/functions.php';
 
-echo "=== Starting Egyptian Educational Model Dataset Seeding ===\n\n";
+echo "=== Starting Egyptian Educational System Seeder ===\n";
 
-// Disable foreign key checks for clean reseeding
+// Disable foreign key checks for clean truncated rebuild
 mysqli_query($conn, "SET FOREIGN_KEY_CHECKS = 0");
 
-// Fetch existing Admin ID and details so they are preserved
-$adminRes = mysqli_query($conn, "SELECT id, name, email, password, role FROM users WHERE role = 'admin' LIMIT 1");
+// Preserve Admin account if exists
+$adminRes = mysqli_query($conn, "SELECT id, name, email, password FROM users WHERE role = 'admin' LIMIT 1");
 $adminUser = null;
-if ($adminRes && $row = mysqli_fetch_assoc($adminRes)) {
-    $adminUser = $row;
-    echo "Preserving Admin Account: {$adminUser['email']} (ID: {$adminUser['id']})\n";
+if ($adminRes && mysqli_num_rows($adminRes) > 0) {
+    $adminUser = mysqli_fetch_assoc($adminRes);
+    echo "Preserving Existing Admin Account: {$adminUser['email']} (ID: {$adminUser['id']})\n";
 } else {
-    // If no admin, default
     $adminUser = [
         'name' => 'System Administrator',
         'email' => 'admin@test.com',
-        'password' => password_hash('Admin@123456', PASSWORD_DEFAULT),
-        'role' => 'admin'
+        'password' => password_hash('Admin@123456', PASSWORD_DEFAULT)
     ];
     echo "Creating Default Admin Account: admin@test.com\n";
 }
@@ -86,11 +85,11 @@ $G_3P = 'Third Year of Middle School';
 $G_1S = 'First Year of High School';
 
 // ----------------------------------------------------
-// 1. CREATE PREPARATORY TEACHERS
+// 1. CREATE PREPARATORY TEACHERS (17 Teachers)
 // ----------------------------------------------------
-// All 5 subjects with various grade span combinations & overlapping teachers
+// All 5 subjects with various grade span combinations & overlapping teachers (No "Dr." titles)
 $prepTeachersData = [
-    // Arabic (Overlapping across combinations)
+    // Arabic (5 overlapping teachers)
     [
         'name' => 'Mr. Mohamed Reda',
         'email' => 'mohamed.reda@school.eg',
@@ -122,7 +121,7 @@ $prepTeachersData = [
         'grades' => [$G_3P] // 3rd Prep only
     ],
 
-    // English
+    // English (3 overlapping teachers)
     [
         'name' => 'Mr. Tarek Shawky',
         'email' => 'tarek.shawky@school.eg',
@@ -142,7 +141,7 @@ $prepTeachersData = [
         'grades' => [$G_2P] // 2nd Prep only
     ],
 
-    // Mathematics
+    // Mathematics (3 overlapping teachers)
     [
         'name' => 'Mr. Hisham Barakat',
         'email' => 'hisham.barakat@school.eg',
@@ -162,9 +161,9 @@ $prepTeachersData = [
         'grades' => [$G_3P] // 3rd Prep only
     ],
 
-    // Science
+    // Science (3 overlapping teachers)
     [
-        'name' => 'Dr. Mostafa Mahmoud',
+        'name' => 'Mr. Mostafa Mahmoud',
         'email' => 'mostafa.mahmoud@school.eg',
         'subject' => 'Science',
         'grades' => [$G_1P, $G_2P, $G_3P] // All 3 Prep
@@ -182,7 +181,7 @@ $prepTeachersData = [
         'grades' => [$G_2P, $G_3P] // 2nd & 3rd Prep
     ],
 
-    // Social Studies
+    // Social Studies (3 overlapping teachers)
     [
         'name' => 'Mr. Gamal Hamdan',
         'email' => 'gamal.hamdan@school.eg',
@@ -204,12 +203,12 @@ $prepTeachersData = [
 ];
 
 // ----------------------------------------------------
-// 2. CREATE 1ST SECONDARY TEACHERS
+// 2. CREATE 1ST SECONDARY TEACHERS (6 Teachers)
 // ----------------------------------------------------
-// All 6 subjects for Secondary stage
+// All 6 subjects for Secondary stage (No "Dr." titles)
 $secTeachersData = [
     [
-        'name' => 'Dr. Zaki Naguib',
+        'name' => 'Mr. Zaki Naguib',
         'email' => 'zaki.naguib@school.eg',
         'subject' => 'Arabic',
         'grades' => [$G_1S]
@@ -221,7 +220,7 @@ $secTeachersData = [
         'grades' => [$G_1S]
     ],
     [
-        'name' => 'Dr. Younan Labib',
+        'name' => 'Mr. Younan Labib',
         'email' => 'younan.labib@school.eg',
         'subject' => 'History',
         'grades' => [$G_1S]
@@ -233,20 +232,20 @@ $secTeachersData = [
         'grades' => [$G_1S]
     ],
     [
-        'name' => 'Dr. Ahmed Zewail',
+        'name' => 'Mr. Ahmed Zewail',
         'email' => 'ahmed.zewail@school.eg',
         'subject' => 'Integrated Sciences',
         'grades' => [$G_1S]
     ],
     [
-        'name' => 'Dr. Mourad Wahba',
+        'name' => 'Mr. Mourad Wahba',
         'email' => 'mourad.wahba@school.eg',
         'subject' => 'Philosophy & Logic',
         'grades' => [$G_1S]
     ]
 ];
 
-$allTeachersMap = []; // keyed by email -> user_id
+$allTeachersMap = []; // keyed by email -> user info
 
 foreach (array_merge($prepTeachersData, $secTeachersData) as $t) {
     $escName = mysqli_real_escape_string($conn, $t['name']);
@@ -259,6 +258,7 @@ foreach (array_merge($prepTeachersData, $secTeachersData) as $t) {
     $allTeachersMap[$t['email']] = [
         'id' => $tId,
         'name' => $t['name'],
+        'email' => $t['email'],
         'subject' => $t['subject'],
         'grades' => $t['grades']
     ];
@@ -270,51 +270,84 @@ foreach (array_merge($prepTeachersData, $secTeachersData) as $t) {
 echo "Created " . count($allTeachersMap) . " Teachers (Preparatory & Secondary).\n";
 
 // ----------------------------------------------------
-// 3. CREATE TEACHING ASSISTANTS
+// 3. CREATE TEACHING ASSISTANTS (2 Assistants per Teacher)
 // ----------------------------------------------------
-// Rule: An assistant is assigned to exactly ONE lead teacher.
-// A lead teacher can have multiple assistants (e.g., Mohamed Reda has 2 assistants).
-$assistantsData = [
-    [
-        'name' => 'Asst. Karim Adel',
-        'email' => 'karim.adel@school.eg',
-        'teacher' => 'mohamed.reda@school.eg'
-    ],
-    [
-        'name' => 'Asst. Nourhan Sherif',
-        'email' => 'nourhan.sherif@school.eg',
-        'teacher' => 'tarek.shawky@school.eg'
-    ],
-    [
-        'name' => 'Asst. Omar Farouk',
-        'email' => 'omar.farouk@school.eg',
-        'teacher' => 'hisham.barakat@school.eg'
-    ],
-    [
-        'name' => 'Asst. Mariam Samir',
-        'email' => 'mariam.samir@school.eg',
-        'teacher' => 'mostafa.mahmoud@school.eg'
-    ],
-    [
-        'name' => 'Asst. Bassem Youssef',
-        'email' => 'bassem.youssef@school.eg',
-        'teacher' => 'gamal.hamdan@school.eg'
-    ],
-    [
-        'name' => 'Asst. Dina Anwar',
-        'email' => 'dina.anwar@school.eg',
-        'teacher' => 'zaki.naguib@school.eg'
-    ],
-    [
-        'name' => 'Asst. Tamer Hosny',
-        'email' => 'tamer.hosny@school.eg',
-        // Also assisting Mohamed Reda (Demonstrating Mohamed Reda having multiple assistants: Karim Adel & Tamer Hosny)
-        'teacher' => 'mohamed.reda@school.eg'
-    ]
+// Rule: Each assistant is assigned to strictly ONE lead teacher.
+// Rule: Every teacher has AT LEAST 2 assistants assigned.
+$assistantsPool = [
+    // Mohamed Reda
+    ['name' => 'Asst. Karim Adel', 'email' => 'karim.adel@school.eg', 'teacher' => 'mohamed.reda@school.eg'],
+    ['name' => 'Asst. Tamer Hosny', 'email' => 'tamer.hosny@school.eg', 'teacher' => 'mohamed.reda@school.eg'],
+    // Ahmed El-Sayed
+    ['name' => 'Asst. Hany Ramzy', 'email' => 'hany.ramzy@school.eg', 'teacher' => 'ahmed.elsayed@school.eg'],
+    ['name' => 'Asst. Salma Rashad', 'email' => 'salma.rashad@school.eg', 'teacher' => 'ahmed.elsayed@school.eg'],
+    // Mahmoud Hassan
+    ['name' => 'Asst. Noha Ezzat', 'email' => 'noha.ezzat@school.eg', 'teacher' => 'mahmoud.hassan@school.eg'],
+    ['name' => 'Asst. Mahmoud Said', 'email' => 'mahmoud.said@school.eg', 'teacher' => 'mahmoud.hassan@school.eg'],
+    // Khaled Mansour
+    ['name' => 'Asst. Hend Rostom', 'email' => 'hend.rostom@school.eg', 'teacher' => 'khaled.mansour@school.eg'],
+    ['name' => 'Asst. Amr Waked', 'email' => 'amr.waked@school.eg', 'teacher' => 'khaled.mansour@school.eg'],
+    // Fatma El-Zahraa
+    ['name' => 'Asst. Rania Farid', 'email' => 'rania.farid@school.eg', 'teacher' => 'fatma.elzahraa@school.eg'],
+    ['name' => 'Asst. Khaled Saleh', 'email' => 'khaled.saleh@school.eg', 'teacher' => 'fatma.elzahraa@school.eg'],
+    // Tarek Shawky
+    ['name' => 'Asst. Nourhan Sherif', 'email' => 'nourhan.sherif@school.eg', 'teacher' => 'tarek.shawky@school.eg'],
+    ['name' => 'Asst. Yasmin Abdelaziz', 'email' => 'yasmin.abdelaziz@school.eg', 'teacher' => 'tarek.shawky@school.eg'],
+    // Mona Abdelaziz
+    ['name' => 'Asst. Mohamed Mamdouh', 'email' => 'mohamed.mamdouh@school.eg', 'teacher' => 'mona.abdelaziz@school.eg'],
+    ['name' => 'Asst. Menna Shalaby', 'email' => 'menna.shalaby@school.eg', 'teacher' => 'mona.abdelaziz@school.eg'],
+    // Yasser Galal
+    ['name' => 'Asst. Ahmed Dawood', 'email' => 'ahmed.dawood@school.eg', 'teacher' => 'yasser.galal@school.eg'],
+    ['name' => 'Asst. Nelly Karim', 'email' => 'nelly.karim@school.eg', 'teacher' => 'yasser.galal@school.eg'],
+    // Hisham Barakat
+    ['name' => 'Asst. Omar Farouk', 'email' => 'omar.farouk@school.eg', 'teacher' => 'hisham.barakat@school.eg'],
+    ['name' => 'Asst. Asser Yassin', 'email' => 'asser.yassin@school.eg', 'teacher' => 'hisham.barakat@school.eg'],
+    // Rania Youssef
+    ['name' => 'Asst. Mona Zaki', 'email' => 'mona.zaki@school.eg', 'teacher' => 'rania.youssef@school.eg'],
+    ['name' => 'Asst. Ahmed Helmy', 'email' => 'ahmed.helmy@school.eg', 'teacher' => 'rania.youssef@school.eg'],
+    // Amr Diab
+    ['name' => 'Asst. Karim Abdelaziz', 'email' => 'karim.abdelaziz@school.eg', 'teacher' => 'amr.diab@school.eg'],
+    ['name' => 'Asst. Mai Ezz Eldin', 'email' => 'mai.ezzeldin@school.eg', 'teacher' => 'amr.diab@school.eg'],
+    // Mostafa Mahmoud
+    ['name' => 'Asst. Mariam Samir', 'email' => 'mariam.samir@school.eg', 'teacher' => 'mostafa.mahmoud@school.eg'],
+    ['name' => 'Asst. Amir Karara', 'email' => 'amir.karara@school.eg', 'teacher' => 'mostafa.mahmoud@school.eg'],
+    // Salma Hayek
+    ['name' => 'Asst. Tara Emad', 'email' => 'tara.emad@school.eg', 'teacher' => 'salma.hayek@school.eg'],
+    ['name' => 'Asst. Ahmed Malek', 'email' => 'ahmed.malek@school.eg', 'teacher' => 'salma.hayek@school.eg'],
+    // Sherif Mounir
+    ['name' => 'Asst. Huda El Mufti', 'email' => 'huda.elmufti@school.eg', 'teacher' => 'sherif.mounir@school.eg'],
+    ['name' => 'Asst. Nour El Nabawy', 'email' => 'nour.elnabawy@school.eg', 'teacher' => 'sherif.mounir@school.eg'],
+    // Gamal Hamdan
+    ['name' => 'Asst. Bassem Youssef', 'email' => 'bassem.youssef@school.eg', 'teacher' => 'gamal.hamdan@school.eg'],
+    ['name' => 'Asst. Salma Abu Deif', 'email' => 'salma.abudeif@school.eg', 'teacher' => 'gamal.hamdan@school.eg'],
+    // Hoda Shaarawy
+    ['name' => 'Asst. Mayan El Sayed', 'email' => 'mayan.elsayed@school.eg', 'teacher' => 'hoda.shaarawy@school.eg'],
+    ['name' => 'Asst. Essam Omar', 'email' => 'essam.omar@school.eg', 'teacher' => 'hoda.shaarawy@school.eg'],
+    // Ezzat El-Alaili
+    ['name' => 'Asst. Taha Dessouky', 'email' => 'taha.dessouky@school.eg', 'teacher' => 'ezzat.elalaili@school.eg'],
+    ['name' => 'Asst. Asmaa Galal', 'email' => 'asmaa.galal@school.eg', 'teacher' => 'ezzat.elalaili@school.eg'],
+    // Zaki Naguib
+    ['name' => 'Asst. Dina Anwar', 'email' => 'dina.anwar@school.eg', 'teacher' => 'zaki.naguib@school.eg'],
+    ['name' => 'Asst. Aya Samaha', 'email' => 'aya.samaha@school.eg', 'teacher' => 'zaki.naguib@school.eg'],
+    // Peter George
+    ['name' => 'Asst. Ahmed Dash', 'email' => 'ahmed.dash@school.eg', 'teacher' => 'peter.george@school.eg'],
+    ['name' => 'Asst. Sarrah Abdelrahman', 'email' => 'sarrah.abdelrahman@school.eg', 'teacher' => 'peter.george@school.eg'],
+    // Younan Labib
+    ['name' => 'Asst. Mohamed Farrag', 'email' => 'mohamed.farrag@school.eg', 'teacher' => 'younan.labib@school.eg'],
+    ['name' => 'Asst. Passant Shawky', 'email' => 'passant.shawky@school.eg', 'teacher' => 'younan.labib@school.eg'],
+    // Magdy Yacoub
+    ['name' => 'Asst. Amir El Masry', 'email' => 'amir.elmasry@school.eg', 'teacher' => 'magdy.yacoub@school.eg'],
+    ['name' => 'Asst. Cynthia Khalifeh', 'email' => 'cynthia.khalifeh@school.eg', 'teacher' => 'magdy.yacoub@school.eg'],
+    // Ahmed Zewail
+    ['name' => 'Asst. Ali Kassem', 'email' => 'ali.kassem@school.eg', 'teacher' => 'ahmed.zewail@school.eg'],
+    ['name' => 'Asst. Malak Koura', 'email' => 'malak.koura@school.eg', 'teacher' => 'ahmed.zewail@school.eg'],
+    // Mourad Wahba
+    ['name' => 'Asst. Adam Elsharkawy', 'email' => 'adam.elsharkawy@school.eg', 'teacher' => 'mourad.wahba@school.eg'],
+    ['name' => 'Asst. Jamila Awad', 'email' => 'jamila.awad@school.eg', 'teacher' => 'mourad.wahba@school.eg']
 ];
 
 $allAssistantsMap = [];
-foreach ($assistantsData as $a) {
+foreach ($assistantsPool as $a) {
     $escName = mysqli_real_escape_string($conn, $a['name']);
     $escEmail = mysqli_real_escape_string($conn, $a['email']);
 
@@ -330,26 +363,26 @@ foreach ($assistantsData as $a) {
     }
 }
 
-echo "Created " . count($allAssistantsMap) . " Teaching Assistants.\n";
+echo "Created " . count($allAssistantsMap) . " Teaching Assistants (2 per teacher).\n";
 
 // ----------------------------------------------------
 // 4. CREATE COURSES & ASSIGN ASSISTANTS
 // ----------------------------------------------------
+// Clean Course Names: e.g. "Arabic (1st Prep)", "English (2nd Prep)" (NO repeated teacher name)
 $coursesList = [];
 
 foreach ($allTeachersMap as $tEmail => $tInfo) {
     $tId = $tInfo['id'];
     $tSubj = $tInfo['subject'];
     
-    // Find an assistant assigned to this teacher
+    // Find all assistants assigned to this teacher
     $asstIds = getTeacherAssistantIds($conn, $tId);
-    $asstId = !empty($asstIds) ? $asstIds[0] : 0;
 
     foreach ($tInfo['grades'] as $gl) {
         $stage = getEducationalStage($gl);
         $gradeShort = ($gl === $G_1P ? '1st Prep' : ($gl === $G_2P ? '2nd Prep' : ($gl === $G_3P ? '3rd Prep' : '1st Sec')));
-        $courseName = "{$tSubj} ({$gradeShort}) - {$tInfo['name']}";
-        $courseDesc = "Comprehensive {$tSubj} curriculum for {$gradeShort} taught by {$tInfo['name']}.";
+        $courseName = "{$tSubj} ({$gradeShort})";
+        $courseDesc = "Comprehensive {$tSubj} curriculum for {$gradeShort}.";
 
         $escName = mysqli_real_escape_string($conn, $courseName);
         $escDesc = mysqli_real_escape_string($conn, $courseDesc);
@@ -360,9 +393,10 @@ foreach ($allTeachersMap as $tEmail => $tInfo) {
                              VALUES ('$escName', '$escDesc', '$escSubj', '$escGrade', $tId, 1, NOW())");
         $courseId = (int)mysqli_insert_id($conn);
 
-        if ($asstId > 0) {
+        // Assign teacher's assistants to course
+        foreach ($asstIds as $aId) {
             mysqli_query($conn, "INSERT INTO course_assistants (course_id, assistant_id, assigned_at)
-                                 VALUES ($courseId, $asstId, NOW())");
+                                 VALUES ($courseId, $aId, NOW())");
         }
 
         $coursesList[] = [
@@ -371,7 +405,7 @@ foreach ($allTeachersMap as $tEmail => $tInfo) {
             'subject' => $tSubj,
             'grade_level' => $gl,
             'teacher_id' => $tId,
-            'assistant_id' => $asstId
+            'assistant_ids' => $asstIds
         ];
     }
 }
@@ -379,85 +413,127 @@ foreach ($allTeachersMap as $tEmail => $tInfo) {
 echo "Created " . count($coursesList) . " Courses with linked lead teachers and teaching assistants.\n";
 
 // ----------------------------------------------------
-// 5. CREATE STUDENTS (Full and Partial selections across grades)
+// 5. CREATE STUDENTS (Ensuring AT LEAST 2 Students per Teacher)
 // ----------------------------------------------------
 $studentsData = [
-    // 1st Prep Students
+    // ----------------- 1st Prep Students -----------------
     [
         'name' => 'Youssef Mohamed',
         'email' => 'youssef.mohamed@student.eg',
         'grade' => $G_1P,
-        // Full 5 subjects: Mohamed Reda (Arabic), Tarek Shawky (English), Hisham Barakat (Math), Mostafa Mahmoud (Science), Gamal Hamdan (Social)
+        // Reda (Arabic), Shawky (English), Barakat (Math), Mahmoud (Science), Hamdan (Social)
         'teachers' => ['mohamed.reda@school.eg', 'tarek.shawky@school.eg', 'hisham.barakat@school.eg', 'mostafa.mahmoud@school.eg', 'gamal.hamdan@school.eg']
     ],
     [
         'name' => 'Nour El-Din',
         'email' => 'nour.eldin@student.eg',
         'grade' => $G_1P,
-        // Partial subjects (3 subjects): Mahmoud Hassan (Arabic), Mona Abdelaziz (English), Salma Hayek (Science)
-        'teachers' => ['mahmoud.hassan@school.eg', 'mona.abdelaziz@school.eg', 'salma.hayek@school.eg']
+        // Hassan (Arabic), Abdelaziz (English), Youssef (Math), Hayek (Science), Shaarawy (Social)
+        'teachers' => ['mahmoud.hassan@school.eg', 'mona.abdelaziz@school.eg', 'rania.youssef@school.eg', 'salma.hayek@school.eg', 'hoda.shaarawy@school.eg']
     ],
     [
         'name' => 'Layla Hassan',
         'email' => 'layla.hassan@student.eg',
         'grade' => $G_1P,
-        // Single subject (1 teacher): Ahmed El-Sayed (Arabic)
-        'teachers' => ['ahmed.elsayed@school.eg']
+        // El-Sayed (Arabic), Shawky (English), Barakat (Math), Mahmoud (Science), Hamdan (Social)
+        'teachers' => ['ahmed.elsayed@school.eg', 'tarek.shawky@school.eg', 'hisham.barakat@school.eg', 'mostafa.mahmoud@school.eg', 'gamal.hamdan@school.eg']
+    ],
+    [
+        'name' => 'Tariq Ali',
+        'email' => 'tariq.ali@student.eg',
+        'grade' => $G_1P,
+        // Hassan (Arabic), Abdelaziz (English), Youssef (Math), Hayek (Science), Shaarawy (Social)
+        'teachers' => ['mahmoud.hassan@school.eg', 'mona.abdelaziz@school.eg', 'rania.youssef@school.eg', 'salma.hayek@school.eg', 'hoda.shaarawy@school.eg']
+    ],
+    [
+        'name' => 'Heba Sayed',
+        'email' => 'heba.sayed@student.eg',
+        'grade' => $G_1P,
+        // El-Sayed (Arabic), Shawky (English), Barakat (Math), Mahmoud (Science), Hamdan (Social)
+        'teachers' => ['ahmed.elsayed@school.eg', 'tarek.shawky@school.eg', 'hisham.barakat@school.eg', 'mostafa.mahmoud@school.eg', 'gamal.hamdan@school.eg']
     ],
 
-    // 2nd Prep Students
+    // ----------------- 2nd Prep Students -----------------
     [
         'name' => 'Ziad Tarek',
         'email' => 'ziad.tarek@student.eg',
         'grade' => $G_2P,
-        // Full 5 subjects: Khaled Mansour (Arabic), Yasser Galal (English), Rania Youssef (Math), Sherif Mounir (Science), Ezzat El-Alaili (Social)
+        // Mansour (Arabic), Galal (English), Youssef (Math), Mounir (Science), El-Alaili (Social)
         'teachers' => ['khaled.mansour@school.eg', 'yasser.galal@school.eg', 'rania.youssef@school.eg', 'sherif.mounir@school.eg', 'ezzat.elalaili@school.eg']
     ],
     [
         'name' => 'Habiba Amr',
         'email' => 'habiba.amr@student.eg',
         'grade' => $G_2P,
-        // Partial (2 subjects): Mohamed Reda (Arabic), Hisham Barakat (Math)
-        'teachers' => ['mohamed.reda@school.eg', 'hisham.barakat@school.eg']
+        // Reda (Arabic), Galal (English), Barakat (Math), Mahmoud (Science), El-Alaili (Social)
+        'teachers' => ['mohamed.reda@school.eg', 'yasser.galal@school.eg', 'hisham.barakat@school.eg', 'mostafa.mahmoud@school.eg', 'ezzat.elalaili@school.eg']
+    ],
+    [
+        'name' => 'Mariam Adel',
+        'email' => 'mariam.adel@student.eg',
+        'grade' => $G_2P,
+        // El-Sayed (Arabic), Shawky (English), Youssef (Math), Mounir (Science), Hamdan (Social)
+        'teachers' => ['ahmed.elsayed@school.eg', 'tarek.shawky@school.eg', 'rania.youssef@school.eg', 'sherif.mounir@school.eg', 'gamal.hamdan@school.eg']
+    ],
+    [
+        'name' => 'Ahmed Khalil',
+        'email' => 'ahmed.khalil@student.eg',
+        'grade' => $G_2P,
+        // Mansour (Arabic), Galal (English), Barakat (Math), Mahmoud (Science), El-Alaili (Social)
+        'teachers' => ['khaled.mansour@school.eg', 'yasser.galal@school.eg', 'hisham.barakat@school.eg', 'mostafa.mahmoud@school.eg', 'ezzat.elalaili@school.eg']
     ],
 
-    // 3rd Prep Students
+    // ----------------- 3rd Prep Students -----------------
     [
         'name' => 'Malak Sherif',
         'email' => 'malak.sherif@student.eg',
         'grade' => $G_3P,
-        // Full 5 subjects: Fatma El-Zahraa (Arabic), Tarek Shawky (English), Amr Diab (Math), Mostafa Mahmoud (Science), Hoda Shaarawy (Social)
+        // El-Zahraa (Arabic), Shawky (English), Diab (Math), Mahmoud (Science), Shaarawy (Social)
         'teachers' => ['fatma.elzahraa@school.eg', 'tarek.shawky@school.eg', 'amr.diab@school.eg', 'mostafa.mahmoud@school.eg', 'hoda.shaarawy@school.eg']
     ],
     [
         'name' => 'Omar Hany',
         'email' => 'omar.hany@student.eg',
         'grade' => $G_3P,
-        // Partial (3 subjects): Khaled Mansour (Arabic), Mona Abdelaziz (English), Sherif Mounir (Science)
-        'teachers' => ['khaled.mansour@school.eg', 'mona.abdelaziz@school.eg', 'sherif.mounir@school.eg']
+        // Mansour (Arabic), Abdelaziz (English), Diab (Math), Mounir (Science), Hamdan (Social)
+        'teachers' => ['khaled.mansour@school.eg', 'mona.abdelaziz@school.eg', 'amr.diab@school.eg', 'sherif.mounir@school.eg', 'gamal.hamdan@school.eg']
+    ],
+    [
+        'name' => 'Farida Mostafa',
+        'email' => 'farida.mostafa@student.eg',
+        'grade' => $G_3P,
+        // El-Zahraa (Arabic), Abdelaziz (English), Diab (Math), Mounir (Science), Shaarawy (Social)
+        'teachers' => ['fatma.elzahraa@school.eg', 'mona.abdelaziz@school.eg', 'amr.diab@school.eg', 'sherif.mounir@school.eg', 'hoda.shaarawy@school.eg']
+    ],
+    [
+        'name' => 'Karim Hassan',
+        'email' => 'karim.hassan@student.eg',
+        'grade' => $G_3P,
+        // Reda (Arabic), Shawky (English), Barakat (Math), Mahmoud (Science), Hamdan (Social)
+        'teachers' => ['mohamed.reda@school.eg', 'tarek.shawky@school.eg', 'hisham.barakat@school.eg', 'mostafa.mahmoud@school.eg', 'gamal.hamdan@school.eg']
     ],
 
-    // 1st Secondary Students
+    // ----------------- 1st Secondary Students -----------------
     [
         'name' => 'Kareem Mostafa',
         'email' => 'kareem.mostafa@student.eg',
         'grade' => $G_1S,
-        // Full 6 subjects: Zaki Naguib (Arabic), Peter George (First Foreign Lang), Younan Labib (History), Magdy Yacoub (Math), Ahmed Zewail (Integrated Sci), Mourad Wahba (Philosophy)
+        // Full 6 subjects: Naguib, George, Labib, Yacoub, Zewail, Wahba
         'teachers' => ['zaki.naguib@school.eg', 'peter.george@school.eg', 'younan.labib@school.eg', 'magdy.yacoub@school.eg', 'ahmed.zewail@school.eg', 'mourad.wahba@school.eg']
     ],
     [
         'name' => 'Salma Ehab',
         'email' => 'salma.ehab@student.eg',
         'grade' => $G_1S,
-        // Partial (3 subjects): Peter George (First Foreign Lang), Magdy Yacoub (Math), Ahmed Zewail (Integrated Sci)
-        'teachers' => ['peter.george@school.eg', 'magdy.yacoub@school.eg', 'ahmed.zewail@school.eg']
+        // Full 6 subjects
+        'teachers' => ['zaki.naguib@school.eg', 'peter.george@school.eg', 'younan.labib@school.eg', 'magdy.yacoub@school.eg', 'ahmed.zewail@school.eg', 'mourad.wahba@school.eg']
     ],
     [
-        'name' => 'Ibrahim Adel',
-        'email' => 'ibrahim.adel@student.eg',
+        'name' => 'Hassan Kamal',
+        'email' => 'hassan.kamal@student.eg',
         'grade' => $G_1S,
-        // Single subject (1 teacher): Zaki Naguib (Arabic)
-        'teachers' => ['zaki.naguib@school.eg']
+        // Full 6 subjects
+        'teachers' => ['zaki.naguib@school.eg', 'peter.george@school.eg', 'younan.labib@school.eg', 'magdy.yacoub@school.eg', 'ahmed.zewail@school.eg', 'mourad.wahba@school.eg']
     ]
 ];
 

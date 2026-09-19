@@ -167,21 +167,40 @@ assignment-system-project/
 
 ## User Roles & Default Test Accounts
 
-The system includes pre-configured and verified accounts across all four system roles:
+The system includes pre-configured and verified accounts across all four system roles (password for seeded test accounts is `Pass@123456`):
 
+### 1. System Administrator
 | Role | Name | Email | Password | Primary Functions |
 | :--- | :--- | :--- | :--- | :--- |
-| **Admin** | System Administrator | `admin@test.com` | `Admin123!` | System configuration, courses, user management & password overrides |
-| **Teacher** | Dr. Ahmed Hassan | `teacher@test.com` | `Teacher123!` | Course leadership, assignment creation, grade review & publication |
-| **Teacher** | abdo islam | `2305152@anu.edu.eg` | `12345678` | Course instruction & assignment management |
-| **Assistant** | Mohamed Assistant | `assistant@test.com` | `Teacher123!` | Evaluation, draft scoring, feedback, correction file attachment |
-| **Assistant** | islam | `islam@test.com` | `Admin123!` | Submission evaluation & draft grading |
-| **Assistant** | solom | `solom@test.com` | `12345678` | Course assistant & submission grading |
-| **Assistant** | islllllam | `isla@test.com` | `12345678` | Course assistant & submission grading |
-| **Student** | Ahmed Hassan | `ahmed@test.com` | `12345678` | Coursework submission, status tracking, viewing published results |
-| **Student** | ahmed | `abdelrhman.islam00@gmail.com` | `12345678` | Coursework submission, late exception testing & feedback |
-| **Student** | Abdelrhman Islam | `abdelrhman.islam04@gimal.com` | `12345678` | Coursework submission & grade review |
-| **Student** | sala | `sala@test.com` | `12345678` | Coursework submission & enrolled classes |
+| **Admin** | System Administrator | `admin@test.com` | `Admin@123456` / `Pass@123456` | System configuration, courses, user management & password overrides |
+
+### 2. Representative Teachers (No Dr. titles; Lead Instructors)
+| Role | Name | Email | Password | Subject & Scope |
+| :--- | :--- | :--- | :--- | :--- |
+| **Teacher** | Mr. Mohamed Reda | `mohamed.reda@school.eg` | `Pass@123456` | Arabic (1st, 2nd, 3rd Prep) |
+| **Teacher** | Mr. Tarek Shawky | `tarek.shawky@school.eg` | `Pass@123456` | English (1st, 2nd, 3rd Prep) |
+| **Teacher** | Mr. Hisham Barakat | `hisham.barakat@school.eg` | `Pass@123456` | Mathematics (1st, 2nd, 3rd Prep) |
+| **Teacher** | Mr. Mostafa Mahmoud | `mostafa.mahmoud@school.eg` | `Pass@123456` | Science (1st, 2nd, 3rd Prep) |
+| **Teacher** | Mr. Zaki Naguib | `zaki.naguib@school.eg` | `Pass@123456` | Arabic (1st Secondary) |
+| **Teacher** | Mr. Ahmed Zewail | `ahmed.zewail@school.eg` | `Pass@123456` | Integrated Sciences (1st Secondary) |
+
+### 3. Representative Teaching Assistants (Assigned to Exactly 1 Lead Teacher)
+| Role | Name | Email | Password | Assigned Lead Teacher |
+| :--- | :--- | :--- | :--- | :--- |
+| **Assistant** | Asst. Karim Adel | `karim.adel@school.eg` | `Pass@123456` | Mr. Mohamed Reda (Arabic) |
+| **Assistant** | Asst. Tamer Hosny | `tamer.hosny@school.eg` | `Pass@123456` | Mr. Mohamed Reda (Arabic) |
+| **Assistant** | Asst. Nourhan Sherif | `nourhan.sherif@school.eg` | `Pass@123456` | Mr. Tarek Shawky (English) |
+| **Assistant** | Asst. Omar Farouk | `omar.farouk@school.eg` | `Pass@123456` | Mr. Hisham Barakat (Mathematics) |
+| **Assistant** | Asst. Dina Anwar | `dina.anwar@school.eg` | `Pass@123456` | Mr. Zaki Naguib (Arabic - Secondary) |
+
+### 4. Representative Students (Grade Levels & Teacher Selections)
+| Role | Name | Email | Password | Grade Level |
+| :--- | :--- | :--- | :--- | :--- |
+| **Student** | Youssef Mohamed | `youssef.mohamed@student.eg` | `Pass@123456` | 1st Prep (Full 5 Subjects) |
+| **Student** | Nour El-Din | `nour.eldin@student.eg` | `Pass@123456` | 1st Prep (Overlapping Prep Teachers) |
+| **Student** | Ziad Tarek | `ziad.tarek@student.eg` | `Pass@123456` | 2nd Prep (Full 5 Subjects) |
+| **Student** | Malak Sherif | `malak.sherif@student.eg` | `Pass@123456` | 3rd Prep (Full 5 Subjects) |
+| **Student** | Kareem Mostafa | `kareem.mostafa@student.eg` | `Pass@123456` | 1st Secondary (Full 6 Subjects) |
 
 > [!NOTE]
 > **Admin Password Overrides**: Administrators can write and set a new password for **any user** or **themselves** at any time via the Admin Users Management portal (`frontend/admin/users.html`) directly inside the **Edit** modal (minimum 8 characters; leave blank to keep current password).

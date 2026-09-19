@@ -211,7 +211,7 @@ INSERT INTO `grades` (`id`, `submission_id`, `assistant_id`, `grade`, `feedback`
 (5, 8, 3, 23.50, 'Great layout, clean typographic hierarchy, and responsive styling. Be sure to use semantic HTML5 elements in the navigation.', NULL, NULL, NULL, '2026-09-02 11:15:00', '2026-09-08 09:28:12'),
 (6, 9, 3, 29.00, 'Outstanding execution plans and proper index creation on foreign keys. Very well structured!', NULL, NULL, NULL, '2026-09-03 14:00:00', '2026-09-08 09:28:12'),
 (8, 12, 3, 20.00, 'done', 'lessons03&04.pdf', 'corr_12_1788863124.pdf', 'uploads/corrections/corr_12_1788863124.pdf', '2026-09-08 13:26:39', '2026-09-08 10:26:39'),
-(11, 15, 3, 89.00, 'Approved by Dr. Ahmed Hassan: Adjusted points after mobile inspection: navigation burger needs improvement.', 'feedback_notes.pdf', 'corr_test.pdf', 'uploads/corrections/corr_test.pdf', '2026-09-09 12:38:21', '2026-09-09 09:38:21');
+(11, 15, 3, 89.00, 'Approved by Mr. Ahmed Hassan: Adjusted points after mobile inspection: navigation burger needs improvement.', 'feedback_notes.pdf', 'corr_test.pdf', 'uploads/corrections/corr_test.pdf', '2026-09-09 12:38:21', '2026-09-09 09:38:21');
 
 -- --------------------------------------------------------
 
@@ -388,7 +388,7 @@ CREATE TABLE `student_teachers` (
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `password`, `role`, `is_active`, `created_at`, `updated_at`) VALUES
-(2, 'Dr. Ahmed Hassan', 'teacher@test.com', '$2y$10$/QywIbq6w04cPjQBT0y4geZNXojXqvX49EQPNpnJoiifY8FS71hJG', 'teacher', 1, '2026-09-07 20:02:01', '2026-09-08 09:28:12'),
+(2, 'Mr. Ahmed Hassan', 'teacher@test.com', '$2y$10$/QywIbq6w04cPjQBT0y4geZNXojXqvX49EQPNpnJoiifY8FS71hJG', 'teacher', 1, '2026-09-07 20:02:01', '2026-09-08 09:28:12'),
 (3, 'Mohamed Assistant', 'assistant@test.com', '$2y$10$87mwx/p7iLc6o3Z8k4sfNuyOmiAAYK3qoz.bQsD7eOl49WI6o6dN2', 'assistant', 1, '2026-09-07 20:02:01', '2026-09-08 09:28:12'),
 (5, 'Abdelrhman Islam', 'abdelrhman.islam04@gimal.com', '$2y$10$TMrqX8q8w8Jfg44Jm4nsvuZ5OIeJZB8f.LCAB84xFQd8nbFn5trhO', 'student', 1, '2026-09-08 08:52:04', '2026-09-08 09:28:12'),
 (6, 'ahmed', 'abdelrhman.islam00@gmail.com', '$2y$10$TMrqX8q8w8Jfg44Jm4nsvuZ5OIeJZB8f.LCAB84xFQd8nbFn5trhO', 'student', 1, '2026-09-08 08:56:58', '2026-09-08 09:28:12'),

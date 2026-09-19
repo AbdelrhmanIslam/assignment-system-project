@@ -86,7 +86,7 @@ if ($decision === 'recheck') {
     // notify assigned assistant(s)
     $asstRes = mysqli_query($conn, "SELECT assistant_id FROM course_assistants WHERE course_id = $courseId");
     $notifTitle = mysqli_real_escape_string($conn, "Recheck Requested");
-    $notifMsg = mysqli_real_escape_string($conn, "Dr. {$teacherName} requested a recheck on {$studentName}'s submission for '{$assignmentTitle}': \"{$comment}\"");
+    $notifMsg = mysqli_real_escape_string($conn, "Teacher {$teacherName} requested a recheck on {$studentName}'s submission for '{$assignmentTitle}': \"{$comment}\"");
 
     if ($asstRes) {
         while ($aRow = mysqli_fetch_assoc($asstRes)) {
