@@ -184,7 +184,7 @@ The system includes pre-configured and verified accounts across all four system 
 | **Student** | sala | `sala@test.com` | `12345678` | Coursework submission & enrolled classes |
 
 > [!NOTE]
-> **Admin Password Overrides**: Administrators can write and set a new password for **any user** or **themselves** at any time via the Admin Users Management portal (`frontend/admin/users.html`) using the dedicated **Change Pass** button or **Change My Password** header button (minimum 8 characters).
+> **Admin Password Overrides**: Administrators can write and set a new password for **any user** or **themselves** at any time via the Admin Users Management portal (`frontend/admin/users.html`) directly inside the **Edit** modal (minimum 8 characters; leave blank to keep current password).
 
 ---
 
