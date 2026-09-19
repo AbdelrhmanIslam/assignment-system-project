@@ -172,7 +172,7 @@ The system includes pre-configured and verified accounts across all four system 
 ### 1. System Administrator
 | Role | Name | Email | Password | Primary Functions |
 | :--- | :--- | :--- | :--- | :--- |
-| **Admin** | System Administrator | `admin@test.com` | `Admin@123456` / `Pass@123456` | System configuration, courses, user management & password overrides |
+| **Admin** | System Administrator | `admin@test.com` | `Admin123!` / `Pass@123456` | System configuration, courses, user management & password overrides |
 
 ### 2. Representative Teachers (No Dr. titles; Lead Instructors)
 | Role | Name | Email | Password | Subject & Scope |
