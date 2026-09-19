@@ -167,14 +167,24 @@ assignment-system-project/
 
 ## User Roles & Default Test Accounts
 
-The database comes pre-seeded with test accounts for all four system roles:
+The system includes pre-configured and verified accounts across all four system roles:
 
-| Role | Email | Password | Primary Functions |
-| :--- | :--- | :--- | :--- |
-| **Admin** | `admin@test.com` | `Admin123!` | System configuration, courses, user management |
-| **Teacher** | `teacher@test.com` | `Teacher123!` | Course leadership, assignment creation, grade review & publication |
-| **Assistant** | `assistant@test.com` | `Teacher123!` | Evaluation, draft scoring, feedback, correction file attachment |
-| **Student** | `ahmed@test.com` | `12345678` | Coursework submission, status tracking, viewing published results |
+| Role | Name | Email | Password | Primary Functions |
+| :--- | :--- | :--- | :--- | :--- |
+| **Admin** | System Administrator | `admin@test.com` | `Admin123!` | System configuration, courses, user management & password overrides |
+| **Teacher** | Dr. Ahmed Hassan | `teacher@test.com` | `Teacher123!` | Course leadership, assignment creation, grade review & publication |
+| **Teacher** | abdo islam | `2305152@anu.edu.eg` | `12345678` | Course instruction & assignment management |
+| **Assistant** | Mohamed Assistant | `assistant@test.com` | `Teacher123!` | Evaluation, draft scoring, feedback, correction file attachment |
+| **Assistant** | islam | `islam@test.com` | `Admin123!` | Submission evaluation & draft grading |
+| **Assistant** | solom | `solom@test.com` | `12345678` | Course assistant & submission grading |
+| **Assistant** | islllllam | `isla@test.com` | `12345678` | Course assistant & submission grading |
+| **Student** | Ahmed Hassan | `ahmed@test.com` | `12345678` | Coursework submission, status tracking, viewing published results |
+| **Student** | ahmed | `abdelrhman.islam00@gmail.com` | `12345678` | Coursework submission, late exception testing & feedback |
+| **Student** | Abdelrhman Islam | `abdelrhman.islam04@gimal.com` | `12345678` | Coursework submission & grade review |
+| **Student** | sala | `sala@test.com` | `12345678` | Coursework submission & enrolled classes |
+
+> [!NOTE]
+> **Admin Password Overrides**: Administrators can write and set a new password for **any user** or **themselves** at any time via the Admin Users Management portal (`frontend/admin/users.html`) using the dedicated **Change Pass** button or **Change My Password** header button (minimum 8 characters).
 
 ---
 
