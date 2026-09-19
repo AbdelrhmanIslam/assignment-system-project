@@ -180,7 +180,7 @@ function renderTeachingAssistants(assistants) {
         var markedBadge = document.createElement('span');
         markedBadge.className = 'status-badge status-graded';
         markedBadge.style.cssText = 'font-size: 11px; padding: 2px 8px;';
-        markedBadge.textContent = 'Marked: ' + (ast.graded_count || 0);
+        markedBadge.textContent = 'Graded: ' + (ast.graded_count || 0);
 
         badgeRow.appendChild(roleBadge);
         badgeRow.appendChild(markedBadge);
@@ -267,15 +267,15 @@ function renderEnrolledStudents(list) {
     list.forEach(function (st) {
         var tr = document.createElement('tr');
         var markedBadge = (st.marked_count > 0)
-            ? '<span class="status-badge status-graded" style="font-size:11px;">' + st.marked_count + ' Marked</span>'
-            : '<span class="status-badge" style="font-size:11px; background:var(--glass-bg-elevated); color:var(--text-muted); border:1px solid var(--glass-border);">0 Marked</span>';
+            ? '<span class="status-badge status-graded" style="font-size:11px;">' + st.marked_count + ' Graded</span>'
+            : '<span class="status-badge" style="font-size:11px; background:var(--glass-bg-elevated); color:var(--text-muted); border:1px solid var(--glass-border);">0 Graded</span>';
 
         tr.innerHTML =
             '<td><strong>' + escapeHtml(st.name) + '</strong></td>' +
             '<td>' + escapeHtml(st.email) + '</td>' +
-            '<td><span class="status-badge status-review" style="font-size:11px;">' + escapeHtml(st.grade_level) + '</span></td>' +
+            '<td><span class="status-badge status-review" style="font-size:11px;">' + escapeHtml(formatGradeLevel(st.grade_level)) + '</span></td>' +
             '<td>' + escapeHtml(st.enrolled_courses) + '</td>' +
-            '<td><span class="status-badge status-submitted" style="font-size:11px;">' + st.submission_count + ' submissions</span></td>' +
+            '<td><span class="status-badge status-submitted" style="font-size:11px;">' + st.submission_count + (st.submission_count === 1 ? ' submission' : ' submissions') + '</span></td>' +
             '<td>' + markedBadge + '</td>' +
             '<td><button type="button" class="action-btn action-review btn-student-history" data-id="' + st.id + '" data-name="' + escapeHtml(st.name) + '" data-email="' + escapeHtml(st.email) + '" data-grade="' + escapeHtml(st.grade_level) + '" style="border:none; cursor:pointer; font-size:12px; padding:5px 10px;">History</button></td>';
         tbody.appendChild(tr);
@@ -309,7 +309,7 @@ function openStudentHistoryModal(studentId, name, email, grade) {
 
     if (nameEl) nameEl.textContent = name;
     if (emailEl) emailEl.textContent = email;
-    if (gradeEl) gradeEl.textContent = grade;
+    if (gradeEl) gradeEl.textContent = formatGradeLevel(grade);
     if (subLink) subLink.href = 'submissions.html?student_id=' + studentId;
 
     var loadingEl = document.getElementById('modal-history-loading');
@@ -355,7 +355,7 @@ function openStudentHistoryModal(studentId, name, email, grade) {
         .catch(function (err) {
             if (loadingEl) loadingEl.style.display = 'none';
             if (emptyEl) {
-                emptyEl.innerHTML = '<p style="color:#ef4444;">Failed to load submissions for this student.</p>';
+                emptyEl.innerHTML = '<p style="color:#ef4444;">Unable to load submissions for this student.</p>';
                 emptyEl.style.display = 'block';
             }
         });
@@ -379,7 +379,7 @@ function renderModalHistoryRows(filter) {
         if (tableCont) tableCont.style.display = 'none';
         if (emptyEl) {
             emptyEl.style.display = 'block';
-            emptyEl.innerHTML = '<h3 style="font-size: 16px; color: #334155; margin-bottom: 6px;">No Matching Submissions</h3><p style="font-size: 13px; color: #64748b; margin: 0;">No assignments found for the selected filter (' + filter + ').</p>';
+            emptyEl.innerHTML = '<h3 style="font-size: 16px; color: #334155; margin-bottom: 6px;">No Matching Submissions</h3><p style="font-size: 13px; color: #64748b; margin: 0;">No submissions match the selected filter.</p>';
         }
         return;
     }
@@ -562,7 +562,7 @@ function openAssistantHistoryModal(assistantId, name, email) {
         .catch(function (err) {
             if (loadingEl) loadingEl.style.display = 'none';
             if (emptyEl) {
-                emptyEl.innerHTML = '<p style="color:#ef4444;">Failed to load marked submissions for this assistant.</p>';
+                emptyEl.innerHTML = '<p style="color:#ef4444;">Unable to load evaluations for this assistant.</p>';
                 emptyEl.style.display = 'block';
             }
         });
@@ -599,7 +599,7 @@ function renderAsstModalHistoryRows(filter) {
         if (tableCont) tableCont.style.display = 'none';
         if (emptyEl) {
             emptyEl.style.display = 'block';
-            emptyEl.innerHTML = '<h3 style="font-size: 16px; color: #334155; margin-bottom: 6px;">No Matching Submissions</h3><p style="font-size: 13px; color: #64748b; margin: 0;">No marked assignments match the selected filter.</p>';
+            emptyEl.innerHTML = '<h3 style="font-size: 16px; color: #334155; margin-bottom: 6px;">No Matching Submissions</h3><p style="font-size: 13px; color: #64748b; margin: 0;">No evaluations match the selected filter.</p>';
         }
         return;
     }
@@ -721,7 +721,11 @@ function setElementText(id, text) {
 function getStatusInfo(status) {
     if (status === 'graded') {
         return { label: 'Graded', className: 'status-graded' };
-    } else if (status === 'under_review' || status === 'pending_teacher' || status === 'recheck') {
+    } else if (status === 'recheck') {
+        return { label: 'Recheck Requested', className: 'status-closed' };
+    } else if (status === 'pending_approval' || status === 'pending_teacher') {
+        return { label: 'Pending Approval', className: 'status-submitted' };
+    } else if (status === 'under_review') {
         return { label: 'Under Review', className: 'status-review' };
     } else {
         return { label: 'Submitted', className: 'status-submitted' };

@@ -88,13 +88,14 @@ function renderAssignedStudents(list) {
 
     list.forEach(function (st) {
         var row = document.createElement('tr');
+        var displayGrade = window.formatGradeLevel ? formatGradeLevel(st.grade_level) : (st.grade_level || '—');
         row.innerHTML =
             '<td><strong>' + escapeHtml(st.name) + '</strong></td>' +
             '<td>' + escapeHtml(st.email) + '</td>' +
-            '<td><span class="status-badge status-review" style="font-size:11px;">' + escapeHtml(st.grade_level) + '</span></td>' +
+            '<td><span class="status-badge status-review" style="font-size:11px;">' + escapeHtml(displayGrade) + '</span></td>' +
             '<td>' + escapeHtml(st.course_names) + '</td>' +
             '<td><span class="status-badge status-submitted" style="font-size:11px;">' + st.submission_count + ' submissions</span></td>' +
-            '<td><button type="button" class="action-btn action-review btn-student-history" data-id="' + st.id + '" data-name="' + escapeHtml(st.name) + '" data-email="' + escapeHtml(st.email) + '" data-grade="' + escapeHtml(st.grade_level) + '" style="border:none; cursor:pointer; font-size:12px; padding:5px 10px;">History</button></td>';
+            '<td><button type="button" class="action-btn action-review btn-student-history" data-id="' + st.id + '" data-name="' + escapeHtml(st.name) + '" data-email="' + escapeHtml(st.email) + '" data-grade="' + escapeHtml(displayGrade) + '" style="border:none; cursor:pointer; font-size:12px; padding:5px 10px;">History</button></td>';
         tbody.appendChild(row);
     });
 
@@ -159,7 +160,7 @@ function openStudentHistoryModal(studentId, name, email, grade) {
                         badgeLabel = 'Recheck';
                     } else if (sub.status === 'pending_teacher') {
                         badgeClass = 'status-review';
-                        badgeLabel = 'Pending Teacher';
+                        badgeLabel = 'Pending Approval';
                     }
 
                     var gradeText = '—';
@@ -174,7 +175,7 @@ function openStudentHistoryModal(studentId, name, email, grade) {
                         '<td><span class="status-badge" style="font-size:11px; background:var(--glass-bg-elevated); color:var(--text-secondary); border:1px solid var(--glass-border);">v' + (sub.version || 1) + '</span></td>' +
                         '<td><span class="status-badge ' + badgeClass + '" style="font-size:11px;">' + badgeLabel + '</span></td>' +
                         '<td>' + gradeText + '</td>' +
-                        '<td><a href="review.html?id=' + sub.id + '" class="action-btn action-review" style="font-size:12px; padding:5px 9px; text-decoration:none; display:inline-block;">Grade & Edit</a></td>';
+                        '<td><a href="review.html?id=' + sub.id + '" class="action-btn action-review" style="font-size:12px; padding:5px 9px; text-decoration:none; display:inline-block;">Review</a></td>';
 
                     tableBody.appendChild(tr);
                 });
@@ -234,28 +235,28 @@ function renderRecentSubmissions(submissions) {
         // status badge configuration
         var badgeClass = 'status-not-submitted';
         var badgeLabel = 'Submitted';
-        var actionLabel = 'Grade Work';
+        var actionLabel = 'Review';
         var actionClass = 'action-submit';
 
         if (sub.status === 'graded') {
             badgeClass = 'status-graded';
             badgeLabel = 'Graded';
-            actionLabel = 'Edit Grade';
+            actionLabel = 'View Result';
             actionClass = 'action-result';
         } else if (sub.status === 'under_review') {
             badgeClass = 'status-review';
             badgeLabel = 'Under Review';
-            actionLabel = 'Continue Review';
+            actionLabel = 'Review';
             actionClass = 'action-review';
         } else if (sub.status === 'recheck') {
             badgeClass = 'status-closed';
             badgeLabel = 'Recheck Requested';
-            actionLabel = 'Recheck & Grade';
+            actionLabel = 'Recheck';
             actionClass = 'action-submit';
         } else if (sub.status === 'pending_teacher') {
             badgeClass = 'status-review';
-            badgeLabel = 'Pending Teacher';
-            actionLabel = 'View Review';
+            badgeLabel = 'Pending Approval';
+            actionLabel = 'View Details';
             actionClass = 'action-view';
         }
 

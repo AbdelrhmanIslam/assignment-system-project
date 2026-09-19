@@ -56,7 +56,7 @@ function updateTeachers(teachers) {
   if (!teachers || teachers.length === 0) {
     var emptyDiv = document.createElement("div");
     emptyDiv.style.cssText = "grid-column: 1 / -1; padding: 1.5rem; background: var(--glass-bg); border: 1px dashed var(--glass-border); border-radius: var(--radius-md); color: var(--text-muted); text-align: center;";
-    emptyDiv.innerHTML = "<strong>No teachers assigned yet.</strong><p style='margin: 4px 0 0; font-size: 0.9rem;'>You will see assignments as soon as you are enrolled with your instructors.</p>";
+    emptyDiv.innerHTML = "<strong>No teachers assigned yet.</strong><p style='margin: 4px 0 0; font-size: 0.9rem;'>Assignments will appear once you are enrolled with your teachers.</p>";
     container.appendChild(emptyDiv);
     return;
   }
@@ -85,7 +85,7 @@ function updateTeachers(teachers) {
     var badge = document.createElement("span");
     badge.className = "status-badge status-graded";
     badge.style.cssText = "font-size: 11px; padding: 2px 8px; margin-top: 6px; display: inline-block;";
-    badge.textContent = "Active Instructor";
+    badge.textContent = "Teacher";
 
     info.appendChild(name);
     info.appendChild(email);
@@ -111,7 +111,7 @@ function updateStudentInfo(student) {
   }
 
   if (studentGradeBadge && student.grade_level) {
-    studentGradeBadge.textContent = student.grade_level;
+    studentGradeBadge.textContent = window.formatGradeLevel ? formatGradeLevel(student.grade_level) : student.grade_level;
     studentGradeBadge.style.display = "inline-block";
   }
 }
@@ -191,7 +191,7 @@ function updateAssignments(assignments) {
     var teacherCell = document.createElement("td");
     var teacherBadge = document.createElement("span");
     teacherBadge.style.cssText = "font-weight: 600; color: var(--text-primary); display: inline-flex; align-items: center; gap: 4px;";
-    teacherBadge.textContent = assignment.teacher_name || "Lead Teacher";
+    teacherBadge.textContent = assignment.teacher_name || "Teacher";
     teacherCell.appendChild(teacherBadge);
 
     var deadlineCell = document.createElement("td");
@@ -249,7 +249,7 @@ function getActionLabel(status) {
     case "not_submitted":
       return "Submit";
     case "deadline_passed":
-      return "View Details";
+      return "View";
     case "graded":
       return "View Result";
     default:
@@ -318,7 +318,7 @@ function getStatusClass(status) {
 
 function formatDate(dateString) {
   if (!dateString) {
-    return "No Deadline";
+    return "No deadline";
   }
   var date = new Date(dateString.replace(" ", "T"));
 
@@ -352,7 +352,7 @@ function showDashboardError(message) {
     empty.style.display = "block";
 
     empty.innerHTML =
-      "<h3>Unable to Load Dashboard</h3>" +
+      "<h3>Unable to load dashboard</h3>" +
       "<p>" +
       escapeHtml(message) +
       "</p>";

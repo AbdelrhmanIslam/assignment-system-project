@@ -333,7 +333,7 @@ function renderStudentRowHtml(u) {
     return '<tr>' +
         '<td style="white-space:nowrap;"><strong>' + escapeHtml(u.name) + '</strong></td>' +
         '<td style="white-space:nowrap;">' + escapeHtml(u.email) + '</td>' +
-        '<td style="white-space:nowrap;"><span class="status-badge status-submitted" style="font-size:11px; white-space:nowrap;">' + escapeHtml(u.grade_level || 'First Year of Middle School') + '</span></td>' +
+        '<td style="white-space:nowrap;"><span class="status-badge status-submitted" style="font-size:11px; white-space:nowrap;">' + escapeHtml(formatGradeLevel(u.grade_level || 'First Year of Middle School')) + '</span></td>' +
         '<td>' + sCoursesHtml + '</td>' +
         '<td style="white-space:nowrap;">' + statusBadge + '</td>' +
         '<td style="white-space:nowrap; font-size:12.5px;"><span style="white-space:nowrap; display:inline-block;">' + formatDate(u.created_at) + '</span></td>' +
@@ -349,7 +349,7 @@ function renderTeacherRowHtml(u) {
     if (u.teacher_grade_levels && u.teacher_grade_levels.length > 0) {
         tGradesHtml = '<div class="teacher-grades-row" style="display:inline-flex !important; flex-direction:row !important; flex-wrap:nowrap !important; align-items:center !important; gap:6px !important; white-space:nowrap !important; max-width:340px !important; overflow-x:auto !important; padding-bottom:3px !important; -webkit-overflow-scrolling:touch !important;">' +
             u.teacher_grade_levels.map(function (gl) {
-                return '<span class="status-badge status-review grade-badge-pill" style="white-space:nowrap !important; flex-shrink:0 !important; display:inline-flex !important; align-items:center !important; font-size:11px !important; font-weight:600 !important; padding:4px 10px !important; border-radius:var(--radius-pill) !important; line-height:1.2 !important;">' + escapeHtml(gl) + '</span>';
+                return '<span class="status-badge status-review grade-badge-pill" style="white-space:nowrap !important; flex-shrink:0 !important; display:inline-flex !important; align-items:center !important; font-size:11px !important; font-weight:600 !important; padding:4px 10px !important; border-radius:var(--radius-pill) !important; line-height:1.2 !important;">' + escapeHtml(formatGradeLevel(gl)) + '</span>';
             }).join('') + '</div>';
     }
 
@@ -437,8 +437,8 @@ function renderStudentsHierarchy(students) {
             if (!teacherMap[unKey]) {
                 teacherMap[unKey] = {
                     id: unKey,
-                    name: 'Unassigned Students (No Teacher Selected)',
-                    email: 'Students not yet assigned to an instructor',
+                    name: 'Unassigned Students',
+                    email: 'Students without an assigned teacher',
                     isUnassigned: true,
                     grades: {}
                 };
@@ -513,7 +513,7 @@ function renderStudentsHierarchy(students) {
             html += '      <div class="grade-subcategory-header" onclick="toggleGradeSubcategory(this, event)" title="Click to collapse / expand this grade level">';
             html += '        <span style="display:flex; align-items:center; gap:8px;">';
             html += '          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>';
-            html += '          <span>' + escapeHtml(gk) + '</span>';
+            html += '          <span>' + escapeHtml(formatGradeLevel(gk)) + '</span>';
             html += '        </span>';
             html += '        <div style="display:flex; align-items:center; gap:6px;">';
             html += '          <span class="sub-count-badge">' + sList.length + ' ' + (sList.length === 1 ? 'Student' : 'Students') + '</span>';
@@ -524,13 +524,13 @@ function renderStudentsHierarchy(students) {
             html += '        <table class="assignments-table student-assignments-table">';
             html += '          <thead>';
             html += '            <tr>';
-            html += '              <th style="min-width:160px;">Student Name</th>';
+            html += '              <th style="min-width:160px;">Student</th>';
             html += '              <th style="min-width:180px;">Email</th>';
             html += '              <th style="min-width:200px; white-space:nowrap;">Grade Level</th>';
-            html += '              <th style="min-width:460px;">Assigned Courses &amp; Own Teacher</th>';
+            html += '              <th style="min-width:460px;">Assigned Courses &amp; Teachers</th>';
             html += '              <th style="min-width:100px; white-space:nowrap;">Status</th>';
             html += '              <th style="min-width:130px; white-space:nowrap;">Joined</th>';
-            html += '              <th style="min-width:160px; text-align:right; white-space:nowrap;">Action</th>';
+            html += '              <th style="min-width:160px; text-align:right; white-space:nowrap;">Actions</th>';
             html += '            </tr>';
             html += '          </thead>';
             html += '          <tbody>';
@@ -596,8 +596,8 @@ function renderTeachersHierarchy(teachers) {
         html += '    <div style="display:flex; align-items:center; gap:10px;">';
         html += '      <span style="display:inline-flex; align-items:center; color:var(--role-student);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg></span>';
         html += '      <div>';
-        html += '        <h3 class="category-title">' + escapeHtml(gk) + '</h3>';
-        html += '        <span class="category-subtitle">Teachers instructing courses in ' + escapeHtml(gk) + '</span>';
+        html += '        <h3 class="category-title">' + escapeHtml(formatGradeLevel(gk)) + '</h3>';
+        html += '        <span class="category-subtitle">Teachers instructing ' + escapeHtml(formatGradeLevel(gk)) + '</span>';
         html += '      </div>';
         html += '    </div>';
         html += '    <div style="display:flex; align-items:center; gap:10px;">';
@@ -605,19 +605,19 @@ function renderTeachersHierarchy(teachers) {
         html += '      <span class="accordion-toggle-icon" title="Toggle Section"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span>';
         html += '    </div>';
         html += '  </div>';
-
+        html += '';
         html += '  <div class="hierarchical-table-wrapper">';
         html += '    <table class="assignments-table teacher-assignments-table">';
         html += '      <thead>';
         html += '        <tr>';
-        html += '          <th style="min-width:160px; white-space:nowrap !important;">Teacher Name</th>';
+        html += '          <th style="min-width:160px; white-space:nowrap !important;">Teacher</th>';
         html += '          <th style="min-width:180px; white-space:nowrap !important;">Email</th>';
-        html += '          <th style="min-width:240px; white-space:nowrap !important;">Grade Level(s)</th>';
-        html += '          <th style="min-width:140px; text-align:center; white-space:nowrap !important;">Number of Courses</th>';
-        html += '          <th style="min-width:460px; white-space:nowrap !important;">Courses &amp; Students Assigned</th>';
+        html += '          <th style="min-width:240px; white-space:nowrap !important;">Grade Levels</th>';
+        html += '          <th style="min-width:140px; text-align:center; white-space:nowrap !important;">Courses</th>';
+        html += '          <th style="min-width:460px; white-space:nowrap !important;">Assigned Courses</th>';
         html += '          <th style="min-width:100px; white-space:nowrap !important;">Status</th>';
         html += '          <th style="min-width:130px; white-space:nowrap !important;">Joined</th>';
-        html += '          <th style="min-width:160px; text-align:right; white-space:nowrap !important;">Action</th>';
+        html += '          <th style="min-width:160px; text-align:right; white-space:nowrap !important;">Actions</th>';
         html += '        </tr>';
         html += '      </thead>';
         html += '      <tbody>';
@@ -649,7 +649,7 @@ function renderAssistantsHierarchy(assistants) {
             if (!teacherMap[unKey]) {
                 teacherMap[unKey] = {
                     id: unKey,
-                    name: 'Unassigned Teaching Assistants',
+                    name: 'Unassigned Assistants',
                     isUnassigned: true,
                     assistants: []
                 };
@@ -685,8 +685,8 @@ function renderAssistantsHierarchy(assistants) {
         var tGroup = teacherMap[tKey];
         var aList = tGroup.assistants;
 
-        var headerTitle = tGroup.isUnassigned ? escapeHtml(tGroup.name) : ('Assistant For: ' + escapeHtml(tGroup.name));
-        var headerSubtitle = tGroup.email ? escapeHtml(tGroup.email) : (tGroup.isUnassigned ? 'Assistants pending teacher assignment' : 'Designated teaching assistant staff');
+        var headerTitle = tGroup.isUnassigned ? escapeHtml(tGroup.name) : ('Assistant to: ' + escapeHtml(tGroup.name));
+        var headerSubtitle = tGroup.email ? escapeHtml(tGroup.email) : (tGroup.isUnassigned ? 'Assistants pending teacher assignment' : 'Teaching assistants for this instructor');
 
         html += '<div class="user-category-card">';
         html += '  <div class="user-category-header ' + (tGroup.isUnassigned ? 'unassigned-cat' : 'assistant-cat') + '" onclick="toggleCategoryCard(this)" title="Click to collapse / expand this assistant category">';
@@ -702,18 +702,18 @@ function renderAssistantsHierarchy(assistants) {
         html += '      <span class="accordion-toggle-icon" title="Toggle Section"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span>';
         html += '    </div>';
         html += '  </div>';
-
+        html += '';
         html += '  <div class="hierarchical-table-wrapper">';
         html += '    <table class="assignments-table">';
         html += '      <thead>';
         html += '        <tr>';
-        html += '          <th>Assistant Name</th>';
+        html += '          <th>Assistant</th>';
         html += '          <th>Email</th>';
         html += '          <th>Role</th>';
-        html += '          <th>Assistant For</th>';
+        html += '          <th>Assigned Teacher</th>';
         html += '          <th>Status</th>';
         html += '          <th>Joined</th>';
-        html += '          <th>Action</th>';
+        html += '          <th>Actions</th>';
         html += '        </tr>';
         html += '      </thead>';
         html += '      <tbody>';
@@ -805,22 +805,22 @@ function renderHierarchicalUsers(users) {
         var combinedHtml = '';
 
         if (students.length > 0) {
-            combinedHtml += '<div class="role-section-divider"><h2><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg> Students (' + students.length + ')</h2><span style="font-size:12px; color:var(--text-muted);">Grouped by Teacher &amp; Academic Grade Level</span></div>';
+            combinedHtml += '<div class="role-section-divider"><h2><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg> Students (' + students.length + ')</h2><span style="font-size:12px; color:var(--text-muted);">Grouped by teacher and grade level</span></div>';
             combinedHtml += renderStudentsHierarchy(students);
         }
 
         if (teachers.length > 0) {
-            combinedHtml += '<div class="role-section-divider"><h2><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg> Teachers (' + teachers.length + ')</h2><span style="font-size:12px; color:var(--text-muted);">Grouped by Instructing Grade Level</span></div>';
+            combinedHtml += '<div class="role-section-divider"><h2><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg> Teachers (' + teachers.length + ')</h2><span style="font-size:12px; color:var(--text-muted);">Grouped by grade level</span></div>';
             combinedHtml += renderTeachersHierarchy(teachers);
         }
 
         if (assistants.length > 0) {
-            combinedHtml += '<div class="role-section-divider"><h2><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg> Teaching Assistants (' + assistants.length + ')</h2><span style="font-size:12px; color:var(--text-muted);">Grouped by Assigned Teacher</span></div>';
+            combinedHtml += '<div class="role-section-divider"><h2><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg> Teaching Assistants (' + assistants.length + ')</h2><span style="font-size:12px; color:var(--text-muted);">Grouped by assigned teacher</span></div>';
             combinedHtml += renderAssistantsHierarchy(assistants);
         }
 
         if (admins.length > 0) {
-            combinedHtml += '<div class="role-section-divider"><h2><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg> Administrators (' + admins.length + ')</h2><span style="font-size:12px; color:var(--text-muted);">System Administrative Accounts</span></div>';
+            combinedHtml += '<div class="role-section-divider"><h2><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg> Administrators (' + admins.length + ')</h2><span style="font-size:12px; color:var(--text-muted);">Administrative accounts</span></div>';
             combinedHtml += renderAdminsHierarchy(admins);
         }
 
@@ -907,7 +907,7 @@ function setupCreateUserForm() {
         .then(function (data) {
             if (submitBtn) {
                 submitBtn.disabled = false;
-                submitBtn.textContent = 'Create User Account';
+                submitBtn.textContent = 'Add User';
             }
 
             if (!data.success) {
@@ -915,14 +915,14 @@ function setupCreateUserForm() {
                 return;
             }
 
-            showAlert('User created successfully!', 'success');
+            showAlert('User created successfully.', 'success');
             form.reset();
             loadUsers();
         })
         .catch(function (err) {
             if (submitBtn) {
                 submitBtn.disabled = false;
-                submitBtn.textContent = 'Create User Account';
+                submitBtn.textContent = 'Add User';
             }
             console.error('Error creating user:', err);
             showAlert('Server error while creating user.', 'error');
@@ -1076,18 +1076,18 @@ function renderModalStudentCourses(user) {
     });
 
     if (studentTeacherIds.length === 0) {
-        addSelect.innerHTML = '<option value="">-- No courses available (Select teachers first) --</option>';
+        addSelect.innerHTML = '<option value="">No courses available (select teachers first)</option>';
         if (btnAdd) btnAdd.disabled = true;
     } else if (eligibleCourses.length === 0) {
-        addSelect.innerHTML = '<option value="">-- All assigned teachers\' courses are enrolled --</option>';
+        addSelect.innerHTML = '<option value="">All available courses enrolled</option>';
         if (btnAdd) btnAdd.disabled = true;
     } else {
         if (btnAdd) btnAdd.disabled = false;
-        addSelect.innerHTML = '<option value="">-- Choose Course to Enroll (' + eligibleCourses.length + ' Available) --</option>';
+        addSelect.innerHTML = '<option value="">Choose course to enroll (' + eligibleCourses.length + ' available)</option>';
         eligibleCourses.forEach(function (ac) {
             var opt = document.createElement('option');
             opt.value = ac.id;
-            opt.textContent = ac.name + ' (' + ac.grade_level + ' - ' + ac.teacher_name + ')';
+            opt.textContent = ac.name + ' (' + formatGradeLevel(ac.grade_level) + ' - ' + ac.teacher_name + ')';
             addSelect.appendChild(opt);
         });
     }
@@ -1133,7 +1133,7 @@ function removeCourseFromStudent(studentId, courseId) {
             });
             return;
         }
-        showAlert('Course removed from student successfully!', 'success');
+        showAlert('Course removed successfully.', 'success');
         loadUsers(function() {
             var updatedU = null;
             for (var i = 0; i < loadedUsers.length; i++) {
@@ -1183,13 +1183,13 @@ function addCourseToStudent(studentId) {
     .then(function (data) {
         if (btn) {
             btn.disabled = false;
-            btn.textContent = '+ Enroll';
+            btn.textContent = 'Enroll';
         }
         if (!data.success) {
             showAlert(data.message || 'Failed to enroll course.', 'error');
             return;
         }
-        showAlert('Course enrolled for student successfully!', 'success');
+        showAlert('Student enrolled in course successfully.', 'success');
         loadUsers(function() {
             var updatedU = null;
             for (var i = 0; i < loadedUsers.length; i++) {
@@ -1206,7 +1206,7 @@ function addCourseToStudent(studentId) {
     .catch(function (err) {
         if (btn) {
             btn.disabled = false;
-            btn.textContent = '+ Enroll';
+            btn.textContent = 'Enroll';
         }
         console.error('Error enrolling course:', err);
         showAlert('Server error while enrolling course.', 'error');
@@ -1248,15 +1248,15 @@ function renderModalTeacherCourses(user) {
     });
 
     if (unassignedCourses.length === 0) {
-        addSelect.innerHTML = '<option value="">-- No unassigned courses available --</option>';
+        addSelect.innerHTML = '<option value="">No unassigned courses available</option>';
         if (btnAdd) btnAdd.disabled = true;
     } else {
         if (btnAdd) btnAdd.disabled = false;
-        addSelect.innerHTML = '<option value="">-- Choose Unassigned Course (' + unassignedCourses.length + ' Available) --</option>';
+        addSelect.innerHTML = '<option value="">Choose unassigned course (' + unassignedCourses.length + ' available)</option>';
         unassignedCourses.forEach(function (ac) {
             var opt = document.createElement('option');
             opt.value = ac.id;
-            opt.textContent = ac.name + ' (' + ac.grade_level + ')';
+            opt.textContent = ac.name + ' (' + formatGradeLevel(ac.grade_level) + ')';
             addSelect.appendChild(opt);
         });
     }
@@ -1309,7 +1309,7 @@ function removeCourseFromTeacher(teacherId, courseId) {
             });
             return;
         }
-        showAlert('Course unassigned from teacher successfully.', 'success');
+        showAlert('Course unassigned successfully.', 'success');
         loadUsers(function() {
             var updatedU = null;
             for (var i = 0; i < loadedUsers.length; i++) {
@@ -1359,13 +1359,13 @@ function addCourseToTeacher(teacherId) {
     .then(function (data) {
         if (btn) {
             btn.disabled = false;
-            btn.textContent = '+ Assign';
+            btn.textContent = 'Assign';
         }
         if (!data.success) {
             showAlert(data.message || 'Failed to assign course.', 'error');
             return;
         }
-        showAlert('Course assigned to teacher successfully!', 'success');
+        showAlert('Course assigned to teacher successfully.', 'success');
         loadUsers(function() {
             var updatedU = null;
             for (var i = 0; i < loadedUsers.length; i++) {
@@ -1382,7 +1382,7 @@ function addCourseToTeacher(teacherId) {
     .catch(function (err) {
         if (btn) {
             btn.disabled = false;
-            btn.textContent = '+ Assign';
+            btn.textContent = 'Assign';
         }
         console.error('Error assigning course:', err);
         showAlert('Server error while assigning course.', 'error');
@@ -1440,7 +1440,7 @@ function setupEditUserForm() {
                 return;
             }
 
-            showAlert('User details updated successfully!', 'success');
+            showAlert('User updated successfully.', 'success');
             closeEditUserModal();
             loadUsers();
         })

@@ -22,12 +22,12 @@
 
     <header class="dashboard-header">
         <div>
-            <h1>All Assignments</h1>
-            <p>View, submit, and track assignments across all your enrolled courses</p>
+            <h1>Assignments</h1>
+            <p>View, submit, and track your course assignments</p>
         </div>
 
         <div class="header-actions">
-            <a href="lateness.html" class="action-btn" style="background: rgba(234, 88, 12, 0.15); color: #c2410c; border: 1px solid rgba(234, 88, 12, 0.4); text-decoration: none; padding: 7px 14px; border-radius: var(--radius-pill); font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">&#9888;&#65039; Missed Submissions &amp; Lateness</a>
+            <a href="lateness.html" class="action-btn" style="background: rgba(234, 88, 12, 0.15); color: #c2410c; border: 1px solid rgba(234, 88, 12, 0.4); text-decoration: none; padding: 7px 14px; border-radius: var(--radius-pill); font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">&#9888;&#65039; Missed &amp; Late Submissions</a>
             <a href="notifications.html" class="view-btn" style="background:#4b5563; text-decoration:none;">Notifications</a>
             <span class="user-role">Student</span>
 
@@ -55,7 +55,7 @@
 
         <div id="empty-state" class="empty-state" style="display: none;">
             <h3>No assignments found</h3>
-            <p>No assignments match your selected filter criteria.</p>
+            <p>No assignments match your current filters.</p>
         </div>
 
         <div id="table-container" class="table-container" style="display: none;">
@@ -69,7 +69,7 @@
                         <th>Deadline</th>
                         <th>Status</th>
                         <th>Grade</th>
-                        <th>Action</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody id="assignments-body">

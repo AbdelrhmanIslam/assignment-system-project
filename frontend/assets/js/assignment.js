@@ -41,15 +41,15 @@ document.addEventListener('DOMContentLoaded', function () {
             setElementText('assignment-title', assignment.title);
             setElementText('course-name', assignment.course_name);
             setElementText('teacher-name', assignment.teacher_name ? assignment.teacher_name : 'Teacher');
-            setElementText('lead-teacher-name', assignment.teacher_name ? assignment.teacher_name : 'Lead Teacher');
+            setElementText('lead-teacher-name', assignment.teacher_name ? assignment.teacher_name : 'Teacher');
             setElementText('max-grade', assignment.max_grade + ' pts');
-            setElementText('target-grade-level', assignment.grade_level || 'First Year of Middle School');
+            setElementText('target-grade-level', window.formatGradeLevel ? formatGradeLevel(assignment.grade_level) : (assignment.grade_level || 'Preparatory'));
             setElementText('description-text', assignment.description);
             setElementText('allowed-extensions', assignment.allowed_extensions);
             setElementText('max-file-size', assignment.max_file_size_mb + ' MB');
 
             // format deadline date
-            var deadlineFormatted = 'No Deadline (Open-ended)';
+            var deadlineFormatted = 'No deadline';
             if (assignment.deadline) {
                 var deadlineDate = new Date(assignment.deadline);
                 deadlineFormatted = deadlineDate.toLocaleString('en-US', {
@@ -71,21 +71,21 @@ document.addEventListener('DOMContentLoaded', function () {
             var policyElem = document.getElementById('allow-resubmission');
             if (policyElem) {
                 if (resubmissionAllowed) {
-                    policyElem.innerHTML = '<span style="color: var(--success, #10b981);">Permitted</span> <small style="display:block; font-size:11.5px; font-weight:normal; color:var(--text-muted); margin-top:2px;">(Multiple attempts &amp; 24h late reopening permitted)</small>';
+                    policyElem.innerHTML = '<span style="color: var(--success, #10b981);">Allowed</span> <small style="display:block; font-size:11.5px; font-weight:normal; color:var(--text-muted); margin-top:2px;">(Multiple attempts and 24h exceptions allowed)</small>';
                 } else {
-                    policyElem.innerHTML = '<span style="color: var(--danger, #ef4444);">Not Permitted</span> <small style="display:block; font-size:11.5px; font-weight:normal; color:var(--text-muted); margin-top:2px;">(Single submission only — Late reopening disabled)</small>';
+                    policyElem.innerHTML = '<span style="color: var(--danger, #ef4444);">Not Allowed</span> <small style="display:block; font-size:11.5px; font-weight:normal; color:var(--text-muted); margin-top:2px;">(Single submission only)</small>';
                 }
             }
 
-            var permittedAttemptsText = '1 Attempt (Single submission)';
+            var permittedAttemptsText = '1 attempt';
             if (resubmissionAllowed) {
-                permittedAttemptsText = (maxAttempts === 0) ? 'Unlimited Attempts' : (maxAttempts + ' Attempts');
+                permittedAttemptsText = (maxAttempts === 0) ? 'Unlimited attempts' : (maxAttempts + (maxAttempts === 1 ? ' attempt' : ' attempts'));
             }
             setElementText('permitted-attempts', permittedAttemptsText);
 
             var attemptsUsedText = attemptsCount + ' of ' + (maxAttempts === 0 ? 'Unlimited' : maxAttempts);
             if (attemptsCount > 0 && maxAttempts > 0 && attemptsCount >= maxAttempts) {
-                attemptsUsedText += ' (Max reached)';
+                attemptsUsedText += ' (Maximum reached)';
             }
             setElementText('attempts-used', attemptsUsedText);
 
@@ -96,19 +96,19 @@ document.addEventListener('DOMContentLoaded', function () {
                     deadlineBadge.className = 'status-badge';
                     deadlineBadge.style.background = '#f59e0b';
                     deadlineBadge.style.color = '#ffffff';
-                    deadlineBadge.textContent = 'Reopened (Late Exception Active)';
+                    deadlineBadge.textContent = 'Reopened (24h Exception Active)';
                     deadlineBadge.style.display = 'inline-block';
                 } else if (data.is_past_deadline) {
                     deadlineBadge.className = 'status-badge status-closed';
-                    deadlineBadge.textContent = 'Deadline Passed (Closed)';
+                    deadlineBadge.textContent = 'Deadline Passed';
                     deadlineBadge.style.display = 'inline-block';
                 } else if (data.has_reached_max_attempts) {
                     deadlineBadge.className = 'status-badge status-closed';
-                    deadlineBadge.textContent = 'Max Attempts Reached (Closed)';
+                    deadlineBadge.textContent = 'Maximum Attempts Reached';
                     deadlineBadge.style.display = 'inline-block';
                 } else if (!assignment.deadline) {
                     deadlineBadge.className = 'status-badge status-open';
-                    deadlineBadge.textContent = 'No Deadline (Open)';
+                    deadlineBadge.textContent = 'No Deadline';
                     deadlineBadge.style.display = 'inline-block';
                 } else {
                     deadlineBadge.className = 'status-badge status-open';
@@ -172,7 +172,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             lateBadge.style.background = '#ea580c';
                             lateBadge.style.color = '#fff';
                             lateBadge.style.marginLeft = '8px';
-                            lateBadge.textContent = 'Submitted Late';
+                            lateBadge.textContent = 'Late';
                             statusBadge.parentNode.insertBefore(lateBadge, statusBadge.nextSibling);
                         }
                     }
@@ -238,23 +238,23 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (submissionNotice) {
                     submissionNotice.style.display = 'block';
                     if (data.is_past_deadline) {
-                        if (submitBtn) submitBtn.textContent = 'Deadline Passed — Submissions Closed';
+                        if (submitBtn) submitBtn.textContent = 'Deadline Passed';
                         submissionNotice.className = 'notice-box';
                         submissionNotice.style.background = 'rgba(239, 68, 68, 0.08)';
                         submissionNotice.style.border = '1px solid rgba(239, 68, 68, 0.3)';
                         submissionNotice.style.color = 'var(--danger, #ef4444)';
                         if (!resubmissionAllowed) {
-                            submissionNotice.innerHTML = '<strong>Submissions Closed &amp; Resubmission Disabled:</strong> The deadline for this assignment has passed (' + deadlineFormatted + '). The teacher has disabled resubmissions for this assignment, so late reopening cannot be granted.';
+                            submissionNotice.innerHTML = '<strong>Submissions Closed:</strong> The deadline has passed (' + deadlineFormatted + '). Resubmissions are not allowed for this assignment.';
                         } else {
-                            submissionNotice.innerHTML = '<strong>Submissions Closed:</strong> The deadline for this assignment has passed (' + deadlineFormatted + '). Late submissions are locked unless your teacher grants a 24-hour reopening exception.';
+                            submissionNotice.innerHTML = '<strong>Submissions Closed:</strong> The deadline has passed (' + deadlineFormatted + '). Late submissions require a 24-hour exception from your teacher.';
                         }
                     } else if (data.has_reached_max_attempts) {
-                        if (submitBtn) submitBtn.textContent = 'Max Tries Reached (' + attemptsCount + '/' + maxAttempts + ') — Closed';
+                        if (submitBtn) submitBtn.textContent = 'Maximum Attempts Reached';
                         submissionNotice.className = 'notice-box';
                         submissionNotice.style.background = 'rgba(245, 158, 11, 0.08)';
                         submissionNotice.style.border = '1px solid rgba(245, 158, 11, 0.3)';
                         submissionNotice.style.color = 'var(--warning, #d97706)';
-                        submissionNotice.innerHTML = '<strong>Max Attempts Reached:</strong> You have used all permitted attempts (' + attemptsCount + ' of ' + maxAttempts + '). Further submissions are locked.';
+                        submissionNotice.innerHTML = '<strong>Maximum Attempts Reached:</strong> You have used all allowed attempts (' + attemptsCount + ' of ' + maxAttempts + '). Further submissions are closed.';
                     }
                 }
             } else {
@@ -278,7 +278,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     if (uploadTitle) uploadTitle.textContent = 'Submit Late Assignment (Reopened)';
                     if (submitBtn) {
-                        submitBtn.textContent = 'Upload & Submit Late Assignment';
+                        submitBtn.textContent = 'Submit Late Assignment';
                         submitBtn.style.background = '#d97706';
                     }
 
@@ -290,14 +290,14 @@ document.addEventListener('DOMContentLoaded', function () {
                         submissionNotice.style.color = '#92400e';
                         var notesSnippet = exc.notes ? ('<div style="margin-top: 6px; font-size: 13px; font-style: italic; color: #78350f;"><strong>Teacher Note:</strong> "' + exc.notes + '"</div>') : '';
                         submissionNotice.innerHTML = '<div style="font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">' +
-                            '<span>&#9888;&#65039; 24-Hour Late Submission Window Granted</span></div>' +
-                            '<div>' + teacherGranted + ' has reopened this assignment specifically for you. You are allowed <strong>1 single attempt</strong> valid until <strong>' + expiresAt + '</strong>. This submission will be formally recorded and flagged as <strong>Late</strong> for your teacher and assistants.</div>' + notesSnippet;
+                            '<span>&#9888;&#65039; 24-Hour Late Submission Window Active</span></div>' +
+                            '<div>' + teacherGranted + ' has reopened this assignment for you. You have <strong>1 attempt</strong> until <strong>' + expiresAt + '</strong>. This submission will be labeled as <strong>Late</strong> during grading.</div>' + notesSnippet;
                     }
                 } else if (submission) {
                     var nextAttempt = attemptsCount + 1;
                     var totalAttemptsLabel = (maxAttempts === 0) ? 'Unlimited' : maxAttempts;
                     if (uploadTitle) uploadTitle.textContent = 'Submit New Version (Attempt ' + nextAttempt + ' of ' + totalAttemptsLabel + ')';
-                    if (submitBtn) submitBtn.textContent = 'Upload & Submit Version ' + nextAttempt;
+                    if (submitBtn) submitBtn.textContent = 'Submit Version ' + nextAttempt;
 
                     if (submissionNotice) {
                         submissionNotice.className = 'notice-box';
@@ -305,11 +305,11 @@ document.addEventListener('DOMContentLoaded', function () {
                         submissionNotice.style.background = 'rgba(0, 121, 121, 0.08)';
                         submissionNotice.style.border = '1px solid rgba(0, 121, 121, 0.25)';
                         submissionNotice.style.color = 'var(--primary, #007979)';
-                        submissionNotice.innerHTML = 'You have used <strong>' + attemptsCount + '</strong> of <strong>' + totalAttemptsLabel + '</strong> allowed attempts. Submitting a new file will replace your previous version.';
+                        submissionNotice.innerHTML = 'You have used <strong>' + attemptsCount + '</strong> of <strong>' + totalAttemptsLabel + '</strong> attempts. Submitting a new file will replace your previous version.';
                     }
                 } else {
                     if (uploadTitle) uploadTitle.textContent = 'Submit Assignment';
-                    if (submitBtn) submitBtn.textContent = 'Upload & Submit';
+                    if (submitBtn) submitBtn.textContent = 'Submit Assignment';
 
                     if (submissionNotice) {
                         submissionNotice.className = 'notice-box';
@@ -318,9 +318,9 @@ document.addEventListener('DOMContentLoaded', function () {
                         submissionNotice.style.border = '1px solid rgba(0, 121, 121, 0.25)';
                         submissionNotice.style.color = 'var(--primary, #007979)';
                         if (maxAttempts === 1) {
-                            submissionNotice.innerHTML = '<strong>Single submission only:</strong> You will only have 1 attempt to submit this assignment.';
+                            submissionNotice.innerHTML = '<strong>Single submission:</strong> You have 1 attempt to submit this assignment.';
                         } else {
-                            submissionNotice.innerHTML = 'You have <strong>' + (maxAttempts === 0 ? 'Unlimited' : maxAttempts) + '</strong> permitted attempts for this assignment.';
+                            submissionNotice.innerHTML = 'You have <strong>' + (maxAttempts === 0 ? 'Unlimited' : maxAttempts) + '</strong> attempts for this assignment.';
                         }
                     }
                 }

@@ -37,8 +37,8 @@
 
     <section class="content-card" id="create-assignment-section" style="margin-bottom: 30px;">
         <span id="create-modal"></span>
-        <h2>Create New Assignment</h2>
-        <p style="color: #6b7280; margin-bottom: 20px; font-size: 14px;">Fill in the details to publish a new assignment for enrolled students</p>
+        <h2>Create Assignment</h2>
+        <p style="color: #6b7280; margin-bottom: 20px; font-size: 14px;">Publish a new assignment for enrolled students</p>
 
         <form id="create-assignment-form">
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; margin-bottom: 18px;">
@@ -51,28 +51,28 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="assignment-title">Assignment Title *</label>
+                    <label for="assignment-title">Title *</label>
                     <input type="text" id="assignment-title" name="title" placeholder="e.g. JavaScript Interactive App" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="assignment-grade-level">Target Grade Level *</label>
+                    <label for="assignment-grade-level">Grade Level *</label>
                     <select id="assignment-grade-level" name="grade_level" required>
-                        <option value="First Year of Middle School">First Year of Middle School (Grade 7 / 1st Prep)</option>
-                        <option value="Second Year of Middle School">Second Year of Middle School (Grade 8 / 2nd Prep)</option>
-                        <option value="Third Year of Middle School">Third Year of Middle School (Grade 9 / 3rd Prep)</option>
-                        <option value="First Year of High School">First Year of High School (Grade 10 / 1st Secondary)</option>
+                        <option value="First Year of Middle School">1st Preparatory (Grade 7)</option>
+                        <option value="Second Year of Middle School">2nd Preparatory (Grade 8)</option>
+                        <option value="Third Year of Middle School">3rd Preparatory (Grade 9)</option>
+                        <option value="First Year of High School">1st Secondary (Grade 10)</option>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label for="assignment-max-grade">Max Grade Points *</label>
+                    <label for="assignment-max-grade">Max Points *</label>
                     <input type="number" id="assignment-max-grade" name="max_grade" value="20" min="1" step="0.5" required>
                 </div>
 
                 <div class="form-group" id="deadline-form-group">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                        <label for="assignment-deadline" style="margin-bottom: 0;">Deadline Date &amp; Time <span id="deadline-required-mark">*</span></label>
+                        <label for="assignment-deadline" style="margin-bottom: 0;">Deadline <span id="deadline-required-mark">*</span></label>
                         <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; cursor: pointer; color: var(--primary);">
                             <input type="checkbox" id="no-deadline-toggle" name="has_no_deadline" value="1" style="width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer;">
                             <span>No Deadline</span>
@@ -80,20 +80,20 @@
                     </div>
                     <input type="datetime-local" id="assignment-deadline" name="deadline" required>
                     <p id="no-deadline-help" style="display: none; margin: 6px 0 0; font-size: 12.5px; color: var(--text-muted);">
-                        Open-ended assignment: students can submit at any time without a closing deadline.
+                        Open-ended assignment: students can submit at any time without a deadline.
                     </p>
                 </div>
             </div>
 
             <div class="form-group" style="margin-bottom: 18px;">
-                <label for="assignment-description">Instructions & Description *</label>
+                <label for="assignment-description">Instructions *</label>
                 <textarea id="assignment-description" name="description" rows="4" placeholder="Detailed requirements and grading criteria..." required></textarea>
             </div>
 
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; margin-bottom: 22px;">
 
                 <div class="form-group">
-                    <label for="assignment-ext">Allowed Extensions</label>
+                    <label for="assignment-ext">Allowed File Types</label>
                     <input type="text" id="assignment-ext" name="allowed_extensions" value="pdf,doc,docx,zip" placeholder="e.g. pdf,zip,docx">
                 </div>
 
@@ -104,32 +104,31 @@
 
                 <div class="form-group" style="grid-column: span 2;">
                     <label for="assignment-resub" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px;">
-                        <span>Resubmission Policy (Before &amp; After Deadline) *</span>
-                        <small style="color: var(--text-muted); font-weight: normal;">Controls multiple tries &amp; late reopening</small>
+                        <span>Resubmission Policy *</span>
                     </label>
                     <select id="assignment-resub" name="allow_resubmission" style="width: 100%;">
-                        <option value="1" selected>Permitted — Allow multiple attempts &amp; 24h late reopening exceptions</option>
-                        <option value="0">Not Permitted — Single submission only (Late reopening strictly disabled)</option>
+                        <option value="1" selected>Allowed — Students can resubmit within attempt limits and request late reopening</option>
+                        <option value="0">Not Allowed — Single submission only (late reopening disabled)</option>
                     </select>
                     <p id="resub-policy-hint" style="margin: 4px 0 0; font-size: 12px; color: var(--text-muted);">
-                        When permitted, students can resubmit within attempts limit, and you can reopen missed assignments for a 24h window.
+                        When allowed, students can submit multiple attempts and teachers can reopen missed assignments for 24 hours.
                     </p>
                 </div>
 
                 <div class="form-group" id="max-attempts-field">
-                    <label for="assignment-max-attempts">Permitted Tries / Attempts *</label>
+                    <label for="assignment-max-attempts">Allowed Attempts *</label>
                     <select id="assignment-max-attempts" name="max_attempts">
-                        <option value="1">1 Attempt (Single submission)</option>
-                        <option value="2">2 Attempts</option>
-                        <option value="3" selected>3 Attempts</option>
-                        <option value="5">5 Attempts</option>
-                        <option value="0">Unlimited Attempts (Until deadline)</option>
+                        <option value="1">1 attempt</option>
+                        <option value="2">2 attempts</option>
+                        <option value="3" selected>3 attempts</option>
+                        <option value="5">5 attempts</option>
+                        <option value="0">Unlimited attempts</option>
                     </select>
                 </div>
             </div>
 
             <button type="submit" class="btn-primary" style="max-width: 250px;">
-                Publish Assignment
+                Create Assignment
             </button>
         </form>
     </section>
@@ -137,14 +136,14 @@
     <section class="assignments-section">
         <div class="section-header">
             <div>
-                <h2>Your Published Assignments</h2>
-                <p>Monitor submissions and grading progress across all active assignments</p>
+                <h2>Assignments</h2>
+                <p>Monitor submissions and grading across active assignments</p>
             </div>
         </div>
 
         <div id="assignments-empty" class="empty-state" style="display: none;">
-            <h3>No Assignments Created</h3>
-            <p>You have not created any assignments yet. Use the form above to add your first assignment.</p>
+            <h3>No assignments found</h3>
+            <p>You have not created any assignments yet.</p>
         </div>
 
         <div id="assignments-table-container" class="table-container" style="display: none;">
@@ -155,10 +154,10 @@
                         <th>Course</th>
                         <th>Grade Level</th>
                         <th>Deadline</th>
-                        <th>Max Grade</th>
+                        <th>Max Points</th>
                         <th>Submissions</th>
                         <th>Resubmission Policy</th>
-                        <th>Action</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody id="assignments-table-body">

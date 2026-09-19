@@ -174,7 +174,7 @@ function renderTable(assignments) {
         row.innerHTML =
             '<td><strong style="color:var(--text-primary);">' + escapeHtml(a.title) + '</strong></td>' +
             '<td>' + escapeHtml(a.course_name) + '</td>' +
-            '<td><span class="status-badge status-review" style="font-size:11px;">' + escapeHtml(a.grade_level || 'First Year of Middle School') + '</span></td>' +
+            '<td style="white-space:nowrap;"><span class="status-badge status-review" style="font-size:11px;">' + escapeHtml(formatGradeLevel(a.grade_level || 'First Year of Middle School')) + '</span></td>' +
             '<td><strong style="display:inline-flex; align-items:center; gap:4px; color:var(--text-primary);">' + escapeHtml(a.teacher_name) + '</strong></td>' +
             '<td>' + a.max_grade + ' pts</td>' +
             '<td>' + formatDate(a.deadline) + '</td>' +

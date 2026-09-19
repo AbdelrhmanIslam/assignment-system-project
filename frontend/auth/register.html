@@ -24,7 +24,7 @@
 
     <div class="auth-card">
         <h1>Create Account</h1>
-        <p class="auth-subtitle">Register as a student</p>
+        <p class="auth-subtitle">Create a student account</p>
 
         <div id="alert-box" style="display: none;"></div>
 
@@ -59,7 +59,7 @@
                         name="password"
                         required
                     >
-                    <button type="button" class="toggle-password-btn" data-target="password" aria-label="toggle password visibility">
+                    <button type="button" class="toggle-password-btn" data-target="password" aria-label="Toggle password visibility">
                         <svg class="eye-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                             <circle cx="12" cy="12" r="3"></circle>
@@ -81,7 +81,7 @@
                         name="confirm_password"
                         required
                     >
-                    <button type="button" class="toggle-password-btn" data-target="confirm_password" aria-label="toggle password visibility">
+                    <button type="button" class="toggle-password-btn" data-target="confirm_password" aria-label="Toggle password visibility">
                         <svg class="eye-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                             <circle cx="12" cy="12" r="3"></circle>
@@ -97,21 +97,21 @@
             <div class="form-group">
                 <label for="grade_level">Grade Level</label>
                 <select id="grade_level" name="grade_level" required>
-                    <option value="">Select your Grade Level...</option>
-                    <option value="First Year of Middle School">First Year of Middle School (Grade 7 / 1st Prep)</option>
-                    <option value="Second Year of Middle School">Second Year of Middle School (Grade 8 / 2nd Prep)</option>
-                    <option value="Third Year of Middle School">Third Year of Middle School (Grade 9 / 3rd Prep)</option>
-                    <option value="First Year of High School">First Year of High School (Grade 10 / 1st Secondary)</option>
+                    <option value="">Select Grade Level</option>
+                    <option value="First Year of Middle School">1st Preparatory (Grade 7)</option>
+                    <option value="Second Year of Middle School">2nd Preparatory (Grade 8)</option>
+                    <option value="Third Year of Middle School">3rd Preparatory (Grade 9)</option>
+                    <option value="First Year of High School">1st Secondary (Grade 10)</option>
                 </select>
             </div>
 
             <!-- Dynamic teachers for selected grade level -->
             <div id="teachers-selection-group" class="form-group" style="display: none; margin-top: -5px;">
                 <label style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                    <span style="font-weight: 600; font-size: 14px; color: var(--text-primary);">Select Teacher(s) *</span>
+                    <span style="font-weight: 600; font-size: 14px; color: var(--text-primary);">Select Teachers *</span>
                     <span style="font-size: 11px; font-weight: normal; color: var(--text-muted);">Choose one or more</span>
                 </label>
-                <div id="teachers-loading" style="display: none; font-size: 13px; color: var(--text-muted); padding: 6px 0;">Loading teachers for this grade...</div>
+                <div id="teachers-loading" style="display: none; font-size: 13px; color: var(--text-muted); padding: 6px 0;">Loading teachers...</div>
                 <div id="teachers-empty" style="display: none; font-size: 12px; color: var(--warning-text); background: var(--warning-bg); border: 1px solid var(--warning-border); border-radius: 6px; padding: 8px 12px;">No teachers currently assigned to this grade level.</div>
                 <div id="teachers-checkboxes-container" style="display: flex; flex-direction: column; gap: 8px; max-height: 180px; overflow-y: auto; padding: 6px; border: 1px solid var(--glass-border); border-radius: 6px; background: var(--glass-bg-subtle);">
                     <!-- teacher options rendered dynamically -->
@@ -125,7 +125,7 @@
 
         <p class="auth-link">
             Already have an account?
-            <a href="login.html">Login</a>
+            <a href="login.html">Sign In</a>
         </p>
     </div>
 </div>

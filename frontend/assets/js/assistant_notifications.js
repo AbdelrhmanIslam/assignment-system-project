@@ -72,7 +72,7 @@ function renderNotifications(notifications, unreadCount) {
 
             var actionHtml = '';
             if (n.reference_id) {
-                actionHtml = '<a href="review.html?id=' + n.reference_id + '" class="view-btn" style="font-size:12px; padding:6px 12px;">Review Work</a>';
+                actionHtml = '<a href="review.html?id=' + n.reference_id + '" class="view-btn" style="font-size:12px; padding:6px 12px;">Review</a>';
             }
 
             var markBtnHtml = '';
@@ -85,7 +85,7 @@ function renderNotifications(notifications, unreadCount) {
                     '<div style="flex:1;">' +
                         '<div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">' +
                             '<strong style="font-size:15px; color:var(--text-primary);">' + escapeHtml(n.title) + '</strong>' +
-                            (!n.is_read ? '<span class="status-badge" style="background:var(--role-assistant-bg); color:var(--role-assistant-text); font-size:11px;">NEW</span>' : '') +
+                            (!n.is_read ? '<span class="status-badge" style="background:var(--role-assistant-bg); color:var(--role-assistant-text); font-size:11px;">New</span>' : '') +
                         '</div>' +
                         '<p style="margin:0 0 10px; color:var(--text-body); font-size:14px; line-height:1.5;">' + escapeHtml(n.message) + '</p>' +
                         '<span style="font-size:12px; color:var(--text-muted);">' + formatDate(n.created_at) + '</span>' +

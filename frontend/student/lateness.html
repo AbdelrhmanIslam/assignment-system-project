@@ -145,8 +145,8 @@
 
     <header class="dashboard-header">
         <div>
-            <h1>Missed Submissions &amp; Lateness</h1>
-            <p>Track missed assignments and submit assignments reopened for resubmission by your teachers.</p>
+            <h1>Missed &amp; Late Submissions</h1>
+            <p>Track missed deadlines and submit assignments reopened by your teachers.</p>
         </div>
 
         <div class="header-actions">
@@ -162,30 +162,30 @@
     <div id="active-permission-banner" class="reopen-banner-hint" style="display: none;">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="flex-shrink: 0;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
         <div>
-            <strong style="font-size: 14px; display: block; margin-bottom: 2px;">Active Late Submission Window Available!</strong>
-            <span id="active-permission-banner-text">One or more teachers have granted you a single-attempt 24-hour exception to submit your work. Click the submission button on the assignment before the timer expires.</span>
+            <strong style="font-size: 14px; display: block; margin-bottom: 2px;">Late Submission Window Active</strong>
+            <span id="active-permission-banner-text">A teacher has granted you a 24-hour window to submit your work. Submit your assignment before the window closes.</span>
         </div>
     </div>
 
     <!-- statistics overview -->
     <section class="stats-grid" style="margin-bottom: 25px;">
         <div class="stat-card">
-            <span class="stat-label">Total Missed Deadlines</span>
+            <span class="stat-label">Missed Deadlines</span>
             <strong class="stat-number" id="stat-total-missed" style="color: var(--danger);">0</strong>
         </div>
 
         <div class="stat-card">
-            <span class="stat-label">Reopened with Permission</span>
+            <span class="stat-label">Reopened (24h Window)</span>
             <strong class="stat-number" id="stat-active-exceptions" style="color: #d97706;">0</strong>
         </div>
 
         <div class="stat-card">
-            <span class="stat-label">Submitted Late (Permission Used)</span>
+            <span class="stat-label">Submitted Late</span>
             <strong class="stat-number" id="stat-submitted-late" style="color: var(--success);">0</strong>
         </div>
 
         <div class="stat-card">
-            <span class="stat-label">Enrolled Teachers</span>
+            <span class="stat-label">Teachers</span>
             <strong class="stat-number" id="stat-teachers-count" style="color: var(--primary);">0</strong>
         </div>
     </section>
@@ -194,9 +194,9 @@
     <section class="lateness-card">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
             <div>
-                <h2 style="margin: 0 0 4px; font-size: 18px;">Missed Assignments by Enrolled Teacher</h2>
+                <h2 style="margin: 0 0 4px; font-size: 18px;">Missed Assignments by Teacher</h2>
                 <p style="margin: 0; font-size: 13px; color: var(--text-muted);">
-                    Select a teacher button to filter their specific missed assignments and resubmission permissions.
+                    Filter missed assignments and reopen permissions by teacher.
                 </p>
             </div>
             <div>
@@ -221,7 +221,7 @@
         <div id="missed-empty" class="empty-state" style="display: none; padding: 45px 20px; text-align: center;">
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-bottom: 12px; opacity: 0.5; color: var(--success);"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
             <h3 style="margin-bottom: 6px;">No Missed Submissions</h3>
-            <p style="color: var(--text-muted); font-size: 14px; margin: 0;">You have no past-deadline missed assignments for this selection.</p>
+            <p style="color: var(--text-muted); font-size: 14px; margin: 0;">You have no missed assignments for this selection.</p>
         </div>
 
         <!-- missed assignments table -->
@@ -232,8 +232,8 @@
                         <th>Teacher</th>
                         <th>Course</th>
                         <th>Assignment</th>
-                        <th>Original Deadline</th>
-                        <th>Permission &amp; Status</th>
+                        <th>Deadline</th>
+                        <th>Status</th>
                         <th style="text-align: right;">Action</th>
                     </tr>
                 </thead>

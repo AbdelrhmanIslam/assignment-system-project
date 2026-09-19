@@ -25,12 +25,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 // populate course dropdown options
                 if (courseSelect && data.courses) {
-                    courseSelect.innerHTML = '<option value="">-- Choose Course --</option>';
+                    courseSelect.innerHTML = '<option value="">Choose course...</option>';
                     for (var i = 0; i < data.courses.length; i++) {
                         var opt = document.createElement('option');
                         opt.value = data.courses[i].id;
                         var cgl = data.courses[i].grade_level || '';
-                        opt.textContent = data.courses[i].name + (cgl ? ' (' + cgl + ')' : '');
+                        opt.textContent = data.courses[i].name + (cgl ? ' (' + formatGradeLevel(cgl) + ')' : '');
                         opt.setAttribute('data-grade-level', cgl);
                         courseSelect.appendChild(opt);
                     }
@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             maxAttemptsSelect.value = '1';
                             maxAttemptsSelect.disabled = true;
                             if (hint) {
-                                hint.textContent = 'Resubmission disabled: Students have 1 attempt only, and late reopening will NOT be permitted if missed.';
+                                hint.textContent = 'Resubmission not allowed: Students have 1 attempt only, and late reopening is disabled.';
                                 hint.style.color = '#ef4444';
                             }
                         } else {
@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 maxAttemptsSelect.value = '3';
                             }
                             if (hint) {
-                                hint.textContent = 'When permitted, students can resubmit within attempts limit, and you can reopen missed assignments for a 24h window.';
+                                hint.textContent = 'When allowed, students can submit multiple attempts and teachers can reopen missed assignments for 24 hours.';
                                 hint.style.color = 'var(--text-muted)';
                             }
                         }
@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             var glBadge = document.createElement('span');
                             glBadge.className = 'status-badge status-review';
                             glBadge.style.fontSize = '11px';
-                            glBadge.textContent = a.grade_level || 'First Year of Middle School';
+                            glBadge.textContent = formatGradeLevel(a.grade_level || 'First Year of Middle School');
                             tdGradeLevel.appendChild(glBadge);
                             tr.appendChild(tdGradeLevel);
 
@@ -153,9 +153,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
                             var tdResub = document.createElement('td');
                             if (parseInt(a.allow_resubmission, 10) === 1) {
-                                tdResub.innerHTML = '<span class="status-badge status-open" style="font-size: 11px;">Permitted</span>';
+                                tdResub.innerHTML = '<span class="status-badge status-open" style="font-size: 11px;">Allowed</span>';
                             } else {
-                                tdResub.innerHTML = '<span class="status-badge" style="font-size: 11px; background: rgba(239, 68, 68, 0.12); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3);">Not Permitted</span>';
+                                tdResub.innerHTML = '<span class="status-badge" style="font-size: 11px; background: rgba(239, 68, 68, 0.12); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3);">Not Allowed</span>';
                             }
                             tr.appendChild(tdResub);
 

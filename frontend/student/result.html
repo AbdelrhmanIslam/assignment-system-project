@@ -17,7 +17,7 @@
 
         <header class="dashboard-header">
             <div>
-                <h1>Assignment Result & Evaluation</h1>
+                <h1>Assignment Result</h1>
                 <p>Detailed performance report and instructor feedback</p>
             </div>
             <div class="header-actions">
@@ -38,12 +38,12 @@
                     <div>
                         <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px; flex-wrap: wrap;">
                             <span id="courseName" class="status-badge status-review">Course</span>
-                            <span id="teacherName" class="status-badge status-submitted">Lead Teacher</span>
+                            <span id="teacherName" class="status-badge status-submitted">Teacher</span>
                         </div>
                         <h2 id="assignmentTitle" style="margin: 6px 0 0; font-size: 22px;">Assignment Title</h2>
                     </div>
                     <div style="text-align:right;">
-                        <span style="font-size:13px; color:#6b7280; display:block;">Total Points Possible</span>
+                        <span style="font-size:13px; color:#6b7280; display:block;">Max Points</span>
                         <strong id="maxGrade" style="font-size:22px; color:#111827;">0</strong>
                     </div>
                 </div>
@@ -68,13 +68,13 @@
                         </div>
 
                         <div style="background: var(--glass-bg-elevated); border: 1px solid var(--glass-border); border-radius: 8px; padding: 18px; margin-bottom: 20px;">
-                            <h4 style="margin: 0 0 10px; font-size: 15px; color: var(--text-heading);">Instructor Feedback</h4>
-                            <p id="gradeFeedback" style="margin: 0; line-height: 1.6; color: var(--text-body); white-space: pre-line;">No feedback entered.</p>
+                            <h4 style="margin: 0 0 10px; font-size: 15px; color: var(--text-heading);">Teacher Feedback</h4>
+                            <p id="gradeFeedback" style="margin: 0; line-height: 1.6; color: var(--text-body); white-space: pre-line;">No feedback provided.</p>
                         </div>
 
                         <div style="display:flex; justify-content:space-between; font-size: 13px; color: var(--text-muted); border-top: 1px solid var(--glass-border); padding-top: 14px;">
                             <span>Evaluated by: <strong id="gradedBy" style="color:var(--text-primary);">--</strong></span>
-                            <span>Date: <strong id="gradedAt" style="color:var(--text-primary);">--</strong></span>
+                            <span>Graded on: <strong id="gradedAt" style="color:var(--text-primary);">--</strong></span>
                         </div>
 
                         <!-- Official Assistant Evaluation Signature Box -->
@@ -84,13 +84,13 @@
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"></path><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path></svg>
                                 </span>
                                 <div>
-                                    <h4 style="margin: 0; font-size: 15px; color: var(--role-assistant-text);">Verified Assistant Evaluation Signature</h4>
-                                    <span style="font-size: 12px; color: var(--text-muted);">Officially marked and submitted by Teaching Assistant</span>
+                                    <h4 style="margin: 0; font-size: 15px; color: var(--role-assistant-text);">Teaching Assistant Evaluation</h4>
+                                    <span style="font-size: 12px; color: var(--text-muted);">Officially evaluated and graded by Teaching Assistant</span>
                                 </div>
                             </div>
                             <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.5; margin-left: 44px;">
                                 <div>Signed by: <strong id="assistantSignName">--</strong> (<span id="assistantSignEmail">--</span>)</div>
-                                <div style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">Evaluation Timestamp: <span id="assistantSignDate">--</span></div>
+                                <div style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">Evaluation Date: <span id="assistantSignDate">--</span></div>
                             </div>
                         </div>
 
@@ -105,9 +105,9 @@
                     <div id="pendingCard" class="content-card" style="display:none; border-top: 4px solid #f59e0b;">
                         <h3 style="margin: 0 0 10px; color: #b45309;">Submission Under Review</h3>
                         <p style="color: #4b5563; line-height: 1.5; margin-bottom: 15px;">
-                            Your submission has been received and is currently being evaluated by the instructor or assistant. Your grade and feedback will appear here as soon as evaluation is completed.
+                            Your submission has been received and is currently being evaluated. Your grade and feedback will appear here once evaluation is complete.
                         </p>
-                        <span id="subStatusBadge" class="status-badge status-review">UNDER REVIEW</span>
+                        <span id="subStatusBadge" class="status-badge status-review">Under Review</span>
                     </div>
                 </div>
 
@@ -116,7 +116,7 @@
                         <h2>Your Submission</h2>
                         <div class="submission-box">
                             <div class="submission-item">
-                                <span>Uploaded File:</span>
+                                <span>Submitted File:</span>
                                 <strong id="subFileName" style="word-break: break-all;">--</strong>
                             </div>
                             <div class="submission-item">
@@ -124,12 +124,12 @@
                                 <strong id="subFileSize">--</strong>
                             </div>
                             <div class="submission-item">
-                                <span>Submitted At:</span>
+                                <span>Submitted On:</span>
                                 <strong id="subDate">--</strong>
                             </div>
                             <div class="submission-item">
                                 <span>Submission Version:</span>
-                                <strong id="subVersion">v1</strong>
+                                <strong id="subVersion">Version 1</strong>
                             </div>
                         </div>
 

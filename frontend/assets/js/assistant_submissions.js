@@ -165,28 +165,28 @@ function renderTable(submissions) {
 
         var badgeClass = 'status-not-submitted';
         var badgeLabel = 'Submitted';
-        var actionLabel = 'Grade & Feedback';
+        var actionLabel = 'Review';
         var actionClass = 'action-submit';
 
         if (sub.status === 'graded') {
             badgeClass = 'status-graded';
             badgeLabel = 'Graded';
-            actionLabel = 'Edit Evaluation';
+            actionLabel = 'View Result';
             actionClass = 'action-result';
         } else if (sub.status === 'under_review') {
             badgeClass = 'status-review';
             badgeLabel = 'Under Review';
-            actionLabel = 'Continue Grading';
+            actionLabel = 'Review';
             actionClass = 'action-review';
         } else if (sub.status === 'recheck') {
             badgeClass = 'status-closed';
             badgeLabel = 'Recheck Requested';
-            actionLabel = 'Recheck & Grade';
+            actionLabel = 'Recheck';
             actionClass = 'action-submit';
         } else if (sub.status === 'pending_teacher') {
             badgeClass = 'status-review';
-            badgeLabel = 'Pending Teacher';
-            actionLabel = 'Review';
+            badgeLabel = 'Pending Approval';
+            actionLabel = 'View Details';
             actionClass = 'action-view';
         }
 

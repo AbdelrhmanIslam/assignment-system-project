@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function () {
             var tdTeacher = document.createElement('td');
             var teacherSpan = document.createElement('span');
             teacherSpan.style.cssText = 'font-weight: 600; color: var(--text-primary); display: inline-flex; align-items: center; gap: 4px;';
-            teacherSpan.textContent = item.teacher_name || 'Instructor';
+            teacherSpan.textContent = item.teacher_name || 'Teacher';
             tdTeacher.appendChild(teacherSpan);
             tr.appendChild(tdTeacher);
 
@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', function () {
             var glBadge = document.createElement('span');
             glBadge.className = 'status-badge status-review';
             glBadge.style.fontSize = '11px';
-            glBadge.textContent = item.grade_level || 'First Year of Middle School';
+            glBadge.textContent = window.formatGradeLevel ? formatGradeLevel(item.grade_level) : (item.grade_level || 'Preparatory');
             tdGradeLevel.appendChild(glBadge);
             tr.appendChild(tdGradeLevel);
 
@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     hour12: true
                 });
             } else {
-                tdDeadline.innerHTML = '<span class="status-badge status-open" style="font-size: 11px;">No Deadline</span>';
+                tdDeadline.innerHTML = '<span class="status-badge status-open" style="font-size: 11px;">No deadline</span>';
             }
             tr.appendChild(tdDeadline);
 
@@ -159,7 +159,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 actionLink.href = 'assignment.html?id=' + item.id;
             }
             actionLink.className = 'action-btn ' + item.action_class;
-            actionLink.textContent = item.action_label;
+            actionLink.textContent = (item.status_key === 'graded') ? 'View Result' : ((item.status_key === 'not_submitted') ? 'Submit' : 'View');
             tdAction.appendChild(actionLink);
             tr.appendChild(tdAction);
 

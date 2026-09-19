@@ -31,13 +31,13 @@ function loadAdminDashboard() {
             setElementText('stat-users-sub', m.students + ' Students, ' + m.teachers + ' Teachers, ' + m.assistants + ' Assistants');
 
             setElementText('stat-courses', m.total_courses);
-            setElementText('stat-courses-sub', m.active_courses + ' Active Courses');
+            setElementText('stat-courses-sub', m.active_courses + ' active');
 
             setElementText('stat-assignments', m.total_assignments);
-            setElementText('stat-assignments-sub', m.active_assignments + ' Active Assignments');
+            setElementText('stat-assignments-sub', m.active_assignments + ' active');
 
             setElementText('stat-submissions', m.total_submissions);
-            setElementText('stat-submissions-sub', m.graded_submissions + ' Graded, ' + m.pending_submissions + ' Pending');
+            setElementText('stat-submissions-sub', m.graded_submissions + ' graded, ' + m.pending_submissions + ' pending');
         }
 
         // render recent users
@@ -97,11 +97,21 @@ function renderRecentSubmissions(submissions) {
         var row = document.createElement('tr');
 
         var badgeClass = 'status-not-submitted';
-        var badgeLabel = s.status.replace('_', ' ').toUpperCase();
+        var badgeLabel = 'Submitted';
 
-        if (s.status === 'graded') badgeClass = 'status-graded';
-        else if (s.status === 'under_review') badgeClass = 'status-review';
-        else if (s.status === 'recheck') badgeClass = 'status-closed';
+        if (s.status === 'graded') {
+            badgeClass = 'status-graded';
+            badgeLabel = 'Graded';
+        } else if (s.status === 'under_review') {
+            badgeClass = 'status-review';
+            badgeLabel = 'Under Review';
+        } else if (s.status === 'recheck') {
+            badgeClass = 'status-closed';
+            badgeLabel = 'Recheck Requested';
+        } else if (s.status === 'pending_approval') {
+            badgeClass = 'status-submitted';
+            badgeLabel = 'Pending Approval';
+        }
 
         row.innerHTML =
             '<td><strong>' + escapeHtml(s.student_name) + '</strong></td>' +

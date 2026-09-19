@@ -66,7 +66,7 @@ function updateCategoryBanner(filteredCourses) {
     banner.style.display = 'block';
 
     if (catDisplay) {
-        catDisplay.textContent = (currentGradeFilter === 'all') ? 'All Academic Grade Levels' : currentGradeFilter;
+        catDisplay.textContent = (currentGradeFilter === 'all') ? 'All Grade Levels' : formatGradeLevel(currentGradeFilter);
     }
 
     if (teachersDisplay) {
@@ -131,11 +131,11 @@ function updateAssistantDropdown(teacherId) {
         opt.value = '';
         opt.disabled = true;
         opt.selected = true;
-        opt.textContent = 'Please select a Lead Teacher first...';
+        opt.textContent = 'Select a teacher first...';
         assistantSelect.appendChild(opt);
         assistantSelect.disabled = true;
         if (helpText) {
-            helpText.textContent = 'Each teacher has their own isolated teaching assistants.';
+            helpText.textContent = 'Assistants assigned to the selected teacher.';
             helpText.style.color = 'var(--text-muted)';
         }
         return;
@@ -154,30 +154,30 @@ function updateAssistantDropdown(teacherId) {
         optEmpty.value = '';
         optEmpty.disabled = true;
         optEmpty.selected = true;
-        optEmpty.textContent = 'No teaching assistants assigned to this teacher';
+        optEmpty.textContent = 'No assistants assigned to this teacher';
         assistantSelect.appendChild(optEmpty);
         assistantSelect.disabled = true;
         if (helpText) {
-            helpText.textContent = 'This teacher has no teaching assistants. Please assign an assistant in Manage Users first.';
+            helpText.textContent = 'This teacher has no assigned assistants. Assign an assistant in Manage Users first.';
             helpText.style.color = 'var(--danger)';
         }
     } else {
         assistantSelect.disabled = false;
         if (helpText) {
-            helpText.textContent = 'Showing assistants dedicated exclusively to this teacher (' + filtered.length + ' available).';
+            helpText.textContent = 'Assistants assigned to this teacher (' + filtered.length + ' available).';
             helpText.style.color = 'var(--success)';
         }
 
         var placeholderOpt = document.createElement('option');
         placeholderOpt.value = '';
         placeholderOpt.disabled = true;
-        placeholderOpt.textContent = 'Choose assistant for this teacher...';
+        placeholderOpt.textContent = 'Choose assistant...';
         assistantSelect.appendChild(placeholderOpt);
 
         filtered.forEach(function (a, idx) {
             var opt = document.createElement('option');
             opt.value = a.id;
-            opt.textContent = a.name + ' (Dedicated Assistant)';
+            opt.textContent = a.name;
             if (filtered.length === 1 && idx === 0) {
                 opt.selected = true;
                 placeholderOpt.selected = false;
@@ -201,7 +201,7 @@ function populateDropdowns(teachers, assistants) {
     function updateTeacherOptions() {
         if (!teacherSelect) return;
         var selectedGrade = gradeSelect ? gradeSelect.value : '';
-        teacherSelect.innerHTML = '<option value="">Select Instructor...</option>';
+        teacherSelect.innerHTML = '<option value="">Select Teacher...</option>';
 
         var eligibleTeachers = allTeachers.filter(function (t) {
             if (!selectedGrade) return true;
@@ -213,13 +213,13 @@ function populateDropdowns(teachers, assistants) {
             var opt = document.createElement('option');
             opt.value = '';
             opt.disabled = true;
-            opt.textContent = 'No teachers assigned to ' + selectedGrade;
+            opt.textContent = 'No teachers assigned to ' + formatGradeLevel(selectedGrade);
             teacherSelect.appendChild(opt);
         } else {
             eligibleTeachers.forEach(function (t) {
                 var opt = document.createElement('option');
                 opt.value = t.id;
-                var levelsText = (t.grade_levels && t.grade_levels.length > 0) ? ' (' + t.grade_levels.join(', ') + ')' : '';
+                var levelsText = (t.grade_levels && t.grade_levels.length > 0) ? ' (' + t.grade_levels.map(formatGradeLevel).join(', ') + ')' : '';
                 opt.textContent = t.name + levelsText;
                 teacherSelect.appendChild(opt);
             });
@@ -271,7 +271,7 @@ function renderCoursesTable(courses) {
         var toggleLabel = c.is_active ? 'Archive' : 'Activate';
         var toggleClass = c.is_active ? 'background:var(--danger);' : 'background:var(--success);';
 
-        var gradeLevelBadge = '<span class="status-badge status-review" style="font-size:11px;">' + escapeHtml(c.grade_level || 'First Year of Middle School') + '</span>';
+        var gradeLevelBadge = '<span class="status-badge status-review" style="font-size:11px;">' + escapeHtml(formatGradeLevel(c.grade_level || 'First Year of Middle School')) + '</span>';
 
         row.innerHTML =
             '<td><strong style="color:var(--text-primary);">' + escapeHtml(c.name) + '</strong><br><small style="color:var(--text-muted);">' + escapeHtml(c.description || 'No description') + '</small></td>' +
@@ -386,11 +386,11 @@ function setupCreateCourseForm() {
         var tId = document.getElementById('select-teacher').value;
         var aId = document.getElementById('select-assistant').value;
         if (!tId) {
-            showAlert('Please select a Lead Teacher for this course.', 'error');
+            showAlert('Please select a teacher for this course.', 'error');
             return;
         }
         if (!aId) {
-            showAlert('Please select a Teaching Assistant assigned to this teacher.', 'error');
+            showAlert('Please select an assistant for this course.', 'error');
             return;
         }
 
@@ -419,7 +419,7 @@ function setupCreateCourseForm() {
                 return;
             }
 
-            showAlert('Course created successfully!', 'success');
+            showAlert('Course created successfully.', 'success');
             form.reset();
             loadCourses();
         })

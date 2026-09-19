@@ -18,7 +18,7 @@
         <header class="dashboard-header">
             <div>
                 <h1>System Administration</h1>
-                <p>Welcome, <span id="admin-name">Administrator</span> (<span id="admin-email">admin@test.com</span>)</p>
+                <p>Signed in as <span id="admin-name">Administrator</span> &bull; <span id="admin-email">admin@test.com</span></p>
             </div>
             <div class="header-actions">
                 <span class="user-role" style="background: #fef2f2; color: #991b1b;">Admin</span>
@@ -34,7 +34,7 @@
                 Manage Courses
             </a>
             <a href="assignments.html" class="action-btn action-review" style="padding: 10px 18px; font-size: 14px; text-decoration: none;">
-                Assignments Overview
+                Assignments
             </a>
             <a href="settings.html" class="action-btn" style="background: #4b5563; color: #fff; padding: 10px 18px; font-size: 14px; text-decoration: none;">
                 System Settings
@@ -55,7 +55,7 @@
             </div>
 
             <div class="stat-card">
-                <span class="stat-label">Assignments</span>
+                <span class="stat-label">Total Assignments</span>
                 <strong class="stat-number" id="stat-assignments">0</strong>
                 <small id="stat-assignments-sub" style="display:block; color:#6b7280; font-size:12px; margin-top:6px;">Loading...</small>
             </div>
@@ -86,7 +86,7 @@
                                 <th>Email</th>
                                 <th>Role</th>
                                 <th>Status</th>
-                                <th>Created</th>
+                                <th>Registered</th>
                             </tr>
                         </thead>
                         <tbody id="recent-users-body">
@@ -113,7 +113,7 @@
                                 <th>Assignment</th>
                                 <th>Course</th>
                                 <th>Status</th>
-                                <th>Date</th>
+                                <th>Submitted</th>
                             </tr>
                         </thead>
                         <tbody id="recent-submissions-body">

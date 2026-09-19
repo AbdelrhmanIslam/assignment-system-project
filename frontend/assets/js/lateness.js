@@ -110,11 +110,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
         gradeLevelTabsContainer.innerHTML = '';
 
-        // "All Registered Classes" tab
+        // "All Classes" tab
         var allBtn = document.createElement('button');
         allBtn.className = 'filter-tab' + (currentGradeFilter === 'all' ? ' active' : '');
         allBtn.setAttribute('data-grade', 'all');
-        allBtn.textContent = 'All Registered Classes (' + allMissedSubmissions.length + ')';
+        allBtn.textContent = 'All Classes (' + allMissedSubmissions.length + ')';
         allBtn.addEventListener('click', function () {
             setActiveGradeTab(this, 'all');
         });
@@ -133,7 +133,8 @@ document.addEventListener('DOMContentLoaded', function () {
             var tabBtn = document.createElement('button');
             tabBtn.className = 'filter-tab' + (currentGradeFilter === gradeName ? ' active' : '');
             tabBtn.setAttribute('data-grade', gradeName);
-            tabBtn.textContent = gradeName + ' (' + countForGrade + ')';
+            var displayGrade = window.formatGradeLevel ? formatGradeLevel(gradeName) : gradeName;
+            tabBtn.textContent = displayGrade + ' (' + countForGrade + ')';
             
             (function (gName) {
                 tabBtn.addEventListener('click', function () {
@@ -218,7 +219,8 @@ document.addEventListener('DOMContentLoaded', function () {
             var gBadge = document.createElement('span');
             gBadge.className = 'status-badge status-review';
             gBadge.style.fontSize = '11px';
-            gBadge.textContent = item.student_grade_level || item.assignment_grade_level || 'Middle School';
+            var rawGrade = item.student_grade_level || item.assignment_grade_level;
+            gBadge.textContent = window.formatGradeLevel ? formatGradeLevel(rawGrade) : (rawGrade || 'Preparatory');
             tdGrade.appendChild(gBadge);
             tr.appendChild(tdGrade);
 
@@ -251,7 +253,7 @@ document.addEventListener('DOMContentLoaded', function () {
             var pill = document.createElement('span');
             pill.className = 'missed-count-pill';
             pill.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg> ' +
-                             mCount + (mCount === 1 ? ' missed for you' : ' missed for you');
+                             mCount + (mCount === 1 ? ' missed' : ' missed');
             tdCount.appendChild(pill);
 
             if (item.student_missed_titles && item.student_missed_titles.length > 0) {
@@ -274,9 +276,9 @@ document.addEventListener('DOMContentLoaded', function () {
             // 7. Resubmission Policy Column (Placed directly after Teacher Lateness Count)
             var tdPolicy = document.createElement('td');
             if (parseInt(item.allow_resubmission, 10) === 0) {
-                tdPolicy.innerHTML = '<span class="status-badge" style="background: rgba(239, 68, 68, 0.12); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.35); font-size: 11.5px; font-weight: 600; padding: 5px 11px; border-radius: var(--radius-pill); white-space: nowrap; display: inline-flex; align-items: center; gap: 4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg> Policy: Resubmission Disabled</span>';
+                tdPolicy.innerHTML = '<span class="status-badge" style="background: rgba(239, 68, 68, 0.12); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.35); font-size: 11.5px; font-weight: 600; padding: 5px 11px; border-radius: var(--radius-pill); white-space: nowrap; display: inline-flex; align-items: center; gap: 4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg> Not Allowed</span>';
             } else {
-                tdPolicy.innerHTML = '<span class="status-badge" style="background: rgba(16, 185, 129, 0.12); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.35); font-size: 11.5px; font-weight: 600; padding: 5px 11px; border-radius: var(--radius-pill); white-space: nowrap; display: inline-flex; align-items: center; gap: 4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> Policy: Resubmissions Permitted</span>';
+                tdPolicy.innerHTML = '<span class="status-badge" style="background: rgba(16, 185, 129, 0.12); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.35); font-size: 11.5px; font-weight: 600; padding: 5px 11px; border-radius: var(--radius-pill); white-space: nowrap; display: inline-flex; align-items: center; gap: 4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> Allowed</span>';
             }
             tr.appendChild(tdPolicy);
 
@@ -301,7 +303,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     var actSpan = document.createElement('span');
                     actSpan.className = 'status-badge';
                     actSpan.style.cssText = 'font-size: 11.5px; padding: 5px 12px; background: rgba(245, 158, 11, 0.16); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.4); font-weight: 600; white-space: nowrap;';
-                    actSpan.textContent = 'Active (24h Window)';
+                    actSpan.textContent = 'Active (24h)';
                     tdAction.appendChild(actSpan);
                 } else if (item.late_submission_id) {
                     var viewSubBtn = document.createElement('a');
@@ -315,13 +317,13 @@ document.addEventListener('DOMContentLoaded', function () {
                     var disabledSpan = document.createElement('span');
                     disabledSpan.className = 'status-badge';
                     disabledSpan.style.cssText = 'background: rgba(239, 68, 68, 0.12); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.35); font-size: 11.5px; font-weight: 600; padding: 6px 12px; border-radius: var(--radius-pill); white-space: nowrap; display: inline-flex; align-items: center; gap: 5px;';
-                    disabledSpan.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg> Resubmission Not Permitted';
+                    disabledSpan.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg> Resubmission Not Allowed';
                     tdAction.appendChild(disabledSpan);
                 } else {
                     var reopenBtn = document.createElement('button');
                     reopenBtn.className = 'reopen-btn';
                     reopenBtn.style.cssText = 'white-space: nowrap !important; word-break: keep-all !important;';
-                    reopenBtn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="flex-shrink: 0;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg><span style="white-space: nowrap !important; word-break: keep-all !important;">Reopen (24h / 1 Try)</span>';
+                    reopenBtn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="flex-shrink: 0;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg><span style="white-space: nowrap !important; word-break: keep-all !important;">Reopen (24h)</span>';
                     
                     (function (rec) {
                         reopenBtn.addEventListener('click', function () {
@@ -335,7 +337,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Assistant view (Read-only authority)
                 var asstNotice = document.createElement('span');
                 asstNotice.style.cssText = 'font-size: 12px; color: var(--text-muted); font-weight: 500; font-style: italic; white-space: nowrap;';
-                asstNotice.textContent = 'Teacher Authority Only';
+                asstNotice.textContent = 'Teacher only';
                 tdAction.appendChild(asstNotice);
             }
 
@@ -406,11 +408,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 var rightStatus = document.createElement('div');
                 if (parseInt(ma.allow_resubmission, 10) === 0) {
-                    rightStatus.innerHTML = '<span class="status-badge" style="background: rgba(239, 68, 68, 0.12); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: var(--radius-pill); white-space: nowrap;">Policy: Disabled</span>';
+                    rightStatus.innerHTML = '<span class="status-badge" style="background: rgba(239, 68, 68, 0.12); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: var(--radius-pill); white-space: nowrap;">Not Allowed</span>';
                 } else if (ma.has_active_exception) {
                     rightStatus.innerHTML = '<span class="status-badge" style="background: rgba(245, 158, 11, 0.16); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.4); font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: var(--radius-pill); white-space: nowrap;">Active (' + (ma.time_left_human || '24h') + ')</span>';
                 } else {
-                    rightStatus.innerHTML = '<span class="status-badge status-open" style="font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: var(--radius-pill); white-space: nowrap;">Eligible for Reopen</span>';
+                    rightStatus.innerHTML = '<span class="status-badge status-open" style="font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: var(--radius-pill); white-space: nowrap;">Eligible</span>';
                 }
 
                 itemLabel.appendChild(leftBox);
@@ -462,15 +464,15 @@ document.addEventListener('DOMContentLoaded', function () {
         } else if (count === 1) {
             modalConfirmBtn.disabled = false;
             modalConfirmBtn.style.opacity = '1';
-            modalConfirmBtn.textContent = 'Confirm & Reopen 1 Assignment (24h)';
+            modalConfirmBtn.textContent = 'Reopen 1 Assignment (24h)';
         } else if (count === eligibleCbs.length && count > 1) {
             modalConfirmBtn.disabled = false;
             modalConfirmBtn.style.opacity = '1';
-            modalConfirmBtn.textContent = 'Confirm & Reopen All (' + count + ') Assignments (24h)';
+            modalConfirmBtn.textContent = 'Reopen All (' + count + ') Assignments (24h)';
         } else {
             modalConfirmBtn.disabled = false;
             modalConfirmBtn.style.opacity = '1';
-            modalConfirmBtn.textContent = 'Confirm & Reopen ' + count + ' Assignments (24h)';
+            modalConfirmBtn.textContent = 'Reopen ' + count + ' Assignments (24h)';
         }
     }
 
@@ -508,7 +510,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             modalConfirmBtn.disabled = true;
-            modalConfirmBtn.textContent = 'Granting Exception(s)...';
+            modalConfirmBtn.textContent = 'Reopening...';
 
             var formData = new FormData();
             formData.append('action', 'reopen');

@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .then(function (data) {
             if (!data || !data.success) {
-                showAlert('error', data && data.message ? data.message : 'Error loading submission details.');
+                showAlert('error', data && data.message ? data.message : 'Unable to load submission details.');
                 return;
             }
 
@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // Late submission / 24-hour exception indicator
             var lateBanner = document.getElementById('late-exception-banner');
             if (parseInt(sub.is_late, 10) === 1 || sub.exception_id) {
-                var notesText = sub.exception_notes ? ('<div style="margin-top: 5px; font-style: italic; opacity: 0.95;">Teacher Notes: "' + escapeHtml(sub.exception_notes) + '"</div>') : '';
+                var notesText = sub.exception_notes ? ('<div style="margin-top: 5px; font-style: italic; opacity: 0.95;">Note: "' + escapeHtml(sub.exception_notes) + '"</div>') : '';
                 if (!lateBanner) {
                     lateBanner = document.createElement('div');
                     lateBanner.id = 'late-exception-banner';
@@ -86,8 +86,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         mainCard.insertBefore(lateBanner, mainCard.children[1] || null);
                     }
                 }
-                lateBanner.innerHTML = '<strong style="display: block; font-size: 14px; margin-bottom: 3px;">&#9888;&#65039; Late Submission (Reopened via 24-Hour Exception)</strong>' +
-                    '<span>This student missed the original deadline and submitted under a single-submission 24-hour exception.</span>' + notesText;
+                lateBanner.innerHTML = '<strong style="display: block; font-size: 14px; margin-bottom: 3px;">&#9888;&#65039; Late Submission (24-Hour Exception)</strong>' +
+                    '<span>Submitted under a 24-hour exception for a missed deadline.</span>' + notesText;
 
                 if (statusBadge && !document.getElementById('late-badge')) {
                     var lateBadge = document.createElement('span');
@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
             if (maxGradeHint) {
-                maxGradeHint.textContent = 'Maximum allowed score: ' + sub.max_grade;
+                maxGradeHint.textContent = 'Maximum points: ' + sub.max_grade;
             }
 
             var feedbackInput = document.getElementById('input-feedback');
@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (sub.correction_file_name && corrBox && downloadCorrBtn) {
                     corrBox.style.display = 'block';
                     downloadCorrBtn.href = '../../backend/student/download.php?type=correction&id=' + sub.id;
-                    downloadCorrBtn.textContent = 'Download Correction (' + sub.correction_file_name + ')';
+                    downloadCorrBtn.textContent = 'Download Correction File (' + sub.correction_file_name + ')';
                 }
             }
         })
@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', function () {
             var gradeInput = document.getElementById('input-grade');
             var gradeVal = parseFloat(gradeInput.value);
             if (isNaN(gradeVal) || gradeVal < 0) {
-                showAlert('error', 'Please enter a valid approved score.');
+                showAlert('error', 'Please enter a valid grade.');
                 return;
             }
 
@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', function () {
         btnRecheck.addEventListener('click', function () {
             var commentVal = document.getElementById('input-comment').value.trim();
             if (commentVal === '') {
-                showAlert('error', 'Please write a note in "Teacher Note" explaining what the assistant needs to recheck.');
+                showAlert('error', 'Please provide a note explaining what needs to be rechecked.');
                 document.getElementById('input-comment').focus();
                 return;
             }
@@ -209,7 +209,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         })
         .catch(function (err) {
-            showAlert('error', 'Network error submitting review.');
+            showAlert('error', 'Network error while submitting review.');
             console.error('Error:', err);
         });
     }

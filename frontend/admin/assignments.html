@@ -19,8 +19,8 @@
 
         <header class="dashboard-header">
             <div>
-                <h1>Assignments System Oversight</h1>
-                <p>Monitor assignments across all departments and manage active status</p>
+                <h1>Assignments Oversight</h1>
+                <p>Monitor assignments across all courses and teachers</p>
             </div>
             <div class="header-actions">
                 <span class="user-role role-admin">Admin</span>
@@ -34,8 +34,8 @@
         <section class="assignments-section">
             <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 16px;">
                 <div>
-                    <h2>Assignments by Teacher (Category)</h2>
-                    <p>Browse course assignments categorized by faculty instructor</p>
+                    <h2>Assignments by Teacher</h2>
+                    <p>Browse assignments organized by teacher</p>
                 </div>
 
                 <input type="text" id="search-input" placeholder="Search title, course, or teacher..." style="padding: 8px 14px; border-radius: 6px; font-size: 14px; width: 280px;">
@@ -53,7 +53,7 @@
             <div id="teacher-category-banner" class="category-banner" style="display: none; padding: 12px 18px; border-left: 4px solid var(--role-teacher); border-radius: 8px; margin-bottom: 18px; font-size: 13px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
                     <div>
-                        <span style="color: var(--text-muted); font-weight: 500;">Teacher Category:</span>
+                        <span style="color: var(--text-muted); font-weight: 500;">Teacher:</span>
                         <strong id="teacher-category-name" style="color: var(--text-primary); margin-left: 4px;">—</strong>
                     </div>
                     <div id="teacher-category-stats" style="color: var(--text-secondary);">
@@ -69,12 +69,12 @@
                             <th>Assignment</th>
                             <th>Course</th>
                             <th>Grade Level</th>
-                            <th>Instructor</th>
+                            <th>Teacher</th>
                             <th>Max Points</th>
                             <th>Deadline</th>
-                            <th>Submissions Status</th>
+                            <th>Submissions</th>
                             <th>Status</th>
-                            <th>Action</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody id="assignments-table-body">

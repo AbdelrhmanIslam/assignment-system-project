@@ -49,14 +49,14 @@ function renderResult(data) {
     document.getElementById('courseName').textContent = assign.course_name;
     var teacherEl = document.getElementById('teacherName');
     if (teacherEl) {
-        teacherEl.textContent = 'Teacher: ' + (assign.teacher_name || 'Lead Teacher');
+        teacherEl.textContent = 'Teacher: ' + (assign.teacher_name || 'Teacher');
     }
     document.getElementById('maxGrade').textContent = assign.max_grade;
 
     document.getElementById('subFileName').textContent = sub.file_name;
     document.getElementById('subFileSize').textContent = formatBytes(sub.file_size);
     document.getElementById('subDate').textContent = formatDate(sub.submitted_at);
-    document.getElementById('subVersion').textContent = 'v' + sub.version;
+    document.getElementById('subVersion').textContent = 'Version ' + sub.version;
 
     var downloadSubBtn = document.getElementById('downloadSubBtn');
     if (downloadSubBtn) {
@@ -83,7 +83,7 @@ function renderResult(data) {
             if (grade.assistant_signature) {
                 assistantBox.style.display = 'block';
                 document.getElementById('assistantSignName').textContent = grade.assistant_signature.name;
-                document.getElementById('assistantSignEmail').textContent = grade.assistant_signature.email || 'teaching assistant';
+                document.getElementById('assistantSignEmail').textContent = grade.assistant_signature.email || 'Teaching Assistant';
                 document.getElementById('assistantSignDate').textContent = formatDate(grade.assistant_signature.signed_at);
             } else {
                 assistantBox.style.display = 'none';
@@ -104,7 +104,15 @@ function renderResult(data) {
     } else {
         if (resultCard) resultCard.style.display = 'none';
         if (pendingCard) pendingCard.style.display = 'block';
-        document.getElementById('subStatusBadge').textContent = sub.status.replace('_', ' ').toUpperCase();
+        var statusMap = {
+            'submitted': 'Submitted',
+            'under_review': 'Under Review',
+            'pending_approval': 'Pending Approval',
+            'graded': 'Graded',
+            'recheck_requested': 'Recheck Requested'
+        };
+        var displayStatus = statusMap[sub.status] || (sub.status ? sub.status.replace(/_/g, ' ') : 'Under Review');
+        document.getElementById('subStatusBadge').textContent = displayStatus;
     }
 
     var loader = document.getElementById('loadingState');

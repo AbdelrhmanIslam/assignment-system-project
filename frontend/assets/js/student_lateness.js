@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var allBtn = document.createElement('button');
         allBtn.className = 'teacher-filter-btn' + (selectedTeacherId === 'all' ? ' active' : '');
         allBtn.setAttribute('data-teacher-id', 'all');
-        allBtn.innerHTML = 'All Enrolled Teachers <span class="teacher-count-tag">' + allMissedAssignments.length + '</span>';
+        allBtn.innerHTML = 'All Teachers <span class="teacher-count-tag">' + allMissedAssignments.length + '</span>';
         allBtn.addEventListener('click', function () {
             setActiveTeacherButton(this, 'all');
         });
@@ -166,8 +166,8 @@ document.addEventListener('DOMContentLoaded', function () {
             // 3. Assignment Title & Max Grade & Resubmission Policy
             var tdAssign = document.createElement('td');
             var policyTag = (parseInt(item.allow_resubmission, 10) === 1)
-                ? '<div style="margin-top:4px;"><span style="font-size:11px; font-weight:600; padding:2px 7px; border-radius:4px; background:rgba(16,185,129,0.12); color:#10b981; border:1px solid rgba(16,185,129,0.25);">Policy: Resubmissions Permitted</span></div>'
-                : '<div style="margin-top:4px;"><span style="font-size:11px; font-weight:600; padding:2px 7px; border-radius:4px; background:rgba(239,68,68,0.12); color:#ef4444; border:1px solid rgba(239,68,68,0.25);">Policy: Resubmission Disabled</span></div>';
+                ? '<div style="margin-top:4px;"><span style="font-size:11px; font-weight:600; padding:2px 7px; border-radius:4px; background:rgba(16,185,129,0.12); color:#10b981; border:1px solid rgba(16,185,129,0.25);">Resubmission: Allowed</span></div>'
+                : '<div style="margin-top:4px;"><span style="font-size:11px; font-weight:600; padding:2px 7px; border-radius:4px; background:rgba(239,68,68,0.12); color:#ef4444; border:1px solid rgba(239,68,68,0.25);">Resubmission: Not Allowed</span></div>';
             tdAssign.innerHTML = '<strong>' + escapeHtml(item.assignment_title) + '</strong><br>' +
                                  '<small style="color: var(--text-muted);">' + item.max_grade + ' pts max</small>' +
                                  policyTag;
@@ -194,21 +194,21 @@ document.addEventListener('DOMContentLoaded', function () {
             var tdStatus = document.createElement('td');
             if (item.status === 'reopened') {
                 var notesText = item.exception_notes ? ('<div style="font-size:12px; color:var(--text-muted); font-style:italic; margin-top:3px;">"' + escapeHtml(item.exception_notes) + '"</div>') : '';
-                tdStatus.innerHTML = '<span class="status-reopened-badge">&#9888;&#65039; Reopened for Resubmission</span>' +
+                tdStatus.innerHTML = '<span class="status-reopened-badge">&#9888;&#65039; Reopened (24h Window)</span>' +
                                      '<div style="margin-top:4px; font-size:12px; color:#d97706; font-weight:700;">&#9203; ' + (item.human_remaining || 'Active 24h Window') + '</div>' +
                                      notesText;
             } else if (item.status === 'submitted_late') {
-                var gradeInfo = item.latest_grade !== null ? (item.latest_grade + ' / ' + item.max_grade + ' pts') : 'Grading in progress';
-                tdStatus.innerHTML = '<span class="status-badge status-graded">Submitted Late (Under Permission)</span>' +
-                                     '<div style="margin-top:4px; font-size:12px; color:var(--text-muted);">Evaluation: <strong>' + gradeInfo + '</strong></div>';
+                var gradeInfo = item.latest_grade !== null ? (item.latest_grade + ' / ' + item.max_grade + ' pts') : 'Under Review';
+                tdStatus.innerHTML = '<span class="status-badge status-graded">Submitted Late</span>' +
+                                     '<div style="margin-top:4px; font-size:12px; color:var(--text-muted);">Grade: <strong>' + gradeInfo + '</strong></div>';
             } else if (item.status === 'expired') {
-                tdStatus.innerHTML = '<span class="status-badge status-closed">24h Exception Expired</span>' +
+                tdStatus.innerHTML = '<span class="status-badge status-closed">Window Expired</span>' +
                                      '<div style="margin-top:4px; font-size:11.5px; color:var(--text-muted);">Window closed without submission</div>';
             } else {
                 var closedPolicyNotice = (parseInt(item.allow_resubmission, 10) === 0)
-                    ? '<div style="margin-top:4px; font-size:11.5px; color:#ef4444; font-weight:600;">Resubmission Not Permitted</div>'
-                    : '<div style="margin-top:4px; font-size:11.5px; color:var(--text-muted);">Reopening subject to teacher permission</div>';
-                tdStatus.innerHTML = '<span class="status-badge status-closed">Deadline Passed (Closed)</span>' + closedPolicyNotice;
+                    ? '<div style="margin-top:4px; font-size:11.5px; color:#ef4444; font-weight:600;">Resubmission Not Allowed</div>'
+                    : '<div style="margin-top:4px; font-size:11.5px; color:var(--text-muted);">Requires teacher permission to reopen</div>';
+                tdStatus.innerHTML = '<span class="status-badge status-closed">Deadline Passed</span>' + closedPolicyNotice;
             }
             tr.appendChild(tdStatus);
 
@@ -220,7 +220,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 var submitBtn = document.createElement('a');
                 submitBtn.href = 'assignment.html?id=' + item.assignment_id;
                 submitBtn.className = 'reopen-action-btn';
-                submitBtn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg> Submit Late &rarr;';
+                submitBtn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg> Submit Assignment &rarr;';
                 tdAction.appendChild(submitBtn);
             } else if (item.status === 'submitted_late') {
                 var viewSubBtn = document.createElement('a');
@@ -234,7 +234,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 viewDetailsBtn.href = 'assignment.html?id=' + item.assignment_id;
                 viewDetailsBtn.className = 'action-btn action-review';
                 viewDetailsBtn.style.cssText = 'font-size:12px; padding:6px 14px; text-decoration:none; opacity:0.85;';
-                viewDetailsBtn.textContent = 'View Details';
+                viewDetailsBtn.textContent = 'View Assignment';
                 tdAction.appendChild(viewDetailsBtn);
             }
 

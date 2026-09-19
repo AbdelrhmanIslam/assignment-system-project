@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Review & Grade Submission - Teacher</title>
+    <title>Review Submission - Teacher</title>
 
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/dashboard.css">
@@ -17,13 +17,13 @@
 <div class="dashboard-page">
 
     <a href="submissions.html" class="back-btn">
-        Back to Submissions Queue
+        Back to Submissions
     </a>
 
     <header class="dashboard-header">
         <div>
-            <h1>Submission Review & Grading</h1>
-            <p>Evaluating student submission for <span id="assignment-title">Loading...</span></p>
+            <h1>Review Submission</h1>
+            <p>Reviewing submission for <span id="assignment-title">Loading...</span></p>
         </div>
 
         <div class="header-actions">
@@ -41,7 +41,7 @@
 
             <section class="content-card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                    <h2>Submitted Work Details</h2>
+                    <h2>Submission Details</h2>
                     <span id="status-badge" class="status-badge">Pending Review</span>
                 </div>
 
@@ -62,24 +62,24 @@
                     </div>
 
                     <div class="meta-item">
-                        <span>Max Score</span>
+                        <span>Max Points</span>
                         <strong id="max-grade-display">—</strong>
                     </div>
 
                     <div class="meta-item">
-                        <span>Submitted At</span>
+                        <span>Submitted</span>
                         <strong id="submitted-at">—</strong>
                     </div>
 
                     <div class="meta-item">
-                        <span>Submission Version</span>
+                        <span>Version</span>
                         <strong id="file-version">v1</strong>
                     </div>
                 </div>
 
                 <div style="background: var(--glass-bg-elevated); border: 1px dashed var(--glass-border); border-radius: 8px; padding: 18px; margin: 20px 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
                     <div>
-                        <span style="font-size: 12px; color: var(--text-muted); text-transform: uppercase;">Submitted File:</span>
+                        <span style="font-size: 12px; color: var(--text-muted); text-transform: uppercase;">Submitted File</span>
                         <strong id="file-name" style="display: block; font-size: 15px; margin-top: 4px; color: var(--text-primary);">—</strong>
                         <span id="file-size" style="font-size: 12px; color: var(--text-muted);">—</span>
                     </div>
@@ -89,7 +89,7 @@
                     </a>
                 </div>
 
-                <h3>Assignment Description</h3>
+                <h3>Instructions</h3>
                 <div id="assignment-description" class="description-box">
                     Loading description...
                 </div>
@@ -100,8 +100,8 @@
         <div class="assignment-sidebar">
 
             <section class="content-card">
-                <h2>Teacher Review &amp; Publishing</h2>
-                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">Approve assistant evaluation or request a recheck</p>
+                <h2>Review &amp; Grade</h2>
+                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">Approve assistant evaluation or request a recheck.</p>
 
                 <!-- Official Assistant Evaluation Signature & Grade Indicator -->
                 <div id="assistant-notes-box" style="display: none; background: var(--role-assistant-bg); border: 1.5px dashed var(--role-assistant-border); padding: 16px; margin-bottom: 20px; border-radius: 8px;">
@@ -109,15 +109,15 @@
                         <span style="display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:50%; background:var(--role-assistant-bg); color:var(--role-assistant-text); flex-shrink:0;">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"></path><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path></svg>
                         </span>
-                        <strong style="font-size: 14px; color: var(--role-assistant-text);">Assistant Evaluation Signature</strong>
+                        <strong style="font-size: 14px; color: var(--role-assistant-text);">Assistant Evaluation</strong>
                     </div>
                     <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.5; margin-left: 36px;">
-                        <div>Marked by: <strong id="assistant-name">—</strong> (<span id="assistant-email">—</span>)</div>
+                        <div>Evaluated by: <strong id="assistant-name">—</strong> (<span id="assistant-email">—</span>)</div>
                         <div style="margin-top: 4px;">Proposed Grade: <strong id="assistant-proposed-grade" style="font-size:15px; color:var(--success);">—</strong></div>
-                        <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Signed At: <span id="assistant-signed-at">—</span></div>
+                        <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Date: <span id="assistant-signed-at">—</span></div>
                     </div>
                     <div id="assistant-corr-box" style="display: none; margin-top: 12px; margin-left: 28px;">
-                        <a id="download-assistant-corr-btn" href="#" class="view-btn" style="background: var(--primary); font-size: 12px; padding: 6px 12px;">Download Assistant Correction File</a>
+                        <a id="download-assistant-corr-btn" href="#" class="view-btn" style="background: var(--primary); font-size: 12px; padding: 6px 12px;">Download Correction File</a>
                     </div>
                 </div>
 
@@ -126,29 +126,29 @@
                     <input type="hidden" name="decision" id="review-decision" value="approved">
 
                     <div class="form-group" style="margin-bottom: 15px;">
-                        <label for="input-grade" style="display: block; font-weight: 600; margin-bottom: 6px;">Approved Score Points *</label>
+                        <label for="input-grade" style="display: block; font-weight: 600; margin-bottom: 6px;">Grade *</label>
                         <input type="number" id="input-grade" name="grade" step="0.25" min="0" required placeholder="e.g. 18.5" style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 15px;">
                         <p id="max-grade-hint" style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Maximum points allowed</p>
                     </div>
 
                     <div class="form-group" style="margin-bottom: 15px;">
-                        <label for="input-feedback" style="display: block; font-weight: 600; margin-bottom: 6px;">Published Feedback for Student</label>
-                        <textarea id="input-feedback" name="feedback" rows="4" style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; font-family: inherit; font-size: 14px;" placeholder="Feedback visible to student..."></textarea>
+                        <label for="input-feedback" style="display: block; font-weight: 600; margin-bottom: 6px;">Feedback for Student</label>
+                        <textarea id="input-feedback" name="feedback" rows="4" style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; font-family: inherit; font-size: 14px;" placeholder="Add feedback for the student..."></textarea>
                     </div>
 
                     <!-- notes / recheck reason comments -->
                     <div class="form-group" style="margin-bottom: 20px;">
-                        <label for="input-comment" style="display: block; font-weight: 600; margin-bottom: 6px;">Teacher Note (Required if requesting Recheck)</label>
-                        <textarea id="input-comment" name="comment" rows="3" style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; font-family: inherit; font-size: 14px;" placeholder="Enter instructions for assistant if requesting a recheck..."></textarea>
+                        <label for="input-comment" style="display: block; font-weight: 600; margin-bottom: 6px;">Note for Assistant (Required if requesting recheck)</label>
+                        <textarea id="input-comment" name="comment" rows="3" style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; font-family: inherit; font-size: 14px;" placeholder="Enter instructions for the assistant..."></textarea>
                     </div>
 
                     <div style="display: flex; flex-direction: column; gap: 10px;">
                         <button type="button" id="btn-approve" class="btn-primary" style="width: 100%; padding: 12px; font-size: 15px; background: var(--primary);">
-                            Approve &amp; Publish Final Grade
+                            Approve &amp; Publish Grade
                         </button>
 
                         <button type="button" id="btn-recheck" class="action-btn action-submit" style="width: 100%; padding: 12px; font-size: 14px; background: var(--warning); color: #fff; border: none; cursor: pointer; text-align: center;">
-                            Request Recheck from Assistant
+                            Request Recheck
                         </button>
                     </div>
                 </form>

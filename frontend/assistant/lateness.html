@@ -71,8 +71,8 @@
 
     <header class="dashboard-header">
         <div>
-            <h1>Missed Submissions &amp; Lateness</h1>
-            <p>Monitor students who missed assignment deadlines across your assigned teachers and courses.</p>
+            <h1>Missed &amp; Late Submissions</h1>
+            <p>Monitor students with missed deadlines across your assigned courses.</p>
         </div>
 
         <div class="header-actions">
@@ -84,7 +84,7 @@
     <div class="permission-notice">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="flex-shrink: 0;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
         <div>
-            <strong>Assistant Permission Notice:</strong> You can view all student delays, class levels, and 24-hour exception statuses across your assigned teachers. The authority to reopen an assignment for a student is restricted exclusively to the course teacher.
+            <strong>Assistant Permissions:</strong> You can view student submissions and 24-hour exception statuses across your assigned teachers. Reopening assignments is restricted to course teachers.
         </div>
     </div>
 
@@ -98,17 +98,17 @@
         </div>
 
         <div class="stat-card">
-            <span class="stat-label">Students with Delays</span>
+            <span class="stat-label">Students with Missed Deadlines</span>
             <strong class="stat-number" id="stat-students-count" style="color: #ea580c;">0</strong>
         </div>
 
         <div class="stat-card">
-            <span class="stat-label">Active 24h Exceptions</span>
+            <span class="stat-label">Active Exceptions</span>
             <strong class="stat-number" id="stat-active-exceptions" style="color: #d97706;">0</strong>
         </div>
 
         <div class="stat-card">
-            <span class="stat-label">Submitted Late</span>
+            <span class="stat-label">Late Submissions</span>
             <strong class="stat-number" id="stat-submitted-late" style="color: var(--success);">0</strong>
         </div>
     </section>
@@ -117,13 +117,13 @@
     <section class="lateness-card">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
             <div>
-                <h2 style="margin: 0 0 4px; font-size: 18px;">Teacher Classes &amp; Registered Grade Levels</h2>
+                <h2 style="margin: 0 0 4px; font-size: 18px;">Classes &amp; Grade Levels</h2>
                 <p style="margin: 0; font-size: 13px; color: var(--text-muted);">
-                    Showing only grade levels registered to the selected teacher.
+                    Showing grade levels registered to the selected teacher.
                 </p>
             </div>
             <div id="teacher-selector-container" style="display: none; align-items: center; gap: 8px;">
-                <label for="teacher-select" style="font-size: 13px; font-weight: 600;">Assigned Teacher:</label>
+                <label for="teacher-select" style="font-size: 13px; font-weight: 600;">Teacher:</label>
                 <select id="teacher-select" style="padding: 6px 14px; border-radius: var(--radius-pill); font-size: 13px; border: 1px solid var(--border-color); background: var(--surface); color: var(--text-primary);"></select>
             </div>
         </div>
@@ -131,7 +131,7 @@
         <!-- Grade level pills (populated dynamically with ONLY teacher registered grades) -->
         <div class="filter-bar" style="border: none; padding: 0; margin-bottom: 18px;">
             <div class="filter-tabs" id="grade-level-tabs">
-                <button class="filter-tab active" data-grade="all" id="tab-all-grades">All Registered Classes</button>
+                <button class="filter-tab active" data-grade="all" id="tab-all-grades">All Classes</button>
                 <!-- Dynamic tabs injected by lateness.js -->
             </div>
 
@@ -148,8 +148,8 @@
 
         <!-- Empty state -->
         <div id="missed-empty" class="empty-state" style="display: none;">
-            <h3>No Missed Submissions</h3>
-            <p>No students currently have unsubmitted past-deadline assignments for the selected class.</p>
+            <h3>No missed submissions</h3>
+            <p>No students have unsubmitted past-deadline assignments for the selected class.</p>
         </div>
 
         <!-- Table container -->
@@ -157,14 +157,14 @@
             <table class="assignments-table">
                 <thead>
                     <tr>
-                        <th>Student Name &amp; Email</th>
-                        <th>Class / Grade Level</th>
+                        <th>Student</th>
+                        <th>Grade Level</th>
                         <th>Course</th>
                         <th>Assignment</th>
-                        <th>Original Deadline</th>
-                        <th>Teacher Lateness Count</th>
-                        <th>Exception Status</th>
-                        <th>Action</th>
+                        <th>Deadline</th>
+                        <th>Missed Count</th>
+                        <th>Status</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody id="missed-table-body">

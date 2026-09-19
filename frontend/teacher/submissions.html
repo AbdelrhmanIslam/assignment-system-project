@@ -22,12 +22,12 @@
 
     <header class="dashboard-header">
         <div>
-            <h1>Student Submissions Queue</h1>
-            <p>Review student submitted files, assign scores, and publish final evaluations</p>
+            <h1>Submissions Queue</h1>
+            <p>Review student submissions and grades</p>
         </div>
 
         <div class="header-actions">
-            <a href="lateness.html" class="action-btn" style="background: rgba(234, 88, 12, 0.15); color: #c2410c; border: 1px solid rgba(234, 88, 12, 0.4); text-decoration: none; padding: 7px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">&#9888;&#65039; Missed Submissions &amp; Lateness</a>
+            <a href="lateness.html" class="action-btn" style="background: rgba(234, 88, 12, 0.15); color: #c2410c; border: 1px solid rgba(234, 88, 12, 0.4); text-decoration: none; padding: 7px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">&#9888;&#65039; Missed &amp; Late Submissions</a>
             <span class="user-role">Teacher</span>
 
             <a href="../../backend/auth/logout.php" class="logout-btn">Logout</a>
@@ -58,8 +58,8 @@
         </div>
 
         <div id="submissions-empty" class="empty-state" style="display: none;">
-            <h3>No Submissions Found</h3>
-            <p>No student submissions match your current filter selection.</p>
+            <h3>No submissions found</h3>
+            <p>No submissions match your current filters.</p>
         </div>
 
         <div id="submissions-table-container" class="table-container" style="display: none;">
@@ -69,10 +69,10 @@
                         <th>Student</th>
                         <th>Assignment</th>
                         <th>Course</th>
-                        <th>Submitted At</th>
+                        <th>Submitted</th>
                         <th>Status</th>
                         <th>Grade</th>
-                        <th>Action</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody id="submissions-table-body">

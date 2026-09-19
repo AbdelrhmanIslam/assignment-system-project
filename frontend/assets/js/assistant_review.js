@@ -64,12 +64,17 @@ function renderDetails(data) {
 
     var statusBadge = document.getElementById('status-badge');
     if (statusBadge) {
-        statusBadge.textContent = sub.status.replace('_', ' ').toUpperCase();
         if (sub.status === 'graded') {
+            statusBadge.textContent = 'Graded';
             statusBadge.className = 'status-badge status-graded';
         } else if (sub.status === 'recheck') {
+            statusBadge.textContent = 'Recheck Requested';
             statusBadge.className = 'status-badge status-closed';
+        } else if (sub.status === 'pending_teacher') {
+            statusBadge.textContent = 'Pending Approval';
+            statusBadge.className = 'status-badge status-review';
         } else {
+            statusBadge.textContent = 'Submitted';
             statusBadge.className = 'status-badge status-review';
         }
     }
@@ -77,7 +82,7 @@ function renderDetails(data) {
     // Late submission / 24-hour exception indicator
     var lateBanner = document.getElementById('late-exception-banner');
     if (parseInt(sub.is_late, 10) === 1 || sub.exception_id) {
-        var notesText = sub.exception_notes ? ('<div style="margin-top: 5px; font-style: italic; opacity: 0.95;">Teacher Notes: "' + escapeHtml(sub.exception_notes) + '"</div>') : '';
+        var notesText = sub.exception_notes ? ('<div style="margin-top: 5px; font-style: italic; opacity: 0.95;">Note: "' + escapeHtml(sub.exception_notes) + '"</div>') : '';
         if (!lateBanner) {
             lateBanner = document.createElement('div');
             lateBanner.id = 'late-exception-banner';
@@ -95,8 +100,8 @@ function renderDetails(data) {
                 mainCard.insertBefore(lateBanner, mainCard.children[1] || null);
             }
         }
-        lateBanner.innerHTML = '<strong style="display: block; font-size: 14px; margin-bottom: 3px;">&#9888;&#65039; Late Submission (Reopened via 24-Hour Exception)</strong>' +
-            '<span>This student missed the original deadline and submitted under a single-submission 24-hour exception granted by the teacher.</span>' + notesText;
+        lateBanner.innerHTML = '<strong style="display: block; font-size: 14px; margin-bottom: 3px;">&#9888;&#65039; Late Submission (24-Hour Exception)</strong>' +
+            '<span>Submitted under a 24-hour exception for a missed deadline.</span>' + notesText;
 
         if (statusBadge && !document.getElementById('late-badge')) {
             var lateBadge = document.createElement('span');
@@ -114,7 +119,7 @@ function renderDetails(data) {
     var gradeInput = document.getElementById('input-grade');
     if (gradeInput) {
         gradeInput.max = assign.max_grade;
-        document.getElementById('max-grade-hint').textContent = 'Maximum allowed: ' + assign.max_grade + ' points';
+        document.getElementById('max-grade-hint').textContent = 'Maximum points: ' + assign.max_grade;
     }
 
     // populate existing grade if present
@@ -153,7 +158,7 @@ function setupGradeForm(submissionId) {
         var gradeVal = parseFloat(gradeInput.value);
 
         if (isNaN(gradeVal) || gradeVal < 0 || gradeVal > currentMaxGrade) {
-            showError('Please enter a valid score between 0 and ' + currentMaxGrade);
+            showError('Please enter a valid grade between 0 and ' + currentMaxGrade + '.');
             return;
         }
 
@@ -163,7 +168,7 @@ function setupGradeForm(submissionId) {
         var submitBtn = form.querySelector('button[type="submit"]');
         if (submitBtn) {
             submitBtn.disabled = true;
-            submitBtn.textContent = 'Saving Grade...';
+            submitBtn.textContent = 'Submitting...';
         }
 
         fetch('../../backend/assistant/grade.php', {
@@ -174,7 +179,7 @@ function setupGradeForm(submissionId) {
         .then(function (data) {
             if (submitBtn) {
                 submitBtn.disabled = false;
-                submitBtn.textContent = 'Save Evaluation & Grade';
+                submitBtn.textContent = 'Submit for Teacher Approval';
             }
 
             if (!data.success) {
@@ -182,7 +187,7 @@ function setupGradeForm(submissionId) {
                 return;
             }
 
-            showSuccess('Evaluation saved successfully! Redirecting to queue...');
+            showSuccess('Evaluation submitted successfully. Redirecting to queue...');
             setTimeout(function () {
                 window.location.href = 'submissions.html';
             }, 1200);
@@ -190,7 +195,7 @@ function setupGradeForm(submissionId) {
         .catch(function (err) {
             if (submitBtn) {
                 submitBtn.disabled = false;
-                submitBtn.textContent = 'Save Evaluation & Grade';
+                submitBtn.textContent = 'Submit for Teacher Approval';
             }
             console.error('Error saving grade:', err);
             showError('Server error while saving grade.');

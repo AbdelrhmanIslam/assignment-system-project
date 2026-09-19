@@ -22,8 +22,8 @@
 
     <header class="dashboard-header">
         <div>
-            <h1 id="assignment-title">Loading Assignment...</h1>
-            <p>Course: <span id="course-name">—</span> | Instructor: <span id="teacher-name">—</span></p>
+            <h1 id="assignment-title">Loading assignment...</h1>
+            <p>Course: <span id="course-name">—</span> | Teacher: <span id="teacher-name">—</span></p>
         </div>
 
         <div class="header-actions">
@@ -46,17 +46,17 @@
 
                 <div class="meta-grid">
                     <div class="meta-item">
-                        <span>Lead Teacher</span>
+                        <span>Teacher</span>
                         <strong id="lead-teacher-name" style="color: var(--primary);">—</strong>
                     </div>
 
                     <div class="meta-item">
-                        <span>Max Grade</span>
+                        <span>Max Points</span>
                         <strong id="max-grade">—</strong>
                     </div>
 
                     <div class="meta-item">
-                        <span>Target Grade Level</span>
+                        <span>Grade Level</span>
                         <strong id="target-grade-level">—</strong>
                     </div>
 
@@ -66,7 +66,7 @@
                     </div>
 
                     <div class="meta-item">
-                        <span>Allowed Formats</span>
+                        <span>Allowed File Types</span>
                         <strong id="allowed-extensions">—</strong>
                     </div>
 
@@ -81,12 +81,12 @@
                     </div>
 
                     <div class="meta-item">
-                        <span>Permitted Tries</span>
+                        <span>Allowed Attempts</span>
                         <strong id="permitted-attempts">—</strong>
                     </div>
 
                     <div class="meta-item">
-                        <span>Your Attempts</span>
+                        <span>Attempts Used</span>
                         <strong id="attempts-used">—</strong>
                     </div>
                 </div>
@@ -109,7 +109,7 @@
 
                 <div class="submission-box">
                     <div class="submission-item">
-                        <span>File Name:</span>
+                        <span>File:</span>
                         <strong id="submission-file-name">—</strong>
                     </div>
 
@@ -119,26 +119,26 @@
                     </div>
 
                     <div class="submission-item">
-                        <span>File Size:</span>
+                        <span>Size:</span>
                         <strong id="submission-file-size">—</strong>
                     </div>
 
                     <div class="submission-item">
-                        <span>Submitted At:</span>
+                        <span>Submitted:</span>
                         <strong id="submission-date">—</strong>
                     </div>
                 </div>
 
                 <div style="margin-top: 12px; display: flex; gap: 10px; flex-wrap: wrap;">
-                    <a id="download-submission-link" href="#" class="view-btn" style="display: none;">Download Your File</a>
-                    <a id="view-result-report-link" href="#" class="view-btn" style="display: none; background: #059669;">View Full Evaluation Report &rarr;</a>
+                    <a id="download-submission-link" href="#" class="view-btn" style="display: none;">Download File</a>
+                    <a id="view-result-report-link" href="#" class="view-btn" style="display: none; background: #059669;">View Result &rarr;</a>
                 </div>
 
                 <!-- grade and feedback box -->
                 <div id="grade-card" class="grade-box" style="display: none;">
-                    <h3>Grade & Feedback</h3>
+                    <h3>Grade &amp; Feedback</h3>
                     <div class="submission-item">
-                        <span>Grade Received:</span>
+                        <span>Grade:</span>
                         <strong id="grade-score">—</strong>
                     </div>
                     <p style="margin: 8px 0 4px; font-size: 13px; color: #166534; font-weight: 600;">Feedback:</p>
@@ -149,7 +149,7 @@
                         <span>Correction File:</span>
                         <strong id="correction-file-name">—</strong>
                         <div style="margin-top: 8px;">
-                            <a id="download-correction-link" href="#" class="view-btn" style="background: #059669; font-size: 12px;">Download Correction</a>
+                            <a id="download-correction-link" href="#" class="view-btn" style="background: #059669; font-size: 12px;">Download Correction File</a>
                         </div>
                     </div>
                 </div>
@@ -167,7 +167,7 @@
                     <input type="hidden" name="assignment_id" id="form-assignment-id" value="">
 
                     <div class="upload-form-group">
-                        <label for="submission-file-input" id="submission-file-label">Choose Submission File</label>
+                        <label for="submission-file-input" id="submission-file-label">Upload File</label>
                         <input
                             type="file"
                             id="submission-file-input"
@@ -175,12 +175,12 @@
                             required
                         >
                         <p class="upload-help" id="submission-upload-help">
-                            Ensure file matches allowed extensions and size limit.
+                            Ensure your file meets the allowed format and size requirements.
                         </p>
                     </div>
 
                     <button type="submit" id="submit-assignment-btn" class="btn-primary" style="width: 100%; border-radius: var(--radius-pill); font-size: 14px; padding: 11px 20px; transition: var(--transition-all);">
-                        Upload &amp; Submit
+                        Submit Assignment
                     </button>
                 </form>
             </section>

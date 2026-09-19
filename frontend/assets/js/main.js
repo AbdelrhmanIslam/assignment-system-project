@@ -162,5 +162,18 @@
         }
     });
 
+    function formatGradeLevel(grade) {
+        if (!grade) return '—';
+        var map = {
+            'First Year of Middle School': '1st Preparatory',
+            'Second Year of Middle School': '2nd Preparatory',
+            'Third Year of Middle School': '3rd Preparatory',
+            'First Year of High School': '1st Secondary',
+            'Middle School': 'Preparatory'
+        };
+        return map[grade] || grade;
+    }
+
     window.toggleTheme = toggleTheme;
+    window.formatGradeLevel = formatGradeLevel;
 })();

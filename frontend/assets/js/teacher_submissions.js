@@ -184,7 +184,7 @@ document.addEventListener('DOMContentLoaded', function () {
             var actionBtn = document.createElement('a');
             actionBtn.href = 'review.html?id=' + sub.id;
             actionBtn.className = 'action-btn ' + (sub.status === 'graded' ? 'action-view' : (sub.status === 'pending_teacher' ? 'action-submit' : 'action-review'));
-            actionBtn.textContent = (sub.status === 'pending_teacher') ? 'Review & Approve' : ((sub.status === 'graded') ? 'View / Edit' : 'Review Work');
+            actionBtn.textContent = (sub.status === 'graded') ? 'View Result' : 'Review';
             tdAction.appendChild(actionBtn);
             tr.appendChild(tdAction);
 
@@ -219,13 +219,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function getStatusInfo(status) {
         if (status === 'graded') {
-            return { label: 'Graded (Published)', className: 'status-graded' };
+            return { label: 'Graded', className: 'status-graded' };
         } else if (status === 'pending_teacher') {
-            return { label: 'Pending Your Approval', className: 'status-review' };
+            return { label: 'Pending Approval', className: 'status-review' };
         } else if (status === 'recheck') {
-            return { label: 'Recheck In Progress', className: 'status-closed' };
+            return { label: 'Recheck Requested', className: 'status-closed' };
         } else if (status === 'under_review') {
-            return { label: 'Assistant Reviewing', className: 'status-review' };
+            return { label: 'Under Review', className: 'status-review' };
         } else {
             return { label: 'Submitted', className: 'status-submitted' };
         }
