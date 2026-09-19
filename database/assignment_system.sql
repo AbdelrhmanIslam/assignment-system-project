@@ -362,6 +362,7 @@ CREATE TABLE `teacher_assistants` (
   `assistant_id` int(10) UNSIGNED NOT NULL,
   `assigned_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_assistant_single_teacher` (`assistant_id`),
   UNIQUE KEY `unique_teacher_assistant` (`teacher_id`,`assistant_id`),
   KEY `idx_teacher_assistant_teacher` (`teacher_id`),
   KEY `idx_teacher_assistant_assistant` (`assistant_id`)

@@ -272,41 +272,44 @@ echo "Created " . count($allTeachersMap) . " Teachers (Preparatory & Secondary).
 // ----------------------------------------------------
 // 3. CREATE TEACHING ASSISTANTS
 // ----------------------------------------------------
+// Rule: An assistant is assigned to exactly ONE lead teacher.
+// A lead teacher can have multiple assistants (e.g., Mohamed Reda has 2 assistants).
 $assistantsData = [
     [
         'name' => 'Asst. Karim Adel',
         'email' => 'karim.adel@school.eg',
-        'teachers' => ['mohamed.reda@school.eg', 'ahmed.elsayed@school.eg']
+        'teacher' => 'mohamed.reda@school.eg'
     ],
     [
         'name' => 'Asst. Nourhan Sherif',
         'email' => 'nourhan.sherif@school.eg',
-        'teachers' => ['tarek.shawky@school.eg', 'mona.abdelaziz@school.eg']
+        'teacher' => 'tarek.shawky@school.eg'
     ],
     [
         'name' => 'Asst. Omar Farouk',
         'email' => 'omar.farouk@school.eg',
-        'teachers' => ['hisham.barakat@school.eg', 'rania.youssef@school.eg']
+        'teacher' => 'hisham.barakat@school.eg'
     ],
     [
         'name' => 'Asst. Mariam Samir',
         'email' => 'mariam.samir@school.eg',
-        'teachers' => ['mostafa.mahmoud@school.eg', 'salma.hayek@school.eg']
+        'teacher' => 'mostafa.mahmoud@school.eg'
     ],
     [
         'name' => 'Asst. Bassem Youssef',
         'email' => 'bassem.youssef@school.eg',
-        'teachers' => ['gamal.hamdan@school.eg', 'hoda.shaarawy@school.eg']
+        'teacher' => 'gamal.hamdan@school.eg'
     ],
     [
         'name' => 'Asst. Dina Anwar',
         'email' => 'dina.anwar@school.eg',
-        'teachers' => ['zaki.naguib@school.eg', 'peter.george@school.eg', 'ahmed.zewail@school.eg']
+        'teacher' => 'zaki.naguib@school.eg'
     ],
     [
         'name' => 'Asst. Tamer Hosny',
         'email' => 'tamer.hosny@school.eg',
-        'teachers' => ['younan.labib@school.eg', 'magdy.yacoub@school.eg', 'mourad.wahba@school.eg']
+        // Also assisting Mohamed Reda (Demonstrating Mohamed Reda having multiple assistants: Karim Adel & Tamer Hosny)
+        'teacher' => 'mohamed.reda@school.eg'
     ]
 ];
 
@@ -320,13 +323,11 @@ foreach ($assistantsData as $a) {
     $aId = (int)mysqli_insert_id($conn);
     $allAssistantsMap[$a['email']] = $aId;
 
-    $tIds = [];
-    foreach ($a['teachers'] as $tEmail) {
-        if (isset($allTeachersMap[$tEmail])) {
-            $tIds[] = $allTeachersMap[$tEmail]['id'];
-        }
+    $tEmail = $a['teacher'];
+    $tId = isset($allTeachersMap[$tEmail]) ? $allTeachersMap[$tEmail]['id'] : 0;
+    if ($tId > 0) {
+        setAssistantTeachers($conn, $aId, $tId);
     }
-    setAssistantTeachers($conn, $aId, $tIds);
 }
 
 echo "Created " . count($allAssistantsMap) . " Teaching Assistants.\n";
@@ -570,15 +571,24 @@ foreach ($assignmentsList as $asgn) {
 echo "Created {$submissionCount} Submissions and {$gradeCount} Grades.\n";
 
 // ----------------------------------------------------
-// 7. ENSURE UNIQUE CONSTRAINT ON student_teachers (student_id, subject)
+// 7. ENSURE UNIQUE CONSTRAINTS
 // ----------------------------------------------------
-// Check if uq_student_subject index exists
+// 1. student_teachers: (student_id, subject) unique
 $chkIdx = mysqli_query($conn, "SHOW INDEX FROM student_teachers WHERE Key_name = 'uq_student_subject'");
 if ($chkIdx && mysqli_num_rows($chkIdx) === 0) {
     mysqli_query($conn, "ALTER TABLE student_teachers ADD UNIQUE KEY uq_student_subject (student_id, subject)");
     echo "Added UNIQUE KEY uq_student_subject (student_id, subject) to student_teachers table.\n";
 } else {
     echo "UNIQUE KEY uq_student_subject on student_teachers verified.\n";
+}
+
+// 2. teacher_assistants: (assistant_id) unique -> An assistant can only belong to ONE teacher
+$chkAsstIdx = mysqli_query($conn, "SHOW INDEX FROM teacher_assistants WHERE Key_name = 'uq_assistant_single_teacher'");
+if ($chkAsstIdx && mysqli_num_rows($chkAsstIdx) === 0) {
+    mysqli_query($conn, "ALTER TABLE teacher_assistants ADD UNIQUE KEY uq_assistant_single_teacher (assistant_id)");
+    echo "Added UNIQUE KEY uq_assistant_single_teacher (assistant_id) to teacher_assistants table.\n";
+} else {
+    echo "UNIQUE KEY uq_assistant_single_teacher on teacher_assistants verified.\n";
 }
 
 echo "\n=== Database Seeding Completed Successfully! ===\n";

@@ -521,8 +521,7 @@ record_test('TEACHER_ISOLATION', 'Teacher A cannot grade Teacher B submission (T
 // =================================================================
 echo "\n--- 6. ASSISTANT ISOLATION ---\n";
 
-// Assistant Karim Adel ($asstKarim) is assigned to Mohamed Reda ($mReda)
-// 6.1 Assistant sees only assigned lead teachers' submissions
+// 6.1 Assistant sees only assigned lead teacher submissions
 $a1SubsRes = mysqli_query($conn, "
     SELECT s.id, c.teacher_id
     FROM submissions s
@@ -548,6 +547,25 @@ $a1GradeT2Res = mysqli_query($conn, "
 ");
 $a1CanGradeT2 = ($a1GradeT2Res && mysqli_num_rows($a1GradeT2Res) > 0);
 record_test('ASSISTANT_ISOLATION', 'Assistant cannot grade unassigned teacher submission (Tampering blocked)', !$a1CanGradeT2, "Strict teacher_assistants join check");
+
+// 6.3 Business Rule: Assistant cannot be assigned to more than 1 teacher
+$multiAsstRes = mysqli_query($conn, "
+    SELECT assistant_id, COUNT(DISTINCT teacher_id) as t_count
+    FROM teacher_assistants
+    GROUP BY assistant_id
+    HAVING t_count > 1
+");
+$multiAsstCount = mysqli_num_rows($multiAsstRes);
+record_test('ASSISTANT_RULES', 'No assistant is assigned to more than one teacher', $multiAsstCount === 0, "Violating assistants: $multiAsstCount");
+
+// 6.4 Business Rule: Single teacher can have multiple assistants
+$mRedaAssts = getTeacherAssistants($conn, $mReda);
+record_test('ASSISTANT_RULES', 'A single teacher can have multiple assistants', count($mRedaAssts) >= 2, "Mr. Mohamed Reda has " . count($mRedaAssts) . " assistants: " . implode(', ', array_column($mRedaAssts, 'name')));
+
+// 6.5 Schema: UNIQUE KEY uq_assistant_single_teacher exists on teacher_assistants
+$asstIdxRes = mysqli_query($conn, "SHOW INDEX FROM teacher_assistants WHERE Key_name = 'uq_assistant_single_teacher'");
+$hasAsstIdx = ($asstIdxRes && mysqli_num_rows($asstIdxRes) > 0);
+record_test('ASSISTANT_RULES', 'UNIQUE KEY uq_assistant_single_teacher enforced in database', $hasAsstIdx, "Unique key active on assistant_id");
 
 
 // =================================================================

@@ -105,14 +105,17 @@ if (isPost()) {
                 exit;
             }
         } elseif ($role === 'assistant') {
-            $rawTIds = isset($_POST['teacher_ids']) ? $_POST['teacher_ids'] : (isset($_POST['teacher_ids[]']) ? $_POST['teacher_ids[]'] : null);
-            if ($rawTIds !== null) {
-                $assistantTeachers = is_array($rawTIds) ? $rawTIds : explode(',', $rawTIds);
-            }
-            if (empty($assistantTeachers)) {
-                echo json_encode(['success' => false, 'message' => 'Please select at least one Teacher for this assistant.']);
+            $rawTId = isset($_POST['teacher_id']) ? (int)$_POST['teacher_id'] : (isset($_POST['teacher_ids']) ? (int)(is_array($_POST['teacher_ids']) ? (reset($_POST['teacher_ids']) ?: 0) : $_POST['teacher_ids']) : 0);
+            if ($rawTId <= 0) {
+                echo json_encode(['success' => false, 'message' => 'Please select a Lead Teacher for this assistant.']);
                 exit;
             }
+            $chkT = mysqli_query($conn, "SELECT id FROM users WHERE id = $rawTId AND role = 'teacher' AND is_active = 1 LIMIT 1");
+            if (!$chkT || mysqli_num_rows($chkT) === 0) {
+                echo json_encode(['success' => false, 'message' => 'Selected lead teacher does not exist or is inactive.']);
+                exit;
+            }
+            $assistantTeacherId = $rawTId;
         }
 
         // prevent duplicate email registration
@@ -144,7 +147,7 @@ if (isPost()) {
             } elseif ($role === 'teacher') {
                 setTeacherGradeLevels($conn, $newUserId, $teacherGrades);
             } elseif ($role === 'assistant') {
-                setAssistantTeachers($conn, $newUserId, $assistantTeachers);
+                setAssistantTeachers($conn, $newUserId, $assistantTeacherId);
             }
             echo json_encode(['success' => true, 'message' => 'User created successfully!']);
         } else {
@@ -249,12 +252,13 @@ if (isPost()) {
             }
         }
 
-        // update assigned teachers if assistant
+        // update assigned teacher if assistant (single lead teacher)
         if ($targetRole === 'assistant') {
-            $rawUpdateTIds = isset($_POST['teacher_ids']) ? $_POST['teacher_ids'] : (isset($_POST['teacher_ids[]']) ? $_POST['teacher_ids[]'] : null);
-            if ($rawUpdateTIds !== null) {
-                $asstTeachers = is_array($rawUpdateTIds) ? $rawUpdateTIds : explode(',', $rawUpdateTIds);
-                setAssistantTeachers($conn, $targetUserId, $asstTeachers);
+            if (isset($_POST['teacher_id']) || isset($_POST['teacher_ids'])) {
+                $rawTId = isset($_POST['teacher_id']) ? (int)$_POST['teacher_id'] : (int)(is_array($_POST['teacher_ids']) ? (reset($_POST['teacher_ids']) ?: 0) : $_POST['teacher_ids']);
+                if ($rawTId > 0) {
+                    setAssistantTeachers($conn, $targetUserId, $rawTId);
+                }
             }
         }
 
@@ -520,6 +524,8 @@ if ($result) {
         $uRole = $row['role'];
         $teacherLevels = ($uRole === 'teacher') ? getTeacherGradeLevels($conn, $uId) : [];
         $assignedTeachers = ($uRole === 'assistant') ? getAssistantTeachers($conn, $uId) : [];
+        $assignedTeacherId = ($uRole === 'assistant') ? getAssistantTeacherId($conn, $uId) : 0;
+        $assignedAssistants = ($uRole === 'teacher') ? getTeacherAssistants($conn, $uId) : [];
         $studentTeachers = ($uRole === 'student') ? getStudentTeachers($conn, $uId) : [];
         $studentTeacherIds = ($uRole === 'student') ? getStudentTeacherIds($conn, $uId) : [];
 
@@ -577,6 +583,8 @@ if ($result) {
             'grade_level' => $row['grade_level'],
             'teacher_grade_levels' => $teacherLevels,
             'assigned_teachers' => $assignedTeachers,
+            'assigned_teacher_id' => $assignedTeacherId,
+            'assigned_assistants' => $assignedAssistants,
             'student_teachers' => $studentTeachers,
             'student_teacher_ids' => $studentTeacherIds,
             'student_courses' => $studentCourses,

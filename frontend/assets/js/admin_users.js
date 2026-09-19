@@ -70,7 +70,7 @@ function setupRoleChangeListeners() {
         if (aGroup) {
             aGroup.style.display = (r === 'assistant') ? 'block' : 'none';
             if (r === 'assistant') {
-                renderTeacherCheckboxes('create-assistant-teachers-list', 'teacher_ids[]', []);
+                renderAssistantTeacherDropdown('create-assistant-teacher', 0);
             }
         }
     });
@@ -88,6 +88,25 @@ function setupRoleChangeListeners() {
             loadTeachersForStudentModal(this.value, 'edit-student-teachers-list', 'student_teacher_ids[]', []);
         });
     }
+}
+
+function renderAssistantTeacherDropdown(selectId, selectedTeacherId) {
+    var select = document.getElementById(selectId);
+    if (!select) return;
+    select.innerHTML = '<option value="">Select Lead Teacher...</option>';
+    if (!activeTeachers || activeTeachers.length === 0) {
+        select.innerHTML = '<option value="">No active teachers available</option>';
+        return;
+    }
+    activeTeachers.forEach(function (t) {
+        var opt = document.createElement('option');
+        opt.value = t.id;
+        opt.textContent = t.name + (t.subject ? ' (' + t.subject + ')' : '');
+        if (selectedTeacherId && parseInt(selectedTeacherId, 10) === t.id) {
+            opt.selected = true;
+        }
+        select.appendChild(opt);
+    });
 }
 
 function loadTeachersForStudentModal(gradeLevel, containerId, inputName, selectedIds) {
@@ -187,7 +206,7 @@ function loadUsers(callback) {
 
         if (data.active_teachers) {
             activeTeachers = data.active_teachers;
-            renderTeacherCheckboxes('create-assistant-teachers-list', 'teacher_ids[]', []);
+            renderAssistantTeacherDropdown('create-assistant-teacher', 0);
         }
 
         if (data.all_courses) {
@@ -382,8 +401,17 @@ function renderTeacherRowHtml(u) {
             }).join('') + '</div>';
     }
 
+    var asstBadges = '';
+    if (u.assigned_assistants && u.assigned_assistants.length > 0) {
+        asstBadges = '<div style="margin-top:4px; display:flex; flex-wrap:wrap; gap:3px;">' +
+            u.assigned_assistants.map(function(a) {
+                return '<span class="status-badge" style="font-size:10px; padding:1px 6px; border-radius:var(--radius-pill); background:var(--role-assistant-bg); color:var(--role-assistant-text); border:1px solid var(--role-assistant-border); display:inline-flex; align-items:center; gap:3px;"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle></svg>' + escapeHtml(a.name) + '</span>';
+            }).join('') +
+        '</div>';
+    }
+
     return '<tr>' +
-        '<td style="white-space:nowrap; vertical-align:middle;"><div><strong>' + escapeHtml(u.name) + '</strong></div>' + subjectBadge + '</td>' +
+        '<td style="white-space:nowrap; vertical-align:middle;"><div><strong>' + escapeHtml(u.name) + '</strong></div>' + subjectBadge + asstBadges + '</td>' +
         '<td style="white-space:nowrap; vertical-align:middle;">' + escapeHtml(u.email) + '</td>' +
         '<td style="white-space:nowrap; vertical-align:middle;">' + tGradesHtml + '</td>' +
         '<td style="text-align:center; white-space:nowrap; vertical-align:middle;"><span class="status-badge status-review" style="font-size:11px; font-weight:600; white-space:nowrap;">' + (u.courses_count || 0) + ' Courses</span></td>' +
@@ -401,12 +429,11 @@ function renderAssistantRowHtml(u) {
 
     var asstForHtml = '<span style="font-size:12px; color:var(--text-muted);">Unassigned</span>';
     if (u.assigned_teachers && u.assigned_teachers.length > 0) {
-        asstForHtml = '<div style="display:inline-flex; flex-direction:row; flex-wrap:nowrap; gap:5px; align-items:center; white-space:nowrap;">' +
-            u.assigned_teachers.map(function (t) {
-                return '<span class="status-badge status-submitted" style="font-size:11px; white-space:nowrap; display:inline-flex; align-items:center; gap:3px; flex-shrink:0;">' +
-                    '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> ' +
-                    escapeHtml(t.name) + '</span>';
-            }).join('') + '</div>';
+        var t = u.assigned_teachers[0];
+        asstForHtml = '<span class="status-badge status-submitted" style="font-size:11.5px; white-space:nowrap; display:inline-flex; align-items:center; gap:4px; font-weight:600;">' +
+            '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> ' +
+            escapeHtml(t.name) + (t.subject ? ' (' + escapeHtml(t.subject) + ')' : '') +
+        '</span>';
     }
 
     return '<tr>' +
@@ -1032,8 +1059,8 @@ function openEditUserModal(userId) {
         if (tCoursesGroup) tCoursesGroup.style.display = 'none';
         if (aEditGroup) {
             aEditGroup.style.display = 'block';
-            var selectedTeacherIds = (u.assigned_teachers || []).map(function (t) { return t.id; });
-            renderTeacherCheckboxes('edit-assistant-teachers-list', 'teacher_ids[]', selectedTeacherIds);
+            var selectedTeacherId = u.assigned_teacher_id || (u.assigned_teachers && u.assigned_teachers[0] ? u.assigned_teachers[0].id : 0);
+            renderAssistantTeacherDropdown('edit-assistant-teacher', selectedTeacherId);
         }
     } else {
         if (sEditGroup) sEditGroup.style.display = 'none';
