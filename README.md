@@ -4,7 +4,7 @@ A multi-role academic assignment and grading workflow management platform design
 
 The system streamlines the entire coursework cycle: from course configuration and assignment publishing by teachers, to student submissions, assistant grading, and final teacher approval and grade publishing.
 
----
+--
 
 ## Table of Contents
 
