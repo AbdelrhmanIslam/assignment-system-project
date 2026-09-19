@@ -2,6 +2,7 @@
 
 var currentRoleFilter = 'all';
 var searchQuery = '';
+var currentAdminId = 0;
 
 var loadedUsers = [];
 var activeTeachers = [];
@@ -12,6 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
     setupFilters();
     setupCreateUserForm();
     setupEditUserForm();
+    setupChangePasswordForm();
     setupRoleChangeListeners();
     setupCourseActionButtons();
 });
@@ -163,8 +165,11 @@ function loadUsers(callback) {
             return;
         }
 
-        if (data.user && document.getElementById('admin-name')) {
-            document.getElementById('admin-name').textContent = data.user.name;
+        if (data.user) {
+            if (data.user.id) currentAdminId = parseInt(data.user.id, 10);
+            if (document.getElementById('admin-name')) {
+                document.getElementById('admin-name').textContent = data.user.name;
+            }
         }
 
         if (data.active_teachers) {
@@ -291,14 +296,23 @@ function renderStatusBadge(isActive) {
 function renderActionButtons(u) {
     var toggleBtnLabel = u.is_active ? 'Deactivate' : 'Activate';
     var toggleBtnClass = u.is_active ? 'background:var(--danger);' : 'background:var(--success);';
+    var isSelf = (currentAdminId > 0 && u.id === currentAdminId);
 
-    return '<div style="display:inline-flex; gap:6px; align-items:center;">' +
-        '<button onclick="openEditUserModal(' + u.id + ')" class="action-btn action-view" style="font-size:12px; padding:6px 12px; border:none; cursor:pointer;">' +
+    var toggleBtnHtml = isSelf ?
+        '<button type="button" class="view-btn" disabled style="opacity:0.45; cursor:not-allowed; font-size:11.5px; padding:5px 10px; border:none; border-radius:var(--radius-pill);" title="You cannot deactivate your own administrative account">Self</button>' :
+        '<button type="button" onclick="toggleUserStatus(' + u.id + ', this)" class="view-btn" style="' + toggleBtnClass + ' font-size:11.5px; padding:5px 10px; border:none; cursor:pointer; border-radius:var(--radius-pill); white-space:nowrap;">' +
+            toggleBtnLabel +
+        '</button>';
+
+    return '<div style="display:inline-flex; gap:5px; align-items:center; flex-wrap:nowrap;">' +
+        '<button type="button" onclick="openChangePasswordModal(' + u.id + ')" class="action-btn" style="background:rgba(13, 148, 136, 0.12); color:var(--primary); border:1px solid rgba(13, 148, 136, 0.35); font-size:11.5px; padding:5px 10px; border-radius:var(--radius-pill); cursor:pointer; display:inline-flex; align-items:center; gap:4px; font-weight:600; white-space:nowrap;" title="Set new password for this user">' +
+            '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>' +
+            'Change Pass' +
+        '</button>' +
+        '<button type="button" onclick="openEditUserModal(' + u.id + ')" class="action-btn action-view" style="font-size:11.5px; padding:5px 10px; border:none; cursor:pointer; border-radius:var(--radius-pill); white-space:nowrap;">' +
             'Edit' +
         '</button>' +
-        '<button onclick="toggleUserStatus(' + u.id + ', this)" class="view-btn" style="' + toggleBtnClass + ' font-size:12px; padding:6px 12px; border:none; cursor:pointer;">' +
-            toggleBtnLabel +
-        '</button>' +
+        toggleBtnHtml +
     '</div>';
 }
 
@@ -1494,3 +1508,177 @@ function showAlert(msg, type) {
         if (box) box.style.display = 'none';
     }, 4500);
 }
+
+// Change Password Modal Controllers
+function openChangePasswordModal(userId) {
+    var u = null;
+    for (var i = 0; i < loadedUsers.length; i++) {
+        if (loadedUsers[i].id === userId) {
+            u = loadedUsers[i];
+            break;
+        }
+    }
+    if (!u) return;
+
+    var modal = document.getElementById('change-password-modal');
+    var inputId = document.getElementById('change-pass-user-id');
+    var inputPass = document.getElementById('change-pass-new-password');
+    var targetName = document.getElementById('change-pass-target-name');
+    var targetEmail = document.getElementById('change-pass-target-email');
+    var targetRole = document.getElementById('change-pass-target-role');
+    var targetId = document.getElementById('change-pass-target-id');
+    var modalTitle = document.getElementById('change-pass-modal-title');
+    var errorBox = document.getElementById('change-pass-error-msg');
+
+    var isSelf = (currentAdminId > 0 && u.id === currentAdminId);
+
+    if (inputId) inputId.value = u.id;
+    if (inputPass) {
+        inputPass.value = '';
+        inputPass.type = 'password';
+    }
+    if (errorBox) {
+        errorBox.textContent = '';
+        errorBox.style.display = 'none';
+    }
+
+    var eyeOpen = document.getElementById('eye-icon-open');
+    var eyeClosed = document.getElementById('eye-icon-closed');
+    if (eyeOpen && eyeClosed) {
+        eyeOpen.style.display = 'block';
+        eyeClosed.style.display = 'none';
+    }
+
+    if (modalTitle) {
+        modalTitle.textContent = isSelf ? 'Change Your Admin Password' : 'Change Password';
+    }
+    if (targetName) targetName.textContent = u.name + (isSelf ? ' (You)' : '');
+    if (targetEmail) targetEmail.textContent = u.email;
+    if (targetRole) {
+        targetRole.textContent = u.role.toUpperCase();
+        targetRole.className = 'status-badge ' + getRoleBadgeClass(u.role);
+    }
+    if (targetId) targetId.textContent = u.id;
+
+    if (modal) {
+        modal.style.display = 'flex';
+        setTimeout(function () {
+            if (inputPass) inputPass.focus();
+        }, 80);
+    }
+}
+
+function closeChangePasswordModal() {
+    var modal = document.getElementById('change-password-modal');
+    if (modal) modal.style.display = 'none';
+}
+
+function openAdminOwnPasswordModal() {
+    if (currentAdminId > 0) {
+        openChangePasswordModal(currentAdminId);
+    } else {
+        var adminUser = loadedUsers.find(function (u) { return u.role === 'admin'; });
+        if (adminUser) openChangePasswordModal(adminUser.id);
+    }
+}
+
+function toggleChangePasswordVisibility() {
+    var input = document.getElementById('change-pass-new-password');
+    var eyeOpen = document.getElementById('eye-icon-open');
+    var eyeClosed = document.getElementById('eye-icon-closed');
+    if (!input) return;
+
+    if (input.type === 'password') {
+        input.type = 'text';
+        if (eyeOpen) eyeOpen.style.display = 'none';
+        if (eyeClosed) eyeClosed.style.display = 'block';
+    } else {
+        input.type = 'password';
+        if (eyeOpen) eyeOpen.style.display = 'block';
+        if (eyeClosed) eyeClosed.style.display = 'none';
+    }
+}
+
+function setupChangePasswordForm() {
+    var form = document.getElementById('change-password-form');
+    if (!form) return;
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        var userId = parseInt(document.getElementById('change-pass-user-id').value, 10);
+        var passInput = document.getElementById('change-pass-new-password');
+        var errorBox = document.getElementById('change-pass-error-msg');
+        var submitBtn = document.getElementById('btn-submit-change-pass');
+
+        var newPass = passInput ? passInput.value.trim() : '';
+        if (newPass.length < 8) {
+            if (errorBox) {
+                errorBox.textContent = 'Password must be at least 8 characters long.';
+                errorBox.style.display = 'block';
+            }
+            if (passInput) passInput.focus();
+            return;
+        }
+
+        if (errorBox) errorBox.style.display = 'none';
+
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Updating...';
+        }
+
+        var formData = new FormData();
+        formData.append('action', 'change_password');
+        formData.append('user_id', userId);
+        formData.append('new_password', newPass);
+
+        fetch('../../backend/admin/users.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Update Password';
+            }
+
+            if (!data.success) {
+                if (errorBox) {
+                    errorBox.textContent = data.message || 'Failed to change password.';
+                    errorBox.style.display = 'block';
+                } else {
+                    showAlert(data.message || 'Failed to change password.', 'error');
+                }
+                return;
+            }
+
+            showAlert(data.message, 'success');
+            closeChangePasswordModal();
+            loadUsers();
+        })
+        .catch(function (err) {
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Update Password';
+            }
+            console.error('Error changing password:', err);
+            showAlert('Server network error while changing password.', 'error');
+        });
+    });
+
+    var modal = document.getElementById('change-password-modal');
+    if (modal) {
+        modal.addEventListener('click', function (e) {
+            if (e.target === modal) closeChangePasswordModal();
+        });
+    }
+}
+
+// Expose handlers globally to window
+window.openChangePasswordModal = openChangePasswordModal;
+window.closeChangePasswordModal = closeChangePasswordModal;
+window.openAdminOwnPasswordModal = openAdminOwnPasswordModal;
+window.toggleChangePasswordVisibility = toggleChangePasswordVisibility;
+

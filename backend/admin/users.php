@@ -240,10 +240,65 @@ if (isPost()) {
         $updateRes = mysqli_query($conn, $updateSql);
 
         if ($updateRes) {
+            if ($targetUserId === $adminId) {
+                $_SESSION['user_name'] = $name;
+                $_SESSION['user_email'] = $email;
+            }
             $msg = ($newPassword !== '') ? 'User details and password updated successfully!' : 'User details updated successfully!';
             echo json_encode(['success' => true, 'message' => $msg]);
         } else {
             echo json_encode(['success' => false, 'message' => 'Database error: ' . mysqli_error($conn)]);
+        }
+        exit;
+    }
+
+    if ($action === 'change_password') {
+        $targetUserId = isset($_POST['user_id']) ? (int) $_POST['user_id'] : 0;
+        $newPassword = isset($_POST['new_password']) ? trim($_POST['new_password']) : (isset($_POST['password']) ? trim($_POST['password']) : '');
+
+        if ($targetUserId <= 0) {
+            echo json_encode(['success' => false, 'message' => 'Invalid user ID specified.']);
+            exit;
+        }
+
+        if (empty($newPassword)) {
+            echo json_encode(['success' => false, 'message' => 'Please provide a new password.']);
+            exit;
+        }
+
+        if (strlen($newPassword) < 8) {
+            echo json_encode(['success' => false, 'message' => 'Password must be at least 8 characters long.']);
+            exit;
+        }
+
+        // check if target user exists
+        $chkUser = mysqli_query($conn, "SELECT id, name, email, role FROM users WHERE id = $targetUserId LIMIT 1");
+        $targetUser = mysqli_fetch_assoc($chkUser);
+        if (!$targetUser) {
+            echo json_encode(['success' => false, 'message' => 'User not found in the database.']);
+            exit;
+        }
+
+        // hash password securely
+        $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+        $escapedHash = mysqli_real_escape_string($conn, $hashedPassword);
+
+        $updPass = mysqli_query($conn, "UPDATE users SET password = '$escapedHash' WHERE id = $targetUserId");
+        if ($updPass) {
+            $targetRoleName = ucfirst($targetUser['role']);
+            $isSelf = ($targetUserId === $adminId);
+            $msg = $isSelf
+                ? 'Your password has been changed successfully! You can continue using the platform or log in with your new credentials.'
+                : 'Password for ' . htmlspecialchars($targetUser['name']) . ' (' . $targetRoleName . ') updated successfully!';
+
+            echo json_encode([
+                'success' => true,
+                'message' => $msg,
+                'user_id' => $targetUserId,
+                'is_self' => $isSelf
+            ]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Database error updating password: ' . mysqli_error($conn)]);
         }
         exit;
     }
@@ -488,6 +543,7 @@ if ($allCoursesRes) {
 echo json_encode([
     'success' => true,
     'user' => [
+        'id' => $adminId,
         'name' => currentUserName(),
         'role' => currentUserRole()
     ],
