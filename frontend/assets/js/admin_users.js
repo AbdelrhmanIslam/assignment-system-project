@@ -8,6 +8,18 @@ var loadedUsers = [];
 var activeTeachers = [];
 var allActiveCourses = [];
 
+var formatGradeLevel = window.formatGradeLevel || function (grade) {
+    if (!grade) return '—';
+    var map = {
+        'First Year of Middle School': '1st Preparatory',
+        'Second Year of Middle School': '2nd Preparatory',
+        'Third Year of Middle School': '3rd Preparatory',
+        'First Year of High School': '1st Secondary',
+        'Middle School': 'Preparatory'
+    };
+    return map[grade] || grade;
+};
+
 document.addEventListener('DOMContentLoaded', function () {
     loadUsers();
     setupFilters();
@@ -437,8 +449,8 @@ function renderStudentsHierarchy(students) {
             if (!teacherMap[unKey]) {
                 teacherMap[unKey] = {
                     id: unKey,
-                    name: 'Unassigned Students',
-                    email: 'Students without an assigned teacher',
+                    name: 'Unassigned Students (No Teacher Selected)',
+                    email: 'Students not yet assigned to an instructor',
                     isUnassigned: true,
                     grades: {}
                 };
@@ -649,7 +661,7 @@ function renderAssistantsHierarchy(assistants) {
             if (!teacherMap[unKey]) {
                 teacherMap[unKey] = {
                     id: unKey,
-                    name: 'Unassigned Assistants',
+                    name: 'Unassigned Teaching Assistants',
                     isUnassigned: true,
                     assistants: []
                 };
@@ -685,8 +697,8 @@ function renderAssistantsHierarchy(assistants) {
         var tGroup = teacherMap[tKey];
         var aList = tGroup.assistants;
 
-        var headerTitle = tGroup.isUnassigned ? escapeHtml(tGroup.name) : ('Assistant to: ' + escapeHtml(tGroup.name));
-        var headerSubtitle = tGroup.email ? escapeHtml(tGroup.email) : (tGroup.isUnassigned ? 'Assistants pending teacher assignment' : 'Teaching assistants for this instructor');
+        var headerTitle = tGroup.isUnassigned ? escapeHtml(tGroup.name) : ('Assistant For: ' + escapeHtml(tGroup.name));
+        var headerSubtitle = tGroup.email ? escapeHtml(tGroup.email) : (tGroup.isUnassigned ? 'Assistants pending teacher assignment' : 'Designated teaching assistant staff');
 
         html += '<div class="user-category-card">';
         html += '  <div class="user-category-header ' + (tGroup.isUnassigned ? 'unassigned-cat' : 'assistant-cat') + '" onclick="toggleCategoryCard(this)" title="Click to collapse / expand this assistant category">';

@@ -1,5 +1,17 @@
 // teacher dashboard javascript controller
 
+var formatGradeLevel = window.formatGradeLevel || function (grade) {
+    if (!grade) return '—';
+    var map = {
+        'First Year of Middle School': '1st Preparatory',
+        'Second Year of Middle School': '2nd Preparatory',
+        'Third Year of Middle School': '3rd Preparatory',
+        'First Year of High School': '1st Secondary',
+        'Middle School': 'Preparatory'
+    };
+    return map[grade] || grade;
+};
+
 document.addEventListener('DOMContentLoaded', function () {
     // fetch teacher dashboard data from backend api
     fetch('../../backend/teacher/dashboard.php')

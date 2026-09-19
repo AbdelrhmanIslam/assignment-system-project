@@ -177,3 +177,6 @@
     window.toggleTheme = toggleTheme;
     window.formatGradeLevel = formatGradeLevel;
 })();
+
+// Global scope alias for direct function calls
+var formatGradeLevel = window.formatGradeLevel;
