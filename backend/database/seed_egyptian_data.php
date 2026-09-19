@@ -552,14 +552,14 @@ foreach ($assignmentsList as $asgn) {
             $status = ($sIdx % 3 === 0) ? 'under_review' : (($sIdx % 2 === 0) ? 'graded' : 'submitted');
             $submittedAt = date('Y-m-d H:i:s', strtotime('-' . rand(1, 48) . ' hours'));
 
-            mysqli_query($conn, "INSERT INTO submissions (assignment_id, student_id, version, file_path, original_filename, file_size_bytes, status, is_late, submitted_at)
-                                 VALUES ($asgnId, $studentId, 1, 'uploads/submissions/test_submission_{$asgnId}_{$studentId}.pdf', 'test_solution.pdf', 102400, '$status', 0, '$submittedAt')");
+            mysqli_query($conn, "INSERT INTO submissions (assignment_id, student_id, version, file_path, file_name, stored_file_name, file_size, file_type, status, is_late, submitted_at)
+                                 VALUES ($asgnId, $studentId, 1, 'uploads/submissions/test_submission_{$asgnId}_{$studentId}.pdf', 'test_solution.pdf', 'test_solution_{$asgnId}_{$studentId}.pdf', 102400, 'application/pdf', '$status', 0, '$submittedAt')");
             $subId = (int)mysqli_insert_id($conn);
             $submissionCount++;
 
             if ($status === 'graded') {
                 $score = rand((int)($maxGrade * 0.7), $maxGrade);
-                mysqli_query($conn, "INSERT INTO grades (submission_id, graded_by, grade, feedback, graded_at)
+                mysqli_query($conn, "INSERT INTO grades (submission_id, assistant_id, grade, feedback, graded_at)
                                      VALUES ($subId, $tId, $score, 'Excellent work! Well presented answers.', NOW())");
                 $gradeCount++;
             }
