@@ -50,6 +50,7 @@ if (isPost()) {
 
         // validate role-specific requirements
         $studentGrade = '';
+        $teacherSubject = '';
         $studentTeachers = [];
         $teacherGrades = [];
         $assistantTeachers = [];
@@ -64,12 +65,43 @@ if (isPost()) {
                 $studentTeachers = is_array($rawSTeachers) ? $rawSTeachers : explode(',', $rawSTeachers);
             }
         } elseif ($role === 'teacher') {
+            $teacherSubject = isset($_POST['subject']) ? trim($_POST['subject']) : '';
+            if (empty($teacherSubject)) {
+                echo json_encode(['success' => false, 'message' => 'Please select a Subject for this teacher.']);
+                exit;
+            }
+
             $rawTGrades = isset($_POST['teacher_grade_levels']) ? $_POST['teacher_grade_levels'] : (isset($_POST['teacher_grade_levels[]']) ? $_POST['teacher_grade_levels[]'] : null);
             if ($rawTGrades !== null) {
                 $teacherGrades = is_array($rawTGrades) ? $rawTGrades : explode(',', $rawTGrades);
             }
             if (empty($teacherGrades)) {
                 echo json_encode(['success' => false, 'message' => 'Please select at least one Grade Level for this teacher.']);
+                exit;
+            }
+
+            // Check stage isolation
+            $allowed = getAllowedGradeLevels();
+            $firstStage = null;
+            foreach ($teacherGrades as $tg) {
+                $tg = trim($tg);
+                if (!in_array($tg, $allowed)) {
+                    echo json_encode(['success' => false, 'message' => "Invalid grade level '$tg'."]);
+                    exit;
+                }
+                $stg = getEducationalStage($tg);
+                if ($firstStage === null) {
+                    $firstStage = $stg;
+                } elseif ($stg !== $firstStage) {
+                    echo json_encode(['success' => false, 'message' => 'Stage isolation error: A teacher cannot teach both Preparatory and Secondary grades.']);
+                    exit;
+                }
+            }
+
+            // Check valid subject for stage
+            $stageSubjects = getSubjectListForStage($firstStage);
+            if (!in_array($teacherSubject, $stageSubjects)) {
+                echo json_encode(['success' => false, 'message' => "Subject '$teacherSubject' is not valid for $firstStage stage."]);
                 exit;
             }
         } elseif ($role === 'assistant') {
@@ -96,16 +128,17 @@ if (isPost()) {
         $escapedName = mysqli_real_escape_string($conn, $name);
         $escapedHash = mysqli_real_escape_string($conn, $hashedPassword);
         $escapedStudentGrade = mysqli_real_escape_string($conn, $studentGrade);
+        $escapedSubject = mysqli_real_escape_string($conn, $teacherSubject);
 
-        $insertSql = "INSERT INTO users (name, email, password, role, grade_level, is_active, created_at)
-                      VALUES ('$escapedName', '$escapedEmail', '$escapedHash', '$role', " . ($role === 'student' ? "'$escapedStudentGrade'" : "NULL") . ", 1, NOW())";
+        $insertSql = "INSERT INTO users (name, email, password, role, subject, grade_level, is_active, created_at)
+                      VALUES ('$escapedName', '$escapedEmail', '$escapedHash', '$role', " . ($role === 'teacher' ? "'$escapedSubject'" : "NULL") . ", " . ($role === 'student' ? "'$escapedStudentGrade'" : "NULL") . ", 1, NOW())";
         $insertRes = mysqli_query($conn, $insertSql);
 
         if ($insertRes) {
             $newUserId = (int) mysqli_insert_id($conn);
             if ($role === 'student') {
                 if (!empty($studentTeachers)) {
-                    setStudentTeachers($conn, $newUserId, $studentTeachers);
+                    setStudentTeachers($conn, $newUserId, $studentTeachers, $studentGrade);
                 }
                 enrollStudentInGradeLevelCourses($conn, $newUserId, $studentGrade, $studentTeachers);
             } elseif ($role === 'teacher') {
@@ -252,30 +285,73 @@ if (isPost()) {
         exit;
     }
 
-    if ($action === 'change_password') {
+    if ($action === 'delete_user') {
         $targetUserId = isset($_POST['user_id']) ? (int) $_POST['user_id'] : 0;
-        $newPassword = isset($_POST['new_password']) ? trim($_POST['new_password']) : (isset($_POST['password']) ? trim($_POST['password']) : '');
 
         if ($targetUserId <= 0) {
-            echo json_encode(['success' => false, 'message' => 'Invalid user ID specified.']);
+            echo json_encode(['success' => false, 'message' => 'Invalid user ID.']);
             exit;
         }
 
-        if (empty($newPassword)) {
-            echo json_encode(['success' => false, 'message' => 'Please provide a new password.']);
+        if ($targetUserId === $adminId) {
+            echo json_encode(['success' => false, 'message' => 'You cannot delete your own account.']);
             exit;
         }
 
-        if (strlen($newPassword) < 8) {
-            echo json_encode(['success' => false, 'message' => 'Password must be at least 8 characters long.']);
+        $delSql = "DELETE FROM users WHERE id = $targetUserId";
+        $delRes = mysqli_query($conn, $delSql);
+
+        if ($delRes) {
+            echo json_encode(['success' => true, 'message' => 'User deleted successfully.']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Failed to delete user: ' . mysqli_error($conn)]);
+        }
+        exit;
+    }
+
+    if ($action === 'change_password') {
+        $targetUserId = isset($_POST['user_id']) ? (int) $_POST['user_id'] : 0;
+        $newPassword = isset($_POST['password']) ? trim($_POST['password']) : '';
+
+        if ($targetUserId <= 0) {
+            echo json_encode(['success' => false, 'message' => 'Invalid user ID.']);
             exit;
         }
 
-        // check if target user exists
-        $chkUser = mysqli_query($conn, "SELECT id, name, email, role FROM users WHERE id = $targetUserId LIMIT 1");
-        $targetUser = mysqli_fetch_assoc($chkUser);
+        if ($newPassword === '') {
+            echo json_encode(['success' => false, 'message' => 'New password cannot be empty.']);
+            exit;
+        }
+
+        // fetch user details for response
+        $uQuery = mysqli_query($conn, "SELECT id, name, role FROM users WHERE id = $targetUserId LIMIT 1");
+        $targetUser = mysqli_fetch_assoc($uQuery);
+
         if (!$targetUser) {
-            echo json_encode(['success' => false, 'message' => 'User not found in the database.']);
+            echo json_encode(['success' => false, 'message' => 'User not found.']);
+            exit;
+        }
+
+        // enforce robust password policy
+        $passwordErrors = [];
+        if (strlen($newPassword) <= 8) {
+            $passwordErrors[] = 'Password must be more than 8 characters.';
+        }
+        if (!preg_match('/[A-Z]/', $newPassword)) {
+            $passwordErrors[] = 'Password must contain at least 1 uppercase letter (A-Z).';
+        }
+        if (!preg_match('/[a-z]/', $newPassword)) {
+            $passwordErrors[] = 'Password must contain at least 1 lowercase letter (a-z).';
+        }
+        if (!preg_match('/[0-9]/', $newPassword)) {
+            $passwordErrors[] = 'Password must contain at least 1 number (0-9).';
+        }
+        if (!preg_match('/[^a-zA-Z0-9]/', $newPassword)) {
+            $passwordErrors[] = 'Password must contain at least 1 symbol (such as #, !, $, etc.).';
+        }
+
+        if (!empty($passwordErrors)) {
+            echo json_encode(['success' => false, 'message' => implode(' ', $passwordErrors)]);
             exit;
         }
 
@@ -334,7 +410,10 @@ if (isPost()) {
         $ins = mysqli_query($conn, "INSERT IGNORE INTO course_students (course_id, student_id, enrolled_at) VALUES ($courseId, $targetUserId, NOW())");
         if ($ins) {
             if ($teacherId > 0) {
-                mysqli_query($conn, "INSERT IGNORE INTO student_teachers (student_id, teacher_id) VALUES ($targetUserId, $teacherId)");
+                $tSubjRes = mysqli_query($conn, "SELECT subject FROM users WHERE id = $teacherId LIMIT 1");
+                $tSubj = ($tSubjRes && $tsr = mysqli_fetch_assoc($tSubjRes)) ? $tsr['subject'] : '';
+                $escapedTSubj = mysqli_real_escape_string($conn, $tSubj);
+                mysqli_query($conn, "INSERT IGNORE INTO student_teachers (student_id, teacher_id, subject) VALUES ($targetUserId, $teacherId, '$escapedTSubj')");
             }
             echo json_encode(['success' => true, 'message' => 'Course enrolled for student successfully!']);
         } else {
@@ -411,7 +490,7 @@ if (isPost()) {
         exit;
     }
 
-    echo json_encode(['success' => false, 'message' => 'Invalid action specified.']);
+    echo json_encode(['success' => false, 'message' => 'Unknown action.']);
     exit;
 }
 
@@ -431,7 +510,7 @@ if (!empty($search)) {
 }
 
 $whereSql = implode(' AND ', $whereClauses);
-$sql = "SELECT id, name, email, role, grade_level, is_active, created_at FROM users WHERE $whereSql ORDER BY id DESC";
+$sql = "SELECT id, name, email, role, subject, grade_level, is_active, created_at FROM users WHERE $whereSql ORDER BY id DESC";
 $result = mysqli_query($conn, $sql);
 
 $users = [];
@@ -494,6 +573,7 @@ if ($result) {
             'name' => $row['name'],
             'email' => $row['email'],
             'role' => $uRole,
+            'subject' => $row['subject'] ?? '',
             'grade_level' => $row['grade_level'],
             'teacher_grade_levels' => $teacherLevels,
             'assigned_teachers' => $assignedTeachers,
@@ -509,14 +589,15 @@ if ($result) {
 }
 
 // query active teachers list for dropdowns and checkboxes
-$activeTeachersRes = mysqli_query($conn, "SELECT id, name, email FROM users WHERE role = 'teacher' AND is_active = 1 ORDER BY name ASC");
+$activeTeachersRes = mysqli_query($conn, "SELECT id, name, email, subject FROM users WHERE role = 'teacher' AND is_active = 1 ORDER BY name ASC");
 $activeTeachers = [];
 if ($activeTeachersRes) {
     while ($tRow = mysqli_fetch_assoc($activeTeachersRes)) {
         $activeTeachers[] = [
             'id' => (int) $tRow['id'],
             'name' => $tRow['name'],
-            'email' => $tRow['email']
+            'email' => $tRow['email'],
+            'subject' => $tRow['subject'] ?? ''
         ];
     }
 }

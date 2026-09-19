@@ -82,14 +82,25 @@ function updateTeachers(teachers) {
     email.style.cssText = "display: block; font-size: 13px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;";
     email.textContent = t.email;
 
-    var badge = document.createElement("span");
-    badge.className = "status-badge status-graded";
-    badge.style.cssText = "font-size: 11px; padding: 2px 8px; margin-top: 6px; display: inline-block;";
-    badge.textContent = "Teacher";
+    var badgeContainer = document.createElement("div");
+    badgeContainer.style.cssText = "display: flex; gap: 6px; align-items: center; margin-top: 6px; flex-wrap: wrap;";
+
+    if (t.subject) {
+      var subjectBadge = document.createElement("span");
+      subjectBadge.style.cssText = "font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 600; background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3);";
+      subjectBadge.textContent = t.subject;
+      badgeContainer.appendChild(subjectBadge);
+    }
+
+    var roleBadge = document.createElement("span");
+    roleBadge.className = "status-badge status-graded";
+    roleBadge.style.cssText = "font-size: 11px; padding: 2px 8px;";
+    roleBadge.textContent = "Teacher";
+    badgeContainer.appendChild(roleBadge);
 
     info.appendChild(name);
     info.appendChild(email);
-    info.appendChild(badge);
+    info.appendChild(badgeContainer);
 
     card.appendChild(avatar);
     card.appendChild(info);

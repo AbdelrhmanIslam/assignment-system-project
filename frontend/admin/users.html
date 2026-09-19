@@ -294,9 +294,31 @@
                             </div>
                         </div>
 
+                        <div id="create-teacher-subject-group" class="form-group" style="margin-bottom: 15px; display: none;">
+                            <label for="input-teacher-subject" style="display: block; font-weight: 600; margin-bottom: 5px;">Subject *</label>
+                            <select id="input-teacher-subject" name="subject" style="width: 100%; padding: 9px; border-radius: 6px; font-size: 14px;">
+                                <option value="">Select Subject</option>
+                                <optgroup label="Preparatory Subjects">
+                                    <option value="Arabic">Arabic</option>
+                                    <option value="English">English</option>
+                                    <option value="Mathematics">Mathematics</option>
+                                    <option value="Science">Science</option>
+                                    <option value="Social Studies">Social Studies</option>
+                                </optgroup>
+                                <optgroup label="Secondary Subjects">
+                                    <option value="Arabic">Arabic</option>
+                                    <option value="First Foreign Language">First Foreign Language</option>
+                                    <option value="History">History</option>
+                                    <option value="Mathematics">Mathematics</option>
+                                    <option value="Integrated Sciences">Integrated Sciences</option>
+                                    <option value="Philosophy & Logic">Philosophy & Logic</option>
+                                </optgroup>
+                            </select>
+                        </div>
+
                         <div id="create-teacher-grade-group" class="form-group" style="margin-bottom: 15px; display: none;">
                             <label style="display: block; font-weight: 600; margin-bottom: 5px;">Assigned Grade Levels *</label>
-                            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">Select grade levels this teacher instructs</p>
+                            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">Select grade levels this teacher instructs (All Preparatory or 1st Secondary)</p>
                             <div style="display: flex; flex-direction: column; gap: 6px;">
                                 <label style="font-size: 13px; font-weight: normal; cursor: pointer; display: flex; align-items: center; gap: 8px;">
                                     <input type="checkbox" name="teacher_grade_levels[]" value="First Year of Middle School" checked> 1st Preparatory
@@ -421,6 +443,28 @@
                             Enroll
                         </button>
                     </div>
+                </div>
+
+                <div id="edit-teacher-subject-group" class="form-group" style="margin-bottom: 0; display: none;">
+                    <label for="edit-teacher-subject" style="display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px;">Assigned Subject</label>
+                    <select id="edit-teacher-subject" name="subject" style="border-radius: var(--radius-pill); width: 100%; padding: 8px 12px; font-size: 13px;">
+                        <option value="">Select Subject</option>
+                        <optgroup label="Preparatory Stage">
+                            <option value="Arabic">Arabic</option>
+                            <option value="English">English</option>
+                            <option value="Mathematics">Mathematics</option>
+                            <option value="Science">Science</option>
+                            <option value="Social Studies">Social Studies</option>
+                        </optgroup>
+                        <optgroup label="Secondary Stage">
+                            <option value="Arabic">Arabic</option>
+                            <option value="First Foreign Language">First Foreign Language</option>
+                            <option value="History">History</option>
+                            <option value="Mathematics">Mathematics</option>
+                            <option value="Integrated Sciences">Integrated Sciences</option>
+                            <option value="Philosophy & Logic">Philosophy & Logic</option>
+                        </optgroup>
+                    </select>
                 </div>
 
                 <div id="edit-teacher-grade-group" class="form-group" style="margin-bottom: 0; display: none;">

@@ -53,6 +53,7 @@ function setupRoleChangeListeners() {
     roleSelect.addEventListener('change', function () {
         var r = roleSelect.value;
         var sGroup = document.getElementById('create-student-grade-group');
+        var tSubjGroup = document.getElementById('create-teacher-subject-group');
         var tGroup = document.getElementById('create-teacher-grade-group');
         var aGroup = document.getElementById('create-assistant-teacher-group');
         var stGroup = document.getElementById('create-student-teacher-group');
@@ -64,6 +65,7 @@ function setupRoleChangeListeners() {
                 loadTeachersForStudentModal(sGradeVal, 'create-student-teachers-list', 'student_teacher_ids[]', []);
             }
         }
+        if (tSubjGroup) tSubjGroup.style.display = (r === 'teacher') ? 'block' : 'none';
         if (tGroup) tGroup.style.display = (r === 'teacher') ? 'block' : 'none';
         if (aGroup) {
             aGroup.style.display = (r === 'assistant') ? 'block' : 'none';
@@ -357,6 +359,9 @@ function renderTeacherRowHtml(u) {
     var statusBadge = renderStatusBadge(u.is_active);
     var actionButtons = renderActionButtons(u);
 
+    var subjectBadge = u.subject ?
+        '<span class="status-badge" style="font-size:11px; padding:2px 8px; border-radius:var(--radius-pill); font-weight:600; background:rgba(99, 102, 241, 0.15); color:#818cf8; border:1px solid rgba(99, 102, 241, 0.3); display:inline-block; margin-top:3px;">' + escapeHtml(u.subject) + '</span>' : '';
+
     var tGradesHtml = '<span style="color:var(--text-muted); font-size:12px;">—</span>';
     if (u.teacher_grade_levels && u.teacher_grade_levels.length > 0) {
         tGradesHtml = '<div class="teacher-grades-row" style="display:inline-flex !important; flex-direction:row !important; flex-wrap:nowrap !important; align-items:center !important; gap:6px !important; white-space:nowrap !important; max-width:340px !important; overflow-x:auto !important; padding-bottom:3px !important; -webkit-overflow-scrolling:touch !important;">' +
@@ -378,7 +383,7 @@ function renderTeacherRowHtml(u) {
     }
 
     return '<tr>' +
-        '<td style="white-space:nowrap; vertical-align:middle;"><strong>' + escapeHtml(u.name) + '</strong></td>' +
+        '<td style="white-space:nowrap; vertical-align:middle;"><div><strong>' + escapeHtml(u.name) + '</strong></div>' + subjectBadge + '</td>' +
         '<td style="white-space:nowrap; vertical-align:middle;">' + escapeHtml(u.email) + '</td>' +
         '<td style="white-space:nowrap; vertical-align:middle;">' + tGradesHtml + '</td>' +
         '<td style="text-align:center; white-space:nowrap; vertical-align:middle;"><span class="status-badge status-review" style="font-size:11px; font-weight:600; white-space:nowrap;">' + (u.courses_count || 0) + ' Courses</span></td>' +
@@ -982,15 +987,18 @@ function openEditUserModal(userId) {
     var sEditGroup = document.getElementById('edit-student-grade-group');
     var stEditGroup = document.getElementById('edit-student-teacher-group');
     var sCoursesGroup = document.getElementById('edit-student-courses-group');
+    var tSubjEditGroup = document.getElementById('edit-teacher-subject-group');
     var tEditGroup = document.getElementById('edit-teacher-grade-group');
     var tCoursesGroup = document.getElementById('edit-teacher-courses-group');
     var aEditGroup = document.getElementById('edit-assistant-teacher-group');
     var sEditSelect = document.getElementById('edit-student-grade');
+    var tEditSubjSelect = document.getElementById('edit-teacher-subject');
 
     if (u.role === 'student') {
         if (sEditGroup) sEditGroup.style.display = 'block';
         if (stEditGroup) stEditGroup.style.display = 'block';
         if (sCoursesGroup) sCoursesGroup.style.display = 'block';
+        if (tSubjEditGroup) tSubjEditGroup.style.display = 'none';
         if (tEditGroup) tEditGroup.style.display = 'none';
         if (tCoursesGroup) tCoursesGroup.style.display = 'none';
         if (aEditGroup) aEditGroup.style.display = 'none';
@@ -1003,6 +1011,10 @@ function openEditUserModal(userId) {
         if (sEditGroup) sEditGroup.style.display = 'none';
         if (stEditGroup) stEditGroup.style.display = 'none';
         if (sCoursesGroup) sCoursesGroup.style.display = 'none';
+        if (tSubjEditGroup) {
+            tSubjEditGroup.style.display = 'block';
+            if (tEditSubjSelect) tEditSubjSelect.value = u.subject || '';
+        }
         if (tEditGroup) tEditGroup.style.display = 'block';
         if (tCoursesGroup) tCoursesGroup.style.display = 'block';
         if (aEditGroup) aEditGroup.style.display = 'none';
@@ -1015,6 +1027,7 @@ function openEditUserModal(userId) {
         if (sEditGroup) sEditGroup.style.display = 'none';
         if (stEditGroup) stEditGroup.style.display = 'none';
         if (sCoursesGroup) sCoursesGroup.style.display = 'none';
+        if (tSubjEditGroup) tSubjEditGroup.style.display = 'none';
         if (tEditGroup) tEditGroup.style.display = 'none';
         if (tCoursesGroup) tCoursesGroup.style.display = 'none';
         if (aEditGroup) {
@@ -1026,6 +1039,7 @@ function openEditUserModal(userId) {
         if (sEditGroup) sEditGroup.style.display = 'none';
         if (stEditGroup) stEditGroup.style.display = 'none';
         if (sCoursesGroup) sCoursesGroup.style.display = 'none';
+        if (tSubjEditGroup) tSubjEditGroup.style.display = 'none';
         if (tEditGroup) tEditGroup.style.display = 'none';
         if (tCoursesGroup) tCoursesGroup.style.display = 'none';
         if (aEditGroup) aEditGroup.style.display = 'none';

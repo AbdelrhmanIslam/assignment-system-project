@@ -57,15 +57,21 @@ if (isPost()) {
             exit;
         }
 
-        $insertCourseSql = "INSERT INTO courses (name, description, grade_level, teacher_id, is_active, created_at)
-                            VALUES ('$escapedName', '$escapedDesc', '$escapedGrade', $teacherId, 1, NOW())";
+        // fetch teacher subject
+        $tSubQ = mysqli_query($conn, "SELECT subject FROM users WHERE id = $teacherId LIMIT 1");
+        $tSubRow = mysqli_fetch_assoc($tSubQ);
+        $tSubject = $tSubRow ? trim($tSubRow['subject'] ?? '') : '';
+        $escapedSubject = mysqli_real_escape_string($conn, $tSubject);
+
+        $insertCourseSql = "INSERT INTO courses (name, description, subject, grade_level, teacher_id, is_active, created_at)
+                            VALUES ('$escapedName', '$escapedDesc', '$escapedSubject', '$escapedGrade', $teacherId, 1, NOW())";
         $insertCourseRes = mysqli_query($conn, $insertCourseSql);
 
         if ($insertCourseRes) {
             $newCourseId = mysqli_insert_id($conn);
 
-            // auto-enroll all active students belonging to this grade level
-            enrollGradeLevelStudentsInCourse($conn, $newCourseId, $gradeLevel);
+            // auto-enroll active students of this grade who have selected this teacher
+            enrollGradeLevelStudentsInCourse($conn, $newCourseId, $gradeLevel, $teacherId);
 
             // assign isolated assistant to course
             mysqli_query($conn, "INSERT INTO course_assistants (course_id, assistant_id, assigned_at)
@@ -178,6 +184,7 @@ $coursesSql = "SELECT
                  c.id,
                  c.name,
                  c.description,
+                 c.subject,
                  c.grade_level,
                  c.is_active,
                  c.created_at,
@@ -200,6 +207,7 @@ if ($coursesRes) {
             'id' => (int) $row['id'],
             'name' => $row['name'],
             'description' => $row['description'],
+            'subject' => $row['subject'] ?? '',
             'grade_level' => $row['grade_level'] ? $row['grade_level'] : 'First Year of Middle School',
             'is_active' => (int) $row['is_active'] === 1,
             'teacher_name' => $row['teacher_name'] ? $row['teacher_name'] : 'Unassigned',
@@ -211,8 +219,8 @@ if ($coursesRes) {
     }
 }
 
-// fetch list of teachers with assigned grade levels for dropdown
-$teachersRes = mysqli_query($conn, "SELECT id, name FROM users WHERE role = 'teacher' AND is_active = 1 ORDER BY name ASC");
+// fetch list of teachers with assigned grade levels and subjects for dropdown
+$teachersRes = mysqli_query($conn, "SELECT id, name, subject FROM users WHERE role = 'teacher' AND is_active = 1 ORDER BY name ASC");
 $teachersList = [];
 if ($teachersRes) {
     while ($t = mysqli_fetch_assoc($teachersRes)) {
@@ -220,6 +228,7 @@ if ($teachersRes) {
         $teachersList[] = [
             'id' => $tId,
             'name' => $t['name'],
+            'subject' => $t['subject'] ?? '',
             'grade_levels' => getTeacherGradeLevels($conn, $tId)
         ];
     }

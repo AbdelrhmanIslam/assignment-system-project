@@ -105,17 +105,23 @@
                 </select>
             </div>
 
-            <!-- Dynamic teachers for selected grade level -->
+            <!-- Dynamic teachers for selected grade level grouped by subject -->
             <div id="teachers-selection-group" class="form-group" style="display: none; margin-top: -5px;">
-                <label style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                    <span style="font-weight: 600; font-size: 14px; color: var(--text-primary);">Select Teachers *</span>
-                    <span style="font-size: 11px; font-weight: normal; color: var(--text-muted);">Choose one or more</span>
-                </label>
-                <div id="teachers-loading" style="display: none; font-size: 13px; color: var(--text-muted); padding: 6px 0;">Loading teachers...</div>
-                <div id="teachers-empty" style="display: none; font-size: 12px; color: var(--warning-text); background: var(--warning-bg); border: 1px solid var(--warning-border); border-radius: 6px; padding: 8px 12px;">No teachers currently assigned to this grade level.</div>
-                <div id="teachers-checkboxes-container" style="display: flex; flex-direction: column; gap: 8px; max-height: 180px; overflow-y: auto; padding: 6px; border: 1px solid var(--glass-border); border-radius: 6px; background: var(--glass-bg-subtle);">
-                    <!-- teacher options rendered dynamically -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <div>
+                        <span style="font-weight: 600; font-size: 14px; color: var(--text-primary);">Select Your Teachers *</span>
+                        <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Choose at least 1 teacher (max 1 per subject). You can leave subjects unselected.</div>
+                    </div>
+                    <span id="selected-teachers-count-badge" class="badge" style="background: rgba(99, 102, 241, 0.15); color: #818cf8; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 12px; border: 1px solid rgba(99, 102, 241, 0.3);">0 selected</span>
                 </div>
+                <div id="teachers-loading" style="display: none; font-size: 13px; color: var(--text-muted); padding: 12px; text-align: center; background: var(--glass-bg-subtle); border-radius: 8px; border: 1px solid var(--glass-border);">Loading available teachers...</div>
+                <div id="teachers-empty" style="display: none; font-size: 12px; color: var(--warning-text); background: var(--warning-bg); border: 1px solid var(--warning-border); border-radius: 8px; padding: 10px 14px;">No teachers are currently assigned to this grade level.</div>
+                
+                <div id="teachers-subjects-container" style="display: flex; flex-direction: column; gap: 12px; max-height: 280px; overflow-y: auto; padding: 6px 4px;">
+                    <!-- subject cards rendered dynamically -->
+                </div>
+                <!-- Container for submitted hidden teacher_ids inputs -->
+                <div id="hidden-teacher-inputs"></div>
             </div>
 
             <button type="submit" id="btn-register" class="btn-primary">
@@ -135,9 +141,11 @@
 document.addEventListener('DOMContentLoaded', function () {
     var gradeSelect = document.getElementById('grade_level');
     var teachersGroup = document.getElementById('teachers-selection-group');
-    var teachersContainer = document.getElementById('teachers-checkboxes-container');
+    var subjectsContainer = document.getElementById('teachers-subjects-container');
     var teachersLoading = document.getElementById('teachers-loading');
     var teachersEmpty = document.getElementById('teachers-empty');
+    var countBadge = document.getElementById('selected-teachers-count-badge');
+    var hiddenInputsContainer = document.getElementById('hidden-teacher-inputs');
     var registerForm = document.querySelector('form');
 
     function escapeHtml(text) {
@@ -146,20 +154,43 @@ document.addEventListener('DOMContentLoaded', function () {
         return div.innerHTML;
     }
 
+    function updateSelectedCount() {
+        var selected = document.querySelectorAll('input[type="radio"][data-teacher-id]:checked');
+        var count = 0;
+        selected.forEach(function(r) {
+            if (r.value && r.value !== 'none') count++;
+        });
+        if (countBadge) {
+            countBadge.textContent = count + ' selected';
+            if (count > 0) {
+                countBadge.style.background = 'rgba(16, 185, 129, 0.15)';
+                countBadge.style.color = '#34d399';
+                countBadge.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+            } else {
+                countBadge.style.background = 'rgba(99, 102, 241, 0.15)';
+                countBadge.style.color = '#818cf8';
+                countBadge.style.borderColor = 'rgba(99, 102, 241, 0.3)';
+            }
+        }
+    }
+
     if (gradeSelect) {
         gradeSelect.addEventListener('change', function () {
             var selectedGrade = this.value;
             if (!selectedGrade) {
                 teachersGroup.style.display = 'none';
-                teachersContainer.innerHTML = '';
+                subjectsContainer.innerHTML = '';
+                hiddenInputsContainer.innerHTML = '';
                 return;
             }
 
             teachersGroup.style.display = 'block';
             teachersLoading.style.display = 'block';
             teachersEmpty.style.display = 'none';
-            teachersContainer.style.display = 'none';
-            teachersContainer.innerHTML = '';
+            subjectsContainer.style.display = 'none';
+            subjectsContainer.innerHTML = '';
+            hiddenInputsContainer.innerHTML = '';
+            if (countBadge) countBadge.textContent = '0 selected';
 
             fetch('../../backend/auth/get_teachers_by_grade.php?grade_level=' + encodeURIComponent(selectedGrade))
                 .then(function (res) { return res.json(); })
@@ -167,27 +198,104 @@ document.addEventListener('DOMContentLoaded', function () {
                     teachersLoading.style.display = 'none';
                     if (data && data.success && data.teachers && data.teachers.length > 0) {
                         teachersEmpty.style.display = 'none';
-                        teachersContainer.style.display = 'flex';
-                        teachersContainer.innerHTML = '';
+                        subjectsContainer.style.display = 'flex';
+                        subjectsContainer.innerHTML = '';
 
-                        data.teachers.forEach(function (t, idx) {
-                            var label = document.createElement('label');
-                            label.style.cssText = 'display: flex; align-items: center; gap: 10px; padding: 8px 10px; background: var(--glass-bg-elevated); border: 1px solid var(--glass-border); border-radius: 6px; cursor: pointer; transition: background 0.15s; font-size: 13px; color: var(--text-primary);';
-                            label.onmouseenter = function() { this.style.background = 'var(--glass-bg-hover)'; };
-                            label.onmouseleave = function() { this.style.background = 'var(--glass-bg-elevated)'; };
+                        var subjects = data.subjects || [];
+                        var teachers = data.teachers || [];
 
-                            label.innerHTML =
-                                '<input type="checkbox" name="teacher_ids[]" value="' + t.id + '" checked style="accent-color: var(--primary); width: 16px; height: 16px; cursor: pointer;">' +
-                                '<div style="line-height: 1.3;">' +
-                                    '<strong style="color: var(--text-primary); display: block;">' + escapeHtml(t.name) + '</strong>' +
-                                    '<span style="color: #6b7280; font-size: 12px;">' + escapeHtml(t.email) + '</span>' +
-                                '</div>';
-
-                            teachersContainer.appendChild(label);
+                        // Group teachers by subject
+                        var subjectTeachersMap = {};
+                        subjects.forEach(function (s) {
+                            subjectTeachersMap[s] = [];
                         });
+                        teachers.forEach(function (t) {
+                            var s = t.subject || 'Other';
+                            if (!subjectTeachersMap[s]) {
+                                subjectTeachersMap[s] = [];
+                            }
+                            subjectTeachersMap[s].push(t);
+                        });
+
+                        // Render each subject block
+                        var subjectKeys = Object.keys(subjectTeachersMap);
+                        subjectKeys.forEach(function (subj, sIdx) {
+                            var tList = subjectTeachersMap[subj];
+                            var safeSubjKey = 'subj_' + sIdx;
+
+                            var card = document.createElement('div');
+                            card.className = 'subject-card';
+                            card.style.cssText = 'background: var(--glass-bg-elevated); border: 1px solid var(--glass-border); border-radius: 8px; padding: 10px 12px; transition: border-color 0.2s;';
+
+                            var header = document.createElement('div');
+                            header.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;';
+                            header.innerHTML = '<span style="font-size: 13px; font-weight: 700; color: var(--text-primary);"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: -1px; margin-right: 5px;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>' + escapeHtml(subj) + '</span>' +
+                                               '<span style="font-size: 11px; color: var(--text-muted);">' + (tList.length > 0 ? tList.length + ' teacher' + (tList.length > 1 ? 's' : '') + ' available' : 'No teacher') + '</span>';
+                            card.appendChild(header);
+
+                            if (tList.length === 0) {
+                                var noTeacher = document.createElement('div');
+                                noTeacher.style.cssText = 'font-size: 12px; color: var(--text-muted); padding: 4px 0; font-style: italic;';
+                                noTeacher.textContent = 'No teacher assigned for this subject yet.';
+                                card.appendChild(noTeacher);
+                            } else {
+                                var optionsGroup = document.createElement('div');
+                                optionsGroup.style.cssText = 'display: flex; flex-direction: column; gap: 6px;';
+
+                                // "None" option to allow deselecting
+                                var noneLabel = document.createElement('label');
+                                noneLabel.style.cssText = 'display: flex; align-items: center; gap: 8px; padding: 5px 8px; border-radius: 5px; cursor: pointer; font-size: 12px; color: var(--text-muted); transition: background 0.15s;';
+                                noneLabel.onmouseenter = function() { this.style.background = 'var(--glass-bg-hover)'; };
+                                noneLabel.onmouseleave = function() { this.style.background = 'transparent'; };
+                                noneLabel.innerHTML = '<input type="radio" name="teacher_radio_' + safeSubjKey + '" value="none" checked style="accent-color: var(--primary); width: 14px; height: 14px; cursor: pointer;">' +
+                                                      '<span>No teacher selected for this subject</span>';
+                                optionsGroup.appendChild(noneLabel);
+
+                                noneLabel.querySelector('input').addEventListener('change', updateSelectedCount);
+
+                                tList.forEach(function (t) {
+                                    var optLabel = document.createElement('label');
+                                    optLabel.style.cssText = 'display: flex; align-items: center; gap: 8px; padding: 6px 8px; background: var(--glass-bg-subtle); border: 1px solid var(--glass-border); border-radius: 6px; cursor: pointer; transition: all 0.15s; font-size: 12px;';
+                                    optLabel.onmouseenter = function() { this.style.borderColor = 'rgba(99, 102, 241, 0.4)'; };
+                                    optLabel.onmouseleave = function() {
+                                        var radio = this.querySelector('input');
+                                        if (!radio.checked) this.style.borderColor = 'var(--glass-border)';
+                                    };
+
+                                    optLabel.innerHTML =
+                                        '<input type="radio" name="teacher_radio_' + safeSubjKey + '" data-teacher-id="' + t.id + '" value="' + t.id + '" style="accent-color: var(--primary); width: 15px; height: 15px; cursor: pointer;">' +
+                                        '<div style="flex: 1; min-width: 0; line-height: 1.3;">' +
+                                            '<div style="font-weight: 600; color: var(--text-primary);">' + escapeHtml(t.name) + '</div>' +
+                                            '<div style="color: var(--text-muted); font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">' + escapeHtml(t.email) + '</div>' +
+                                        '</div>';
+
+                                    var radio = optLabel.querySelector('input');
+                                    radio.addEventListener('change', function () {
+                                        // highlight active selection
+                                        optionsGroup.querySelectorAll('label').forEach(function(l) {
+                                            l.style.borderColor = 'var(--glass-border)';
+                                            l.style.background = 'var(--glass-bg-subtle)';
+                                        });
+                                        if (this.checked && this.value !== 'none') {
+                                            optLabel.style.borderColor = 'var(--primary)';
+                                            optLabel.style.background = 'rgba(99, 102, 241, 0.08)';
+                                        }
+                                        updateSelectedCount();
+                                    });
+
+                                    optionsGroup.appendChild(optLabel);
+                                });
+
+                                card.appendChild(optionsGroup);
+                            }
+
+                            subjectsContainer.appendChild(card);
+                        });
+
+                        updateSelectedCount();
                     } else {
                         teachersEmpty.style.display = 'block';
-                        teachersContainer.style.display = 'none';
+                        subjectsContainer.style.display = 'none';
                     }
                 })
                 .catch(function (err) {
@@ -200,16 +308,34 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (registerForm) {
         registerForm.addEventListener('submit', function (e) {
-            var checkboxes = teachersContainer ? teachersContainer.querySelectorAll('input[name="teacher_ids[]"]') : [];
-            if (checkboxes.length > 0) {
-                var checkedCount = 0;
-                checkboxes.forEach(function (cb) {
-                    if (cb.checked) checkedCount++;
-                });
-                if (checkedCount === 0) {
-                    e.preventDefault();
-                    alert('Please select at least one teacher for your grade level.');
+            // Collect all selected teacher IDs from radios
+            var selectedRadios = document.querySelectorAll('input[type="radio"][data-teacher-id]:checked');
+            var selectedTeacherIds = [];
+            selectedRadios.forEach(function (r) {
+                var val = parseInt(r.value, 10);
+                if (val > 0) {
+                    selectedTeacherIds.push(val);
                 }
+            });
+
+            // Check minimum 1 teacher selected
+            var gradeVal = gradeSelect ? gradeSelect.value : '';
+            if (gradeVal && selectedTeacherIds.length === 0) {
+                e.preventDefault();
+                alert('Please select at least one teacher for your grade level.');
+                return false;
+            }
+
+            // Populate hidden inputs for form submission
+            if (hiddenInputsContainer) {
+                hiddenInputsContainer.innerHTML = '';
+                selectedTeacherIds.forEach(function (id) {
+                    var input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'teacher_ids[]';
+                    input.value = id;
+                    hiddenInputsContainer.appendChild(input);
+                });
             }
         });
     }

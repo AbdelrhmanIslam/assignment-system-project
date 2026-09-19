@@ -85,19 +85,77 @@ if (isPost()) {
         redirect(BASE_URL . '/frontend/auth/register.html?error=' . urlencode('An account with this email already exists.'));
     }
 
-    // validate selected teacher(s) for this grade level
+    // Validate selected teacher(s) for this grade level with 7 strict checks
     $rawTeacherIds = isset($_POST['teacher_ids']) ? $_POST['teacher_ids'] : (isset($_POST['teacher_ids[]']) ? $_POST['teacher_ids[]'] : []);
     $teacherIds = [];
     if (!empty($rawTeacherIds)) {
         $teacherIds = is_array($rawTeacherIds) ? $rawTeacherIds : explode(',', $rawTeacherIds);
-        $teacherIds = array_filter(array_map('intval', $teacherIds), function ($id) {
+        $teacherIds = array_values(array_filter(array_map('intval', $teacherIds), function ($id) {
             return $id > 0;
-        });
+        }));
     }
 
-    $chkTeachRes = mysqli_query($conn, "SELECT u.id FROM users u INNER JOIN teacher_grade_levels tgl ON tgl.teacher_id = u.id WHERE tgl.grade_level = '$escapedGradeLevel' AND u.role = 'teacher' AND u.is_active = 1");
-    if ($chkTeachRes && mysqli_num_rows($chkTeachRes) > 0 && empty($teacherIds)) {
-        redirect(BASE_URL . '/frontend/auth/register.html?error=' . urlencode('Please select at least one teacher for your grade level.'));
+    $studentStage = getEducationalStage($gradeLevel);
+    $validSubjectsForGrade = getSubjectListForGrade($gradeLevel);
+
+    // Check 7: At least 1 teacher must be selected
+    if (empty($teacherIds)) {
+        $errors[] = 'Please select at least one teacher for your grade level.';
+    }
+
+    // Process & validate each teacher
+    $selectedSubjectMap = [];
+    foreach ($teacherIds as $tId) {
+        // Check 2: Teacher exists, active, role = teacher
+        $tSql = "SELECT id, name, subject, is_active, role FROM users WHERE id = $tId LIMIT 1";
+        $tRes = mysqli_query($conn, $tSql);
+        if (!$tRes || mysqli_num_rows($tRes) === 0) {
+            $errors[] = "Selected teacher (ID: $tId) does not exist.";
+            continue;
+        }
+        $tRow = mysqli_fetch_assoc($tRes);
+        if ($tRow['role'] !== 'teacher' || (int)$tRow['is_active'] !== 1) {
+            $errors[] = "Teacher {$tRow['name']} is not active.";
+            continue;
+        }
+
+        // Check 3 & 4: Teacher assigned to student's grade level and stage matches
+        $tGrades = getTeacherGradeLevels($conn, $tId);
+        if (!in_array($gradeLevel, $tGrades)) {
+            $errors[] = "Teacher {$tRow['name']} does not teach $gradeLevel.";
+            continue;
+        }
+
+        // Stage isolation
+        foreach ($tGrades as $tg) {
+            $ts = getEducationalStage($tg);
+            if ($ts && $ts !== $studentStage) {
+                $errors[] = "Teacher {$tRow['name']} belongs to a different educational stage.";
+                break;
+            }
+        }
+
+        // Check 5: Single subject per teacher and valid subject for student grade
+        $tSubject = trim($tRow['subject'] ?? '');
+        if (empty($tSubject)) {
+            $errors[] = "Teacher {$tRow['name']} has no assigned subject.";
+            continue;
+        }
+        if (!in_array($tSubject, $validSubjectsForGrade)) {
+            $errors[] = "Teacher {$tRow['name']} teaches subject '$tSubject' which is not valid for $gradeLevel.";
+            continue;
+        }
+
+        // Check 6: Max 1 teacher per subject
+        if (isset($selectedSubjectMap[$tSubject])) {
+            $errors[] = "You can only select one teacher for $tSubject. Multiple teachers selected for the same subject.";
+            continue;
+        }
+        $selectedSubjectMap[$tSubject] = $tId;
+    }
+
+    if (!empty($errors)) {
+        redirect(BASE_URL . '/frontend/auth/register.html?error=' . urlencode(implode("\n", $errors)));
     }
 
     // hash password securely
@@ -110,9 +168,7 @@ if (isPost()) {
     if ($insertResult) {
         $newStudentId = (int) mysqli_insert_id($conn);
         // link student to chosen teachers in student_teachers table
-        if (!empty($teacherIds)) {
-            setStudentTeachers($conn, $newStudentId, $teacherIds);
-        }
+        setStudentTeachers($conn, $newStudentId, $teacherIds, $gradeLevel);
         // auto-enroll student in active courses belonging to their grade level and chosen teachers
         enrollStudentInGradeLevelCourses($conn, $newStudentId, $gradeLevel, $teacherIds);
         redirect(BASE_URL . '/frontend/auth/register.html?success=' . urlencode('Account created successfully. You can now log in.'));

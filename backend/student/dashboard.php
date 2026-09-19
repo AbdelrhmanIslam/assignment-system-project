@@ -71,13 +71,13 @@ $studentGrade = isset($student['grade_level']) ? $student['grade_level'] : '';
 $escapedStudentGrade = mysqli_real_escape_string($conn, $studentGrade);
 
 // get student's selected teachers
-$teachersQuery = "SELECT u.id, u.name, u.email
+$teachersQuery = "SELECT u.id, u.name, u.email, COALESCE(NULLIF(st.subject, ''), u.subject, '') AS subject
                   FROM users u
                   INNER JOIN student_teachers st ON st.teacher_id = u.id
                   WHERE st.student_id = $studentId
                     AND u.role = 'teacher'
                     AND u.is_active = 1
-                  ORDER BY u.name ASC";
+                  ORDER BY u.subject ASC, u.name ASC";
 $teachersResult = mysqli_query($conn, $teachersQuery);
 $myTeachers = [];
 if ($teachersResult) {
@@ -85,7 +85,8 @@ if ($teachersResult) {
         $myTeachers[] = [
             'id' => (int) $t['id'],
             'name' => $t['name'],
-            'email' => $t['email']
+            'email' => $t['email'],
+            'subject' => $t['subject'] ?? ''
         ];
     }
 }

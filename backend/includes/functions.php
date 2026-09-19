@@ -52,6 +52,55 @@ function getAllowedGradeLevels()
     ];
 }
 
+// get educational stage for a grade level ('Preparatory' or 'Secondary')
+function getEducationalStage($gradeLevel)
+{
+    $prepGrades = [
+        'First Year of Middle School',
+        'Second Year of Middle School',
+        'Third Year of Middle School'
+    ];
+    if (in_array($gradeLevel, $prepGrades)) {
+        return 'Preparatory';
+    }
+    if ($gradeLevel === 'First Year of High School') {
+        return 'Secondary';
+    }
+    return '';
+}
+
+// return subject list for a grade level
+function getSubjectListForGrade($gradeLevel)
+{
+    $stage = getEducationalStage($gradeLevel);
+    return getSubjectListForStage($stage);
+}
+
+// return subject list for an educational stage
+function getSubjectListForStage($stage)
+{
+    if ($stage === 'Preparatory') {
+        return [
+            'Arabic',
+            'English',
+            'Mathematics',
+            'Science',
+            'Social Studies'
+        ];
+    }
+    if ($stage === 'Secondary') {
+        return [
+            'Arabic',
+            'First Foreign Language',
+            'History',
+            'Mathematics',
+            'Integrated Sciences',
+            'Philosophy & Logic'
+        ];
+    }
+    return [];
+}
+
 // enroll a student into active courses for their grade level (optionally filtered by selected teachers)
 function enrollStudentInGradeLevelCourses($conn, $studentId, $gradeLevel, $teacherIds = [])
 {
@@ -110,11 +159,11 @@ function getStudentTeacherIds($conn, $studentId)
     return $ids;
 }
 
-// fetch teacher details assigned to a student
+// fetch teacher details assigned to a student (including subject)
 function getStudentTeachers($conn, $studentId)
 {
     $studentId = (int)$studentId;
-    $sql = "SELECT u.id, u.name, u.email
+    $sql = "SELECT u.id, u.name, u.email, COALESCE(NULLIF(st.subject, ''), u.subject, '') AS subject
             FROM student_teachers st
             INNER JOIN users u ON u.id = st.teacher_id
             WHERE st.student_id = $studentId AND u.is_active = 1
@@ -126,28 +175,77 @@ function getStudentTeachers($conn, $studentId)
             $teachers[] = [
                 'id' => (int)$row['id'],
                 'name' => $row['name'],
-                'email' => $row['email']
+                'email' => $row['email'],
+                'subject' => $row['subject'] ?? ''
             ];
         }
     }
     return $teachers;
 }
 
-// update teachers assigned to a student
-function setStudentTeachers($conn, $studentId, $teacherIds)
+// update teachers assigned to a student (enforcing single teacher per subject and grade matching)
+function setStudentTeachers($conn, $studentId, $teacherIds, $studentGradeLevel = null)
 {
     $studentId = (int)$studentId;
+    
+    // If studentGradeLevel not passed, fetch it
+    if (empty($studentGradeLevel)) {
+        $uRes = mysqli_query($conn, "SELECT grade_level FROM users WHERE id = $studentId LIMIT 1");
+        if ($uRes && $uRow = mysqli_fetch_assoc($uRes)) {
+            $studentGradeLevel = $uRow['grade_level'];
+        }
+    }
+    
     mysqli_query($conn, "DELETE FROM student_teachers WHERE student_id = $studentId");
-    if (!is_array($teacherIds)) {
+    if (!is_array($teacherIds) || empty($teacherIds)) {
         return true;
     }
+
+    $studentStage = getEducationalStage($studentGradeLevel);
+    $validSubjects = getSubjectListForGrade($studentGradeLevel);
+    $usedSubjects = [];
+
     foreach ($teacherIds as $tId) {
         $tId = (int)$tId;
-        if ($tId > 0) {
-            $chk = mysqli_query($conn, "SELECT id FROM users WHERE id = $tId AND role = 'teacher' AND is_active = 1 LIMIT 1");
-            if (mysqli_num_rows($chk) > 0) {
-                mysqli_query($conn, "INSERT IGNORE INTO student_teachers (student_id, teacher_id) VALUES ($studentId, $tId)");
+        if ($tId <= 0) continue;
+
+        // Fetch teacher info
+        $chk = mysqli_query($conn, "SELECT id, subject FROM users WHERE id = $tId AND role = 'teacher' AND is_active = 1 LIMIT 1");
+        if ($chk && $tRow = mysqli_fetch_assoc($chk)) {
+            $teacherSubject = trim($tRow['subject'] ?? '');
+            
+            // Check teacher teaches student's grade level
+            $tGrades = getTeacherGradeLevels($conn, $tId);
+            if (!in_array($studentGradeLevel, $tGrades)) {
+                continue; // Teacher does not teach student's grade
             }
+
+            // Check stage isolation
+            $teacherStage = '';
+            foreach ($tGrades as $tg) {
+                $ts = getEducationalStage($tg);
+                if ($ts) {
+                    $teacherStage = $ts;
+                    break;
+                }
+            }
+            if ($teacherStage !== $studentStage) {
+                continue; // Stage mismatch
+            }
+
+            // Check valid subject for student's grade
+            if (!in_array($teacherSubject, $validSubjects)) {
+                continue;
+            }
+
+            // Enforce max 1 teacher per subject
+            if (isset($usedSubjects[$teacherSubject])) {
+                continue; // Already assigned a teacher for this subject
+            }
+
+            $usedSubjects[$teacherSubject] = true;
+            $escapedSub = mysqli_real_escape_string($conn, $teacherSubject);
+            mysqli_query($conn, "INSERT INTO student_teachers (student_id, teacher_id, subject) VALUES ($studentId, $tId, '$escapedSub')");
         }
     }
     return true;
@@ -168,20 +266,28 @@ function getTeacherGradeLevels($conn, $teacherId)
     return $levels;
 }
 
-// update assigned grade levels for a teacher
+// update assigned grade levels for a teacher (enforces single stage: Preparatory or Secondary)
 function setTeacherGradeLevels($conn, $teacherId, $gradeLevels)
 {
     $teacherId = (int)$teacherId;
     mysqli_query($conn, "DELETE FROM teacher_grade_levels WHERE teacher_id = $teacherId");
-    if (!is_array($gradeLevels)) {
+    if (!is_array($gradeLevels) || empty($gradeLevels)) {
         return true;
     }
     $allowed = getAllowedGradeLevels();
+    $firstStage = null;
     foreach ($gradeLevels as $gl) {
         $gl = trim($gl);
         if (in_array($gl, $allowed)) {
-            $escapedGl = mysqli_real_escape_string($conn, $gl);
-            mysqli_query($conn, "INSERT IGNORE INTO teacher_grade_levels (teacher_id, grade_level) VALUES ($teacherId, '$escapedGl')");
+            $stage = getEducationalStage($gl);
+            if ($firstStage === null) {
+                $firstStage = $stage;
+            }
+            // Only allow grades belonging to the same educational stage
+            if ($stage === $firstStage) {
+                $escapedGl = mysqli_real_escape_string($conn, $gl);
+                mysqli_query($conn, "INSERT IGNORE INTO teacher_grade_levels (teacher_id, grade_level) VALUES ($teacherId, '$escapedGl')");
+            }
         }
     }
     return true;
