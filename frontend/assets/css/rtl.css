@@ -1,0 +1,343 @@
+/* ==========================================================================
+   ASSIGNMENT SYSTEM - ARABIC RTL & TYPOGRAPHY STYLESHEET
+   Supports full layout mirroring and Cairo typography for [dir="rtl"]
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap');
+
+/* --------------------------------------------------------------------------
+   1. GLOBAL LANGUAGE TOGGLE BUTTON (Matches .theme-toggle-btn exactly)
+   -------------------------------------------------------------------------- */
+.lang-toggle-btn {
+   display: inline-flex !important;
+   align-items: center !important;
+   justify-content: center !important;
+   gap: 8px !important;
+   height: 36px !important;
+   padding: 0 16px !important;
+   border-radius: 9999px !important;
+   background: #007979 !important;
+   color: #FFE2AF !important;
+   border: 2px solid #24B1B1 !important;
+   font-size: 13px !important;
+   font-weight: 700 !important;
+   letter-spacing: 0.02em !important;
+   cursor: pointer !important;
+   box-shadow: 0 4px 14px rgba(0, 121, 121, 0.28) !important;
+   transition: all 0.25s ease !important;
+   user-select: none !important;
+   white-space: nowrap !important;
+   outline: none !important;
+}
+
+.lang-toggle-btn:hover {
+   background: #E37434 !important;
+   color: #ffffff !important;
+   border-color: #FFE2AF !important;
+   box-shadow: 0 6px 18px rgba(227, 116, 52, 0.38) !important;
+}
+
+.lang-toggle-btn:active {
+   transform: scale(0.97) !important;
+}
+
+.lang-toggle-btn:focus-visible {
+   outline: none !important;
+   box-shadow: var(--focus-ring, 0 0 0 3px rgba(36, 177, 177, 0.4)) !important;
+}
+
+.lang-toggle-btn svg {
+   width: 15px !important;
+   height: 15px !important;
+   stroke: currentColor !important;
+   fill: none !important;
+   stroke-width: 2.2 !important;
+   stroke-linecap: round !important;
+   stroke-linejoin: round !important;
+   transition: transform 0.25s ease !important;
+}
+
+.lang-toggle-btn:hover svg {
+   transform: rotate(20deg) !important;
+}
+
+[data-theme="dark"] .lang-toggle-btn {
+   background: #4E3636 !important;
+   color: #FFE2AF !important;
+   border: 2px solid #CD1818 !important;
+   box-shadow: 0 4px 14px rgba(205, 24, 24, 0.35) !important;
+}
+
+[data-theme="dark"] .lang-toggle-btn:hover {
+   background: #CD1818 !important;
+   color: #ffffff !important;
+   border-color: #188384 !important;
+   box-shadow: 0 6px 20px rgba(205, 24, 24, 0.5) !important;
+}
+
+/* Auth container placement */
+.auth-theme-toggle {
+   display: flex !important;
+   align-items: center !important;
+   gap: 10px !important;
+}
+
+/* --------------------------------------------------------------------------
+   2. ARABIC TYPOGRAPHY & FONT SYSTEM
+   -------------------------------------------------------------------------- */
+[dir="rtl"],
+[dir="rtl"] body,
+[dir="rtl"] button,
+[dir="rtl"] input,
+[dir="rtl"] select,
+[dir="rtl"] textarea,
+[dir="rtl"] .sidebar-nav,
+[dir="rtl"] .modal-content,
+[dir="rtl"] table {
+   font-family: 'Cairo', system-ui, -apple-system, sans-serif !important;
+   letter-spacing: 0 !important;
+}
+
+[dir="rtl"] h1,
+[dir="rtl"] h2,
+[dir="rtl"] h3,
+[dir="rtl"] h4,
+[dir="rtl"] h5,
+[dir="rtl"] h6 {
+   font-family: 'Cairo', system-ui, -apple-system, sans-serif !important;
+   font-weight: 700 !important;
+   line-height: 1.4 !important;
+}
+
+/* --------------------------------------------------------------------------
+   3. SIDEBAR & MAIN CONTENT LAYOUT MIRRORING
+   -------------------------------------------------------------------------- */
+[dir="rtl"] .dashboard-layout {
+   direction: rtl !important;
+}
+
+[dir="rtl"] .sidebar {
+   right: 0 !important;
+   left: auto !important;
+   border-left: 1px solid var(--border-color, rgba(255, 255, 255, 0.12)) !important;
+   border-right: none !important;
+}
+
+[dir="rtl"] .main-content {
+   margin-right: var(--sidebar-width, 260px) !important;
+   margin-left: 0 !important;
+}
+
+@media (max-width: 991px) {
+   [dir="rtl"] .main-content {
+       margin-right: 0 !important;
+   }
+   [dir="rtl"] .sidebar {
+       transform: translateX(100%) !important;
+   }
+   [dir="rtl"] .sidebar.open {
+       transform: translateX(0) !important;
+   }
+}
+
+/* Sidebar navigation items */
+[dir="rtl"] .nav-item {
+   flex-direction: row !important;
+   text-align: right !important;
+   padding: 10px 16px !important;
+}
+
+[dir="rtl"] .nav-item svg {
+   margin-left: 12px !important;
+   margin-right: 0 !important;
+}
+
+[dir="rtl"] .nav-item .nav-badge {
+   margin-right: auto !important;
+   margin-left: 0 !important;
+}
+
+/* --------------------------------------------------------------------------
+   4. TOPBAR & HEADER ACTIONS
+   -------------------------------------------------------------------------- */
+[dir="rtl"] .topbar {
+   flex-direction: row !important;
+}
+
+[dir="rtl"] .header-actions {
+   flex-direction: row !important;
+   margin-right: auto !important;
+   margin-left: 0 !important;
+}
+
+[dir="rtl"] .user-profile-menu {
+   margin-right: 12px !important;
+   margin-left: 0 !important;
+}
+
+/* --------------------------------------------------------------------------
+   5. TABLES & DATA LISTS
+   -------------------------------------------------------------------------- */
+[dir="rtl"] table {
+   text-align: right !important;
+}
+
+[dir="rtl"] th,
+[dir="rtl"] td {
+   text-align: right !important;
+}
+
+[dir="rtl"] th:first-child,
+[dir="rtl"] td:first-child {
+   padding-right: 16px !important;
+   padding-left: 8px !important;
+}
+
+[dir="rtl"] th:last-child,
+[dir="rtl"] td:last-child {
+   padding-left: 16px !important;
+   padding-right: 8px !important;
+   text-align: left !important; /* Actions column */
+}
+
+[dir="rtl"] .actions-cell {
+   text-align: left !important;
+   justify-content: flex-start !important;
+}
+
+/* --------------------------------------------------------------------------
+   6. FORMS, INPUTS & DROPDOWNS
+   -------------------------------------------------------------------------- */
+[dir="rtl"] .form-group {
+   text-align: right !important;
+}
+
+[dir="rtl"] label {
+   text-align: right !important;
+   display: block !important;
+}
+
+[dir="rtl"] input[type="text"],
+[dir="rtl"] input[type="email"],
+[dir="rtl"] input[type="password"],
+[dir="rtl"] input[type="number"],
+[dir="rtl"] input[type="date"],
+[dir="rtl"] input[type="datetime-local"],
+[dir="rtl"] textarea {
+   text-align: right !important;
+   direction: rtl !important;
+}
+
+/* Search input with icon */
+[dir="rtl"] .search-input-wrapper {
+   position: relative !important;
+}
+
+[dir="rtl"] .search-input-wrapper svg,
+[dir="rtl"] .search-box svg {
+   right: 12px !important;
+   left: auto !important;
+}
+
+[dir="rtl"] .search-input-wrapper input,
+[dir="rtl"] .search-box input {
+   padding-right: 36px !important;
+   padding-left: 12px !important;
+}
+
+/* Select dropdown arrow position */
+[dir="rtl"] select {
+   text-align: right !important;
+   direction: rtl !important;
+   background-position: left 12px center !important;
+   padding-left: 32px !important;
+   padding-right: 12px !important;
+}
+
+/* Checkbox & Radio labels */
+[dir="rtl"] .form-check,
+[dir="rtl"] .checkbox-label,
+[dir="rtl"] .radio-label {
+   flex-direction: row !important;
+   text-align: right !important;
+}
+
+[dir="rtl"] .form-check input,
+[dir="rtl"] .checkbox-label input,
+[dir="rtl"] .radio-label input {
+   margin-left: 8px !important;
+   margin-right: 0 !important;
+}
+
+/* --------------------------------------------------------------------------
+   7. MODALS & POPUPS
+   -------------------------------------------------------------------------- */
+[dir="rtl"] .modal-header {
+   flex-direction: row-reverse !important;
+   justify-content: space-between !important;
+}
+
+[dir="rtl"] .modal-close {
+   margin-left: 0 !important;
+   margin-right: auto !important;
+}
+
+[dir="rtl"] .modal-footer {
+   flex-direction: row-reverse !important;
+   justify-content: flex-start !important;
+   gap: 12px !important;
+}
+
+/* --------------------------------------------------------------------------
+   8. DIRECTIONAL ICONS & BREADCRUMBS
+   -------------------------------------------------------------------------- */
+[dir="rtl"] .breadcrumb-separator,
+[dir="rtl"] .arrow-icon,
+[dir="rtl"] .chevron-right {
+   transform: scaleX(-1) !important;
+}
+
+[dir="rtl"] .back-btn svg {
+   transform: scaleX(-1) !important;
+}
+
+/* --------------------------------------------------------------------------
+   9. STATS CARDS & BADGES
+   -------------------------------------------------------------------------- */
+[dir="rtl"] .stat-card {
+   text-align: right !important;
+}
+
+[dir="rtl"] .stat-card-inner {
+   flex-direction: row-reverse !important;
+   justify-content: space-between !important;
+}
+
+[dir="rtl"] .badge {
+   display: inline-flex !important;
+   align-items: center !important;
+   gap: 4px !important;
+}
+
+[dir="rtl"] .badge svg {
+   margin-left: 4px !important;
+   margin-right: 0 !important;
+}
+
+/* --------------------------------------------------------------------------
+   10. TOAST & NOTIFICATIONS
+   -------------------------------------------------------------------------- */
+[dir="rtl"] .notification-item {
+   text-align: right !important;
+   flex-direction: row !important;
+}
+
+[dir="rtl"] .notification-icon {
+   margin-left: 12px !important;
+   margin-right: 0 !important;
+}
+
+[dir="rtl"] .notification-time {
+   margin-right: auto !important;
+   margin-left: 0 !important;
+}

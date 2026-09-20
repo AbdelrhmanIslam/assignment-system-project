@@ -491,3 +491,8 @@ function showAlert(msg, type) {
         if (box) box.style.display = 'none';
     }, 4500);
 }
+
+window.addEventListener('languageChanged', function () {
+    if (typeof applyCourseFilters === 'function') applyCourseFilters();
+});
+

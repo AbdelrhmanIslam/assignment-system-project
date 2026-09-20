@@ -8,14 +8,25 @@
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/auth.css">
     <link rel="stylesheet" href="../assets/css/responsive.css">
+    <link rel="stylesheet" href="../assets/css/rtl.css">
     <script>
-        (function(){var t=localStorage.getItem('assignment_system_theme')||localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);})();
+        (function(){
+            var t=localStorage.getItem('assignment_system_theme')||localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+            document.documentElement.setAttribute('data-theme',t);
+            var l=localStorage.getItem('assignment_system_lang')||'en';
+            document.documentElement.setAttribute('lang',l);
+            document.documentElement.setAttribute('dir',l==='ar'?'rtl':'ltr');
+        })();
     </script>
 </head>
 <body>
 
 <div class="auth-container">
     <div class="auth-theme-toggle">
+        <button type="button" class="lang-toggle-btn" aria-label="Toggle language">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            <span>العربية</span>
+        </button>
         <button type="button" class="theme-toggle-btn" aria-label="Toggle theme">
             <svg class="theme-icon-moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
             <span class="theme-text">Theme</span>
@@ -23,15 +34,15 @@
     </div>
 
     <div class="auth-card">
-        <h1>Create Account</h1>
-        <p class="auth-subtitle">Create a student account</p>
+        <h1 data-i18n="auth.registration_heading">Student Registration</h1>
+        <p class="auth-subtitle" data-i18n="auth.registration_subtitle">Create your account and select your subject teachers</p>
 
         <div id="alert-box" style="display: none;"></div>
 
         <!-- register form connected to backend -->
         <form method="POST" action="../../backend/auth/register.php">
             <div class="form-group">
-                <label for="name">Full Name</label>
+                <label for="name" data-i18n="auth.full_name_label">Full Name</label>
                 <input
                     type="text"
                     id="name"
@@ -41,7 +52,7 @@
             </div>
 
             <div class="form-group">
-                <label for="email">Email</label>
+                <label for="email" data-i18n="auth.email_label">Email</label>
                 <input
                     type="email"
                     id="email"
@@ -51,7 +62,7 @@
             </div>
 
             <div class="form-group">
-                <label for="password">Password</label>
+                <label for="password" data-i18n="auth.password_label">Password</label>
                 <div class="password-wrapper">
                     <input
                         type="password"
@@ -73,7 +84,7 @@
             </div>
 
             <div class="form-group">
-                <label for="confirm_password">Confirm Password</label>
+                <label for="confirm_password" data-i18n="auth.confirm_password_label">Confirm Password</label>
                 <div class="password-wrapper">
                     <input
                         type="password"
@@ -95,13 +106,13 @@
             </div>
 
             <div class="form-group">
-                <label for="grade_level">Grade Level</label>
+                <label for="grade_level" data-i18n="auth.grade_level_label">Grade Level</label>
                 <select id="grade_level" name="grade_level" required>
-                    <option value="">Select Grade Level</option>
-                    <option value="First Year of Middle School">1st Preparatory (Grade 7)</option>
-                    <option value="Second Year of Middle School">2nd Preparatory (Grade 8)</option>
-                    <option value="Third Year of Middle School">3rd Preparatory (Grade 9)</option>
-                    <option value="First Year of High School">1st Secondary (Grade 10)</option>
+                    <option value="" data-i18n="auth.select_grade_placeholder">-- Select Grade Level --</option>
+                    <option value="First Year of Middle School" data-i18n="educational.grades.First Year of Middle School">1st Preparatory</option>
+                    <option value="Second Year of Middle School" data-i18n="educational.grades.Second Year of Middle School">2nd Preparatory</option>
+                    <option value="Third Year of Middle School" data-i18n="educational.grades.Third Year of Middle School">3rd Preparatory</option>
+                    <option value="First Year of High School" data-i18n="educational.grades.First Year of High School">1st Secondary</option>
                 </select>
             </div>
 
@@ -109,13 +120,13 @@
             <div id="teachers-selection-group" class="form-group" style="display: none; margin-top: -5px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                     <div>
-                        <span style="font-weight: 600; font-size: 14px; color: var(--text-primary);">Select Your Teachers *</span>
-                        <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Choose at least 1 teacher (max 1 per subject). You can leave subjects unselected.</div>
+                        <span style="font-weight: 600; font-size: 14px; color: var(--text-primary);" data-i18n="auth.select_teachers_heading">Select Your Teachers *</span>
+                        <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;" data-i18n="auth.select_teachers_desc">Choose at least 1 teacher (max 1 per subject). You can leave subjects unselected.</div>
                     </div>
                     <span id="selected-teachers-count-badge" class="badge" style="background: rgba(99, 102, 241, 0.15); color: #818cf8; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 12px; border: 1px solid rgba(99, 102, 241, 0.3);">0 selected</span>
                 </div>
-                <div id="teachers-loading" style="display: none; font-size: 13px; color: var(--text-muted); padding: 12px; text-align: center; background: var(--glass-bg-subtle); border-radius: 8px; border: 1px solid var(--glass-border);">Loading available teachers...</div>
-                <div id="teachers-empty" style="display: none; font-size: 12px; color: var(--warning-text); background: var(--warning-bg); border: 1px solid var(--warning-border); border-radius: 8px; padding: 10px 14px;">No teachers are currently assigned to this grade level.</div>
+                <div id="teachers-loading" style="display: none; font-size: 13px; color: var(--text-muted); padding: 12px; text-align: center; background: var(--glass-bg-subtle); border-radius: 8px; border: 1px solid var(--glass-border);" data-i18n="common.loading">Loading available teachers...</div>
+                <div id="teachers-empty" style="display: none; font-size: 12px; color: var(--warning-text); background: var(--warning-bg); border: 1px solid var(--warning-border); border-radius: 8px; padding: 10px 14px;" data-i18n="common.no_data">No teachers are currently assigned to this grade level.</div>
                 
                 <div id="teachers-subjects-container" style="display: flex; flex-direction: column; gap: 12px; max-height: 280px; overflow-y: auto; padding: 6px 4px;">
                     <!-- subject cards rendered dynamically -->
@@ -124,18 +135,19 @@
                 <div id="hidden-teacher-inputs"></div>
             </div>
 
-            <button type="submit" id="btn-register" class="btn-primary">
+            <button type="submit" id="btn-register" class="btn-primary" data-i18n="auth.register_btn">
                 Create Account
             </button>
         </form>
 
         <p class="auth-link">
-            Already have an account?
-            <a href="login.html">Sign In</a>
+            <span data-i18n="auth.already_have_account">Already have an account?</span>
+            <a href="login.html" data-i18n="auth.sign_in_btn">Sign In</a>
         </p>
     </div>
 </div>
 
+<script src="../assets/js/i18n.js"></script>
 <script src="../assets/js/main.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -227,16 +239,18 @@ document.addEventListener('DOMContentLoaded', function () {
                             card.className = 'subject-card';
                             card.style.cssText = 'background: var(--glass-bg-elevated); border: 1px solid var(--glass-border); border-radius: 8px; padding: 10px 12px; transition: border-color 0.2s;';
 
+                            var displaySubj = (window.i18n && typeof window.i18n.translateSubject === 'function') ? window.i18n.translateSubject(subj) : subj;
+                            var availText = tList.length > 0 ? (tList.length + ' ' + ((window.i18n && window.i18n.getLanguage() === 'ar') ? 'معلم متاح' : ('teacher' + (tList.length > 1 ? 's' : '') + ' available'))) : ((window.i18n && window.i18n.getLanguage() === 'ar') ? 'لا يوجد معلم' : 'No teacher');
                             var header = document.createElement('div');
                             header.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;';
-                            header.innerHTML = '<span style="font-size: 13px; font-weight: 700; color: var(--text-primary);"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: -1px; margin-right: 5px;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>' + escapeHtml(subj) + '</span>' +
-                                               '<span style="font-size: 11px; color: var(--text-muted);">' + (tList.length > 0 ? tList.length + ' teacher' + (tList.length > 1 ? 's' : '') + ' available' : 'No teacher') + '</span>';
+                            header.innerHTML = '<span style="font-size: 13px; font-weight: 700; color: var(--text-primary);"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: -1px; margin-inline-end: 5px;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>' + escapeHtml(displaySubj) + '</span>' +
+                                               '<span style="font-size: 11px; color: var(--text-muted);">' + escapeHtml(availText) + '</span>';
                             card.appendChild(header);
 
                             if (tList.length === 0) {
                                 var noTeacher = document.createElement('div');
                                 noTeacher.style.cssText = 'font-size: 12px; color: var(--text-muted); padding: 4px 0; font-style: italic;';
-                                noTeacher.textContent = 'No teacher assigned for this subject yet.';
+                                noTeacher.textContent = (window.i18n && window.i18n.getLanguage() === 'ar') ? 'لا يوجد معلم مسند لهذه المادة حالياً.' : 'No teacher assigned for this subject yet.';
                                 card.appendChild(noTeacher);
                             } else {
                                 var optionsGroup = document.createElement('div');
@@ -247,8 +261,9 @@ document.addEventListener('DOMContentLoaded', function () {
                                 noneLabel.style.cssText = 'display: flex; align-items: center; gap: 8px; padding: 5px 8px; border-radius: 5px; cursor: pointer; font-size: 12px; color: var(--text-muted); transition: background 0.15s;';
                                 noneLabel.onmouseenter = function() { this.style.background = 'var(--glass-bg-hover)'; };
                                 noneLabel.onmouseleave = function() { this.style.background = 'transparent'; };
+                                var noneMsg = (window.i18n && window.i18n.getLanguage() === 'ar') ? 'لم يتم اختيار معلم لهذه المادة' : 'No teacher selected for this subject';
                                 noneLabel.innerHTML = '<input type="radio" name="teacher_radio_' + safeSubjKey + '" value="none" checked style="accent-color: var(--primary); width: 14px; height: 14px; cursor: pointer;">' +
-                                                      '<span>No teacher selected for this subject</span>';
+                                                      '<span>' + escapeHtml(noneMsg) + '</span>';
                                 optionsGroup.appendChild(noneLabel);
 
                                 noneLabel.querySelector('input').addEventListener('change', updateSelectedCount);
@@ -322,7 +337,8 @@ document.addEventListener('DOMContentLoaded', function () {
             var gradeVal = gradeSelect ? gradeSelect.value : '';
             if (gradeVal && selectedTeacherIds.length === 0) {
                 e.preventDefault();
-                alert('Please select at least one teacher for your grade level.');
+                var alertMsg = (window.i18n && typeof window.i18n.t === 'function') ? window.i18n.t('validation.select_teacher', null, 'Please select at least one teacher for your grade level.') : 'Please select at least one teacher for your grade level.';
+                alert(alertMsg);
                 return false;
             }
 

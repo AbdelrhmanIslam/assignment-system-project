@@ -1590,3 +1590,7 @@ window.openEditUserModal = openEditUserModal;
 window.closeEditUserModal = closeEditUserModal;
 window.toggleEditPasswordVisibility = toggleEditPasswordVisibility;
 
+window.addEventListener('languageChanged', function () {
+    if (typeof loadUsers === 'function') loadUsers();
+});
+

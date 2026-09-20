@@ -8,24 +8,31 @@
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/dashboard.css">
     <link rel="stylesheet" href="../assets/css/responsive.css">
+    <link rel="stylesheet" href="../assets/css/rtl.css">
     <script>
-        (function(){var t=localStorage.getItem('assignment_system_theme')||localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);})();
+        (function(){
+            var t=localStorage.getItem('assignment_system_theme')||localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+            document.documentElement.setAttribute('data-theme',t);
+            var l=localStorage.getItem('assignment_system_lang')||'en';
+            document.documentElement.setAttribute('lang',l);
+            document.documentElement.setAttribute('dir',l==='ar'?'rtl':'ltr');
+        })();
     </script>
 </head>
 <body>
     <div class="dashboard-page">
 
-        <a href="dashboard.html" class="back-btn">Back to Dashboard</a>
+        <a href="dashboard.html" class="back-btn" data-i18n="common.back">Back to Dashboard</a>
 
         <header class="dashboard-header">
             <div>
-                <h1>Assignments Oversight</h1>
-                <p>Monitor assignments across all courses and teachers</p>
+                <h1 data-i18n="admin.assignments_title">Assignments Oversight</h1>
+                <p data-i18n="admin.assignments_subtitle">Monitor assignments across all courses and teachers</p>
             </div>
             <div class="header-actions">
-                <span class="user-role role-admin">Admin</span>
+                <span class="user-role role-admin" data-i18n="educational.roles.admin">Admin</span>
                 <span id="admin-name" style="font-weight: 600;">Administrator</span>
-                <a href="../../backend/auth/logout.php" class="logout-btn">Logout</a>
+                <a href="../../backend/auth/logout.php" class="logout-btn" data-i18n="nav.logout">Logout</a>
             </div>
         </header>
 
@@ -66,15 +73,15 @@
                 <table class="assignments-table">
                     <thead>
                         <tr>
-                            <th>Assignment</th>
-                            <th>Course</th>
-                            <th>Grade Level</th>
-                            <th>Teacher</th>
-                            <th>Max Points</th>
-                            <th>Deadline</th>
-                            <th>Submissions</th>
-                            <th>Status</th>
-                            <th>Actions</th>
+                            <th data-i18n="nav.assignments">Assignment</th>
+                            <th data-i18n="nav.courses">Course</th>
+                            <th data-i18n="common.grade">Grade Level</th>
+                            <th data-i18n="educational.roles.teacher">Teacher</th>
+                            <th data-i18n="common.max_grade">Max Points</th>
+                            <th data-i18n="common.deadline">Deadline</th>
+                            <th data-i18n="nav.submissions">Submissions</th>
+                            <th data-i18n="common.status">Status</th>
+                            <th data-i18n="common.actions">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="assignments-table-body">
@@ -84,12 +91,13 @@
             </div>
 
             <div id="empty-state" class="empty-state" style="display: none;">
-                <h3>No Assignments Found</h3>
+                <h3 data-i18n="common.no_data">No Assignments Found</h3>
                 <p>No assignments have been created in the system yet.</p>
             </div>
         </section>
     </div>
 
+    <script src="../assets/js/i18n.js"></script>
     <script src="../assets/js/main.js?v=8.0"></script>
     <script src="../assets/js/admin_assignments.js?v=8.0"></script>
 </body>

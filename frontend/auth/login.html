@@ -8,14 +8,25 @@
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/auth.css">
     <link rel="stylesheet" href="../assets/css/responsive.css">
+    <link rel="stylesheet" href="../assets/css/rtl.css">
     <script>
-        (function(){var t=localStorage.getItem('assignment_system_theme')||localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);})();
+        (function(){
+            var t=localStorage.getItem('assignment_system_theme')||localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+            document.documentElement.setAttribute('data-theme',t);
+            var l=localStorage.getItem('assignment_system_lang')||'en';
+            document.documentElement.setAttribute('lang',l);
+            document.documentElement.setAttribute('dir',l==='ar'?'rtl':'ltr');
+        })();
     </script>
 </head>
 <body>
 
 <div class="auth-container">
     <div class="auth-theme-toggle">
+        <button type="button" class="lang-toggle-btn" aria-label="Toggle language">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            <span>العربية</span>
+        </button>
         <button type="button" class="theme-toggle-btn" aria-label="Toggle theme">
             <svg class="theme-icon-moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
             <span class="theme-text">Theme</span>
@@ -23,15 +34,15 @@
     </div>
 
     <div class="auth-card">
-        <h1>Assignment System</h1>
-        <p class="auth-subtitle">Sign in to your account</p>
+        <h1 data-i18n="common.app_name">Assignment System</h1>
+        <p class="auth-subtitle" data-i18n="auth.login_subtitle">Sign in to your account</p>
 
         <div id="alert-box" style="display: none;"></div>
 
         <!-- login form connected to backend -->
         <form method="POST" action="../../backend/auth/login.php">
             <div class="form-group">
-                <label for="email">Email</label>
+                <label for="email" data-i18n="auth.email_label">Email</label>
                 <input
                     type="email"
                     id="email"
@@ -41,7 +52,7 @@
             </div>
 
             <div class="form-group">
-                <label for="password">Password</label>
+                <label for="password" data-i18n="auth.password_label">Password</label>
                 <div class="password-wrapper">
                     <input
                         type="password"
@@ -62,18 +73,19 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn-primary">
+            <button type="submit" class="btn-primary" data-i18n="auth.sign_in_btn">
                 Sign In
             </button>
         </form>
 
         <p class="auth-link">
-            Don't have an account?
-            <a href="register.html">Create an account</a>
+            <span data-i18n="auth.dont_have_account">Don't have an account?</span>
+            <a href="register.html" data-i18n="auth.register_now">Create an account</a>
         </p>
     </div>
 </div>
 
+<script src="../assets/js/i18n.js"></script>
 <script src="../assets/js/main.js"></script>
 
 </body>

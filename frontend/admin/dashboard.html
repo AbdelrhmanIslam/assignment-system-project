@@ -8,8 +8,15 @@
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/dashboard.css">
     <link rel="stylesheet" href="../assets/css/responsive.css">
+    <link rel="stylesheet" href="../assets/css/rtl.css">
     <script>
-        (function(){var t=localStorage.getItem('assignment_system_theme')||localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);})();
+        (function(){
+            var t=localStorage.getItem('assignment_system_theme')||localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+            document.documentElement.setAttribute('data-theme',t);
+            var l=localStorage.getItem('assignment_system_lang')||'en';
+            document.documentElement.setAttribute('lang',l);
+            document.documentElement.setAttribute('dir',l==='ar'?'rtl':'ltr');
+        })();
     </script>
 </head>
 <body>
@@ -17,53 +24,53 @@
 
         <header class="dashboard-header">
             <div>
-                <h1>System Administration</h1>
-                <p>Signed in as <span id="admin-name">Administrator</span> &bull; <span id="admin-email">admin@test.com</span></p>
+                <h1 data-i18n="nav.system_administration">System Administration</h1>
+                <p><span data-i18n="common.signed_in_as">Signed in as</span> <span id="admin-name">Administrator</span> &bull; <span id="admin-email">admin@test.com</span></p>
             </div>
             <div class="header-actions">
-                <span class="user-role" style="background: #fef2f2; color: #991b1b;">Admin</span>
-                <a href="../../backend/auth/logout.php" class="logout-btn">Logout</a>
+                <span class="user-role" style="background: #fef2f2; color: #991b1b;" data-i18n="educational.roles.admin">Admin</span>
+                <a href="../../backend/auth/logout.php" class="logout-btn" data-i18n="nav.logout">Logout</a>
             </div>
         </header>
 
         <div style="display: flex; gap: 12px; margin-bottom: 25px; flex-wrap: wrap;">
-            <a href="users.html" class="action-btn action-submit" style="padding: 10px 18px; font-size: 14px; text-decoration: none;">
+            <a href="users.html" class="action-btn action-submit" style="padding: 10px 18px; font-size: 14px; text-decoration: none;" data-i18n="admin.users_title">
                 Manage Users
             </a>
-            <a href="courses.html" class="action-btn action-view" style="padding: 10px 18px; font-size: 14px; text-decoration: none;">
+            <a href="courses.html" class="action-btn action-view" style="padding: 10px 18px; font-size: 14px; text-decoration: none;" data-i18n="admin.courses_title">
                 Manage Courses
             </a>
-            <a href="assignments.html" class="action-btn action-review" style="padding: 10px 18px; font-size: 14px; text-decoration: none;">
+            <a href="assignments.html" class="action-btn action-review" style="padding: 10px 18px; font-size: 14px; text-decoration: none;" data-i18n="nav.assignments">
                 Assignments
             </a>
-            <a href="settings.html" class="action-btn" style="background: #4b5563; color: #fff; padding: 10px 18px; font-size: 14px; text-decoration: none;">
+            <a href="settings.html" class="action-btn" style="background: #4b5563; color: #fff; padding: 10px 18px; font-size: 14px; text-decoration: none;" data-i18n="nav.settings">
                 System Settings
             </a>
         </div>
 
         <section class="stats-grid">
             <div class="stat-card">
-                <span class="stat-label">Total Users</span>
+                <span class="stat-label" data-i18n="admin.stat_total_users">Total Users</span>
                 <strong class="stat-number" id="stat-users">0</strong>
-                <small id="stat-users-sub" style="display:block; color:#6b7280; font-size:12px; margin-top:6px;">Loading...</small>
+                <small id="stat-users-sub" style="display:block; color:#6b7280; font-size:12px; margin-top:6px;" data-i18n="common.loading">Loading...</small>
             </div>
 
             <div class="stat-card">
-                <span class="stat-label">Total Courses</span>
+                <span class="stat-label" data-i18n="admin.stat_courses">Total Courses</span>
                 <strong class="stat-number" id="stat-courses">0</strong>
-                <small id="stat-courses-sub" style="display:block; color:#6b7280; font-size:12px; margin-top:6px;">Loading...</small>
+                <small id="stat-courses-sub" style="display:block; color:#6b7280; font-size:12px; margin-top:6px;" data-i18n="common.loading">Loading...</small>
             </div>
 
             <div class="stat-card">
-                <span class="stat-label">Total Assignments</span>
+                <span class="stat-label" data-i18n="admin.stat_assignments">Total Assignments</span>
                 <strong class="stat-number" id="stat-assignments">0</strong>
-                <small id="stat-assignments-sub" style="display:block; color:#6b7280; font-size:12px; margin-top:6px;">Loading...</small>
+                <small id="stat-assignments-sub" style="display:block; color:#6b7280; font-size:12px; margin-top:6px;" data-i18n="common.loading">Loading...</small>
             </div>
 
             <div class="stat-card">
-                <span class="stat-label">Total Submissions</span>
+                <span class="stat-label" data-i18n="admin.stat_submissions">Total Submissions</span>
                 <strong class="stat-number" id="stat-submissions">0</strong>
-                <small id="stat-submissions-sub" style="display:block; color:#6b7280; font-size:12px; margin-top:6px;">Loading...</small>
+                <small id="stat-submissions-sub" style="display:block; color:#6b7280; font-size:12px; margin-top:6px;" data-i18n="common.loading">Loading...</small>
             </div>
         </section>
 
@@ -72,21 +79,21 @@
             <section class="assignments-section">
                 <div class="section-header" style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
-                        <h2>Recent Users</h2>
-                        <p>Latest registered accounts</p>
+                        <h2 data-i18n="admin.users_title">Recent Users</h2>
+                        <p data-i18n="admin.users_subtitle">Latest registered accounts</p>
                     </div>
-                    <a href="users.html" class="view-btn" style="background: #374151; font-size:12px;">View All</a>
+                    <a href="users.html" class="view-btn" style="background: #374151; font-size:12px;" data-i18n="common.view">View All</a>
                 </div>
 
                 <div class="table-container">
                     <table class="assignments-table">
                         <thead>
                             <tr>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Role</th>
-                                <th>Status</th>
-                                <th>Registered</th>
+                                <th data-i18n="common.name">Name</th>
+                                <th data-i18n="auth.email_label">Email</th>
+                                <th data-i18n="admin.th_role">Role</th>
+                                <th data-i18n="common.status">Status</th>
+                                <th data-i18n="common.created_at">Registered</th>
                             </tr>
                         </thead>
                         <tbody id="recent-users-body">
@@ -99,21 +106,21 @@
             <section class="assignments-section">
                 <div class="section-header" style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
-                        <h2>Recent Submissions</h2>
-                        <p>Latest student work received</p>
+                        <h2 data-i18n="student.stat_submitted">Recent Submissions</h2>
+                        <p data-i18n="teacher.submissions_heading">Latest student work received</p>
                     </div>
-                    <a href="assignments.html" class="view-btn" style="background: #374151; font-size:12px;">View All</a>
+                    <a href="assignments.html" class="view-btn" style="background: #374151; font-size:12px;" data-i18n="common.view">View All</a>
                 </div>
 
                 <div class="table-container">
                     <table class="assignments-table">
                         <thead>
                             <tr>
-                                <th>Student</th>
-                                <th>Assignment</th>
-                                <th>Course</th>
-                                <th>Status</th>
-                                <th>Submitted</th>
+                                <th data-i18n="educational.roles.student">Student</th>
+                                <th data-i18n="nav.assignments">Assignment</th>
+                                <th data-i18n="nav.courses">Course</th>
+                                <th data-i18n="common.status">Status</th>
+                                <th data-i18n="common.date">Submitted</th>
                             </tr>
                         </thead>
                         <tbody id="recent-submissions-body">
@@ -125,6 +132,7 @@
         </div>
     </div>
 
+    <script src="../assets/js/i18n.js"></script>
     <script src="../assets/js/main.js"></script>
     <script src="../assets/js/admin_dashboard.js"></script>
 </body>

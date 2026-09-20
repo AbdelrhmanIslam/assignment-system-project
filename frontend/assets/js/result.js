@@ -133,7 +133,8 @@ function formatBytes(bytes) {
 function formatDate(dateStr) {
     if (!dateStr) return '—';
     var d = new Date(dateStr);
-    return d.toLocaleDateString('en-US', {
+    var lang = (window.i18n && window.i18n.getCurrentLanguage() === 'ar') ? 'ar-EG' : 'en-US';
+    return d.toLocaleDateString(lang, {
         year: 'numeric',
         month: 'short',
         day: 'numeric',
@@ -151,3 +152,12 @@ function showError(msg) {
     var loader = document.getElementById('loadingState');
     if (loader) loader.style.display = 'none';
 }
+
+window.addEventListener('languageChanged', function () {
+    var urlParams = new URLSearchParams(window.location.search);
+    var assignmentId = urlParams.get('id');
+    if (assignmentId && typeof loadResult === 'function') {
+        loadResult(assignmentId);
+    }
+});
+

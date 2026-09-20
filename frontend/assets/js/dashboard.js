@@ -256,6 +256,16 @@ function updateAssignments(assignments) {
 }
 
 function getActionLabel(status) {
+  if (window.i18n) {
+    switch (status) {
+      case "not_submitted":
+        return window.i18n.t("common.submit");
+      case "graded":
+        return window.i18n.t("common.view");
+      default:
+        return window.i18n.t("common.view");
+    }
+  }
   switch (status) {
     case "not_submitted":
       return "Submit";
@@ -284,6 +294,9 @@ function getActionClass(status) {
 }
 
 function getStatusLabel(status) {
+  if (window.i18n) {
+    return window.i18n.translateStatus(status);
+  }
   switch (status) {
     case "not_submitted":
       return "Not Submitted";
@@ -377,3 +390,8 @@ function escapeHtml(value) {
 
   return div.innerHTML;
 }
+
+window.addEventListener("languageChanged", function () {
+  if (typeof loadDashboard === "function") loadDashboard();
+});
+

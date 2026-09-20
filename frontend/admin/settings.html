@@ -8,24 +8,31 @@
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/dashboard.css">
     <link rel="stylesheet" href="../assets/css/responsive.css">
+    <link rel="stylesheet" href="../assets/css/rtl.css">
     <script>
-        (function(){var t=localStorage.getItem('assignment_system_theme')||localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);})();
+        (function(){
+            var t=localStorage.getItem('assignment_system_theme')||localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+            document.documentElement.setAttribute('data-theme',t);
+            var l=localStorage.getItem('assignment_system_lang')||'en';
+            document.documentElement.setAttribute('lang',l);
+            document.documentElement.setAttribute('dir',l==='ar'?'rtl':'ltr');
+        })();
     </script>
 </head>
 <body>
     <div class="dashboard-page">
 
-        <a href="dashboard.html" class="back-btn">Back to Dashboard</a>
+        <a href="dashboard.html" class="back-btn" data-i18n="common.back">Back to Dashboard</a>
 
         <header class="dashboard-header">
             <div>
-                <h1>System Settings</h1>
+                <h1 data-i18n="nav.settings">System Settings</h1>
                 <p>Environment configuration, storage status, and server runtime</p>
             </div>
             <div class="header-actions">
-                <span class="user-role" style="background: #fef2f2; color: #991b1b;">Admin</span>
+                <span class="user-role" style="background: #fef2f2; color: #991b1b;" data-i18n="educational.roles.admin">Admin</span>
                 <span id="admin-name" style="font-weight: 600; color: #374151;">Administrator</span>
-                <a href="../../backend/auth/logout.php" class="logout-btn">Logout</a>
+                <a href="../../backend/auth/logout.php" class="logout-btn" data-i18n="nav.logout">Logout</a>
             </div>
         </header>
 
@@ -103,6 +110,7 @@
         </div>
     </div>
 
+    <script src="../assets/js/i18n.js"></script>
     <script src="../assets/js/main.js"></script>
     <script src="../assets/js/admin_settings.js"></script>
 </body>

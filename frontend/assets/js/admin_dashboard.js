@@ -27,17 +27,24 @@ function loadAdminDashboard() {
         // set metrics cards
         if (data.metrics) {
             var m = data.metrics;
+            var tStu = window.i18n ? window.i18n.t('admin.tab_students') : 'Students';
+            var tTea = window.i18n ? window.i18n.t('admin.tab_teachers') : 'Teachers';
+            var tAss = window.i18n ? window.i18n.t('admin.tab_assistants') : 'Assistants';
+            var tAct = window.i18n ? window.i18n.t('common.active') : 'active';
+            var tGrad = window.i18n ? window.i18n.translateStatus('graded') : 'graded';
+            var tPend = window.i18n ? window.i18n.translateStatus('under_review') : 'pending';
+
             setElementText('stat-users', m.total_users);
-            setElementText('stat-users-sub', m.students + ' Students, ' + m.teachers + ' Teachers, ' + m.assistants + ' Assistants');
+            setElementText('stat-users-sub', m.students + ' ' + tStu + ', ' + m.teachers + ' ' + tTea + ', ' + m.assistants + ' ' + tAss);
 
             setElementText('stat-courses', m.total_courses);
-            setElementText('stat-courses-sub', m.active_courses + ' active');
+            setElementText('stat-courses-sub', m.active_courses + ' ' + tAct);
 
             setElementText('stat-assignments', m.total_assignments);
-            setElementText('stat-assignments-sub', m.active_assignments + ' active');
+            setElementText('stat-assignments-sub', m.active_assignments + ' ' + tAct);
 
             setElementText('stat-submissions', m.total_submissions);
-            setElementText('stat-submissions-sub', m.graded_submissions + ' graded, ' + m.pending_submissions + ' pending');
+            setElementText('stat-submissions-sub', m.graded_submissions + ' ' + tGrad + ', ' + m.pending_submissions + ' ' + tPend);
         }
 
         // render recent users
@@ -57,7 +64,8 @@ function renderRecentUsers(users) {
     tbody.innerHTML = '';
 
     if (!users || users.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">No users registered yet.</td></tr>';
+        var emptyMsg = window.i18n ? window.i18n.t('common.no_data') : 'No users registered yet.';
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">' + emptyMsg + '</td></tr>';
         return;
     }
 
@@ -70,12 +78,14 @@ function renderRecentUsers(users) {
         else if (u.role === 'assistant') roleBadge = 'status-submitted';
         else if (u.role === 'student') roleBadge = 'status-graded';
 
-        var statusLabel = u.is_active ? '<span style="color:var(--success); font-weight:600;">Active</span>' : '<span style="color:var(--danger); font-weight:600;">Inactive</span>';
+        var roleDisplay = window.i18n ? window.i18n.translateRole(u.role) : u.role.toUpperCase();
+        var activeText = window.i18n ? window.i18n.t(u.is_active ? 'common.active' : 'common.inactive') : (u.is_active ? 'Active' : 'Inactive');
+        var statusLabel = u.is_active ? '<span style="color:var(--success); font-weight:600;">' + activeText + '</span>' : '<span style="color:var(--danger); font-weight:600;">' + activeText + '</span>';
 
         row.innerHTML =
             '<td><strong>' + escapeHtml(u.name) + '</strong></td>' +
             '<td>' + escapeHtml(u.email) + '</td>' +
-            '<td><span class="status-badge ' + roleBadge + '">' + u.role.toUpperCase() + '</span></td>' +
+            '<td><span class="status-badge ' + roleBadge + '">' + escapeHtml(roleDisplay) + '</span></td>' +
             '<td>' + statusLabel + '</td>' +
             '<td>' + formatDate(u.created_at) + '</td>';
 
@@ -89,7 +99,8 @@ function renderRecentSubmissions(submissions) {
     tbody.innerHTML = '';
 
     if (!submissions || submissions.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">No submissions yet.</td></tr>';
+        var emptyMsg = window.i18n ? window.i18n.t('common.no_data') : 'No submissions yet.';
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">' + emptyMsg + '</td></tr>';
         return;
     }
 
@@ -97,27 +108,23 @@ function renderRecentSubmissions(submissions) {
         var row = document.createElement('tr');
 
         var badgeClass = 'status-not-submitted';
-        var badgeLabel = 'Submitted';
+        var badgeLabel = window.i18n ? window.i18n.translateStatus(s.status) : s.status;
 
         if (s.status === 'graded') {
             badgeClass = 'status-graded';
-            badgeLabel = 'Graded';
         } else if (s.status === 'under_review') {
             badgeClass = 'status-review';
-            badgeLabel = 'Under Review';
         } else if (s.status === 'recheck') {
             badgeClass = 'status-closed';
-            badgeLabel = 'Recheck Requested';
         } else if (s.status === 'pending_approval') {
             badgeClass = 'status-submitted';
-            badgeLabel = 'Pending Approval';
         }
 
         row.innerHTML =
             '<td><strong>' + escapeHtml(s.student_name) + '</strong></td>' +
             '<td>' + escapeHtml(s.assignment_title) + '</td>' +
             '<td>' + escapeHtml(s.course_name) + '</td>' +
-            '<td><span class="status-badge ' + badgeClass + '">' + badgeLabel + '</span></td>' +
+            '<td><span class="status-badge ' + badgeClass + '">' + escapeHtml(badgeLabel) + '</span></td>' +
             '<td>' + formatDate(s.submitted_at) + '</td>';
 
         tbody.appendChild(row);
@@ -132,7 +139,8 @@ function setElementText(id, text) {
 function formatDate(dateStr) {
     if (!dateStr) return '—';
     var d = new Date(dateStr);
-    return d.toLocaleDateString('en-US', {
+    var lang = (window.i18n && window.i18n.getCurrentLanguage() === 'ar') ? 'ar-EG' : 'en-US';
+    return d.toLocaleDateString(lang, {
         month: 'short',
         day: 'numeric',
         year: 'numeric',
@@ -145,3 +153,8 @@ function escapeHtml(str) {
     if (!str) return '';
     return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
+
+window.addEventListener('languageChanged', function () {
+    if (typeof loadAdminDashboard === 'function') loadAdminDashboard();
+});
+

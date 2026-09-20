@@ -1,5 +1,6 @@
 <?php
 // helper functions
+require_once __DIR__ . '/i18n.php';
 
 // escape html output safely
 function e($value)

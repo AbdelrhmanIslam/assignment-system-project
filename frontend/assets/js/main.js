@@ -120,6 +120,9 @@
     document.addEventListener('DOMContentLoaded', function () {
         applyTheme(getPreferredTheme());
         ensureThemeToggle();
+        if (window.i18n && typeof window.i18n.ensureLanguageToggle === 'function') {
+            window.i18n.ensureLanguageToggle();
+        }
 
         // Display error/success alert from URL params
         var urlParams = new URLSearchParams(window.location.search);
@@ -164,6 +167,9 @@
 
     function formatGradeLevel(grade) {
         if (!grade) return '—';
+        if (window.i18n && typeof window.i18n.translateGrade === 'function') {
+            return window.i18n.translateGrade(grade);
+        }
         var map = {
             'First Year of Middle School': '1st Preparatory',
             'Second Year of Middle School': '2nd Preparatory',

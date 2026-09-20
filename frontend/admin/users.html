@@ -8,8 +8,15 @@
     <link rel="stylesheet" href="../assets/css/style.css?v=9.5">
     <link rel="stylesheet" href="../assets/css/dashboard.css?v=9.5">
     <link rel="stylesheet" href="../assets/css/responsive.css?v=9.5">
+    <link rel="stylesheet" href="../assets/css/rtl.css">
     <script>
-        (function(){var t=localStorage.getItem('assignment_system_theme')||localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);})();
+        (function(){
+            var t=localStorage.getItem('assignment_system_theme')||localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+            document.documentElement.setAttribute('data-theme',t);
+            var l=localStorage.getItem('assignment_system_lang')||'en';
+            document.documentElement.setAttribute('lang',l);
+            document.documentElement.setAttribute('dir',l==='ar'?'rtl':'ltr');
+        })();
     </script>
     <style>
         /* Hierarchical Categories Styling */
@@ -188,17 +195,17 @@
 <body>
     <div class="dashboard-page">
 
-        <a href="dashboard.html" class="back-btn">Back to Dashboard</a>
+        <a href="dashboard.html" class="back-btn" data-i18n="common.back">Back to Dashboard</a>
 
         <header class="dashboard-header">
             <div>
-                <h1>User Management</h1>
-                <p>Manage accounts, role assignments, and system access</p>
+                <h1 data-i18n="admin.users_title">User Management</h1>
+                <p data-i18n="admin.users_subtitle">Manage accounts, role assignments, and system access</p>
             </div>
             <div class="header-actions">
-                <span class="user-role role-admin">Admin</span>
+                <span class="user-role role-admin" data-i18n="educational.roles.admin">Admin</span>
                 <span id="admin-name" style="font-weight: 600;">Administrator</span>
-                <a href="../../backend/auth/logout.php" class="logout-btn">Logout</a>
+                <a href="../../backend/auth/logout.php" class="logout-btn" data-i18n="nav.logout">Logout</a>
             </div>
         </header>
 
@@ -212,11 +219,11 @@
                     <div class="user-mgmt-header-bar">
                         <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
                             <div class="filter-tabs">
-                                <button class="filter-tab active" data-role="all">All</button>
-                                <button class="filter-tab" data-role="student">Students</button>
-                                <button class="filter-tab" data-role="teacher">Teachers</button>
-                                <button class="filter-tab" data-role="assistant">Assistants</button>
-                                <button class="filter-tab" data-role="admin">Admins</button>
+                                <button class="filter-tab active" data-role="all" data-i18n="common.all">All</button>
+                                <button class="filter-tab" data-role="student" data-i18n="admin.tab_students">Students</button>
+                                <button class="filter-tab" data-role="teacher" data-i18n="admin.tab_teachers">Teachers</button>
+                                <button class="filter-tab" data-role="assistant" data-i18n="admin.tab_assistants">Assistants</button>
+                                <button class="filter-tab" data-role="admin" data-i18n="admin.tab_admins">Admins</button>
                             </div>
                             <div style="display: flex; gap: 6px;">
                                 <button type="button" id="btn-expand-all" class="btn-accordion-control" title="Expand all category sections">
@@ -512,10 +519,10 @@
                 </div>
 
                 <div style="display: flex; gap: 10px; justify-content: flex-end; padding-top: 12px; border-top: 1px solid var(--border-subtle); margin-top: 4px; flex-shrink: 0;">
-                    <button type="button" onclick="closeEditUserModal()" class="btn-secondary" style="padding: 8px 18px; font-size: 13px; border-radius: var(--radius-pill);">
+                    <button type="button" onclick="closeEditUserModal()" class="btn-secondary" style="padding: 8px 18px; font-size: 13px; border-radius: var(--radius-pill);" data-i18n="common.cancel">
                         Cancel
                     </button>
-                    <button type="submit" class="btn-primary" style="padding: 8px 22px; font-size: 13px; border-radius: var(--radius-pill);">
+                    <button type="submit" class="btn-primary" style="padding: 8px 22px; font-size: 13px; border-radius: var(--radius-pill);" data-i18n="common.save">
                         Save Changes
                     </button>
                 </div>
@@ -523,6 +530,7 @@
         </div>
     </div>
 
+    <script src="../assets/js/i18n.js"></script>
     <script src="../assets/js/main.js?v=10.0"></script>
     <script src="../assets/js/admin_users.js?v=10.0"></script>
 </body>

@@ -219,15 +219,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function getStatusInfo(status) {
         if (status === 'graded') {
-            return { label: 'Graded', className: 'status-graded' };
+            return { label: window.i18n ? window.i18n.translateStatus('graded') : 'Graded', className: 'status-graded' };
         } else if (status === 'pending_teacher') {
-            return { label: 'Pending Approval', className: 'status-review' };
+            return { label: window.i18n ? window.i18n.translateStatus('pending_teacher') : 'Pending Approval', className: 'status-review' };
         } else if (status === 'recheck') {
-            return { label: 'Recheck Requested', className: 'status-closed' };
+            return { label: window.i18n ? window.i18n.translateStatus('recheck') : 'Recheck Requested', className: 'status-closed' };
         } else if (status === 'under_review') {
-            return { label: 'Under Review', className: 'status-review' };
+            return { label: window.i18n ? window.i18n.translateStatus('under_review') : 'Under Review', className: 'status-review' };
         } else {
-            return { label: 'Submitted', className: 'status-submitted' };
+            return { label: window.i18n ? window.i18n.translateStatus('submitted') : 'Submitted', className: 'status-submitted' };
         }
     }
 

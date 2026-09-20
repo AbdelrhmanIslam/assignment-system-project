@@ -164,43 +164,36 @@ function renderTable(submissions) {
         var row = document.createElement('tr');
 
         var badgeClass = 'status-not-submitted';
-        var badgeLabel = 'Submitted';
-        var actionLabel = 'Review';
+        var badgeLabel = window.i18n ? window.i18n.translateStatus(sub.status) : 'Submitted';
+        var actionLabel = window.i18n ? window.i18n.t('common.view') : 'Review';
         var actionClass = 'action-submit';
 
         if (sub.status === 'graded') {
             badgeClass = 'status-graded';
-            badgeLabel = 'Graded';
-            actionLabel = 'View Result';
             actionClass = 'action-result';
         } else if (sub.status === 'under_review') {
             badgeClass = 'status-review';
-            badgeLabel = 'Under Review';
-            actionLabel = 'Review';
             actionClass = 'action-review';
         } else if (sub.status === 'recheck') {
             badgeClass = 'status-closed';
-            badgeLabel = 'Recheck Requested';
-            actionLabel = 'Recheck';
             actionClass = 'action-submit';
         } else if (sub.status === 'pending_teacher') {
             badgeClass = 'status-review';
-            badgeLabel = 'Pending Approval';
-            actionLabel = 'View Details';
             actionClass = 'action-view';
         }
 
+        var lateText = window.i18n ? window.i18n.t('educational.flags.late') : 'Late';
         var gradeDisplay = (sub.grade !== null) ? (sub.grade + ' / ' + sub.max_grade) : '—';
-        var lateBadgeHtml = (parseInt(sub.is_late, 10) === 1) ? ' <span class="status-badge" style="background:#ea580c;color:#fff;margin-left:5px;font-size:11px;">Late</span>' : '';
+        var lateBadgeHtml = (parseInt(sub.is_late, 10) === 1) ? ' <span class="status-badge" style="background:#ea580c;color:#fff;margin-left:5px;font-size:11px;">' + lateText + '</span>' : '';
 
         row.innerHTML =
             '<td><strong>' + escapeHtml(sub.student_name) + '</strong><br><small style="color:var(--text-muted);">' + escapeHtml(sub.student_email) + '</small></td>' +
             '<td>' + escapeHtml(sub.assignment_title) + '</td>' +
             '<td>' + escapeHtml(sub.course_name) + '</td>' +
             '<td>' + formatDate(sub.submitted_at) + ' (v' + sub.version + ')</td>' +
-            '<td><span class="status-badge ' + badgeClass + '">' + badgeLabel + '</span>' + lateBadgeHtml + '</td>' +
+            '<td><span class="status-badge ' + badgeClass + '">' + escapeHtml(badgeLabel) + '</span>' + lateBadgeHtml + '</td>' +
             '<td><strong>' + gradeDisplay + '</strong></td>' +
-            '<td><a href="review.html?id=' + sub.id + '" class="action-btn ' + actionClass + '">' + actionLabel + '</a></td>';
+            '<td><a href="review.html?id=' + sub.id + '" class="action-btn ' + actionClass + '">' + escapeHtml(actionLabel) + '</a></td>';
 
         tbody.appendChild(row);
     });
@@ -209,7 +202,8 @@ function renderTable(submissions) {
 function formatDate(dateStr) {
     if (!dateStr) return '—';
     var d = new Date(dateStr);
-    return d.toLocaleDateString('en-US', {
+    var lang = (window.i18n && window.i18n.getCurrentLanguage() === 'ar') ? 'ar-EG' : 'en-US';
+    return d.toLocaleDateString(lang, {
         month: 'short',
         day: 'numeric',
         year: 'numeric',
@@ -222,3 +216,8 @@ function escapeHtml(str) {
     if (!str) return '';
     return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
+
+window.addEventListener('languageChanged', function () {
+    if (typeof loadSubmissions === 'function') loadSubmissions();
+});
+

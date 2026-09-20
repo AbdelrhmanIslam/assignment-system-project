@@ -732,15 +732,15 @@ function setElementText(id, text) {
 // helper to map status to label and css badge
 function getStatusInfo(status) {
     if (status === 'graded') {
-        return { label: 'Graded', className: 'status-graded' };
+        return { label: window.i18n ? window.i18n.translateStatus('graded') : 'Graded', className: 'status-graded' };
     } else if (status === 'recheck') {
-        return { label: 'Recheck Requested', className: 'status-closed' };
+        return { label: window.i18n ? window.i18n.translateStatus('recheck') : 'Recheck Requested', className: 'status-closed' };
     } else if (status === 'pending_approval' || status === 'pending_teacher') {
-        return { label: 'Pending Approval', className: 'status-submitted' };
+        return { label: window.i18n ? window.i18n.translateStatus('pending_teacher') : 'Pending Approval', className: 'status-submitted' };
     } else if (status === 'under_review') {
-        return { label: 'Under Review', className: 'status-review' };
+        return { label: window.i18n ? window.i18n.translateStatus('under_review') : 'Under Review', className: 'status-review' };
     } else {
-        return { label: 'Submitted', className: 'status-submitted' };
+        return { label: window.i18n ? window.i18n.translateStatus('submitted') : 'Submitted', className: 'status-submitted' };
     }
 }
 
@@ -750,3 +750,10 @@ function escapeHtml(text) {
     div.textContent = text;
     return div.innerHTML;
 }
+
+window.addEventListener('languageChanged', function () {
+    // Re-trigger DOMContentLoaded data fetch if event received
+    var evt = new Event('DOMContentLoaded');
+    document.dispatchEvent(evt);
+});
+

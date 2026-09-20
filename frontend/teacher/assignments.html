@@ -8,8 +8,15 @@
     <link rel="stylesheet" href="../assets/css/style.css?v=9.5">
     <link rel="stylesheet" href="../assets/css/dashboard.css?v=9.5">
     <link rel="stylesheet" href="../assets/css/responsive.css?v=9.5">
+        <link rel="stylesheet" href="../assets/css/rtl.css">
     <script>
-        (function(){var t=localStorage.getItem('assignment_system_theme')||localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);})();
+        (function(){
+            var t=localStorage.getItem('assignment_system_theme')||localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+            document.documentElement.setAttribute('data-theme',t);
+            var l=localStorage.getItem('assignment_system_lang')||'en';
+            document.documentElement.setAttribute('lang',l);
+            document.documentElement.setAttribute('dir',l==='ar'?'rtl':'ltr');
+        })();
     </script>
 </head>
 <body>
@@ -168,6 +175,7 @@
     </section>
 
 </div>
+    <script src="../assets/js/i18n.js"></script>
 
 <script src="../assets/js/main.js?v=9.6"></script>
 <script src="../assets/js/teacher_assignments.js?v=9.6"></script>
