@@ -69,7 +69,8 @@
     "download_file": "Download File",
     "all_courses": "All Courses",
     "graded": "Graded",
-    "pending_review": "Pending Review"
+    "pending_review": "Pending Review",
+    "signed_in_as": "Signed in as"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -283,7 +284,8 @@
     "env_allowed_types": "Allowed File Types:",
     "env_submissions_dir": "Submissions Directory:",
     "env_corrections_dir": "Corrections Directory:",
-    "env_storage_used": "Total Storage Used:"
+    "env_storage_used": "Total Storage Used:",
+    "submitted_work": "Submitted Work"
   },
   "teacher": {
     "dashboard_title": "Teacher Dashboard",

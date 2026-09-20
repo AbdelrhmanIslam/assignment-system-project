@@ -69,7 +69,8 @@
     "download_file": "تنزيل الملف",
     "all_courses": "جميع المقررات",
     "graded": "تم التصحيح",
-    "pending_review": "قيد المراجعة"
+    "pending_review": "قيد المراجعة",
+    "signed_in_as": "تم تسجيل الدخول باسم"
   },
   "nav": {
     "dashboard": "لوحة التحكم",
@@ -283,7 +284,8 @@
     "env_allowed_types": "أنواع الملفات المسموحة:",
     "env_submissions_dir": "مجلد التسليمات:",
     "env_corrections_dir": "مجلد التصحيحات:",
-    "env_storage_used": "المساحة الإجمالية المستخدمة:"
+    "env_storage_used": "المساحة الإجمالية المستخدمة:",
+    "submitted_work": "الأعمال المسلمة"
   },
   "teacher": {
     "dashboard_title": "لوحة تحكم المعلم",

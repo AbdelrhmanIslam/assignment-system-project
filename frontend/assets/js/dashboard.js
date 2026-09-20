@@ -78,7 +78,7 @@ function updateTeachers(teachers) {
 
     var name = document.createElement("strong");
     name.style.cssText = "display: block; font-size: 15px; color: var(--text-primary); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;";
-    name.textContent = t.name;
+    name.textContent = window.i18n ? window.i18n.translateName(t.name) : t.name;
 
     var email = document.createElement("span");
     email.style.cssText = "display: block; font-size: 13px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;";

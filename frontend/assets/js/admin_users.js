@@ -320,53 +320,61 @@ function sortGradeLevels(grades) {
 }
 
 function renderStatusBadge(isActive) {
+    var isAr = (window.i18n && window.i18n.getCurrentLanguage() === 'ar');
     return isActive ?
-        '<span class="status-badge status-graded">Active</span>' :
-        '<span class="status-badge status-closed">Inactive</span>';
+        '<span class="status-badge status-graded">' + (isAr ? 'نشط' : 'Active') + '</span>' :
+        '<span class="status-badge status-closed">' + (isAr ? 'غير نشط' : 'Inactive') + '</span>';
 }
 
 function renderActionButtons(u) {
-    var toggleBtnLabel = u.is_active ? 'Deactivate' : 'Activate';
+    var isAr = (window.i18n && window.i18n.getCurrentLanguage() === 'ar');
+    var toggleBtnLabel = u.is_active ? (isAr ? 'تعطيل' : 'Deactivate') : (isAr ? 'تفعيل' : 'Activate');
     var toggleBtnClass = u.is_active ? 'background:var(--danger);' : 'background:var(--success);';
     var isSelf = (currentAdminId > 0 && u.id === currentAdminId);
 
     var toggleBtnHtml = isSelf ?
-        '<button type="button" class="view-btn" disabled style="opacity:0.45; cursor:not-allowed; font-size:11.5px; padding:5px 10px; border:none; border-radius:var(--radius-pill);" title="You cannot deactivate your own administrative account">Self</button>' :
+        '<button type="button" class="view-btn" disabled style="opacity:0.45; cursor:not-allowed; font-size:11.5px; padding:5px 10px; border:none; border-radius:var(--radius-pill);" title="' + (isAr ? 'لا يمكنك تعطيل حسابك الإداري' : 'You cannot deactivate your own administrative account') + '">' + (isAr ? 'حسابك' : 'Self') + '</button>' :
         '<button type="button" onclick="toggleUserStatus(' + u.id + ', this)" class="view-btn" style="' + toggleBtnClass + ' font-size:11.5px; padding:5px 10px; border:none; cursor:pointer; border-radius:var(--radius-pill); white-space:nowrap;">' +
             toggleBtnLabel +
         '</button>';
 
     return '<div style="display:inline-flex; gap:5px; align-items:center; flex-wrap:nowrap;">' +
         '<button type="button" onclick="openEditUserModal(' + u.id + ')" class="action-btn action-view" style="font-size:11.5px; padding:5px 10px; border:none; cursor:pointer; border-radius:var(--radius-pill); white-space:nowrap;">' +
-            'Edit' +
+            (isAr ? 'تعديل' : 'Edit') +
         '</button>' +
         toggleBtnHtml +
     '</div>';
 }
 
 function renderStudentRowHtml(u) {
+    var isAr = (window.i18n && window.i18n.getCurrentLanguage() === 'ar');
     var statusBadge = renderStatusBadge(u.is_active);
     var actionButtons = renderActionButtons(u);
 
-    var sCoursesHtml = '<span style="font-size:12px; color:var(--text-muted);">No assigned courses</span>';
+    var sCoursesHtml = '<span style="font-size:12px; color:var(--text-muted);">' + (isAr ? 'لا توجد مقررات دراسية مسندة' : 'No assigned courses') + '</span>';
     if (u.student_courses && u.student_courses.length > 0) {
         sCoursesHtml = '<div style="display:inline-flex; flex-direction:row; flex-wrap:wrap; gap:6px; align-items:center;">' +
             u.student_courses.map(function (c) {
+                var cName = window.i18n ? window.i18n.translateCourse(c.course_name) : c.course_name;
+                var tName = window.i18n ? window.i18n.translateName(c.teacher_name) : c.teacher_name;
                 return '<div class="student-course-tag" style="display:inline-flex; flex-direction:row; align-items:center; gap:6px; white-space:nowrap; padding:4px 10px;">' +
                     '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>' +
-                    '<span><strong>' + escapeHtml(c.course_name) + '</strong></span>' +
+                    '<span><strong>' + escapeHtml(cName) + '</strong></span>' +
                     '<span class="student-teacher-indicator" style="display:inline-flex; align-items:center; gap:3px; white-space:nowrap;">' +
                         '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>' +
-                        escapeHtml(c.teacher_name) +
+                        escapeHtml(tName) +
                     '</span>' +
                 '</div>';
             }).join('') + '</div>';
     }
 
+    var uName = window.i18n ? window.i18n.translateName(u.name) : u.name;
+    var gradeBadge = window.i18n ? window.i18n.translateGrade(u.grade_level || 'First Year of Middle School') : formatGradeLevel(u.grade_level || 'First Year of Middle School');
+
     return '<tr>' +
-        '<td style="white-space:nowrap;"><strong>' + escapeHtml(u.name) + '</strong></td>' +
+        '<td style="white-space:nowrap;"><strong>' + escapeHtml(uName) + '</strong></td>' +
         '<td style="white-space:nowrap;">' + escapeHtml(u.email) + '</td>' +
-        '<td style="white-space:nowrap;"><span class="status-badge status-submitted" style="font-size:11px; white-space:nowrap;">' + escapeHtml(formatGradeLevel(u.grade_level || 'First Year of Middle School')) + '</span></td>' +
+        '<td style="white-space:nowrap;"><span class="status-badge status-submitted" style="font-size:11px; white-space:nowrap;">' + escapeHtml(gradeBadge) + '</span></td>' +
         '<td>' + sCoursesHtml + '</td>' +
         '<td style="white-space:nowrap;">' + statusBadge + '</td>' +
         '<td style="white-space:nowrap; font-size:12.5px;"><span style="white-space:nowrap; display:inline-block;">' + formatDate(u.created_at) + '</span></td>' +
@@ -375,28 +383,33 @@ function renderStudentRowHtml(u) {
 }
 
 function renderTeacherRowHtml(u) {
+    var isAr = (window.i18n && window.i18n.getCurrentLanguage() === 'ar');
     var statusBadge = renderStatusBadge(u.is_active);
     var actionButtons = renderActionButtons(u);
 
-    var subjectBadge = u.subject ?
-        '<span class="status-badge" style="font-size:11px; padding:2px 8px; border-radius:var(--radius-pill); font-weight:600; background:rgba(99, 102, 241, 0.15); color:#818cf8; border:1px solid rgba(99, 102, 241, 0.3); display:inline-block; margin-top:3px;">' + escapeHtml(u.subject) + '</span>' : '';
+    var subjDisplay = u.subject ? (window.i18n ? window.i18n.translateSubject(u.subject) : u.subject) : '';
+    var subjectBadge = subjDisplay ?
+        '<span class="status-badge" style="font-size:11px; padding:2px 8px; border-radius:var(--radius-pill); font-weight:600; background:rgba(99, 102, 241, 0.15); color:#818cf8; border:1px solid rgba(99, 102, 241, 0.3); display:inline-block; margin-top:3px;">' + escapeHtml(subjDisplay) + '</span>' : '';
 
     var tGradesHtml = '<span style="color:var(--text-muted); font-size:12px;">—</span>';
     if (u.teacher_grade_levels && u.teacher_grade_levels.length > 0) {
         tGradesHtml = '<div class="teacher-grades-row" style="display:inline-flex !important; flex-direction:row !important; flex-wrap:nowrap !important; align-items:center !important; gap:6px !important; white-space:nowrap !important; max-width:340px !important; overflow-x:auto !important; padding-bottom:3px !important; -webkit-overflow-scrolling:touch !important;">' +
             u.teacher_grade_levels.map(function (gl) {
-                return '<span class="status-badge status-review grade-badge-pill" style="white-space:nowrap !important; flex-shrink:0 !important; display:inline-flex !important; align-items:center !important; font-size:11px !important; font-weight:600 !important; padding:4px 10px !important; border-radius:var(--radius-pill) !important; line-height:1.2 !important;">' + escapeHtml(formatGradeLevel(gl)) + '</span>';
+                var glText = window.i18n ? window.i18n.translateGrade(gl) : formatGradeLevel(gl);
+                return '<span class="status-badge status-review grade-badge-pill" style="white-space:nowrap !important; flex-shrink:0 !important; display:inline-flex !important; align-items:center !important; font-size:11px !important; font-weight:600 !important; padding:4px 10px !important; border-radius:var(--radius-pill) !important; line-height:1.2 !important;">' + escapeHtml(glText) + '</span>';
             }).join('') + '</div>';
     }
 
-    var tCoursesHtml = '<span style="font-size:12px; color:var(--text-muted);">0 courses</span>';
+    var tCoursesHtml = '<span style="font-size:12px; color:var(--text-muted);">' + (isAr ? '٠ مقررات' : '0 courses') + '</span>';
     if (u.teacher_courses && u.teacher_courses.length > 0) {
         tCoursesHtml = '<div class="teacher-courses-row" style="display:inline-flex !important; flex-direction:row !important; flex-wrap:nowrap !important; align-items:center !important; gap:8px !important; white-space:nowrap !important; max-width:620px !important; overflow-x:auto !important; padding-bottom:4px !important; padding-top:2px !important; -webkit-overflow-scrolling:touch !important;">' +
             u.teacher_courses.map(function (tc) {
+                var tcName = window.i18n ? window.i18n.translateCourse(tc.course_name) : tc.course_name;
+                var stuCount = (window.i18n && isAr) ? (window.i18n.toArabicDigits(tc.student_count) + ' طلاب') : (tc.student_count + ' students');
                 return '<div class="student-course-tag teacher-course-tag-pill" style="display:inline-flex !important; flex-direction:row !important; align-items:center !important; gap:6px !important; white-space:nowrap !important; flex-shrink:0 !important; padding:4px 10px 4px 8px !important; border-radius:var(--radius-pill) !important; line-height:1.2 !important;">' +
                     '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>' +
-                    '<span><strong>' + escapeHtml(tc.course_name) + '</strong></span>' +
-                    '<span class="sub-count-badge" style="display:inline-flex; align-items:center; font-size:10px; margin-left:2px; white-space:nowrap !important;">' + tc.student_count + ' students</span>' +
+                    '<span><strong>' + escapeHtml(tcName) + '</strong></span>' +
+                    '<span class="sub-count-badge" style="display:inline-flex; align-items:center; font-size:10px; margin-left:2px; white-space:nowrap !important;">' + stuCount + '</span>' +
                 '</div>';
             }).join('') + '</div>';
     }
@@ -405,16 +418,20 @@ function renderTeacherRowHtml(u) {
     if (u.assigned_assistants && u.assigned_assistants.length > 0) {
         asstBadges = '<div style="margin-top:4px; display:flex; flex-wrap:wrap; gap:3px;">' +
             u.assigned_assistants.map(function(a) {
-                return '<span class="status-badge" style="font-size:10px; padding:1px 6px; border-radius:var(--radius-pill); background:var(--role-assistant-bg); color:var(--role-assistant-text); border:1px solid var(--role-assistant-border); display:inline-flex; align-items:center; gap:3px;"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle></svg>' + escapeHtml(a.name) + '</span>';
+                var aName = window.i18n ? window.i18n.translateName(a.name) : a.name;
+                return '<span class="status-badge" style="font-size:10px; padding:1px 6px; border-radius:var(--radius-pill); background:var(--role-assistant-bg); color:var(--role-assistant-text); border:1px solid var(--role-assistant-border); display:inline-flex; align-items:center; gap:3px;"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle></svg>' + escapeHtml(aName) + '</span>';
             }).join('') +
         '</div>';
     }
 
+    var uName = window.i18n ? window.i18n.translateName(u.name) : u.name;
+    var cCountText = (window.i18n && isAr) ? (window.i18n.toArabicDigits(u.courses_count || 0) + ' مقررات') : ((u.courses_count || 0) + ' Courses');
+
     return '<tr>' +
-        '<td style="white-space:nowrap; vertical-align:middle;"><div><strong>' + escapeHtml(u.name) + '</strong></div>' + subjectBadge + asstBadges + '</td>' +
+        '<td style="white-space:nowrap; vertical-align:middle;"><div><strong>' + escapeHtml(uName) + '</strong></div>' + subjectBadge + asstBadges + '</td>' +
         '<td style="white-space:nowrap; vertical-align:middle;">' + escapeHtml(u.email) + '</td>' +
         '<td style="white-space:nowrap; vertical-align:middle;">' + tGradesHtml + '</td>' +
-        '<td style="text-align:center; white-space:nowrap; vertical-align:middle;"><span class="status-badge status-review" style="font-size:11px; font-weight:600; white-space:nowrap;">' + (u.courses_count || 0) + ' Courses</span></td>' +
+        '<td style="text-align:center; white-space:nowrap; vertical-align:middle;"><span class="status-badge status-review" style="font-size:11px; font-weight:600; white-space:nowrap;">' + cCountText + '</span></td>' +
         '<td style="white-space:nowrap; vertical-align:middle;">' + tCoursesHtml + '</td>' +
         '<td style="white-space:nowrap; vertical-align:middle;">' + statusBadge + '</td>' +
         '<td style="white-space:nowrap !important; font-size:12.5px !important; vertical-align:middle; min-width:130px !important;"><span style="white-space:nowrap !important; display:inline-block !important;">' + formatDate(u.created_at) + '</span></td>' +
@@ -423,23 +440,29 @@ function renderTeacherRowHtml(u) {
 }
 
 function renderAssistantRowHtml(u) {
+    var isAr = (window.i18n && window.i18n.getCurrentLanguage() === 'ar');
     var roleBadge = getRoleBadgeClass(u.role);
     var statusBadge = renderStatusBadge(u.is_active);
     var actionButtons = renderActionButtons(u);
 
-    var asstForHtml = '<span style="font-size:12px; color:var(--text-muted);">Unassigned</span>';
+    var asstForHtml = '<span style="font-size:12px; color:var(--text-muted);">' + (isAr ? 'غير مسند' : 'Unassigned') + '</span>';
     if (u.assigned_teachers && u.assigned_teachers.length > 0) {
         var t = u.assigned_teachers[0];
+        var tName = window.i18n ? window.i18n.translateName(t.name) : t.name;
+        var tSubj = t.subject ? (window.i18n ? window.i18n.translateSubject(t.subject) : t.subject) : '';
         asstForHtml = '<span class="status-badge status-submitted" style="font-size:11.5px; white-space:nowrap; display:inline-flex; align-items:center; gap:4px; font-weight:600;">' +
             '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> ' +
-            escapeHtml(t.name) + (t.subject ? ' (' + escapeHtml(t.subject) + ')' : '') +
+            escapeHtml(tName) + (tSubj ? ' (' + escapeHtml(tSubj) + ')' : '') +
         '</span>';
     }
 
+    var uName = window.i18n ? window.i18n.translateName(u.name) : u.name;
+    var roleDisplay = window.i18n ? window.i18n.translateRole(u.role) : u.role.toUpperCase();
+
     return '<tr>' +
-        '<td style="white-space:nowrap;"><strong>' + escapeHtml(u.name) + '</strong></td>' +
+        '<td style="white-space:nowrap;"><strong>' + escapeHtml(uName) + '</strong></td>' +
         '<td style="white-space:nowrap;">' + escapeHtml(u.email) + '</td>' +
-        '<td style="white-space:nowrap;"><span class="status-badge ' + roleBadge + '">' + u.role.toUpperCase() + '</span></td>' +
+        '<td style="white-space:nowrap;"><span class="status-badge ' + roleBadge + '">' + escapeHtml(roleDisplay) + '</span></td>' +
         '<td style="white-space:nowrap;">' + asstForHtml + '</td>' +
         '<td style="white-space:nowrap;">' + statusBadge + '</td>' +
         '<td style="white-space:nowrap; font-size:12.5px;"><span style="white-space:nowrap; display:inline-block;">' + formatDate(u.created_at) + '</span></td>' +
@@ -448,14 +471,18 @@ function renderAssistantRowHtml(u) {
 }
 
 function renderAdminRowHtml(u) {
+    var isAr = (window.i18n && window.i18n.getCurrentLanguage() === 'ar');
     var roleBadge = getRoleBadgeClass(u.role);
     var statusBadge = renderStatusBadge(u.is_active);
     var actionButtons = renderActionButtons(u);
 
+    var uName = window.i18n ? window.i18n.translateName(u.name) : u.name;
+    var roleDisplay = window.i18n ? window.i18n.translateRole(u.role) : u.role.toUpperCase();
+
     return '<tr>' +
-        '<td style="white-space:nowrap;"><strong>' + escapeHtml(u.name) + '</strong></td>' +
+        '<td style="white-space:nowrap;"><strong>' + escapeHtml(uName) + '</strong></td>' +
         '<td style="white-space:nowrap;">' + escapeHtml(u.email) + '</td>' +
-        '<td style="white-space:nowrap;"><span class="status-badge ' + roleBadge + '">' + u.role.toUpperCase() + '</span></td>' +
+        '<td style="white-space:nowrap;"><span class="status-badge ' + roleBadge + '">' + escapeHtml(roleDisplay) + '</span></td>' +
         '<td style="white-space:nowrap;">' + statusBadge + '</td>' +
         '<td style="white-space:nowrap; font-size:12.5px;"><span style="white-space:nowrap; display:inline-block;">' + formatDate(u.created_at) + '</span></td>' +
         '<td style="text-align:right; white-space:nowrap;">' + actionButtons + '</td>' +
@@ -519,6 +546,7 @@ function renderStudentsHierarchy(students) {
         return teacherMap[a].name.localeCompare(teacherMap[b].name);
     });
 
+    var isAr = (window.i18n && window.i18n.getCurrentLanguage() === 'ar');
     var html = '';
     sortedKeys.forEach(function (tKey) {
         var tGroup = teacherMap[tKey];
@@ -532,19 +560,23 @@ function renderStudentsHierarchy(students) {
         var iconSvg = tGroup.isUnassigned
             ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>'
             : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>';
-        var subtitle = tGroup.email ? escapeHtml(tGroup.email) : (tGroup.isUnassigned ? 'Students pending teacher assignment' : '');
+        
+        var tNameDisplay = window.i18n ? window.i18n.translateName(tGroup.name) : tGroup.name;
+        var catTitle = tGroup.isUnassigned ? (isAr ? 'طلاب بدون معلم مسند' : escapeHtml(tGroup.name)) : ((isAr ? 'المعلم: ' : 'Teacher: ') + escapeHtml(tNameDisplay));
+        var subtitle = tGroup.email ? escapeHtml(tGroup.email) : (tGroup.isUnassigned ? (isAr ? 'طلاب بانتظار إسنادهم لمعلم' : 'Students pending teacher assignment') : '');
+        var stuTotalBadge = (window.i18n && isAr ? window.i18n.toArabicDigits(totalInTeacher) : totalInTeacher) + (isAr ? ' طالب' : (totalInTeacher === 1 ? ' Student' : ' Students'));
 
         html += '<div class="user-category-card">';
         html += '  <div class="user-category-header ' + headerBorderClass + '" onclick="toggleCategoryCard(this)" title="Click to collapse / expand this teacher category">';
         html += '    <div style="display:flex; align-items:center; gap:10px;">';
         html += '      <span style="display:inline-flex; align-items:center; color:var(--primary);">' + iconSvg + '</span>';
         html += '      <div>';
-        html += '        <h3 class="category-title">' + (tGroup.isUnassigned ? escapeHtml(tGroup.name) : ('Teacher: ' + escapeHtml(tGroup.name))) + '</h3>';
+        html += '        <h3 class="category-title">' + catTitle + '</h3>';
         if (subtitle) html += '        <span class="category-subtitle">' + subtitle + '</span>';
         html += '      </div>';
         html += '    </div>';
         html += '    <div style="display:flex; align-items:center; gap:10px;">';
-        html += '      <span class="count-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg> ' + totalInTeacher + ' ' + (totalInTeacher === 1 ? 'Student' : 'Students') + '</span>';
+        html += '      <span class="count-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg> ' + stuTotalBadge + '</span>';
         html += '      <span class="accordion-toggle-icon" title="Toggle Section"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span>';
         html += '    </div>';
         html += '  </div>';
@@ -553,14 +585,17 @@ function renderStudentsHierarchy(students) {
 
         gradeKeys.forEach(function (gk) {
             var sList = gradesObj[gk];
+            var gkTitle = window.i18n ? window.i18n.translateGrade(gk) : formatGradeLevel(gk);
+            var subBadge = (window.i18n && isAr ? window.i18n.toArabicDigits(sList.length) : sList.length) + (isAr ? ' طالب' : (sList.length === 1 ? ' Student' : ' Students'));
+
             html += '    <div class="grade-subcategory-block">';
             html += '      <div class="grade-subcategory-header" onclick="toggleGradeSubcategory(this, event)" title="Click to collapse / expand this grade level">';
             html += '        <span style="display:flex; align-items:center; gap:8px;">';
             html += '          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>';
-            html += '          <span>' + escapeHtml(formatGradeLevel(gk)) + '</span>';
+            html += '          <span>' + escapeHtml(gkTitle) + '</span>';
             html += '        </span>';
             html += '        <div style="display:flex; align-items:center; gap:6px;">';
-            html += '          <span class="sub-count-badge">' + sList.length + ' ' + (sList.length === 1 ? 'Student' : 'Students') + '</span>';
+            html += '          <span class="sub-count-badge">' + subBadge + '</span>';
             html += '          <span class="sub-accordion-toggle-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span>';
             html += '        </div>';
             html += '      </div>';
@@ -568,13 +603,13 @@ function renderStudentsHierarchy(students) {
             html += '        <table class="assignments-table student-assignments-table">';
             html += '          <thead>';
             html += '            <tr>';
-            html += '              <th style="min-width:160px;">Student</th>';
-            html += '              <th style="min-width:180px;">Email</th>';
-            html += '              <th style="min-width:200px; white-space:nowrap;">Grade Level</th>';
-            html += '              <th style="min-width:460px;">Assigned Courses &amp; Teachers</th>';
-            html += '              <th style="min-width:100px; white-space:nowrap;">Status</th>';
-            html += '              <th style="min-width:130px; white-space:nowrap;">Joined</th>';
-            html += '              <th style="min-width:160px; text-align:right; white-space:nowrap;">Actions</th>';
+            html += '              <th style="min-width:160px;">' + (isAr ? 'الطالب' : 'Student') + '</th>';
+            html += '              <th style="min-width:180px;">' + (isAr ? 'البريد الإلكتروني' : 'Email') + '</th>';
+            html += '              <th style="min-width:200px; white-space:nowrap;">' + (isAr ? 'المرحلة الدراسية' : 'Grade Level') + '</th>';
+            html += '              <th style="min-width:460px;">' + (isAr ? 'المقررات والمعلمون المسندون' : 'Assigned Courses &amp; Teachers') + '</th>';
+            html += '              <th style="min-width:100px; white-space:nowrap;">' + (isAr ? 'الحالة' : 'Status') + '</th>';
+            html += '              <th style="min-width:130px; white-space:nowrap;">' + (isAr ? 'تاريخ الانضمام' : 'Joined') + '</th>';
+            html += '              <th style="min-width:160px; text-align:right; white-space:nowrap;">' + (isAr ? 'الإجراءات' : 'Actions') + '</th>';
             html += '            </tr>';
             html += '          </thead>';
             html += '          <tbody>';
@@ -595,12 +630,11 @@ function renderStudentsHierarchy(students) {
 }
 
 function renderTeachersHierarchy(teachers) {
+    var isAr = (window.i18n && window.i18n.getCurrentLanguage() === 'ar');
     if (!teachers || teachers.length === 0) {
-        return '<div style="padding:20px; text-align:center; color:#64748b;">No teachers found.</div>';
+        return '<div style="padding:20px; text-align:center; color:#64748b;">' + (isAr ? 'لا يوجد معلمون.' : 'No teachers found.') + '</div>';
     }
 
-    // Grouping: Grade Level -> [Teachers]
-    // STRICT: Only use backend teacher_grade_levels relationships. Do NOT assume relationships!
     var gradeMap = {};
     ORDERED_GRADE_LEVELS.forEach(function (g) {
         gradeMap[g] = [];
@@ -627,7 +661,7 @@ function renderTeachersHierarchy(teachers) {
     }));
 
     if (gradeKeys.length === 0) {
-        return '<div style="padding:20px; text-align:center; color:#64748b;">No teachers found for this criteria.</div>';
+        return '<div style="padding:20px; text-align:center; color:#64748b;">' + (isAr ? 'لا يوجد معلمون مطابقون.' : 'No teachers found for this criteria.') + '</div>';
     }
 
     var html = '';
@@ -635,17 +669,21 @@ function renderTeachersHierarchy(teachers) {
         var tList = gradeMap[gk];
         var isUn = (gk === unassignedKey);
 
+        var gradeTitle = window.i18n ? window.i18n.translateGrade(gk) : formatGradeLevel(gk);
+        var gradeSub = isAr ? ('المعلمون الذين يدرسون مرحلة ' + gradeTitle) : ('Teachers instructing ' + escapeHtml(formatGradeLevel(gk)));
+        var teacherCount = (window.i18n && isAr ? window.i18n.toArabicDigits(tList.length) : tList.length) + (isAr ? ' معلم' : (tList.length === 1 ? ' Teacher' : ' Teachers'));
+
         html += '<div class="user-category-card">';
         html += '  <div class="user-category-header ' + (isUn ? 'unassigned-cat' : 'grade-cat') + '" onclick="toggleCategoryCard(this)" title="Click to collapse / expand this grade level category">';
         html += '    <div style="display:flex; align-items:center; gap:10px;">';
         html += '      <span style="display:inline-flex; align-items:center; color:var(--role-student);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg></span>';
         html += '      <div>';
-        html += '        <h3 class="category-title">' + escapeHtml(formatGradeLevel(gk)) + '</h3>';
-        html += '        <span class="category-subtitle">Teachers instructing ' + escapeHtml(formatGradeLevel(gk)) + '</span>';
+        html += '        <h3 class="category-title">' + escapeHtml(gradeTitle) + '</h3>';
+        html += '        <span class="category-subtitle">' + escapeHtml(gradeSub) + '</span>';
         html += '      </div>';
         html += '    </div>';
         html += '    <div style="display:flex; align-items:center; gap:10px;">';
-        html += '      <span class="count-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg> ' + tList.length + ' ' + (tList.length === 1 ? 'Teacher' : 'Teachers') + '</span>';
+        html += '      <span class="count-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg> ' + teacherCount + '</span>';
         html += '      <span class="accordion-toggle-icon" title="Toggle Section"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span>';
         html += '    </div>';
         html += '  </div>';
@@ -654,14 +692,14 @@ function renderTeachersHierarchy(teachers) {
         html += '    <table class="assignments-table teacher-assignments-table">';
         html += '      <thead>';
         html += '        <tr>';
-        html += '          <th style="min-width:160px; white-space:nowrap !important;">Teacher</th>';
-        html += '          <th style="min-width:180px; white-space:nowrap !important;">Email</th>';
-        html += '          <th style="min-width:240px; white-space:nowrap !important;">Grade Levels</th>';
-        html += '          <th style="min-width:140px; text-align:center; white-space:nowrap !important;">Courses</th>';
-        html += '          <th style="min-width:460px; white-space:nowrap !important;">Assigned Courses</th>';
-        html += '          <th style="min-width:100px; white-space:nowrap !important;">Status</th>';
-        html += '          <th style="min-width:130px; white-space:nowrap !important;">Joined</th>';
-        html += '          <th style="min-width:160px; text-align:right; white-space:nowrap !important;">Actions</th>';
+        html += '          <th style="min-width:160px; white-space:nowrap !important;">' + (isAr ? 'المعلم' : 'Teacher') + '</th>';
+        html += '          <th style="min-width:180px; white-space:nowrap !important;">' + (isAr ? 'البريد الإلكتروني' : 'Email') + '</th>';
+        html += '          <th style="min-width:240px; white-space:nowrap !important;">' + (isAr ? 'المراحل الدراسية' : 'Grade Levels') + '</th>';
+        html += '          <th style="min-width:140px; text-align:center; white-space:nowrap !important;">' + (isAr ? 'عدد المواد' : 'Courses') + '</th>';
+        html += '          <th style="min-width:460px; white-space:nowrap !important;">' + (isAr ? 'المواد المسندة' : 'Assigned Courses') + '</th>';
+        html += '          <th style="min-width:100px; white-space:nowrap !important;">' + (isAr ? 'الحالة' : 'Status') + '</th>';
+        html += '          <th style="min-width:130px; white-space:nowrap !important;">' + (isAr ? 'تاريخ الانضمام' : 'Joined') + '</th>';
+        html += '          <th style="min-width:160px; text-align:right; white-space:nowrap !important;">' + (isAr ? 'الإجراءات' : 'Actions') + '</th>';
         html += '        </tr>';
         html += '      </thead>';
         html += '      <tbody>';
@@ -678,12 +716,11 @@ function renderTeachersHierarchy(teachers) {
 }
 
 function renderAssistantsHierarchy(assistants) {
+    var isAr = (window.i18n && window.i18n.getCurrentLanguage() === 'ar');
     if (!assistants || assistants.length === 0) {
-        return '<div style="padding:20px; text-align:center; color:#64748b;">No assistants found.</div>';
+        return '<div style="padding:20px; text-align:center; color:#64748b;">' + (isAr ? 'لا يوجد مساعدون.' : 'No assistants found.') + '</div>';
     }
 
-    // Grouping: Assigned Teacher -> [Assistants]
-    // STRICT: Only use backend assigned_teachers relationships. An assistant assigned to one teacher must NOT appear under another teacher.
     var teacherMap = {};
     var unKey = '__unassigned__';
 
@@ -693,7 +730,7 @@ function renderAssistantsHierarchy(assistants) {
             if (!teacherMap[unKey]) {
                 teacherMap[unKey] = {
                     id: unKey,
-                    name: 'Unassigned Teaching Assistants',
+                    name: isAr ? 'مساعدون بدون معلم مسند' : 'Unassigned Teaching Assistants',
                     isUnassigned: true,
                     assistants: []
                 };
@@ -729,8 +766,10 @@ function renderAssistantsHierarchy(assistants) {
         var tGroup = teacherMap[tKey];
         var aList = tGroup.assistants;
 
-        var headerTitle = tGroup.isUnassigned ? escapeHtml(tGroup.name) : ('Assistant For: ' + escapeHtml(tGroup.name));
-        var headerSubtitle = tGroup.email ? escapeHtml(tGroup.email) : (tGroup.isUnassigned ? 'Assistants pending teacher assignment' : 'Designated teaching assistant staff');
+        var leadTeacherName = window.i18n ? window.i18n.translateName(tGroup.name) : tGroup.name;
+        var headerTitle = tGroup.isUnassigned ? escapeHtml(tGroup.name) : ((isAr ? 'مساعد للمعلم: ' : 'Assistant For: ') + escapeHtml(leadTeacherName));
+        var headerSubtitle = tGroup.email ? escapeHtml(tGroup.email) : (tGroup.isUnassigned ? (isAr ? 'مساعدون بانتظار إسنادهم لمعلم' : 'Assistants pending teacher assignment') : (isAr ? 'طاقم المساعدين التعليميين' : 'Designated teaching assistant staff'));
+        var asstCount = (window.i18n && isAr ? window.i18n.toArabicDigits(aList.length) : aList.length) + (isAr ? ' مساعد' : (aList.length === 1 ? ' Assistant' : ' Assistants'));
 
         html += '<div class="user-category-card">';
         html += '  <div class="user-category-header ' + (tGroup.isUnassigned ? 'unassigned-cat' : 'assistant-cat') + '" onclick="toggleCategoryCard(this)" title="Click to collapse / expand this assistant category">';
@@ -742,7 +781,7 @@ function renderAssistantsHierarchy(assistants) {
         html += '      </div>';
         html += '    </div>';
         html += '    <div style="display:flex; align-items:center; gap:10px;">';
-        html += '      <span class="count-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle></svg> ' + aList.length + ' ' + (aList.length === 1 ? 'Assistant' : 'Assistants') + '</span>';
+        html += '      <span class="count-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle></svg> ' + asstCount + '</span>';
         html += '      <span class="accordion-toggle-icon" title="Toggle Section"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span>';
         html += '    </div>';
         html += '  </div>';
@@ -751,13 +790,13 @@ function renderAssistantsHierarchy(assistants) {
         html += '    <table class="assignments-table">';
         html += '      <thead>';
         html += '        <tr>';
-        html += '          <th>Assistant</th>';
-        html += '          <th>Email</th>';
-        html += '          <th>Role</th>';
-        html += '          <th>Assigned Teacher</th>';
-        html += '          <th>Status</th>';
-        html += '          <th>Joined</th>';
-        html += '          <th>Actions</th>';
+        html += '          <th>' + (isAr ? 'المساعد' : 'Assistant') + '</th>';
+        html += '          <th>' + (isAr ? 'البريد الإلكتروني' : 'Email') + '</th>';
+        html += '          <th>' + (isAr ? 'الدور' : 'Role') + '</th>';
+        html += '          <th>' + (isAr ? 'المعلم المسند' : 'Assigned Teacher') + '</th>';
+        html += '          <th>' + (isAr ? 'الحالة' : 'Status') + '</th>';
+        html += '          <th>' + (isAr ? 'تاريخ الانضمام' : 'Joined') + '</th>';
+        html += '          <th>' + (isAr ? 'الإجراءات' : 'Actions') + '</th>';
         html += '        </tr>';
         html += '      </thead>';
         html += '      <tbody>';
@@ -774,9 +813,12 @@ function renderAssistantsHierarchy(assistants) {
 }
 
 function renderAdminsHierarchy(admins) {
+    var isAr = (window.i18n && window.i18n.getCurrentLanguage() === 'ar');
     if (!admins || admins.length === 0) {
-        return '<div style="padding:20px; text-align:center; color:var(--text-muted);">No administrators found.</div>';
+        return '<div style="padding:20px; text-align:center; color:var(--text-muted);">' + (isAr ? 'لا يوجد مسؤولون.' : 'No administrators found.') + '</div>';
     }
+
+    var adminCount = (window.i18n && isAr ? window.i18n.toArabicDigits(admins.length) : admins.length) + (isAr ? ' مسؤول' : (admins.length === 1 ? ' Admin' : ' Admins'));
 
     var html = '';
     html += '<div class="user-category-card">';
@@ -784,12 +826,12 @@ function renderAdminsHierarchy(admins) {
     html += '    <div style="display:flex; align-items:center; gap:10px;">';
     html += '      <span style="display:inline-flex; align-items:center; color:var(--role-admin);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></span>';
     html += '      <div>';
-    html += '        <h3 class="category-title">System Administrators</h3>';
-    html += '        <span class="category-subtitle">Users with full administrative access and system privileges</span>';
+    html += '        <h3 class="category-title">' + (isAr ? 'مديرو النظام' : 'System Administrators') + '</h3>';
+    html += '        <span class="category-subtitle">' + (isAr ? 'مستخدمون يتمتعون بصلاحيات وصول إدارية كاملة' : 'Users with full administrative access and system privileges') + '</span>';
     html += '      </div>';
     html += '    </div>';
     html += '    <div style="display:flex; align-items:center; gap:10px;">';
-    html += '      <span class="count-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg> ' + admins.length + ' ' + (admins.length === 1 ? 'Admin' : 'Admins') + '</span>';
+    html += '      <span class="count-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg> ' + adminCount + '</span>';
     html += '      <span class="accordion-toggle-icon" title="Toggle Section"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span>';
     html += '    </div>';
     html += '  </div>';
@@ -798,12 +840,12 @@ function renderAdminsHierarchy(admins) {
     html += '    <table class="assignments-table">';
     html += '      <thead>';
     html += '        <tr>';
-    html += '          <th>Administrator Name</th>';
-    html += '          <th>Email</th>';
-    html += '          <th>Role</th>';
-    html += '          <th>Status</th>';
-    html += '          <th>Joined</th>';
-    html += '          <th>Action</th>';
+    html += '          <th>' + (isAr ? 'اسم المسؤول' : 'Administrator Name') + '</th>';
+    html += '          <th>' + (isAr ? 'البريد الإلكتروني' : 'Email') + '</th>';
+    html += '          <th>' + (isAr ? 'الدور' : 'Role') + '</th>';
+    html += '          <th>' + (isAr ? 'الحالة' : 'Status') + '</th>';
+    html += '          <th>' + (isAr ? 'تاريخ الانضمام' : 'Joined') + '</th>';
+    html += '          <th>' + (isAr ? 'الإجراءات' : 'Action') + '</th>';
     html += '        </tr>';
     html += '      </thead>';
     html += '      <tbody>';
@@ -1510,13 +1552,16 @@ function setupEditUserForm() {
 
 function formatDate(dateStr) {
     if (!dateStr) return '—';
+    var isAr = (window.i18n && window.i18n.getCurrentLanguage() === 'ar');
     var d = new Date(dateStr);
-    var str = d.toLocaleDateString('en-US', {
+    var lang = isAr ? 'ar-EG' : 'en-US';
+    var str = d.toLocaleDateString(lang, {
         month: 'short',
         day: 'numeric',
         year: 'numeric'
     });
-    return str.replace(/\s+/g, '\u00A0');
+    var res = str.replace(/\s+/g, '\u00A0');
+    return (window.i18n && isAr) ? window.i18n.toArabicDigits(res) : res;
 }
 
 function escapeHtml(str) {

@@ -56,13 +56,15 @@ function renderTeacherCategoryTabs(teachers) {
     if (!tabsContainer) return;
 
     tabsContainer.innerHTML = '';
+    var isAr = (window.i18n && window.i18n.getCurrentLanguage() === 'ar');
 
     // 'All Teachers' tab
     var allBtn = document.createElement('button');
     allBtn.type = 'button';
     allBtn.className = 'filter-tab' + (currentTeacherCategory === 'all' ? ' active' : '');
     allBtn.setAttribute('data-teacher-id', 'all');
-    allBtn.textContent = 'All Teachers (' + allAssignments.length + ')';
+    var allCount = (window.i18n && isAr) ? window.i18n.toArabicDigits(allAssignments.length) : allAssignments.length;
+    allBtn.textContent = (isAr ? 'جميع المعلمين (' : 'All Teachers (') + allCount + ')';
     tabsContainer.appendChild(allBtn);
 
     // Specific teacher tabs
@@ -75,7 +77,9 @@ function renderTeacherCategoryTabs(teachers) {
         btn.type = 'button';
         btn.className = 'filter-tab' + (currentTeacherCategory === String(t.id) ? ' active' : '');
         btn.setAttribute('data-teacher-id', t.id);
-        btn.textContent = t.name + ' (' + count + ')';
+        var tName = window.i18n ? window.i18n.translateName(t.name) : t.name;
+        var tCount = (window.i18n && isAr) ? window.i18n.toArabicDigits(count) : count;
+        btn.textContent = tName + ' (' + tCount + ')';
         tabsContainer.appendChild(btn);
     });
 
@@ -169,26 +173,40 @@ function renderTable(assignments) {
     if (!tbody) return;
     tbody.innerHTML = '';
 
+    var isAr = (window.i18n && window.i18n.getCurrentLanguage() === 'ar');
     assignments.forEach(function (a) {
         var row = document.createElement('tr');
 
+        var activeText = isAr ? 'نشط' : 'Active';
+        var archivedText = isAr ? 'مؤرشف' : 'Archived';
         var statusBadge = a.is_active ?
-            '<span class="status-badge status-graded">Active</span>' :
-            '<span class="status-badge status-closed">Archived</span>';
+            '<span class="status-badge status-graded">' + activeText + '</span>' :
+            '<span class="status-badge status-closed">' + archivedText + '</span>';
 
-        var toggleLabel = a.is_active ? 'Archive' : 'Activate';
+        var toggleLabel = a.is_active ? (isAr ? 'أرشفة' : 'Archive') : (isAr ? 'تفعيل' : 'Activate');
         var toggleClass = a.is_active ? 'background:var(--danger);' : 'background:var(--success);';
+        var deleteLabel = isAr ? 'حذف' : 'Delete';
 
-        var subInfo =
-            '<strong>' + a.total_submissions + '</strong> ' +
-            '<small style="color:var(--text-muted);">(' + a.graded_submissions + ' graded, ' + a.pending_submissions + ' pending)</small>';
+        var assignTitle = window.i18n ? window.i18n.translateAssignment(a.title) : a.title;
+        var courseName = window.i18n ? window.i18n.translateCourse(a.course_name) : a.course_name;
+        var gradeLevelBadge = '<span class="status-badge status-review" style="font-size:11px;">' + escapeHtml(window.i18n ? window.i18n.translateGrade(a.grade_level || 'First Year of Middle School') : formatGradeLevel(a.grade_level || 'First Year of Middle School')) + '</span>';
+        var teacherName = window.i18n ? window.i18n.translateName(a.teacher_name) : a.teacher_name;
+
+        var totalSubs = (window.i18n && isAr) ? window.i18n.toArabicDigits(a.total_submissions) : a.total_submissions;
+        var gradedSubs = (window.i18n && isAr) ? window.i18n.toArabicDigits(a.graded_submissions) : a.graded_submissions;
+        var pendingSubs = (window.i18n && isAr) ? window.i18n.toArabicDigits(a.pending_submissions) : a.pending_submissions;
+        var maxGradeText = (window.i18n && isAr) ? (window.i18n.toArabicDigits(a.max_grade) + ' درجة') : (a.max_grade + ' pts');
+
+        var subInfo = isAr ?
+            ('<strong>' + totalSubs + '</strong> <small style="color:var(--text-muted);">(' + gradedSubs + ' تم التصحيح، ' + pendingSubs + ' قيد المراجعة)</small>') :
+            ('<strong>' + totalSubs + '</strong> <small style="color:var(--text-muted);">(' + gradedSubs + ' graded, ' + pendingSubs + ' pending)</small>');
 
         row.innerHTML =
-            '<td><strong style="color:var(--text-primary);">' + escapeHtml(a.title) + '</strong></td>' +
-            '<td>' + escapeHtml(a.course_name) + '</td>' +
-            '<td style="white-space:nowrap;"><span class="status-badge status-review" style="font-size:11px;">' + escapeHtml(formatGradeLevel(a.grade_level || 'First Year of Middle School')) + '</span></td>' +
-            '<td><strong style="display:inline-flex; align-items:center; gap:4px; color:var(--text-primary);">' + escapeHtml(a.teacher_name) + '</strong></td>' +
-            '<td>' + a.max_grade + ' pts</td>' +
+            '<td><strong style="color:var(--text-primary);">' + escapeHtml(assignTitle) + '</strong></td>' +
+            '<td>' + escapeHtml(courseName) + '</td>' +
+            '<td style="white-space:nowrap;">' + gradeLevelBadge + '</td>' +
+            '<td><strong style="display:inline-flex; align-items:center; gap:4px; color:var(--text-primary);">' + escapeHtml(teacherName) + '</strong></td>' +
+            '<td>' + maxGradeText + '</td>' +
             '<td>' + formatDate(a.deadline) + '</td>' +
             '<td>' + subInfo + '</td>' +
             '<td>' + statusBadge + '</td>' +
@@ -198,7 +216,7 @@ function renderTable(assignments) {
                         toggleLabel +
                     '</button>' +
                     '<button onclick="deleteAssignment(' + a.id + ', this)" class="view-btn" style="background:var(--danger); font-size:12px; padding:6px 10px; border:none; cursor:pointer; border-radius:4px;">' +
-                        'Delete' +
+                        deleteLabel +
                     '</button>' +
                 '</div>' +
             '</td>';
@@ -288,15 +306,18 @@ function deleteAssignment(assignId, btn) {
 }
 
 function formatDate(dateStr) {
-    if (!dateStr) return '<span class="status-badge status-open" style="font-size: 11px;">No Deadline</span>';
+    var isAr = (window.i18n && window.i18n.getCurrentLanguage() === 'ar');
+    if (!dateStr) return '<span class="status-badge status-open" style="font-size: 11px;">' + (isAr ? 'لا يوجد موعد نهائي' : 'No Deadline') + '</span>';
     var d = new Date(dateStr);
-    return d.toLocaleDateString('en-US', {
+    var lang = isAr ? 'ar-EG' : 'en-US';
+    var res = d.toLocaleDateString(lang, {
         month: 'short',
         day: 'numeric',
         year: 'numeric',
         hour: '2-digit',
         minute: '2-digit'
     });
+    return (window.i18n && isAr) ? window.i18n.toArabicDigits(res) : res;
 }
 
 function escapeHtml(str) {
@@ -346,6 +367,7 @@ function showAlert(msg, type) {
 }
 
 window.addEventListener('languageChanged', function () {
+    if (allTeachers && allTeachers.length > 0) renderTeacherCategoryTabs(allTeachers);
     if (typeof applyAssignmentFilters === 'function') applyAssignmentFilters();
 });
 

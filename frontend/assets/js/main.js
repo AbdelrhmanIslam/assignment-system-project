@@ -39,17 +39,21 @@
 
     // Update state of all theme toggle buttons on page
     function updateAllToggleButtons(theme) {
-        var btns = document.querySelectorAll('.theme-toggle-btn');
+        var isAr = (window.i18n && typeof window.i18n.getCurrentLanguage === 'function' && window.i18n.getCurrentLanguage() === 'ar');
+        var btns = document.querySelectorAll('.theme-toggle-btn, #theme-toggle-btn');
         for (var i = 0; i < btns.length; i++) {
             var btn = btns[i];
+            btn.classList.add('theme-toggle-btn');
             if (theme === 'dark') {
-                btn.innerHTML = SUN_ICON + ' <span>Light</span>';
-                btn.setAttribute('aria-label', 'Switch to light mode');
-                btn.setAttribute('title', 'Switch to light mode');
+                var label = isAr ? 'فاتح' : 'Light';
+                btn.innerHTML = SUN_ICON + ' <span>' + label + '</span>';
+                btn.setAttribute('aria-label', isAr ? 'التبديل إلى الوضع الفاتح' : 'Switch to light mode');
+                btn.setAttribute('title', isAr ? 'التبديل إلى الوضع الفاتح' : 'Switch to light mode');
             } else {
-                btn.innerHTML = MOON_ICON + ' <span>Dark</span>';
-                btn.setAttribute('aria-label', 'Switch to dark mode');
-                btn.setAttribute('title', 'Switch to dark mode');
+                var label = isAr ? 'داكن' : 'Dark';
+                btn.innerHTML = MOON_ICON + ' <span>' + label + '</span>';
+                btn.setAttribute('aria-label', isAr ? 'التبديل إلى الوضع الداكن' : 'Switch to dark mode');
+                btn.setAttribute('title', isAr ? 'التبديل إلى الوضع الداكن' : 'Switch to dark mode');
             }
         }
     }
@@ -65,8 +69,9 @@
 
     // Ensure theme toggle button exists in header-actions or auth-container
     function ensureThemeToggle() {
-        var existing = document.querySelector('.theme-toggle-btn');
+        var existing = document.querySelector('.theme-toggle-btn, #theme-toggle-btn');
         if (existing) {
+            existing.classList.add('theme-toggle-btn');
             existing.removeEventListener('click', toggleTheme);
             existing.addEventListener('click', toggleTheme);
             updateAllToggleButtons(document.documentElement.getAttribute('data-theme') || getPreferredTheme());
@@ -102,6 +107,10 @@
             updateAllToggleButtons(document.documentElement.getAttribute('data-theme') || getPreferredTheme());
         }
     }
+
+    window.addEventListener('languageChanged', function () {
+        updateAllToggleButtons(document.documentElement.getAttribute('data-theme') || getPreferredTheme());
+    });
 
     // Listen to system preference changes if user hasn't set explicit preference
     if (window.matchMedia) {
