@@ -339,12 +339,117 @@
         'Salma Ehab': 'سلمى إيهاب',
         'Hassan Kamal': 'حسن كمال',
         'Student': 'طالب',
-        'Teacher': 'معلم'
+        'Teacher': 'معلم',
+
+        // Common First & Last Names (Arabic transliterated & International)
+        'Mohamed': 'محمد', 'Mohammed': 'محمد', 'Muhammad': 'محمد', 'Mohamad': 'محمد',
+        'Ahmed': 'أحمد', 'Mahmoud': 'محمود', 'Mostafa': 'مصطفى', 'Mustafa': 'مصطفى',
+        'Ali': 'علي', 'Omar': 'عمر', 'Amr': 'عمرو', 'Youssef': 'يوسف', 'Yousef': 'يوسف',
+        'Khaled': 'خالد', 'Khalid': 'خالد', 'Tarek': 'طارق', 'Tariq': 'طارق',
+        'Sherif': 'شريف', 'Karim': 'كريم', 'Kareem': 'كريم', 'Hassan': 'حسن',
+        'Hussein': 'حسين', 'Hussain': 'حسين', 'Ibrahim': 'إبراهيم', 'Ismail': 'إسماعيل',
+        'Mina': 'مينا', 'Bishoy': 'بيشوي', 'Kirollos': 'كيرلس', 'Abanoub': 'أبانوب',
+        'Fady': 'فادي', 'Hany': 'هاني', 'Wael': 'وائل', 'Samer': 'سامر', 'Nabil': 'نبيل',
+        'Magdy': 'مجدي', 'Ashraf': 'أشرف', 'Medhat': 'مدحت', 'Ayman': 'أيمن', 'Alaa': 'علاء',
+        'Essam': 'عصام', 'Emad': 'عماد', 'Adel': 'عادل', 'Sameh': 'سامح', 'Walid': 'وليد',
+        'Bassem': 'باسم', 'Ramy': 'رامي', 'Rami': 'رامي', 'Shady': 'شادي', 'Ziad': 'زياد',
+        'Hazem': 'حازم', 'Ehab': 'إيهاب', 'Hossam': 'حسام', 'Hesham': 'هشام', 'Hamdy': 'حمدي',
+        'Shawky': 'شوقي', 'Reda': 'رضا', 'Diab': 'دياب', 'Galal': 'جلال', 'Mansour': 'منصور',
+        'Mounir': 'منير', 'Khalil': 'خليل', 'Kamal': 'كمال', 'Sayed': 'سيد', 'Salem': 'سالم',
+        'Soliman': 'سليمان', 'Bakr': 'بكر', 'Othman': 'عثمان', 'Farouk': 'فاروق', 'Nasser': 'ناصر',
+        'Naguib': 'نجيب', 'Zaki': 'زكي', 'Ezzat': 'عزت', 'Fouad': 'فؤاد', 'Wahba': 'وهبة',
+        'Girgis': 'جرجس', 'Shenouda': 'شنودة', 'Fatma': 'فاطمة', 'Fatima': 'فاطمة',
+        'Mona': 'منى', 'Salma': 'سلمى', 'Rania': 'رانيا', 'Layla': 'ليلى', 'Laila': 'ليلى',
+        'Nour': 'نور', 'Noor': 'نور', 'Heba': 'هبة', 'Dina': 'دينا', 'Hoda': 'هدى',
+        'Farida': 'فريدة', 'Mariam': 'مريم', 'Maryam': 'مريم', 'Habiba': 'حبيبة',
+        'Malak': 'ملك', 'Aya': 'آية', 'Yasmin': 'ياسمين', 'Yasmine': 'ياسمين',
+        'Noha': 'نهى', 'Nada': 'ندى', 'Reem': 'ريم', 'Sara': 'سارة', 'Sarah': 'سارة',
+        'Mai': 'مي', 'May': 'مي', 'Doaa': 'دعاء', 'Marwa': 'مروة', 'Shaimaa': 'شيماء',
+        'Radwa': 'رضوى', 'Asmaa': 'أسماء', 'Basma': 'بسمة', 'Dalia': 'داليا', 'Riham': 'ريهام',
+        'Omnia': 'أمنية', 'Hend': 'هند', 'Samar': 'سمر', 'Eman': 'إيمان', 'Nehal': 'نهال',
+        'Donia': 'دنيا', 'Menna': 'منة', 'Shahd': 'شهد', 'Jana': 'جنى', 'Karma': 'كارما',
+        'John': 'جون', 'David': 'ديفيد', 'Mark': 'مارك', 'Michael': 'مايكل', 'Mary': 'ماري',
+        'Peter': 'بيتر', 'Paul': 'بول', 'George': 'جورج', 'Daniel': 'دانيال', 'James': 'جيمس',
+        'Robert': 'روبرت', 'William': 'ويليام', 'Thomas': 'توماس', 'Richard': 'ريتشارد',
+        'Charles': 'تشارلز', 'Joseph': 'جوزيف', 'Edward': 'إدوارد', 'Brian': 'براين',
+        'Kevin': 'كيفن', 'Steven': 'ستيفن', 'Alex': 'أليكس', 'Alexander': 'ألكسندر',
+        'Andrew': 'أندرو', 'Anthony': 'أنطوني', 'Matthew': 'ماثيو', 'Christopher': 'كريستوفر',
+        'Smith': 'سميث', 'Johnson': 'جونسون', 'Williams': 'ويليامز', 'Brown': 'براون',
+        'Jones': 'جونز', 'Miller': 'ميلر', 'Davis': 'ديفيس', 'Wilson': 'ويلسون',
+        'Taylor': 'تايلور', 'Anderson': 'أندرسون', 'Thomas': 'توماس', 'Jackson': 'جاكسون',
+        'White': 'وايت', 'Harris': 'هاريس', 'Martin': 'مارتن', 'Thompson': 'طومسون',
+        'Clark': 'كلارك', 'Lewis': 'لويس', 'Robinson': 'روبنسون', 'Walker': 'ووكر',
+        'Hall': 'هول', 'Allen': 'ألين', 'Young': 'يونغ', 'King': 'كينغ', 'Wright': 'رايت',
+        'Scott': 'سكوت', 'Green': 'غرين', 'Baker': 'بيكر', 'Adams': 'أدامز', 'Nelson': 'نيلسون',
+        'Hill': 'هيل', 'Campbell': 'كامبل', 'Mitchell': 'ميتشل', 'Roberts': 'روبرتس',
+        'Carter': 'كارتر', 'Phillips': 'فيليبس', 'Evans': 'إيفانز', 'Turner': 'تيرنر',
+        'Parker': 'باركر', 'Collins': 'كولينز', 'Edwards': 'إدواردز', 'Stewart': 'ستيوارت',
+        'Morris': 'موريس', 'Murphy': 'مورفي', 'Cook': 'كوك', 'Rogers': 'روجرز',
+        'Morgan': 'مورغان', 'Peterson': 'بيترسون', 'Cooper': 'كوبر', 'Reed': 'ريد',
+        'Bailey': 'بيلي', 'Bell': 'بيل', 'Kelly': 'كيلي', 'Howard': 'هاوارد', 'Ward': 'وارد',
+        'Richardson': 'ريتشاردسون', 'Wood': 'وود', 'Watson': 'واتسون', 'Brooks': 'بروكس',
+        'Bennett': 'بينيت', 'Gray': 'غراي', 'Price': 'برايس', 'Hughes': 'هيوز',
+        'Sanders': 'ساندرز', 'Ross': 'روس', 'Powell': 'باول', 'Russell': 'راسل',
+        'Perry': 'بيري', 'Butler': 'باتلر', 'Barnes': 'بارنز', 'Fisher': 'فيشر'
     };
+
+    // Phonetic transliterator for arbitrary English words/names into Arabic
+    function transliterateToPhoneticArabic(word) {
+        if (!word) return '';
+        if (/[\u0600-\u06FF]/.test(word)) return word; // already Arabic
+
+        var w = word.toLowerCase();
+        // Multi-letter sounds
+        w = w.replace(/sh/g, 'ش')
+             .replace(/ch/g, 'تش')
+             .replace(/th/g, 'ث')
+             .replace(/kh/g, 'خ')
+             .replace(/gh/g, 'غ')
+             .replace(/dh/g, 'ذ')
+             .replace(/ph/g, 'ف')
+             .replace(/ou/g, 'و')
+             .replace(/oo/g, 'و')
+             .replace(/ee/g, 'ي')
+             .replace(/ea/g, 'ي')
+             .replace(/ai/g, 'اي')
+             .replace(/ay/g, 'اي')
+             .replace(/ey/g, 'ي');
+
+        var charMap = {
+            'a': 'ا', 'b': 'ب', 'c': 'ك', 'd': 'د', 'e': 'ي', 'f': 'ف',
+            'g': 'ج', 'h': 'ه', 'i': 'ي', 'j': 'ج', 'k': 'ك', 'l': 'ل',
+            'm': 'م', 'n': 'ن', 'o': 'و', 'p': 'ب', 'q': 'ق', 'r': 'ر',
+            's': 'س', 't': 'ت', 'u': 'و', 'v': 'ف', 'w': 'و', 'x': 'كس',
+            'y': 'ي', 'z': 'ز'
+        };
+
+        var out = '';
+        for (var i = 0; i < w.length; i++) {
+            var ch = w[i];
+            if (charMap[ch]) {
+                var mapped = charMap[ch];
+                // Avoid redundant consecutive long vowels like اا or يي
+                if (out.length > 0 && out[out.length - 1] === mapped && (mapped === 'ا' || mapped === 'ي' || mapped === 'و')) {
+                    continue;
+                }
+                out += mapped;
+            } else {
+                out += ch;
+            }
+        }
+        return out;
+    }
 
     function translateName(name) {
         if (!name || currentLang !== 'ar') return name;
         var trimmed = String(name).trim();
+        if (!trimmed) return '';
+
+        // If already contains Arabic characters, format digits and return
+        if (/[\u0600-\u06FF]/.test(trimmed)) {
+            return toArabicDigits(trimmed);
+        }
+
         if (nameDictionary[trimmed]) return nameDictionary[trimmed];
 
         if (trimmed.indexOf(',') !== -1) {
@@ -353,44 +458,136 @@
             }).join('، ');
         }
 
-        if (trimmed.indexOf('Mr. ') === 0) {
-            var subName = trimmed.substring(4);
-            return 'أ/ ' + (nameDictionary[subName] || subName);
-        }
-        if (trimmed.indexOf('Ms. ') === 0) {
-            var subName = trimmed.substring(4);
-            return 'أ/ ' + (nameDictionary[subName] || subName);
-        }
-        if (trimmed.indexOf('Asst. ') === 0) {
-            var subName = trimmed.substring(6);
-            return 'م. ' + (nameDictionary[subName] || subName);
+        // Handle title prefixes dynamically
+        var prefix = '';
+        var rest = trimmed;
+        var prefixes = [
+            { en: 'Mr. ', ar: 'أ/ ' },
+            { en: 'Mr ', ar: 'أ/ ' },
+            { en: 'Ms. ', ar: 'أ/ ' },
+            { en: 'Ms ', ar: 'أ/ ' },
+            { en: 'Mrs. ', ar: 'أ/ ' },
+            { en: 'Mrs ', ar: 'أ/ ' },
+            { en: 'Dr. ', ar: 'د/ ' },
+            { en: 'Dr ', ar: 'د/ ' },
+            { en: 'Eng. ', ar: 'م/ ' },
+            { en: 'Eng ', ar: 'م/ ' },
+            { en: 'Prof. ', ar: 'أ.د/ ' },
+            { en: 'Asst. ', ar: 'م. ' },
+            { en: 'Asst ', ar: 'م. ' },
+            { en: 'Teacher ', ar: 'المعلم ' },
+            { en: 'Student ', ar: 'الطالب ' },
+            { en: 'Admin ', ar: 'المسؤول ' }
+        ];
+
+        for (var p = 0; p < prefixes.length; p++) {
+            if (rest.indexOf(prefixes[p].en) === 0) {
+                prefix = prefixes[p].ar;
+                rest = rest.substring(prefixes[p].en.length).trim();
+                break;
+            }
         }
 
-        return trimmed;
+        if (nameDictionary[rest]) {
+            return prefix + nameDictionary[rest];
+        }
+
+        // Translate / transliterate word by word
+        var parts = rest.split(/\s+/);
+        var translatedParts = parts.map(function (w) {
+            var cleanWord = w.replace(/^[^\w]+|[^\w]+$/g, '');
+            if (!cleanWord) return w;
+            if (nameDictionary[cleanWord]) return nameDictionary[cleanWord];
+            var cap = cleanWord.charAt(0).toUpperCase() + cleanWord.slice(1).toLowerCase();
+            if (nameDictionary[cap]) return nameDictionary[cap];
+            return transliterateToPhoneticArabic(cleanWord);
+        });
+
+        return prefix + translatedParts.join(' ');
     }
 
     function translateCourse(courseName) {
         if (!courseName || currentLang !== 'ar') return courseName;
         var res = String(courseName);
 
-        res = res.replace(/\(1st Prep\)/g, '(الصف الأول الإعدادي)')
-                 .replace(/\(2nd Prep\)/g, '(الصف الثاني الإعدادي)')
-                 .replace(/\(3rd Prep\)/g, '(الصف الثالث الإعدادي)')
-                 .replace(/\(1st Sec\)/g, '(الصف الأول الثانوي)')
-                 .replace(/\(Preparatory\)/g, '(المرحلة الإعدادية)')
-                 .replace(/\(Secondary\)/g, '(المرحلة الثانوية)');
+        // If already Arabic, format digits and return
+        if (/[\u0600-\u06FF]/.test(res)) {
+            return toArabicDigits(res);
+        }
 
-        res = res.replace(/Philosophy & Logic/g, 'الفلسفة والمنطق')
-                 .replace(/Integrated Sciences/g, 'العلوم المتكاملة')
-                 .replace(/First Foreign Language/g, 'اللغة الأجنبية الأولى')
-                 .replace(/Social Studies/g, 'الدراسات الاجتماعية')
-                 .replace(/Mathematics/g, 'الرياضيات')
-                 .replace(/Science/g, 'العلوم')
-                 .replace(/History/g, 'التاريخ')
-                 .replace(/English/g, 'اللغة الإنجليزية')
-                 .replace(/Arabic/g, 'اللغة العربية');
+        // Stages & Grade Levels
+        res = res.replace(/\(1st Prep\)/gi, '(الصف الأول الإعدادي)')
+                 .replace(/\(2nd Prep\)/gi, '(الصف الثاني الإعدادي)')
+                 .replace(/\(3rd Prep\)/gi, '(الصف الثالث الإعدادي)')
+                 .replace(/\(1st Sec\)/gi, '(الصف الأول الثانوي)')
+                 .replace(/\(2nd Sec\)/gi, '(الصف الثاني الثانوي)')
+                 .replace(/\(3rd Sec\)/gi, '(الصف الثالث الثانوي)')
+                 .replace(/\(Preparatory\)/gi, '(المرحلة الإعدادية)')
+                 .replace(/\(Secondary\)/gi, '(المرحلة الثانوية)')
+                 .replace(/1st Prep/gi, 'الصف الأول الإعدادي')
+                 .replace(/2nd Prep/gi, 'الصف الثاني الإعدادي')
+                 .replace(/3rd Prep/gi, 'الصف الثالث الإعدادي')
+                 .replace(/1st Sec/gi, 'الصف الأول الثانوي')
+                 .replace(/2nd Sec/gi, 'الصف الثاني الثانوي')
+                 .replace(/3rd Sec/gi, 'الصف الثالث الثانوي')
+                 .replace(/Preparatory/gi, 'المرحلة الإعدادية')
+                 .replace(/Secondary/gi, 'المرحلة الثانوية');
 
-        return res;
+        // Comprehensive Subject Translations
+        var courseDict = [
+            { en: /Philosophy\s*(&|and)\s*Logic/gi, ar: 'الفلسفة والمنطق' },
+            { en: /Integrated Sciences/gi, ar: 'العلوم المتكاملة' },
+            { en: /First Foreign Language/gi, ar: 'اللغة الأجنبية الأولى' },
+            { en: /Second Foreign Language/gi, ar: 'اللغة الأجنبية الثانية' },
+            { en: /Social Studies/gi, ar: 'الدراسات الاجتماعية' },
+            { en: /Computer Science/gi, ar: 'الحاسب الآلي' },
+            { en: /Information Technology/gi, ar: 'تكنولوجيا المعلومات' },
+            { en: /Physical Education/gi, ar: 'التربية الرياضية' },
+            { en: /Religious Education/gi, ar: 'التربية الدينية' },
+            { en: /Islamic Studies/gi, ar: 'التربية الدينية الإسلامية' },
+            { en: /Christian Studies/gi, ar: 'التربية الدينية المسيحية' },
+            { en: /Art Education|Art/gi, ar: 'التربية الفنية' },
+            { en: /Music/gi, ar: 'التربية الموسيقية' },
+            { en: /Trigonometry/gi, ar: 'حساب المثلثات' },
+            { en: /Calculus/gi, ar: 'التفاضل والتكامل' },
+            { en: /Algebra/gi, ar: 'الجبر' },
+            { en: /Geometry/gi, ar: 'الهندسة' },
+            { en: /Statistics/gi, ar: 'الإحصاء' },
+            { en: /Mathematics|Math/gi, ar: 'الرياضيات' },
+            { en: /Physics/gi, ar: 'الفيزياء' },
+            { en: /Chemistry/gi, ar: 'الكيمياء' },
+            { en: /Biology/gi, ar: 'الأحياء' },
+            { en: /Geology/gi, ar: 'الجيولوجيا' },
+            { en: /Science/gi, ar: 'العلوم' },
+            { en: /History/gi, ar: 'التاريخ' },
+            { en: /Geography/gi, ar: 'الجغرافيا' },
+            { en: /Philosophy/gi, ar: 'الفلسفة' },
+            { en: /Logic/gi, ar: 'المنطق' },
+            { en: /Psychology/gi, ar: 'علم النفس' },
+            { en: /Sociology/gi, ar: 'علم الاجتماع' },
+            { en: /Arabic Language|Arabic/gi, ar: 'اللغة العربية' },
+            { en: /English Language|English/gi, ar: 'اللغة الإنجليزية' },
+            { en: /French Language|French/gi, ar: 'اللغة الفرنسية' },
+            { en: /German Language|German/gi, ar: 'اللغة الألمانية' },
+            { en: /Italian Language|Italian/gi, ar: 'اللغة الإيطالية' },
+            { en: /Spanish Language|Spanish/gi, ar: 'اللغة الإسبانية' },
+            { en: /Programming/gi, ar: 'البرمجة' },
+            { en: /Course/gi, ar: 'مقرر' },
+            { en: /Class/gi, ar: 'فصل' },
+            { en: /Level\s*(\d+)/gi, ar: function(_, n) { return 'المستوى ' + toArabicDigits(n); } },
+            { en: /Grade\s*(\d+)/gi, ar: function(_, n) { return 'الصف ' + toArabicDigits(n); } },
+            { en: /Semester\s*(\d+)/gi, ar: function(_, n) { return 'الفصل الدراسي ' + toArabicDigits(n); } },
+            { en: /Term\s*(\d+)/gi, ar: function(_, n) { return 'الترم ' + toArabicDigits(n); } },
+            { en: /Advanced/gi, ar: 'متقدم' },
+            { en: /Basic/gi, ar: 'أساسي' },
+            { en: /Introduction to/gi, ar: 'مقدمة في' }
+        ];
+
+        for (var c = 0; c < courseDict.length; c++) {
+            res = res.replace(courseDict[c].en, courseDict[c].ar);
+        }
+
+        return toArabicDigits(res);
     }
 
     function toArabicDigits(str) {
@@ -407,19 +604,59 @@
         if (!title || currentLang !== 'ar') return title;
         var res = String(title);
 
-        res = res.replace(/Philosophy & Logic/g, 'الفلسفة والمنطق')
-                 .replace(/Integrated Sciences/g, 'العلوم المتكاملة')
-                 .replace(/First Foreign Language/g, 'اللغة الأجنبية الأولى')
-                 .replace(/Social Studies/g, 'الدراسات الاجتماعية')
-                 .replace(/Mathematics/g, 'الرياضيات')
-                 .replace(/Science/g, 'العلوم')
-                 .replace(/History/g, 'التاريخ')
-                 .replace(/English/g, 'اللغة الإنجليزية')
-                 .replace(/Arabic/g, 'اللغة العربية');
+        // If already Arabic, format digits and return
+        if (/[\u0600-\u06FF]/.test(res)) {
+            return toArabicDigits(res);
+        }
 
-        res = res.replace(/Assignment\s*(\d+)/gi, function(_, num) {
-            return 'واجب ' + toArabicDigits(num);
-        }).replace(/Assignment/gi, 'واجب');
+        // First apply course/subject translation
+        res = translateCourse(res);
+
+        // Assignment vocabulary
+        var assignDict = [
+            { en: /Problem Set/gi, ar: 'مجموعة مسائل' },
+            { en: /Final Project/gi, ar: 'مشروع نهائي' },
+            { en: /Midterm Project/gi, ar: 'مشروع منتصف الفصل' },
+            { en: /Midterm Exam|Midterm Test/gi, ar: 'امتحان منتصف الفصل' },
+            { en: /Final Exam|Final Test/gi, ar: 'الامتحان النهائي' },
+            { en: /Homework/gi, ar: 'واجب منزلي' },
+            { en: /Assignment/gi, ar: 'واجب' },
+            { en: /Quiz/gi, ar: 'اختبار قصير' },
+            { en: /Exam|Test/gi, ar: 'امتحان' },
+            { en: /Midterm/gi, ar: 'منتصف الفصل' },
+            { en: /Final/gi, ar: 'نهائي' },
+            { en: /Project/gi, ar: 'مشروع' },
+            { en: /Exercises/gi, ar: 'تمارين' },
+            { en: /Exercise/gi, ar: 'تمرين' },
+            { en: /Worksheet/gi, ar: 'ورقة عمل' },
+            { en: /Practice/gi, ar: 'تدريب' },
+            { en: /Review/gi, ar: 'مراجعة' },
+            { en: /Task/gi, ar: 'مهمة' },
+            { en: /Questions/gi, ar: 'أسئلة' },
+            { en: /Question/gi, ar: 'سؤال' },
+            { en: /Chapter/gi, ar: 'الفصل' },
+            { en: /Unit/gi, ar: 'الوحدة' },
+            { en: /Lesson/gi, ar: 'الدرس' },
+            { en: /Part/gi, ar: 'الجزء' },
+            { en: /Section/gi, ar: 'القسم' },
+            { en: /Reading/gi, ar: 'قراءة' },
+            { en: /Writing/gi, ar: 'كتابة' },
+            { en: /Grammar/gi, ar: 'قواعد' },
+            { en: /Vocabulary/gi, ar: 'مفردات' },
+            { en: /Literature/gi, ar: 'أدب' },
+            { en: /Poetry/gi, ar: 'نصوص' },
+            { en: /Mechanics/gi, ar: 'ميكانيكا' },
+            { en: /Electricity/gi, ar: 'كهرباء' },
+            { en: /\bfor\b/gi, ar: 'لـ' },
+            { en: /\bon\b/gi, ar: 'في' },
+            { en: /\bin\b/gi, ar: 'في' },
+            { en: /\band\b/gi, ar: 'و' },
+            { en: /\bof\b/gi, ar: 'من' }
+        ];
+
+        for (var a = 0; a < assignDict.length; a++) {
+            res = res.replace(assignDict[a].en, assignDict[a].ar);
+        }
 
         return toArabicDigits(res);
     }
@@ -430,9 +667,10 @@
 
         if (res === 'No description' || res === 'No description provided') return 'لا يوجد وصف';
         if (res === 'None' || res === 'None assigned') return 'لا يوجد';
-        if (res === 'Excellent work! Well presented answers.') return 'عمل ممتاز! إجابات منظمة ومكتملة.';
-        if (res.indexOf('Please solve questions 1 to 5') !== -1) {
-            return 'يرجى حل الأسئلة من ' + toArabicDigits('1') + ' إلى ' + toArabicDigits('5') + ' من الكتاب المدرسي ورفع الحل بصيغة PDF.';
+
+        // If already Arabic, format digits and return
+        if (/[\u0600-\u06FF]/.test(res)) {
+            return toArabicDigits(res);
         }
 
         var compMatch = res.match(/Comprehensive (.*) curriculum for (.*)/i);
@@ -447,6 +685,36 @@
             var num = toArabicDigits(hwMatch[1]);
             var subj = translateCourse(hwMatch[2].replace(/\.$/, ''));
             return 'واجب أسبوعي وتدريبات عملية رقم ' + num + ' لمادة ' + subj + '.';
+        }
+
+        var descDict = [
+            { en: /Please solve questions/gi, ar: 'يرجى حل الأسئلة' },
+            { en: /Please solve/gi, ar: 'يرجى حل' },
+            { en: /Solve questions/gi, ar: 'حل الأسئلة' },
+            { en: /Answer all questions/gi, ar: 'أجب عن جميع الأسئلة' },
+            { en: /Upload PDF/gi, ar: 'ارفع ملف PDF' },
+            { en: /Submit before deadline/gi, ar: 'سلم قبل الموعد النهائي' },
+            { en: /Submit your work/gi, ar: 'سلم عملك' },
+            { en: /From textbook/gi, ar: 'من الكتاب المدرسي' },
+            { en: /from page\s*(\d+)\s*to page\s*(\d+)/gi, ar: function(_, p1, p2) { return 'من صفحة ' + toArabicDigits(p1) + ' إلى صفحة ' + toArabicDigits(p2); } },
+            { en: /Page\s*(\d+)/gi, ar: function(_, p) { return 'صفحة ' + toArabicDigits(p); } },
+            { en: /Read chapter\s*(\d+)/gi, ar: function(_, c) { return 'اقرأ الفصل ' + toArabicDigits(c); } },
+            { en: /Chapter\s*(\d+)/gi, ar: function(_, c) { return 'الفصل ' + toArabicDigits(c); } },
+            { en: /Unit\s*(\d+)/gi, ar: function(_, u) { return 'الوحدة ' + toArabicDigits(u); } },
+            { en: /Lesson\s*(\d+)/gi, ar: function(_, l) { return 'الدرس ' + toArabicDigits(l); } },
+            { en: /Questions\s*(\d+)\s*to\s*(\d+)/gi, ar: function(_, q1, q2) { return 'الأسئلة من ' + toArabicDigits(q1) + ' إلى ' + toArabicDigits(q2); } },
+            { en: /(\d+)\s+to\s+(\d+)/gi, ar: function(_, a, b) { return toArabicDigits(a) + ' إلى ' + toArabicDigits(b); } },
+            { en: /Questions/gi, ar: 'الأسئلة' },
+            { en: /Exercise\s*(\d+)/gi, ar: function(_, e) { return 'تمرين ' + toArabicDigits(e); } },
+            { en: /Excellent work!? Well presented answers\.?/gi, ar: 'عمل ممتاز! إجابات منظمة ومكتملة.' },
+            { en: /Excellent work!?/gi, ar: 'عمل ممتاز!' },
+            { en: /Well done!?/gi, ar: 'أحسنت!' },
+            { en: /Good job!?/gi, ar: 'عمل رائع!' },
+            { en: /Needs improvement/gi, ar: 'يحتاج إلى تحسين' }
+        ];
+
+        for (var d = 0; d < descDict.length; d++) {
+            res = res.replace(descDict[d].en, descDict[d].ar);
         }
 
         return toArabicDigits(res);
