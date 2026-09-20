@@ -55,48 +55,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 canReopen = !!data.can_reopen;
                 currentTeacherId = data.teacher_id;
                 allMissedSubmissions = data.missed_submissions || [];
+                lastData = data;
 
-                // update role indicator if available
-                var roleBadge = document.getElementById('user-role-badge');
-                if (roleBadge) {
-                    roleBadge.textContent = data.user_role === 'teacher' ? 'Teacher' : 'Assistant (View Only)';
-                }
-
-                // populate teacher dropdown for assistants with multiple teachers
-                if (teacherSelect && data.available_teachers && data.available_teachers.length > 1) {
-                    if (teacherSelectorContainer) teacherSelectorContainer.style.display = 'flex';
-                    teacherSelect.innerHTML = '';
-                    for (var t = 0; t < data.available_teachers.length; t++) {
-                        var opt = document.createElement('option');
-                        opt.value = data.available_teachers[t].id;
-                        opt.textContent = data.available_teachers[t].name;
-                        if (data.available_teachers[t].id === data.teacher_id) {
-                            opt.selected = true;
-                        }
-                        teacherSelect.appendChild(opt);
-                    }
-
-                    if (!teacherSelect.dataset.hasListener) {
-                        teacherSelect.dataset.hasListener = 'true';
-                        teacherSelect.addEventListener('change', function () {
-                            currentTeacherId = parseInt(this.value, 10);
-                            currentGradeFilter = 'all';
-                            loadLatenessData();
-                        });
-                    }
-                }
-
-                // update summary statistics
-                setStatText('stat-total-missed', data.stats.total_missed);
-                setStatText('stat-students-count', data.stats.unique_students);
-                setStatText('stat-active-exceptions', data.stats.active_exceptions);
-                setStatText('stat-submitted-late', data.stats.submitted_late);
-
-                // render registered grade level tabs
-                renderGradeLevelTabs(data.registered_grade_levels || []);
-
-                // render missed submissions table
-                renderTable();
+                applyData(data);
             })
             .catch(function (err) {
                 console.error('Error:', err);
@@ -104,17 +65,75 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
 
+    var lastData = null;
+
+    function applyData(data) {
+        var isAr = window.i18n && window.i18n.getCurrentLanguage() === 'ar';
+
+        // update role indicator if available
+        var roleBadge = document.getElementById('user-role-badge');
+        if (roleBadge) {
+            roleBadge.textContent = data.user_role === 'teacher' 
+                ? (isAr ? 'معلم' : 'Teacher') 
+                : (isAr ? 'مساعد (عرض فقط)' : 'Assistant (View Only)');
+        }
+
+        // populate teacher dropdown for assistants with multiple teachers
+        if (teacherSelect && data.available_teachers && data.available_teachers.length > 1) {
+            if (teacherSelectorContainer) teacherSelectorContainer.style.display = 'flex';
+            teacherSelect.innerHTML = '';
+            for (var t = 0; t < data.available_teachers.length; t++) {
+                var opt = document.createElement('option');
+                opt.value = data.available_teachers[t].id;
+                var tName = data.available_teachers[t].name;
+                opt.textContent = (isAr && window.i18n) ? window.i18n.translateName(tName) : tName;
+                if (data.available_teachers[t].id === data.teacher_id) {
+                    opt.selected = true;
+                }
+                teacherSelect.appendChild(opt);
+            }
+
+            if (!teacherSelect.dataset.hasListener) {
+                teacherSelect.dataset.hasListener = 'true';
+                teacherSelect.addEventListener('change', function () {
+                    currentTeacherId = parseInt(this.value, 10);
+                    currentGradeFilter = 'all';
+                    loadLatenessData();
+                });
+            }
+        }
+
+        // update summary statistics
+        var fmtNum = function(num) {
+            return (isAr && window.i18n) ? window.i18n.toArabicDigits(num) : num;
+        };
+        setStatText('stat-total-missed', fmtNum(data.stats.total_missed));
+        setStatText('stat-students-count', fmtNum(data.stats.unique_students));
+        setStatText('stat-active-exceptions', fmtNum(data.stats.active_exceptions));
+        setStatText('stat-submitted-late', fmtNum(data.stats.submitted_late));
+
+        // render registered grade level tabs
+        renderGradeLevelTabs(data.registered_grade_levels || []);
+
+        // render missed submissions table
+        renderTable();
+    }
+
     // render class / grade level tabs dynamically based ONLY on teacher's registered grade levels
     function renderGradeLevelTabs(registeredGrades) {
         if (!gradeLevelTabsContainer) return;
 
         gradeLevelTabsContainer.innerHTML = '';
+        var isAr = window.i18n && window.i18n.getCurrentLanguage() === 'ar';
+        var fmtNum = function(num) {
+            return (isAr && window.i18n) ? window.i18n.toArabicDigits(num) : num;
+        };
 
         // "All Classes" tab
         var allBtn = document.createElement('button');
         allBtn.className = 'filter-tab' + (currentGradeFilter === 'all' ? ' active' : '');
         allBtn.setAttribute('data-grade', 'all');
-        allBtn.textContent = 'All Classes (' + allMissedSubmissions.length + ')';
+        allBtn.textContent = (isAr ? 'جميع الفصول (' : 'All Classes (') + fmtNum(allMissedSubmissions.length) + ')';
         allBtn.addEventListener('click', function () {
             setActiveGradeTab(this, 'all');
         });
@@ -133,8 +152,8 @@ document.addEventListener('DOMContentLoaded', function () {
             var tabBtn = document.createElement('button');
             tabBtn.className = 'filter-tab' + (currentGradeFilter === gradeName ? ' active' : '');
             tabBtn.setAttribute('data-grade', gradeName);
-            var displayGrade = window.formatGradeLevel ? formatGradeLevel(gradeName) : gradeName;
-            tabBtn.textContent = displayGrade + ' (' + countForGrade + ')';
+            var displayGrade = window.i18n ? window.i18n.translateGrade(gradeName) : (window.formatGradeLevel ? formatGradeLevel(gradeName) : gradeName);
+            tabBtn.textContent = displayGrade + ' (' + fmtNum(countForGrade) + ')';
             
             (function (gName) {
                 tabBtn.addEventListener('click', function () {
@@ -204,13 +223,19 @@ document.addEventListener('DOMContentLoaded', function () {
         if (tableContainer) tableContainer.style.display = 'block';
         if (emptyNotice) emptyNotice.style.display = 'none';
 
+        var isAr = window.i18n && window.i18n.getCurrentLanguage() === 'ar';
+        var fmtNum = function(num) {
+            return (isAr && window.i18n) ? window.i18n.toArabicDigits(num) : num;
+        };
+
         for (var j = 0; j < filtered.length; j++) {
             var item = filtered[j];
             var tr = document.createElement('tr');
 
             // 1. Student Name & Email
             var tdStudent = document.createElement('td');
-            tdStudent.innerHTML = '<strong>' + escapeHtml(item.student_name) + '</strong><br>' +
+            var sName = (isAr && window.i18n) ? window.i18n.translateName(item.student_name) : item.student_name;
+            tdStudent.innerHTML = '<strong>' + escapeHtml(sName) + '</strong><br>' +
                                   '<small style="color: var(--text-muted);">' + escapeHtml(item.student_email) + '</small>';
             tr.appendChild(tdStudent);
 
@@ -220,24 +245,25 @@ document.addEventListener('DOMContentLoaded', function () {
             gBadge.className = 'status-badge status-review';
             gBadge.style.fontSize = '11px';
             var rawGrade = item.student_grade_level || item.assignment_grade_level;
-            gBadge.textContent = window.formatGradeLevel ? formatGradeLevel(rawGrade) : (rawGrade || 'Preparatory');
+            gBadge.textContent = window.i18n ? window.i18n.translateGrade(rawGrade) : (window.formatGradeLevel ? formatGradeLevel(rawGrade) : (rawGrade || 'Preparatory'));
             tdGrade.appendChild(gBadge);
             tr.appendChild(tdGrade);
 
             // 3. Course Name
             var tdCourse = document.createElement('td');
-            tdCourse.textContent = item.course_name;
+            tdCourse.textContent = (isAr && window.i18n) ? window.i18n.translateCourse(item.course_name) : item.course_name;
             tr.appendChild(tdCourse);
 
             // 4. Assignment Title
             var tdAssign = document.createElement('td');
-            tdAssign.innerHTML = '<strong>' + escapeHtml(item.assignment_title) + '</strong>';
+            var aTitle = (isAr && window.i18n) ? window.i18n.translateAssignment(item.assignment_title) : item.assignment_title;
+            tdAssign.innerHTML = '<strong>' + escapeHtml(aTitle) + '</strong>';
             tr.appendChild(tdAssign);
 
             // 5. Original Deadline
             var tdDeadline = document.createElement('td');
             var dDate = new Date(item.deadline);
-            tdDeadline.textContent = dDate.toLocaleString('en-US', {
+            var dStr = dDate.toLocaleString(isAr ? 'ar-EG' : 'en-US', {
                 month: 'short',
                 day: '2-digit',
                 year: 'numeric',
@@ -245,6 +271,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 minute: '2-digit',
                 hour12: true
             });
+            tdDeadline.textContent = fmtNum(dStr);
             tr.appendChild(tdDeadline);
 
             // 6. Missed Count for this Teacher & Specific Missed Assignment Titles
@@ -252,8 +279,9 @@ document.addEventListener('DOMContentLoaded', function () {
             var mCount = parseInt(item.student_missed_count, 10) || 1;
             var pill = document.createElement('span');
             pill.className = 'missed-count-pill';
+            var missedSuffix = isAr ? 'متأخرات' : 'missed';
             pill.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg> ' +
-                             mCount + (mCount === 1 ? ' missed' : ' missed');
+                             fmtNum(mCount) + ' ' + missedSuffix;
             tdCount.appendChild(pill);
 
             if (item.student_missed_titles && item.student_missed_titles.length > 0) {
@@ -262,11 +290,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 for (var tIdx = 0; tIdx < item.student_missed_titles.length; tIdx++) {
                     var mTitle = item.student_missed_titles[tIdx];
                     var isCurrentRow = (mTitle === item.assignment_title);
+                    var displayMTitle = (isAr && window.i18n) ? window.i18n.translateAssignment(mTitle) : mTitle;
                     var tChip = document.createElement('span');
                     tChip.style.cssText = 'font-size: 11.5px; border-radius: 4px; padding: 2px 6px; display: inline-flex; align-items: center; gap: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; ' +
                         (isCurrentRow ? 'background: rgba(217, 119, 6, 0.12); color: #d97706; font-weight: 600; border: 1px solid rgba(217, 119, 6, 0.3);' : 'background: var(--glass-bg, rgba(0,0,0,0.04)); color: var(--text-secondary); border: 1px solid var(--border-color);');
-                    tChip.title = mTitle;
-                    tChip.innerHTML = '<span style="color:' + (isCurrentRow ? '#d97706' : '#ef4444') + '; font-weight:bold;">&bull;</span> ' + escapeHtml(mTitle);
+                    tChip.title = displayMTitle;
+                    tChip.innerHTML = '<span style="color:' + (isCurrentRow ? '#d97706' : '#ef4444') + '; font-weight:bold;">&bull;</span> ' + escapeHtml(displayMTitle);
                     titlesList.appendChild(tChip);
                 }
                 tdCount.appendChild(titlesList);
@@ -276,9 +305,9 @@ document.addEventListener('DOMContentLoaded', function () {
             // 7. Resubmission Policy Column (Placed directly after Teacher Lateness Count)
             var tdPolicy = document.createElement('td');
             if (parseInt(item.allow_resubmission, 10) === 0) {
-                tdPolicy.innerHTML = '<span class="status-badge" style="background: rgba(239, 68, 68, 0.12); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.35); font-size: 11.5px; font-weight: 600; padding: 5px 11px; border-radius: var(--radius-pill); white-space: nowrap; display: inline-flex; align-items: center; gap: 4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg> Not Allowed</span>';
+                tdPolicy.innerHTML = '<span class="status-badge" style="background: rgba(239, 68, 68, 0.12); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.35); font-size: 11.5px; font-weight: 600; padding: 5px 11px; border-radius: var(--radius-pill); white-space: nowrap; display: inline-flex; align-items: center; gap: 4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg> ' + (isAr ? 'غير مسموح' : 'Not Allowed') + '</span>';
             } else {
-                tdPolicy.innerHTML = '<span class="status-badge" style="background: rgba(16, 185, 129, 0.12); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.35); font-size: 11.5px; font-weight: 600; padding: 5px 11px; border-radius: var(--radius-pill); white-space: nowrap; display: inline-flex; align-items: center; gap: 4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> Allowed</span>';
+                tdPolicy.innerHTML = '<span class="status-badge" style="background: rgba(16, 185, 129, 0.12); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.35); font-size: 11.5px; font-weight: 600; padding: 5px 11px; border-radius: var(--radius-pill); white-space: nowrap; display: inline-flex; align-items: center; gap: 4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> ' + (isAr ? 'مسموح' : 'Allowed') + '</span>';
             }
             tr.appendChild(tdPolicy);
 
@@ -287,7 +316,7 @@ document.addEventListener('DOMContentLoaded', function () {
             var statBadge = document.createElement('span');
             statBadge.className = 'status-badge ' + item.exception_status_class;
             statBadge.style.fontSize = '11.5px';
-            statBadge.textContent = item.exception_status_label;
+            statBadge.textContent = translateExceptionStatus(item.exception_status_label, isAr);
             tdStatus.appendChild(statBadge);
             tr.appendChild(tdStatus);
 
@@ -303,27 +332,27 @@ document.addEventListener('DOMContentLoaded', function () {
                     var actSpan = document.createElement('span');
                     actSpan.className = 'status-badge';
                     actSpan.style.cssText = 'font-size: 11.5px; padding: 5px 12px; background: rgba(245, 158, 11, 0.16); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.4); font-weight: 600; white-space: nowrap;';
-                    actSpan.textContent = 'Active (24h)';
+                    actSpan.textContent = isAr ? 'نشط (٢٤ ساعة)' : 'Active (24h)';
                     tdAction.appendChild(actSpan);
                 } else if (item.late_submission_id) {
                     var viewSubBtn = document.createElement('a');
                     viewSubBtn.href = 'submissions.html?assignment_id=' + item.assignment_id;
                     viewSubBtn.className = 'action-btn action-review';
                     viewSubBtn.style.cssText = 'font-size: 12px; padding: 5px 12px; text-decoration: none; border-radius: var(--radius-pill); white-space: nowrap;';
-                    viewSubBtn.textContent = 'View Submission';
+                    viewSubBtn.textContent = isAr ? 'عرض التسليم' : 'View Submission';
                     tdAction.appendChild(viewSubBtn);
                 } else if (parseInt(item.allow_resubmission, 10) === 0) {
                     // Resubmission not permitted by policy
                     var disabledSpan = document.createElement('span');
                     disabledSpan.className = 'status-badge';
                     disabledSpan.style.cssText = 'background: rgba(239, 68, 68, 0.12); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.35); font-size: 11.5px; font-weight: 600; padding: 6px 12px; border-radius: var(--radius-pill); white-space: nowrap; display: inline-flex; align-items: center; gap: 5px;';
-                    disabledSpan.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg> Resubmission Not Allowed';
+                    disabledSpan.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg> ' + (isAr ? 'إعادة التسليم غير مسموحة' : 'Resubmission Not Allowed');
                     tdAction.appendChild(disabledSpan);
                 } else {
                     var reopenBtn = document.createElement('button');
                     reopenBtn.className = 'reopen-btn';
                     reopenBtn.style.cssText = 'white-space: nowrap !important; word-break: keep-all !important;';
-                    reopenBtn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="flex-shrink: 0;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg><span style="white-space: nowrap !important; word-break: keep-all !important;">Reopen (24h)</span>';
+                    reopenBtn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="flex-shrink: 0;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg><span style="white-space: nowrap !important; word-break: keep-all !important;">' + (isAr ? 'إعادة الفتح (٢٤ ساعة)' : 'Reopen (24h)') + '</span>';
                     
                     (function (rec) {
                         reopenBtn.addEventListener('click', function () {
@@ -337,7 +366,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Assistant view (Read-only authority)
                 var asstNotice = document.createElement('span');
                 asstNotice.style.cssText = 'font-size: 12px; color: var(--text-muted); font-weight: 500; font-style: italic; white-space: nowrap;';
-                asstNotice.textContent = 'Teacher only';
+                asstNotice.textContent = isAr ? 'للمعلم فقط' : 'Teacher only';
                 tdAction.appendChild(asstNotice);
             }
 
@@ -346,15 +375,34 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    function translateExceptionStatus(label, isAr) {
+        if (!isAr || !label) return label;
+        var l = label.toLowerCase();
+        if (l.indexOf('active') !== -1) return 'نشط (٢٤ ساعة)';
+        if (l.indexOf('late submitted') !== -1 || l.indexOf('submitted late') !== -1) return 'تم التسليم متأخراً';
+        if (l.indexOf('missed') !== -1) return 'فائت';
+        if (l.indexOf('overdue') !== -1) return 'متأخر';
+        if (l.indexOf('expired') !== -1) return 'انتهت الصلاحية';
+        if (l.indexOf('passed') !== -1) return 'فات الموعد';
+        return label;
+    }
+
     // open reopen confirmation modal with granular selection (1st, 2nd, 3rd, or all)
     function openReopenModal(item) {
         activeModalPayload = item;
-        if (modalStudentName) modalStudentName.textContent = item.student_name;
+        var isAr = window.i18n && window.i18n.getCurrentLanguage() === 'ar';
+        var fmtNum = function(num) {
+            return (isAr && window.i18n) ? window.i18n.toArabicDigits(num) : num;
+        };
+
+        if (modalStudentName) modalStudentName.textContent = (isAr && window.i18n) ? window.i18n.translateName(item.student_name) : item.student_name;
         if (modalStudentEmail) modalStudentEmail.textContent = item.student_email;
-        if (modalCourseName) modalCourseName.textContent = item.course_name;
+        if (modalCourseName) modalCourseName.textContent = (isAr && window.i18n) ? window.i18n.translateCourse(item.course_name) : item.course_name;
         if (modalMissedCount) {
             var mCount = parseInt(item.student_missed_count, 10) || 1;
-            modalMissedCount.textContent = mCount + (mCount === 1 ? ' missed assignment' : ' missed assignments');
+            modalMissedCount.textContent = isAr 
+                ? (fmtNum(mCount) + ' واجبات متأخرة') 
+                : (mCount + (mCount === 1 ? ' missed assignment' : ' missed assignments'));
         }
 
         var checklistContainer = document.getElementById('modal-assignment-checklist');
@@ -399,20 +447,32 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
 
                 var textDiv = document.createElement('div');
-                var dText = ma.deadline ? new Date(ma.deadline).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'No deadline';
-                textDiv.innerHTML = '<strong style="font-size: 13px; color: var(--text-primary);">' + (k + 1) + '. ' + escapeHtml(ma.assignment_title) + '</strong>' +
-                                    '<div style="font-size: 11.5px; color: var(--text-muted);">' + escapeHtml(ma.course_name) + ' &bull; Deadline: ' + dText + '</div>';
+                var dDate = ma.deadline ? new Date(ma.deadline) : null;
+                var dText = isAr ? 'بدون موعد نهائي' : 'No deadline';
+                if (dDate) {
+                    var dRaw = dDate.toLocaleString(isAr ? 'ar-EG' : 'en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                    dText = fmtNum(dRaw);
+                }
+                var itemTitle = (isAr && window.i18n) ? window.i18n.translateAssignment(ma.assignment_title) : ma.assignment_title;
+                var itemCourse = (isAr && window.i18n) ? window.i18n.translateCourse(ma.course_name) : ma.course_name;
+                var numLabel = fmtNum(k + 1);
+                var deadlinePrefix = isAr ? 'الموعد النهائي: ' : 'Deadline: ';
+
+                textDiv.innerHTML = '<strong style="font-size: 13px; color: var(--text-primary);">' + numLabel + '. ' + escapeHtml(itemTitle) + '</strong>' +
+                                    '<div style="font-size: 11.5px; color: var(--text-muted);">' + escapeHtml(itemCourse) + ' &bull; ' + deadlinePrefix + dText + '</div>';
 
                 leftBox.appendChild(checkbox);
                 leftBox.appendChild(textDiv);
 
                 var rightStatus = document.createElement('div');
                 if (parseInt(ma.allow_resubmission, 10) === 0) {
-                    rightStatus.innerHTML = '<span class="status-badge" style="background: rgba(239, 68, 68, 0.12); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: var(--radius-pill); white-space: nowrap;">Not Allowed</span>';
+                    rightStatus.innerHTML = '<span class="status-badge" style="background: rgba(239, 68, 68, 0.12); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: var(--radius-pill); white-space: nowrap;">' + (isAr ? 'غير مسموح' : 'Not Allowed') + '</span>';
                 } else if (ma.has_active_exception) {
-                    rightStatus.innerHTML = '<span class="status-badge" style="background: rgba(245, 158, 11, 0.16); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.4); font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: var(--radius-pill); white-space: nowrap;">Active (' + (ma.time_left_human || '24h') + ')</span>';
+                    var tLeft = ma.time_left_human || '24h';
+                    if (isAr && window.i18n) tLeft = window.i18n.toArabicDigits(tLeft.replace('h', ' ساعة'));
+                    rightStatus.innerHTML = '<span class="status-badge" style="background: rgba(245, 158, 11, 0.16); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.4); font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: var(--radius-pill); white-space: nowrap;">' + (isAr ? 'نشط (' + tLeft + ')' : 'Active (' + tLeft + ')') + '</span>';
                 } else {
-                    rightStatus.innerHTML = '<span class="status-badge status-open" style="font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: var(--radius-pill); white-space: nowrap;">Eligible</span>';
+                    rightStatus.innerHTML = '<span class="status-badge status-open" style="font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: var(--radius-pill); white-space: nowrap;">' + (isAr ? 'مؤهل' : 'Eligible') + '</span>';
                 }
 
                 itemLabel.appendChild(leftBox);
@@ -456,23 +516,31 @@ document.addEventListener('DOMContentLoaded', function () {
         var checkedCbs = document.querySelectorAll('.reopen-assignment-checkbox:checked');
         var eligibleCbs = document.querySelectorAll('.reopen-assignment-checkbox:not(:disabled)');
         var count = checkedCbs.length;
+        var isAr = window.i18n && window.i18n.getCurrentLanguage() === 'ar';
+        var fmtNum = function(num) {
+            return (isAr && window.i18n) ? window.i18n.toArabicDigits(num) : num;
+        };
 
         if (count === 0) {
             modalConfirmBtn.disabled = true;
-            modalConfirmBtn.textContent = 'Select at least 1 assignment';
+            modalConfirmBtn.textContent = isAr ? 'حدد واجباً واحداً على الأقل' : 'Select at least 1 assignment';
             modalConfirmBtn.style.opacity = '0.6';
         } else if (count === 1) {
             modalConfirmBtn.disabled = false;
             modalConfirmBtn.style.opacity = '1';
-            modalConfirmBtn.textContent = 'Reopen 1 Assignment (24h)';
+            modalConfirmBtn.textContent = isAr ? 'إعادة فتح واجب واحد (٢٤ ساعة)' : 'Reopen 1 Assignment (24h)';
         } else if (count === eligibleCbs.length && count > 1) {
             modalConfirmBtn.disabled = false;
             modalConfirmBtn.style.opacity = '1';
-            modalConfirmBtn.textContent = 'Reopen All (' + count + ') Assignments (24h)';
+            modalConfirmBtn.textContent = isAr 
+                ? ('إعادة فتح جميع (' + fmtNum(count) + ') الواجبات (٢٤ ساعة)') 
+                : ('Reopen All (' + count + ') Assignments (24h)');
         } else {
             modalConfirmBtn.disabled = false;
             modalConfirmBtn.style.opacity = '1';
-            modalConfirmBtn.textContent = 'Reopen ' + count + ' Assignments (24h)';
+            modalConfirmBtn.textContent = isAr 
+                ? ('إعادة فتح ' + fmtNum(count) + ' واجبات (٢٤ ساعة)') 
+                : ('Reopen ' + count + ' Assignments (24h)');
         }
     }
 
@@ -500,7 +568,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
             var checkedCbs = document.querySelectorAll('.reopen-assignment-checkbox:checked');
             if (checkedCbs.length === 0) {
-                showAlert('error', 'Please select at least one overdue assignment to reopen.');
+                var isAr = window.i18n && window.i18n.getCurrentLanguage() === 'ar';
+                showAlert('error', isAr ? 'يرجى تحديد واجب دراسي متأخر واحد على الأقل لإعادة فتحه.' : 'Please select at least one overdue assignment to reopen.');
                 return;
             }
 
@@ -509,8 +578,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 selectedIds.push(parseInt(checkedCbs[s].value, 10));
             }
 
+            var isAr = window.i18n && window.i18n.getCurrentLanguage() === 'ar';
             modalConfirmBtn.disabled = true;
-            modalConfirmBtn.textContent = 'Reopening...';
+            modalConfirmBtn.textContent = isAr ? 'جارٍ إعادة الفتح...' : 'Reopening...';
 
             var formData = new FormData();
             formData.append('action', 'reopen');
@@ -533,14 +603,14 @@ document.addEventListener('DOMContentLoaded', function () {
                         showAlert('success', data.message);
                         loadLatenessData();
                     } else {
-                        showAlert('error', data ? data.message : 'Failed to reopen assignment(s).');
+                        showAlert('error', data ? data.message : (isAr ? 'فشل إعادة فتح الواجب.' : 'Failed to reopen assignment(s).'));
                     }
                 })
                 .catch(function (err) {
                     modalConfirmBtn.disabled = false;
                     closeReopenModal();
                     console.error('Error:', err);
-                    showAlert('error', 'Network error while attempting to reopen assignment(s).');
+                    showAlert('error', isAr ? 'خطأ في الشبكة أثناء محاولة إعادة فتح الواجب.' : 'Network error while attempting to reopen assignment(s).');
                 });
         });
     }
@@ -565,4 +635,10 @@ document.addEventListener('DOMContentLoaded', function () {
         div.textContent = str;
         return div.innerHTML;
     }
+
+    window.addEventListener('languageChanged', function () {
+        if (lastData) {
+            applyData(lastData);
+        }
+    });
 });

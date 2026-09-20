@@ -42,8 +42,9 @@ function loadSubmissions() {
             return;
         }
 
+        var isAr = window.i18n && window.i18n.getCurrentLanguage() === 'ar';
         if (data.user && document.getElementById('assistant-name')) {
-            document.getElementById('assistant-name').textContent = data.user.name;
+            document.getElementById('assistant-name').textContent = isAr && window.i18n ? window.i18n.translateName(data.user.name) : data.user.name;
         }
 
         // populate courses dropdown if not already populated
@@ -63,12 +64,13 @@ function loadSubmissions() {
 function populateCourseFilter(courses) {
     var select = document.getElementById('course-filter-select');
     if (!select || select.children.length > 1) return;
+    var isAr = window.i18n && window.i18n.getCurrentLanguage() === 'ar';
 
     if (courses && courses.length > 0) {
         courses.forEach(function (c) {
             var opt = document.createElement('option');
             opt.value = c.id;
-            opt.textContent = c.name;
+            opt.textContent = isAr && window.i18n ? window.i18n.translateCourse(c.name) : c.name;
             select.appendChild(opt);
         });
     }
@@ -77,12 +79,13 @@ function populateCourseFilter(courses) {
 function populateStudentFilter(students) {
     var select = document.getElementById('student-filter-select');
     if (!select || select.children.length > 1) return;
+    var isAr = window.i18n && window.i18n.getCurrentLanguage() === 'ar';
 
     if (students && students.length > 0) {
         students.forEach(function (st) {
             var opt = document.createElement('option');
             opt.value = st.id;
-            opt.textContent = st.name;
+            opt.textContent = isAr && window.i18n ? window.i18n.translateName(st.name) : st.name;
             if (String(st.id) === String(currentStudentId)) {
                 opt.selected = true;
             }
@@ -159,42 +162,53 @@ function renderTable(submissions) {
 
     if (!tbody) return;
     tbody.innerHTML = '';
+    var isAr = window.i18n && window.i18n.getCurrentLanguage() === 'ar';
 
     submissions.forEach(function (sub) {
         var row = document.createElement('tr');
 
         var badgeClass = 'status-not-submitted';
-        var badgeLabel = window.i18n ? window.i18n.translateStatus(sub.status) : 'Submitted';
-        var actionLabel = window.i18n ? window.i18n.t('common.review') : 'Review';
+        var badgeLabel = window.i18n ? window.i18n.translateStatus(sub.status) : (isAr ? 'تم التسليم' : 'Submitted');
+        var actionLabel = isAr ? 'مراجعة' : (window.i18n ? window.i18n.t('common.review') : 'Review');
         var actionClass = 'action-submit';
 
         if (sub.status === 'graded') {
             badgeClass = 'status-graded';
-            actionLabel = window.i18n ? window.i18n.t('common.view') : 'View';
+            actionLabel = isAr ? 'عرض النتيجة' : (window.i18n ? window.i18n.t('common.view') : 'View');
             actionClass = 'action-result';
         } else if (sub.status === 'under_review') {
             badgeClass = 'status-review';
-            actionLabel = window.i18n ? window.i18n.t('common.review') : 'Review';
+            actionLabel = isAr ? 'مراجعة' : (window.i18n ? window.i18n.t('common.review') : 'Review');
             actionClass = 'action-review';
         } else if (sub.status === 'recheck') {
             badgeClass = 'status-closed';
-            actionLabel = window.i18n ? window.i18n.t('common.recheck') : 'Recheck';
+            actionLabel = isAr ? 'إعادة تدقيق' : (window.i18n ? window.i18n.t('common.recheck') : 'Recheck');
             actionClass = 'action-submit';
         } else if (sub.status === 'pending_teacher') {
             badgeClass = 'status-review';
-            actionLabel = window.i18n ? window.i18n.t('common.view') : 'View';
+            actionLabel = isAr ? 'عرض التفاصيل' : (window.i18n ? window.i18n.t('common.view') : 'View');
             actionClass = 'action-view';
         }
 
-        var lateText = window.i18n ? window.i18n.t('educational.flags.late') : 'Late';
-        var gradeDisplay = (sub.grade !== null) ? (sub.grade + ' / ' + sub.max_grade) : '—';
+        var lateText = isAr ? 'متأخر' : (window.i18n ? window.i18n.t('educational.flags.late') : 'Late');
+        var gradeDisplay = '—';
+        if (sub.grade !== null) {
+            var gVal = isAr && window.i18n ? window.i18n.toArabicDigits(sub.grade) : sub.grade;
+            var mgVal = isAr && window.i18n ? window.i18n.toArabicDigits(sub.max_grade) : sub.max_grade;
+            gradeDisplay = gVal + ' / ' + mgVal;
+        }
         var lateBadgeHtml = (parseInt(sub.is_late, 10) === 1) ? ' <span class="status-badge" style="background:#ea580c;color:#fff;margin-left:5px;font-size:11px;">' + lateText + '</span>' : '';
 
+        var sNameTr = isAr && window.i18n ? window.i18n.translateName(sub.student_name) : sub.student_name;
+        var aTitleTr = isAr && window.i18n ? window.i18n.translateAssignment(sub.assignment_title) : sub.assignment_title;
+        var cNameTr = isAr && window.i18n ? window.i18n.translateCourse(sub.course_name) : sub.course_name;
+        var verText = isAr ? (' (الإصدار ' + (window.i18n ? window.i18n.toArabicDigits(sub.version) : sub.version) + ')') : (' (v' + sub.version + ')');
+
         row.innerHTML =
-            '<td><strong>' + escapeHtml(sub.student_name) + '</strong><br><small style="color:var(--text-muted);">' + escapeHtml(sub.student_email) + '</small></td>' +
-            '<td>' + escapeHtml(sub.assignment_title) + '</td>' +
-            '<td>' + escapeHtml(sub.course_name) + '</td>' +
-            '<td>' + formatDate(sub.submitted_at) + ' (v' + sub.version + ')</td>' +
+            '<td><strong>' + escapeHtml(sNameTr) + '</strong><br><small style="color:var(--text-muted);">' + escapeHtml(sub.student_email) + '</small></td>' +
+            '<td>' + escapeHtml(aTitleTr) + '</td>' +
+            '<td>' + escapeHtml(cNameTr) + '</td>' +
+            '<td>' + formatDate(sub.submitted_at) + verText + '</td>' +
             '<td><span class="status-badge ' + badgeClass + '">' + escapeHtml(badgeLabel) + '</span>' + lateBadgeHtml + '</td>' +
             '<td><strong>' + gradeDisplay + '</strong></td>' +
             '<td><a href="review.html?id=' + sub.id + '" class="action-btn ' + actionClass + '">' + escapeHtml(actionLabel) + '</a></td>';
@@ -206,14 +220,17 @@ function renderTable(submissions) {
 function formatDate(dateStr) {
     if (!dateStr) return '—';
     var d = new Date(dateStr);
-    var lang = (window.i18n && window.i18n.getCurrentLanguage() === 'ar') ? 'ar-EG' : 'en-US';
-    return d.toLocaleDateString(lang, {
+    var isAr = window.i18n && window.i18n.getCurrentLanguage() === 'ar';
+    var lang = isAr ? 'ar-EG' : 'en-US';
+    var formatted = d.toLocaleDateString(lang, {
         month: 'short',
         day: 'numeric',
         year: 'numeric',
         hour: '2-digit',
         minute: '2-digit'
     });
+    if (isAr && window.i18n) formatted = window.i18n.toArabicDigits(formatted);
+    return formatted;
 }
 
 function escapeHtml(str) {

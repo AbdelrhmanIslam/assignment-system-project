@@ -83,26 +83,28 @@ document.addEventListener('DOMContentLoaded', function () {
         if (tableContainer) tableContainer.style.display = 'block';
         if (emptyState) emptyState.style.display = 'none';
 
+        var isAr = (window.i18n && window.i18n.getCurrentLanguage() === 'ar');
         for (var i = 0; i < filtered.length; i++) {
             var item = filtered[i];
             var tr = document.createElement('tr');
 
             var tdTitle = document.createElement('td');
             var strongTitle = document.createElement('strong');
-            strongTitle.textContent = item.title;
+            strongTitle.textContent = window.i18n ? window.i18n.translateAssignment(item.title) : item.title;
             tdTitle.appendChild(strongTitle);
             tr.appendChild(tdTitle);
 
             // course name cell
             var tdCourse = document.createElement('td');
-            tdCourse.textContent = item.course_name;
+            tdCourse.textContent = window.i18n ? window.i18n.translateCourse(item.course_name) : item.course_name;
             tr.appendChild(tdCourse);
 
             // teacher cell
             var tdTeacher = document.createElement('td');
             var teacherSpan = document.createElement('span');
             teacherSpan.style.cssText = 'font-weight: 600; color: var(--text-primary); display: inline-flex; align-items: center; gap: 4px;';
-            teacherSpan.textContent = item.teacher_name || 'Teacher';
+            var trTeacher = item.teacher_name ? (window.i18n ? window.i18n.translateName(item.teacher_name) : item.teacher_name) : (isAr ? 'معلم' : 'Teacher');
+            teacherSpan.textContent = trTeacher;
             tdTeacher.appendChild(teacherSpan);
             tr.appendChild(tdTeacher);
 
@@ -118,8 +120,8 @@ document.addEventListener('DOMContentLoaded', function () {
             var tdDeadline = document.createElement('td');
             if (item.deadline) {
                 var deadlineDate = new Date(item.deadline);
-                var lang = (window.i18n && window.i18n.getCurrentLanguage() === 'ar') ? 'ar-EG' : 'en-US';
-                tdDeadline.textContent = deadlineDate.toLocaleString(lang, {
+                var lang = isAr ? 'ar-EG' : 'en-US';
+                var dRes = deadlineDate.toLocaleString(lang, {
                     month: 'short',
                     day: '2-digit',
                     year: 'numeric',
@@ -127,6 +129,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     minute: '2-digit',
                     hour12: true
                 });
+                tdDeadline.textContent = (window.i18n && isAr) ? window.i18n.toArabicDigits(dRes) : dRes;
             } else {
                 var noDeadlineText = window.i18n ? window.i18n.t('teacher.no_deadline') : 'No deadline';
                 tdDeadline.innerHTML = '<span class="status-badge status-open" style="font-size: 11px;">' + noDeadlineText + '</span>';
@@ -143,7 +146,9 @@ document.addEventListener('DOMContentLoaded', function () {
             var tdGrade = document.createElement('td');
             if (item.status_key === 'graded' && item.grade !== null) {
                 var strongGrade = document.createElement('strong');
-                strongGrade.textContent = item.grade + ' / ' + item.max_grade;
+                var gV = (window.i18n && isAr) ? window.i18n.toArabicDigits(item.grade) : item.grade;
+                var gM = (window.i18n && isAr) ? window.i18n.toArabicDigits(item.max_grade) : item.max_grade;
+                strongGrade.textContent = gV + ' / ' + gM;
                 tdGrade.appendChild(strongGrade);
             } else {
                 var noGrade = document.createElement('span');
@@ -188,15 +193,21 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
 
+        var isAr = (window.i18n && window.i18n.getCurrentLanguage() === 'ar');
         var allLabel = window.i18n ? window.i18n.t('common.all') : 'All';
         var notSubmittedLabel = window.i18n ? window.i18n.t('student.stat_not_submitted') : 'Not Submitted';
         var underReviewLabel = window.i18n ? window.i18n.t('educational.statuses.under_review') : 'Under Review';
         var gradedLabel = window.i18n ? window.i18n.t('common.graded') : 'Graded';
 
-        setTabText('tab-all', allLabel + ' (' + counts.all + ')');
-        setTabText('tab-not-submitted', notSubmittedLabel + ' (' + counts.not_submitted + ')');
-        setTabText('tab-under-review', underReviewLabel + ' (' + counts.under_review + ')');
-        setTabText('tab-graded', gradedLabel + ' (' + counts.graded + ')');
+        var cAll = (window.i18n && isAr) ? window.i18n.toArabicDigits(counts.all) : counts.all;
+        var cNot = (window.i18n && isAr) ? window.i18n.toArabicDigits(counts.not_submitted) : counts.not_submitted;
+        var cRev = (window.i18n && isAr) ? window.i18n.toArabicDigits(counts.under_review) : counts.under_review;
+        var cGrd = (window.i18n && isAr) ? window.i18n.toArabicDigits(counts.graded) : counts.graded;
+
+        setTabText('tab-all', allLabel + ' (' + cAll + ')');
+        setTabText('tab-not-submitted', notSubmittedLabel + ' (' + cNot + ')');
+        setTabText('tab-under-review', underReviewLabel + ' (' + cRev + ')');
+        setTabText('tab-graded', gradedLabel + ' (' + cGrd + ')');
     }
 
     // helper to update text content of an element

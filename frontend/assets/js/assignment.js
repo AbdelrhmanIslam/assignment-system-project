@@ -36,21 +36,25 @@ document.addEventListener('DOMContentLoaded', function () {
             var submission = data.submission;
 
             // render assignment header and general details
-            document.title = assignment.title + ' - Assignment System';
+            var isAr = (window.i18n && window.i18n.getCurrentLanguage() === 'ar');
+            var translatedTitle = isAr && window.i18n ? window.i18n.translateAssignment(assignment.title) : assignment.title;
+            document.title = translatedTitle + (isAr ? ' - نظام الواجبات' : ' - Assignment System');
 
-            setElementText('assignment-title', assignment.title);
-            setElementText('course-name', assignment.course_name);
-            setElementText('teacher-name', assignment.teacher_name ? assignment.teacher_name : 'Teacher');
-            setElementText('lead-teacher-name', assignment.teacher_name ? assignment.teacher_name : 'Teacher');
+            setElementText('assignment-title', translatedTitle);
+            setElementText('course-name', isAr && window.i18n ? window.i18n.translateCourse(assignment.course_name) : assignment.course_name);
+            var teacherDisplay = assignment.teacher_name ? (isAr && window.i18n ? window.i18n.translateName(assignment.teacher_name) : assignment.teacher_name) : (isAr ? 'معلم' : 'Teacher');
+            setElementText('teacher-name', teacherDisplay);
+            setElementText('lead-teacher-name', teacherDisplay);
             var ptsLabel = window.i18n ? window.i18n.t('common.pts') : 'pts';
-            setElementText('max-grade', assignment.max_grade + ' ' + ptsLabel);
+            var maxGradeVal = isAr && window.i18n ? window.i18n.toArabicDigits(assignment.max_grade) : assignment.max_grade;
+            setElementText('max-grade', maxGradeVal + ' ' + ptsLabel);
             setElementText('target-grade-level', window.i18n ? window.i18n.translateGrade(assignment.grade_level) : (window.formatGradeLevel ? formatGradeLevel(assignment.grade_level) : (assignment.grade_level || 'Preparatory')));
-            setElementText('description-text', assignment.description);
+            setElementText('description-text', isAr && window.i18n ? window.i18n.translateDescription(assignment.description) : assignment.description);
             setElementText('allowed-extensions', assignment.allowed_extensions);
-            setElementText('max-file-size', assignment.max_file_size_mb + ' MB');
+            var maxFileSizeVal = isAr && window.i18n ? window.i18n.toArabicDigits(assignment.max_file_size_mb) : assignment.max_file_size_mb;
+            setElementText('max-file-size', maxFileSizeVal + (isAr ? ' ميجابايت' : ' MB'));
 
             // format deadline date
-            var isAr = (window.i18n && window.i18n.getCurrentLanguage() === 'ar');
             var deadlineFormatted = window.i18n ? window.i18n.t('teacher.no_deadline') : 'No deadline';
             if (assignment.deadline) {
                 var deadlineDate = new Date(assignment.deadline);
@@ -63,6 +67,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     minute: '2-digit',
                     hour12: true
                 });
+                if (isAr && window.i18n) {
+                    deadlineFormatted = window.i18n.toArabicDigits(deadlineFormatted);
+                }
             }
             setElementText('deadline', deadlineFormatted);
 
@@ -75,7 +82,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (policyElem) {
                 if (resubmissionAllowed) {
                     var allowedText = isAr ? 'مسموح به' : 'Allowed';
-                    var allowedSub = isAr ? '(يسمح بمحاولات متعددة واستثناءات 24 ساعة)' : '(Multiple attempts and 24h exceptions allowed)';
+                    var allowedSub = isAr ? '(يسمح بمحاولات متعددة واستثناءات ٢٤ ساعة)' : '(Multiple attempts and 24h exceptions allowed)';
                     policyElem.innerHTML = '<span style="color: var(--success, #10b981);">' + allowedText + '</span> <small style="display:block; font-size:11.5px; font-weight:normal; color:var(--text-muted); margin-top:2px;">' + allowedSub + '</small>';
                 } else {
                     var notAllowedText = isAr ? 'غير مسموح به' : 'Not Allowed';
@@ -86,11 +93,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
             var permittedAttemptsText = isAr ? 'محاولة واحدة' : '1 attempt';
             if (resubmissionAllowed) {
-                permittedAttemptsText = (maxAttempts === 0) ? (isAr ? 'محاولات غير محدودة' : 'Unlimited attempts') : (maxAttempts + ' ' + (isAr ? 'محاولات' : (maxAttempts === 1 ? 'attempt' : 'attempts')));
+                var maxAttemptsText = (maxAttempts === 0) ? (isAr ? 'محاولات غير محدودة' : 'Unlimited attempts') : ((isAr && window.i18n ? window.i18n.toArabicDigits(maxAttempts) : maxAttempts) + ' ' + (isAr ? 'محاولات' : (maxAttempts === 1 ? 'attempt' : 'attempts')));
+                permittedAttemptsText = maxAttemptsText;
             }
             setElementText('permitted-attempts', permittedAttemptsText);
 
-            var attemptsUsedText = attemptsCount + ' ' + (isAr ? 'من' : 'of') + ' ' + (maxAttempts === 0 ? (isAr ? 'غير محدود' : 'Unlimited') : maxAttempts);
+            var attemptsUsedCount = (isAr && window.i18n) ? window.i18n.toArabicDigits(attemptsCount) : attemptsCount;
+            var maxAttemptsDisplay = (maxAttempts === 0) ? (isAr ? 'غير محدود' : 'Unlimited') : ((isAr && window.i18n) ? window.i18n.toArabicDigits(maxAttempts) : maxAttempts);
+            var attemptsUsedText = attemptsUsedCount + ' ' + (isAr ? 'من' : 'of') + ' ' + maxAttemptsDisplay;
             if (attemptsCount > 0 && maxAttempts > 0 && attemptsCount >= maxAttempts) {
                 attemptsUsedText += isAr ? ' (تم بلوغ الحد الأقصى)' : ' (Maximum reached)';
             }
@@ -103,7 +113,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     deadlineBadge.className = 'status-badge';
                     deadlineBadge.style.background = '#f59e0b';
                     deadlineBadge.style.color = '#ffffff';
-                    deadlineBadge.textContent = isAr ? 'معاد فتحه (استثناء 24 ساعة نشط)' : 'Reopened (24h Exception Active)';
+                    deadlineBadge.textContent = isAr ? 'معاد فتحه (استثناء ٢٤ ساعة نشط)' : 'Reopened (24h Exception Active)';
                     deadlineBadge.style.display = 'inline-block';
                 } else if (data.is_past_deadline) {
                     deadlineBadge.className = 'status-badge status-closed';
@@ -150,18 +160,20 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
 
                 setElementText('submission-file-name', submission.file_name);
-                setElementText('submission-version', 'v' + submission.version);
+                setElementText('submission-version', isAr && window.i18n ? ('الإصدار ' + window.i18n.toArabicDigits(submission.version)) : ('v' + submission.version));
                 setElementText('submission-file-size', formatBytes(submission.file_size));
 
                 var submittedDate = new Date(submission.submitted_at);
-                setElementText('submission-date', submittedDate.toLocaleString('en-US', {
+                var subDateFormatted = submittedDate.toLocaleString(isAr ? 'ar-EG' : 'en-US', {
                     month: 'short',
                     day: '2-digit',
                     year: 'numeric',
                     hour: '2-digit',
                     minute: '2-digit',
                     hour12: true
-                }));
+                });
+                if (isAr && window.i18n) subDateFormatted = window.i18n.toArabicDigits(subDateFormatted);
+                setElementText('submission-date', subDateFormatted);
 
                 // render submission status badge
                 var statusBadge = document.getElementById('submission-status-badge');
@@ -179,7 +191,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             lateBadge.style.background = '#ea580c';
                             lateBadge.style.color = '#fff';
                             lateBadge.style.marginLeft = '8px';
-                            lateBadge.textContent = 'Late';
+                            lateBadge.textContent = isAr ? 'متأخر' : 'Late';
                             statusBadge.parentNode.insertBefore(lateBadge, statusBadge.nextSibling);
                         }
                     }
@@ -205,8 +217,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 var gradeCard = document.getElementById('grade-card');
                 if (submission.status === 'graded' && submission.grade !== null) {
                     if (gradeCard) gradeCard.style.display = 'block';
-                    setElementText('grade-score', submission.grade + ' / ' + assignment.max_grade);
-                    setElementText('grade-feedback', submission.feedback ? submission.feedback : 'No written feedback provided.');
+                    var subGradeDisp = isAr && window.i18n ? window.i18n.toArabicDigits(submission.grade) : submission.grade;
+                    var maxGradeDisp = isAr && window.i18n ? window.i18n.toArabicDigits(assignment.max_grade) : assignment.max_grade;
+                    setElementText('grade-score', subGradeDisp + ' / ' + maxGradeDisp);
+                    setElementText('grade-feedback', submission.feedback ? (isAr && window.i18n ? window.i18n.translateDescription(submission.feedback) : submission.feedback) : (isAr ? 'لا توجد ملاحظات مكتوبة.' : 'No written feedback provided.'));
 
                     var correctionBox = document.getElementById('correction-file-box');
                     var downloadCorrLink = document.getElementById('download-correction-link');
@@ -245,23 +259,25 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (submissionNotice) {
                     submissionNotice.style.display = 'block';
                     if (data.is_past_deadline) {
-                        if (submitBtn) submitBtn.textContent = 'Deadline Passed';
+                        if (submitBtn) submitBtn.textContent = isAr ? 'انتهى الموعد النهائي' : 'Deadline Passed';
                         submissionNotice.className = 'notice-box';
                         submissionNotice.style.background = 'rgba(239, 68, 68, 0.08)';
                         submissionNotice.style.border = '1px solid rgba(239, 68, 68, 0.3)';
                         submissionNotice.style.color = 'var(--danger, #ef4444)';
                         if (!resubmissionAllowed) {
-                            submissionNotice.innerHTML = '<strong>Submissions Closed:</strong> The deadline has passed (' + deadlineFormatted + '). Resubmissions are not allowed for this assignment.';
+                            submissionNotice.innerHTML = isAr ? ('<strong>تم إغلاق التسليم:</strong> انتهى الموعد النهائي (' + deadlineFormatted + '). إعادة التسليم غير مسموح بها لهذا الواجب.') : ('<strong>Submissions Closed:</strong> The deadline has passed (' + deadlineFormatted + '). Resubmissions are not allowed for this assignment.');
                         } else {
-                            submissionNotice.innerHTML = '<strong>Submissions Closed:</strong> The deadline has passed (' + deadlineFormatted + '). Late submissions require a 24-hour exception from your teacher.';
+                            submissionNotice.innerHTML = isAr ? ('<strong>تم إغلاق التسليم:</strong> انتهى الموعد النهائي (' + deadlineFormatted + '). التسليم المتأخر يتطلب استثناء ٢٤ ساعة من معلمك.') : ('<strong>Submissions Closed:</strong> The deadline has passed (' + deadlineFormatted + '). Late submissions require a 24-hour exception from your teacher.');
                         }
                     } else if (data.has_reached_max_attempts) {
-                        if (submitBtn) submitBtn.textContent = 'Maximum Attempts Reached';
+                        if (submitBtn) submitBtn.textContent = isAr ? 'تم استنفاد الحد الأقصى للمحاولات' : 'Maximum Attempts Reached';
                         submissionNotice.className = 'notice-box';
                         submissionNotice.style.background = 'rgba(245, 158, 11, 0.08)';
                         submissionNotice.style.border = '1px solid rgba(245, 158, 11, 0.3)';
                         submissionNotice.style.color = 'var(--warning, #d97706)';
-                        submissionNotice.innerHTML = '<strong>Maximum Attempts Reached:</strong> You have used all allowed attempts (' + attemptsCount + ' of ' + maxAttempts + '). Further submissions are closed.';
+                        var attDisplay = isAr && window.i18n ? window.i18n.toArabicDigits(attemptsCount) : attemptsCount;
+                        var maxAttDisplay = isAr && window.i18n ? window.i18n.toArabicDigits(maxAttempts) : maxAttempts;
+                        submissionNotice.innerHTML = isAr ? ('<strong>تم استنفاد الحد الأقصى للمحاولات:</strong> لقد استخدمت جميع المحاولات المسموح بها (' + attDisplay + ' من ' + maxAttDisplay + '). باب التسليم مغلق الآن.') : ('<strong>Maximum Attempts Reached:</strong> You have used all allowed attempts (' + attemptsCount + ' of ' + maxAttempts + '). Further submissions are closed.');
                     }
                 }
             } else {
@@ -280,12 +296,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 if (data.has_active_exception) {
                     var exc = data.active_exception || {};
-                    var teacherGranted = exc.teacher_name ? 'Teacher ' + exc.teacher_name : 'Your teacher';
-                    var expiresAt = exc.expires_at ? new Date(exc.expires_at).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '24 hours';
+                    var teacherGranted = exc.teacher_name ? (isAr && window.i18n ? ('المعلم ' + window.i18n.translateName(exc.teacher_name)) : ('Teacher ' + exc.teacher_name)) : (isAr ? 'معلمك' : 'Your teacher');
+                    var expiresAt = exc.expires_at ? new Date(exc.expires_at).toLocaleString(isAr ? 'ar-EG' : [], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : (isAr ? '٢٤ ساعة' : '24 hours');
+                    if (isAr && window.i18n) expiresAt = window.i18n.toArabicDigits(expiresAt);
 
-                    if (uploadTitle) uploadTitle.textContent = 'Submit Late Assignment (Reopened)';
+                    if (uploadTitle) uploadTitle.textContent = isAr ? 'تسليم الواجب المتأخر (معاد فتحه)' : 'Submit Late Assignment (Reopened)';
                     if (submitBtn) {
-                        submitBtn.textContent = 'Submit Late Assignment';
+                        submitBtn.textContent = isAr ? 'تسليم الواجب المتأخر' : 'Submit Late Assignment';
                         submitBtn.style.background = '#d97706';
                     }
 
@@ -295,16 +312,26 @@ document.addEventListener('DOMContentLoaded', function () {
                         submissionNotice.style.background = 'rgba(245, 158, 11, 0.12)';
                         submissionNotice.style.border = '1px solid rgba(245, 158, 11, 0.4)';
                         submissionNotice.style.color = '#92400e';
-                        var notesSnippet = exc.notes ? ('<div style="margin-top: 6px; font-size: 13px; font-style: italic; color: #78350f;"><strong>Teacher Note:</strong> "' + exc.notes + '"</div>') : '';
-                        submissionNotice.innerHTML = '<div style="font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">' +
+                        var excNoteText = exc.notes ? (isAr && window.i18n ? window.i18n.translateDescription(exc.notes) : exc.notes) : '';
+                        var notesSnippet = excNoteText ? ('<div style="margin-top: 6px; font-size: 13px; font-style: italic; color: #78350f;"><strong>' + (isAr ? 'ملاحظة المعلم:' : 'Teacher Note:') + '</strong> "' + excNoteText + '"</div>') : '';
+                        submissionNotice.innerHTML = isAr ? (
+                            '<div style="font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">' +
+                            '<span>&#9888;&#65039; فترة تسليم متأخر لمدة ٢٤ ساعة نشطة</span></div>' +
+                            '<div>قام ' + teacherGranted + ' بإعادة فتح هذا الواجب لك. لديك <strong>محاولة واحدة</strong> حتى <strong>' + expiresAt + '</strong>. سيتم تمييز هذا التسليم بأنه <strong>متأخر</strong> أثناء التصحيح.</div>' + notesSnippet
+                        ) : (
+                            '<div style="font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">' +
                             '<span>&#9888;&#65039; 24-Hour Late Submission Window Active</span></div>' +
-                            '<div>' + teacherGranted + ' has reopened this assignment for you. You have <strong>1 attempt</strong> until <strong>' + expiresAt + '</strong>. This submission will be labeled as <strong>Late</strong> during grading.</div>' + notesSnippet;
+                            '<div>' + teacherGranted + ' has reopened this assignment for you. You have <strong>1 attempt</strong> until <strong>' + expiresAt + '</strong>. This submission will be labeled as <strong>Late</strong> during grading.</div>' + notesSnippet
+                        );
                     }
                 } else if (submission) {
                     var nextAttempt = attemptsCount + 1;
-                    var totalAttemptsLabel = (maxAttempts === 0) ? 'Unlimited' : maxAttempts;
-                    if (uploadTitle) uploadTitle.textContent = 'Submit New Version (Attempt ' + nextAttempt + ' of ' + totalAttemptsLabel + ')';
-                    if (submitBtn) submitBtn.textContent = 'Submit Version ' + nextAttempt;
+                    var totalAttemptsLabel = (maxAttempts === 0) ? (isAr ? 'غير محدود' : 'Unlimited') : maxAttempts;
+                    var nextAttDisp = isAr && window.i18n ? window.i18n.toArabicDigits(nextAttempt) : nextAttempt;
+                    var totalAttDisp = (maxAttempts === 0) ? (isAr ? 'غير محدود' : 'Unlimited') : (isAr && window.i18n ? window.i18n.toArabicDigits(totalAttemptsLabel) : totalAttemptsLabel);
+
+                    if (uploadTitle) uploadTitle.textContent = isAr ? ('تسليم إصدار جديد (المحاولة ' + nextAttDisp + ' من ' + totalAttDisp + ')') : ('Submit New Version (Attempt ' + nextAttempt + ' of ' + totalAttemptsLabel + ')');
+                    if (submitBtn) submitBtn.textContent = isAr ? ('تسليم الإصدار ' + nextAttDisp) : ('Submit Version ' + nextAttempt);
 
                     if (submissionNotice) {
                         submissionNotice.className = 'notice-box';
@@ -312,11 +339,12 @@ document.addEventListener('DOMContentLoaded', function () {
                         submissionNotice.style.background = 'rgba(0, 121, 121, 0.08)';
                         submissionNotice.style.border = '1px solid rgba(0, 121, 121, 0.25)';
                         submissionNotice.style.color = 'var(--primary, #007979)';
-                        submissionNotice.innerHTML = 'You have used <strong>' + attemptsCount + '</strong> of <strong>' + totalAttemptsLabel + '</strong> attempts. Submitting a new file will replace your previous version.';
+                        var curAttDisp = isAr && window.i18n ? window.i18n.toArabicDigits(attemptsCount) : attemptsCount;
+                        submissionNotice.innerHTML = isAr ? ('لقد استخدمت <strong>' + curAttDisp + '</strong> من <strong>' + totalAttDisp + '</strong> محاولات. رفع ملف جديد سيستبدل نسختك السابقة.') : ('You have used <strong>' + attemptsCount + '</strong> of <strong>' + totalAttemptsLabel + '</strong> attempts. Submitting a new file will replace your previous version.');
                     }
                 } else {
-                    if (uploadTitle) uploadTitle.textContent = 'Submit Assignment';
-                    if (submitBtn) submitBtn.textContent = 'Submit Assignment';
+                    if (uploadTitle) uploadTitle.textContent = isAr ? 'تسليم الواجب' : 'Submit Assignment';
+                    if (submitBtn) submitBtn.textContent = isAr ? 'تسليم الواجب' : 'Submit Assignment';
 
                     if (submissionNotice) {
                         submissionNotice.className = 'notice-box';
@@ -325,9 +353,10 @@ document.addEventListener('DOMContentLoaded', function () {
                         submissionNotice.style.border = '1px solid rgba(0, 121, 121, 0.25)';
                         submissionNotice.style.color = 'var(--primary, #007979)';
                         if (maxAttempts === 1) {
-                            submissionNotice.innerHTML = '<strong>Single submission:</strong> You have 1 attempt to submit this assignment.';
+                            submissionNotice.innerHTML = isAr ? '<strong>تسليم لمرة واحدة:</strong> لديك محاولة واحدة فقط لتسليم هذا الواجب.' : '<strong>Single submission:</strong> You have 1 attempt to submit this assignment.';
                         } else {
-                            submissionNotice.innerHTML = 'You have <strong>' + (maxAttempts === 0 ? 'Unlimited' : maxAttempts) + '</strong> attempts for this assignment.';
+                            var totalAttText = (maxAttempts === 0) ? (isAr ? 'غير محدود' : 'Unlimited') : (isAr && window.i18n ? window.i18n.toArabicDigits(maxAttempts) : maxAttempts);
+                            submissionNotice.innerHTML = isAr ? ('لديك <strong>' + totalAttText + '</strong> محاولات لهذا الواجب.') : ('You have <strong>' + (maxAttempts === 0 ? 'Unlimited' : maxAttempts) + '</strong> attempts for this assignment.');
                         }
                     }
                 }
@@ -339,7 +368,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 submissionForm.addEventListener('submit', function (e) {
                     if (!data.can_submit) {
                         e.preventDefault();
-                        alert('Submissions for this assignment are closed.');
+                        alert(isAr ? 'باب التسليم لهذا الواجب مغلق.' : 'Submissions for this assignment are closed.');
                         return false;
                     }
                 });
@@ -347,7 +376,8 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .catch(function (err) {
             console.error('Error:', err);
-            showErrorMessage('An unexpected error occurred while loading assignment data.');
+            var isAr = (window.i18n && window.i18n.getCurrentLanguage() === 'ar');
+            showErrorMessage(isAr ? 'حدث خطأ غير متوقع أثناء تحميل بيانات الواجب.' : 'An unexpected error occurred while loading assignment data.');
         });
 });
 
@@ -371,23 +401,32 @@ function showErrorMessage(msg) {
 
 // format bytes into human readable format
 function formatBytes(bytes) {
-    if (!bytes || bytes === 0) return '0 B';
+    var isAr = (window.i18n && window.i18n.getCurrentLanguage() === 'ar');
+    if (!bytes || bytes === 0) return isAr ? ('٠ بايت') : '0 B';
     var k = 1024;
-    var sizes = ['B', 'KB', 'MB', 'GB'];
+    var sizes = isAr ? ['بايت', 'كيلوبايت', 'ميجابايت', 'جيجابايت'] : ['B', 'KB', 'MB', 'GB'];
     var i = Math.floor(Math.log(bytes) / Math.log(k));
-    return (bytes / Math.pow(k, i)).toFixed(1) + ' ' + sizes[i];
+    var val = (bytes / Math.pow(k, i)).toFixed(1);
+    if (isAr && window.i18n) val = window.i18n.toArabicDigits(val);
+    return val + ' ' + sizes[i];
 }
 
 // helper function to resolve assignment status info
 function getAssignmentStatusInfo(submission) {
     var status = submission.status;
+    var isAr = (window.i18n && window.i18n.getCurrentLanguage() === 'ar');
     if (status === 'submitted') {
-        return { label: 'Submitted', className: 'status-submitted' };
+        return { label: isAr ? 'تم التسليم' : 'Submitted', className: 'status-submitted' };
     } else if (status === 'under_review' || status === 'pending_teacher' || status === 'recheck') {
-        return { label: 'Under Review', className: 'status-review' };
+        return { label: isAr ? 'قيد المراجعة' : 'Under Review', className: 'status-review' };
     } else if (status === 'graded') {
-        return { label: 'Graded', className: 'status-graded' };
+        return { label: isAr ? 'تم التصحيح' : 'Graded', className: 'status-graded' };
     } else {
-        return { label: 'Submitted', className: 'status-submitted' };
+        return { label: isAr ? 'تم التسليم' : 'Submitted', className: 'status-submitted' };
     }
 }
+
+window.addEventListener('languageChanged', function () {
+    var evt = new Event('DOMContentLoaded');
+    document.dispatchEvent(evt);
+});

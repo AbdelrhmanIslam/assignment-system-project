@@ -38,13 +38,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
             allSubmissions = data.submissions || [];
 
+            var isAr = window.i18n && window.i18n.getCurrentLanguage() === 'ar';
+
             // populate student filter dropdown
             if (studentSelect && data.students) {
-                studentSelect.innerHTML = '<option value="all">All Students</option>';
+                studentSelect.innerHTML = isAr ? '<option value="all">جميع الطلاب</option>' : '<option value="all">All Students</option>';
                 data.students.forEach(function (st) {
                     var opt = document.createElement('option');
                     opt.value = st.id;
-                    opt.textContent = st.name;
+                    opt.textContent = isAr && window.i18n ? window.i18n.translateName(st.name) : st.name;
                     if (studentFilterId && String(st.id) === String(studentFilterId)) {
                         opt.selected = true;
                     }
@@ -88,6 +90,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // render table rows
     function renderTable() {
         if (!tbody) return;
+        var isAr = window.i18n && window.i18n.getCurrentLanguage() === 'ar';
 
         var filtered = allSubmissions.filter(function (item) {
             if (selectedStudent !== 'all' && selectedStudent !== '' && selectedStudent !== null) {
@@ -127,29 +130,35 @@ document.addEventListener('DOMContentLoaded', function () {
             var sub = filtered[k];
             var tr = document.createElement('tr');
 
+            var sNameTr = isAr && window.i18n ? window.i18n.translateName(sub.student_name) : sub.student_name;
+            var aTitleTr = isAr && window.i18n ? window.i18n.translateAssignment(sub.assignment_title) : sub.assignment_title;
+            var cNameTr = isAr && window.i18n ? window.i18n.translateCourse(sub.course_name) : sub.course_name;
+
             var tdStudent = document.createElement('td');
-            tdStudent.innerHTML = '<strong>' + escapeHtml(sub.student_name) + '</strong><br><small style="color: var(--text-muted);">' + escapeHtml(sub.student_email) + '</small>';
+            tdStudent.innerHTML = '<strong>' + escapeHtml(sNameTr) + '</strong><br><small style="color: var(--text-muted);">' + escapeHtml(sub.student_email) + '</small>';
             tr.appendChild(tdStudent);
 
             var tdAssignment = document.createElement('td');
-            tdAssignment.textContent = sub.assignment_title;
+            tdAssignment.textContent = aTitleTr;
             tr.appendChild(tdAssignment);
 
             // course name cell
             var tdCourse = document.createElement('td');
-            tdCourse.textContent = sub.course_name;
+            tdCourse.textContent = cNameTr;
             tr.appendChild(tdCourse);
 
             // submitted date & version cell
             var tdDate = document.createElement('td');
             var subDate = new Date(sub.submitted_at);
-            var dateStr = subDate.toLocaleDateString('en-US', {
+            var dateStr = subDate.toLocaleDateString(isAr ? 'ar-EG' : 'en-US', {
                 month: 'short',
                 day: 'numeric',
                 hour: '2-digit',
                 minute: '2-digit'
             });
-            tdDate.innerHTML = dateStr + ' <span class="status-badge" style="background: var(--glass-bg-elevated); color: var(--text-secondary); border: 1px solid var(--glass-border); font-size: 11px;">v' + sub.version + '</span>';
+            if (isAr && window.i18n) dateStr = window.i18n.toArabicDigits(dateStr);
+            var verBadge = isAr ? ('الإصدار ' + (window.i18n ? window.i18n.toArabicDigits(sub.version) : sub.version)) : ('v' + sub.version);
+            tdDate.innerHTML = dateStr + ' <span class="status-badge" style="background: var(--glass-bg-elevated); color: var(--text-secondary); border: 1px solid var(--glass-border); font-size: 11px;">' + verBadge + '</span>';
             tr.appendChild(tdDate);
 
             var tdStatus = document.createElement('td');
@@ -166,7 +175,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 lateBadge.style.color = '#ffffff';
                 lateBadge.style.marginLeft = '6px';
                 lateBadge.style.fontSize = '11px';
-                lateBadge.textContent = 'Late';
+                lateBadge.textContent = isAr ? 'متأخر' : 'Late';
                 tdStatus.appendChild(lateBadge);
             }
 
@@ -174,7 +183,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
             var tdGrade = document.createElement('td');
             if (sub.status === 'graded' && sub.grade !== null) {
-                tdGrade.innerHTML = '<strong style="color: var(--success);">' + sub.grade + ' / ' + sub.max_grade + '</strong>';
+                var gVal = isAr && window.i18n ? window.i18n.toArabicDigits(sub.grade) : sub.grade;
+                var mgVal = isAr && window.i18n ? window.i18n.toArabicDigits(sub.max_grade) : sub.max_grade;
+                tdGrade.innerHTML = '<strong style="color: var(--success);">' + gVal + ' / ' + mgVal + '</strong>';
             } else {
                 tdGrade.textContent = '—';
             }
@@ -184,7 +195,7 @@ document.addEventListener('DOMContentLoaded', function () {
             var actionBtn = document.createElement('a');
             actionBtn.href = 'review.html?id=' + sub.id;
             actionBtn.className = 'action-btn ' + (sub.status === 'graded' ? 'action-view' : (sub.status === 'pending_teacher' ? 'action-submit' : 'action-review'));
-            actionBtn.textContent = (sub.status === 'graded') ? 'View Result' : 'Review';
+            actionBtn.textContent = (sub.status === 'graded') ? (isAr ? 'عرض النتيجة' : 'View Result') : (isAr ? 'مراجعة' : 'Review');
             tdAction.appendChild(actionBtn);
             tr.appendChild(tdAction);
 
@@ -194,6 +205,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // update count labels on tabs
     function updateTabCounts() {
+        var isAr = window.i18n && window.i18n.getCurrentLanguage() === 'ar';
         var total = allSubmissions.length;
         var pending = 0;
         var graded = 0;
@@ -207,9 +219,13 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
 
-        setTabText('tab-all', 'All (' + total + ')');
-        setTabText('tab-pending', 'Pending Review (' + pending + ')');
-        setTabText('tab-graded', 'Graded (' + graded + ')');
+        var totDisp = isAr && window.i18n ? window.i18n.toArabicDigits(total) : total;
+        var penDisp = isAr && window.i18n ? window.i18n.toArabicDigits(pending) : pending;
+        var grdDisp = isAr && window.i18n ? window.i18n.toArabicDigits(graded) : graded;
+
+        setTabText('tab-all', isAr ? ('الكل (' + totDisp + ')') : ('All (' + total + ')'));
+        setTabText('tab-pending', isAr ? ('قيد المراجعة (' + penDisp + ')') : ('Pending Review (' + pending + ')'));
+        setTabText('tab-graded', isAr ? ('تم التصحيح (' + grdDisp + ')') : ('Graded (' + graded + ')'));
     }
 
     function setTabText(id, text) {
@@ -236,4 +252,9 @@ document.addEventListener('DOMContentLoaded', function () {
         div.textContent = str;
         return div.innerHTML;
     }
+
+    window.addEventListener('languageChanged', function () {
+        updateTabCounts();
+        renderTable();
+    });
 });

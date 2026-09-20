@@ -116,7 +116,7 @@ function updateStudentInfo(student) {
   var studentGradeBadge = document.getElementById("student-grade-badge");
 
   if (studentName) {
-    studentName.textContent = student.name;
+    studentName.textContent = window.i18n ? window.i18n.translateName(student.name) : student.name;
   }
 
   if (studentEmail) {
@@ -130,25 +130,26 @@ function updateStudentInfo(student) {
 }
 
 function updateStatistics(stats) {
+  var isAr = (window.i18n && window.i18n.getCurrentLanguage() === 'ar');
   var totalAssignments = document.getElementById("total-assignments");
   var notSubmitted = document.getElementById("not-submitted");
   var underReview = document.getElementById("under-review");
   var graded = document.getElementById("graded");
 
   if (totalAssignments) {
-    totalAssignments.textContent = stats.total;
+    totalAssignments.textContent = (window.i18n && isAr) ? window.i18n.toArabicDigits(stats.total) : stats.total;
   }
 
   if (notSubmitted) {
-    notSubmitted.textContent = stats.not_submitted;
+    notSubmitted.textContent = (window.i18n && isAr) ? window.i18n.toArabicDigits(stats.not_submitted) : stats.not_submitted;
   }
 
   if (underReview) {
-    underReview.textContent = stats.under_review;
+    underReview.textContent = (window.i18n && isAr) ? window.i18n.toArabicDigits(stats.under_review) : stats.under_review;
   }
 
   if (graded) {
-    graded.textContent = stats.graded;
+    graded.textContent = (window.i18n && isAr) ? window.i18n.toArabicDigits(stats.graded) : stats.graded;
   }
 }
 
@@ -188,23 +189,25 @@ function updateAssignments(assignments) {
 
   tableBody.innerHTML = "";
 
+  var isAr = (window.i18n && window.i18n.getCurrentLanguage() === 'ar');
   assignments.forEach(function (assignment) {
     var row = document.createElement("tr");
 
     var assignmentCell = document.createElement("td");
     var assignmentTitle = document.createElement("strong");
 
-    assignmentTitle.textContent = assignment.title;
+    assignmentTitle.textContent = window.i18n ? window.i18n.translateAssignment(assignment.title) : assignment.title;
 
     assignmentCell.appendChild(assignmentTitle);
 
     var courseCell = document.createElement("td");
-    courseCell.textContent = assignment.course_name;
+    courseCell.textContent = window.i18n ? window.i18n.translateCourse(assignment.course_name) : assignment.course_name;
 
     var teacherCell = document.createElement("td");
     var teacherBadge = document.createElement("span");
     teacherBadge.style.cssText = "font-weight: 600; color: var(--text-primary); display: inline-flex; align-items: center; gap: 4px;";
-    teacherBadge.textContent = assignment.teacher_name || "Teacher";
+    var trTeacher = assignment.teacher_name ? (window.i18n ? window.i18n.translateName(assignment.teacher_name) : assignment.teacher_name) : (isAr ? "معلم" : "Teacher");
+    teacherBadge.textContent = trTeacher;
     teacherCell.appendChild(teacherBadge);
 
     var deadlineCell = document.createElement("td");
@@ -224,7 +227,9 @@ function updateAssignments(assignments) {
     var gradeCell = document.createElement("td");
 
     if (assignment.display_status === "graded" && assignment.grade !== null) {
-      gradeCell.textContent = assignment.grade + " / " + assignment.max_grade;
+      var gVal = (window.i18n && isAr) ? window.i18n.toArabicDigits(assignment.grade) : assignment.grade;
+      var gMax = (window.i18n && isAr) ? window.i18n.toArabicDigits(assignment.max_grade) : assignment.max_grade;
+      gradeCell.textContent = gVal + " / " + gMax;
     } else {
       gradeCell.textContent = "—";
     }
@@ -352,14 +357,16 @@ function formatDate(dateString) {
     return dateString;
   }
 
-  var lang = (window.i18n && window.i18n.getCurrentLanguage() === 'ar') ? 'ar-EG' : 'en-US';
-  return date.toLocaleString(lang, {
+  var isAr = (window.i18n && window.i18n.getCurrentLanguage() === 'ar');
+  var lang = isAr ? 'ar-EG' : 'en-US';
+  var res = date.toLocaleString(lang, {
     year: "numeric",
     month: "short",
     day: "numeric",
     hour: "numeric",
     minute: "2-digit",
   });
+  return (window.i18n && isAr) ? window.i18n.toArabicDigits(res) : res;
 }
 
 function showDashboardError(message) {

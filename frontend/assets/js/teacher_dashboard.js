@@ -28,20 +28,29 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
+            var isAr = window.i18n && window.i18n.getCurrentLanguage() === 'ar';
+
             // populate teacher name
             var nameElem = document.getElementById('teacher-name');
             if (nameElem && data.teacher) {
-                nameElem.textContent = data.teacher.name;
+                nameElem.textContent = isAr && window.i18n ? window.i18n.translateName(data.teacher.name) : data.teacher.name;
             }
 
             // populate statistics cards
             if (data.stats) {
-                setElementText('stat-courses', data.stats.courses || 0);
-                setElementText('stat-students', data.stats.total_students || 0);
-                setElementText('stat-assignments', data.stats.assignments || 0);
-                setElementText('stat-assistants', data.stats.assistants !== undefined ? data.stats.assistants : (data.assistants ? data.assistants.length : 0));
-                setElementText('stat-pending', data.stats.pending_review || 0);
-                setElementText('stat-graded', data.stats.graded || 0);
+                var cCount = data.stats.courses || 0;
+                var stCount = data.stats.total_students || 0;
+                var aCount = data.stats.assignments || 0;
+                var asstCount = data.stats.assistants !== undefined ? data.stats.assistants : (data.assistants ? data.assistants.length : 0);
+                var pCount = data.stats.pending_review || 0;
+                var gCount = data.stats.graded || 0;
+
+                setElementText('stat-courses', isAr && window.i18n ? window.i18n.toArabicDigits(cCount) : cCount);
+                setElementText('stat-students', isAr && window.i18n ? window.i18n.toArabicDigits(stCount) : stCount);
+                setElementText('stat-assignments', isAr && window.i18n ? window.i18n.toArabicDigits(aCount) : aCount);
+                setElementText('stat-assistants', isAr && window.i18n ? window.i18n.toArabicDigits(asstCount) : asstCount);
+                setElementText('stat-pending', isAr && window.i18n ? window.i18n.toArabicDigits(pCount) : pCount);
+                setElementText('stat-graded', isAr && window.i18n ? window.i18n.toArabicDigits(gCount) : gCount);
             }
 
             // populate teaching assistants section
@@ -64,26 +73,28 @@ document.addEventListener('DOMContentLoaded', function () {
 
                         var tdStudent = document.createElement('td');
                         var strongStudent = document.createElement('strong');
-                        strongStudent.textContent = item.student_name;
+                        strongStudent.textContent = isAr && window.i18n ? window.i18n.translateName(item.student_name) : item.student_name;
                         tdStudent.appendChild(strongStudent);
                         tr.appendChild(tdStudent);
 
                         var tdAssignment = document.createElement('td');
-                        tdAssignment.textContent = item.assignment_title;
+                        tdAssignment.textContent = isAr && window.i18n ? window.i18n.translateAssignment(item.assignment_title) : item.assignment_title;
                         tr.appendChild(tdAssignment);
 
                         var tdCourse = document.createElement('td');
-                        tdCourse.textContent = item.course_name;
+                        tdCourse.textContent = isAr && window.i18n ? window.i18n.translateCourse(item.course_name) : item.course_name;
                         tr.appendChild(tdCourse);
 
                         var tdDate = document.createElement('td');
                         var dateObj = new Date(item.submitted_at);
-                        tdDate.textContent = dateObj.toLocaleDateString('en-US', {
+                        var dateStr = dateObj.toLocaleDateString(isAr ? 'ar-EG' : 'en-US', {
                             month: 'short',
                             day: 'numeric',
                             hour: '2-digit',
                             minute: '2-digit'
                         });
+                        if (isAr && window.i18n) dateStr = window.i18n.toArabicDigits(dateStr);
+                        tdDate.textContent = dateStr;
                         tr.appendChild(tdDate);
 
                         var tdStatus = document.createElement('td');
@@ -96,7 +107,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
                         var tdGrade = document.createElement('td');
                         if (item.status === 'graded' && item.grade !== null) {
-                            tdGrade.textContent = item.grade + ' / ' + item.max_grade;
+                            var gVal = isAr && window.i18n ? window.i18n.toArabicDigits(item.grade) : item.grade;
+                            var mgVal = isAr && window.i18n ? window.i18n.toArabicDigits(item.max_grade) : item.max_grade;
+                            tdGrade.textContent = gVal + ' / ' + mgVal;
                         } else {
                             tdGrade.textContent = '—';
                         }
@@ -106,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         var reviewLink = document.createElement('a');
                         reviewLink.href = 'review.html?id=' + item.id;
                         reviewLink.className = 'action-btn action-review';
-                        reviewLink.textContent = (item.status === 'graded') ? 'View / Edit' : 'Review & Grade';
+                        reviewLink.textContent = (item.status === 'graded') ? (isAr ? 'عرض / تعديل' : 'View / Edit') : (isAr ? 'مراجعة وتصحيح' : 'Review & Grade');
                         tdAction.appendChild(reviewLink);
                         tr.appendChild(tdAction);
 
@@ -126,11 +139,16 @@ document.addEventListener('DOMContentLoaded', function () {
                     var c = data.courses[j];
                     var cCard = document.createElement('div');
                     cCard.className = 'stat-card';
-                    cCard.innerHTML = '<strong style="font-size: 16px; color: #111827; display: block; margin-bottom: 6px;">' + escapeHtml(c.name) + '</strong>' +
-                                      '<span class="stat-label">' + (c.description ? escapeHtml(c.description) : 'No description') + '</span>' +
-                                      '<div style="display: flex; gap: 15px; margin-top: 12px; font-size: 13px; color: #4b5563;">' +
-                                      '<span><strong>' + c.student_count + '</strong> Students</span>' +
-                                      '<span><strong>' + c.assignment_count + '</strong> Assignments</span>' +
+                    var cNameTr = isAr && window.i18n ? window.i18n.translateCourse(c.name) : c.name;
+                    var cDescTr = c.description ? (isAr && window.i18n ? window.i18n.translateDescription(c.description) : c.description) : (isAr ? 'لا يوجد وصف' : 'No description');
+                    var cStudTr = (isAr && window.i18n ? window.i18n.toArabicDigits(c.student_count) : c.student_count) + ' ' + (isAr ? 'طالب' : 'Students');
+                    var cAssignTr = (isAr && window.i18n ? window.i18n.toArabicDigits(c.assignment_count) : c.assignment_count) + ' ' + (isAr ? 'واجب' : 'Assignments');
+
+                    cCard.innerHTML = '<strong style="font-size: 16px; color: var(--text-primary); display: block; margin-bottom: 6px;">' + escapeHtml(cNameTr) + '</strong>' +
+                                      '<span class="stat-label">' + escapeHtml(cDescTr) + '</span>' +
+                                      '<div style="display: flex; gap: 15px; margin-top: 12px; font-size: 13px; color: var(--text-muted);">' +
+                                      '<span><strong>' + cStudTr + '</strong></span>' +
+                                      '<span><strong>' + cAssignTr + '</strong></span>' +
                                       '</div>';
                     coursesContainer.appendChild(cCard);
                 }
@@ -175,7 +193,7 @@ function renderTeachingAssistants(assistants) {
 
         var name = document.createElement('strong');
         name.style.cssText = 'display: block; font-size: 15px; color: var(--text-primary); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;';
-        name.textContent = ast.name;
+        name.textContent = isAr && window.i18n ? window.i18n.translateName(ast.name) : ast.name;
 
         var email = document.createElement('span');
         email.style.cssText = 'display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;';
@@ -187,12 +205,13 @@ function renderTeachingAssistants(assistants) {
         var roleBadge = document.createElement('span');
         roleBadge.className = 'status-badge status-review';
         roleBadge.style.cssText = 'font-size: 11px; padding: 2px 8px;';
-        roleBadge.textContent = 'Teaching Assistant';
+        roleBadge.textContent = isAr ? 'معيد' : 'Teaching Assistant';
 
         var markedBadge = document.createElement('span');
         markedBadge.className = 'status-badge status-graded';
         markedBadge.style.cssText = 'font-size: 11px; padding: 2px 8px;';
-        markedBadge.textContent = 'Graded: ' + (ast.graded_count || 0);
+        var gAstCount = isAr && window.i18n ? window.i18n.toArabicDigits(ast.graded_count || 0) : (ast.graded_count || 0);
+        markedBadge.textContent = isAr ? ('تم التصحيح: ' + gAstCount) : ('Graded: ' + (ast.graded_count || 0));
 
         badgeRow.appendChild(roleBadge);
         badgeRow.appendChild(markedBadge);
@@ -215,7 +234,7 @@ function renderTeachingAssistants(assistants) {
         historyBtn.setAttribute('data-name', ast.name);
         historyBtn.setAttribute('data-email', ast.email);
         historyBtn.style.cssText = 'border: none; cursor: pointer; font-size: 12px; padding: 6px 12px; background: var(--role-teacher); color: #ffffff; border-radius: 6px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;';
-        historyBtn.textContent = 'History';
+        historyBtn.textContent = isAr ? 'السجل' : 'History';
 
         actionCol.appendChild(historyBtn);
 
@@ -275,21 +294,30 @@ function renderEnrolledStudents(list) {
 
     if (!tbody) return;
     tbody.innerHTML = '';
+    var isAr = window.i18n && window.i18n.getCurrentLanguage() === 'ar';
 
     list.forEach(function (st) {
         var tr = document.createElement('tr');
+        var stMarked = isAr && window.i18n ? window.i18n.toArabicDigits(st.marked_count) : st.marked_count;
         var markedBadge = (st.marked_count > 0)
-            ? '<span class="status-badge status-graded" style="font-size:11px;">' + st.marked_count + ' Graded</span>'
-            : '<span class="status-badge" style="font-size:11px; background:var(--glass-bg-elevated); color:var(--text-muted); border:1px solid var(--glass-border);">0 Graded</span>';
+            ? '<span class="status-badge status-graded" style="font-size:11px;">' + (isAr ? (stMarked + ' مصحح') : (st.marked_count + ' Graded')) + '</span>'
+            : '<span class="status-badge" style="font-size:11px; background:var(--glass-bg-elevated); color:var(--text-muted); border:1px solid var(--glass-border);">' + (isAr ? '٠ مصحح' : '0 Graded') + '</span>';
+
+        var stNameTr = isAr && window.i18n ? window.i18n.translateName(st.name) : st.name;
+        var stGradeTr = isAr && window.i18n ? window.i18n.translateGrade(st.grade_level) : formatGradeLevel(st.grade_level);
+        var stCoursesTr = isAr && window.i18n ? window.i18n.translateCourse(st.enrolled_courses) : st.enrolled_courses;
+        var stSubCount = isAr && window.i18n ? window.i18n.toArabicDigits(st.submission_count) : st.submission_count;
+        var subBadge = '<span class="status-badge status-submitted" style="font-size:11px;">' + (isAr ? (stSubCount + ' تسليم') : (st.submission_count + (st.submission_count === 1 ? ' submission' : ' submissions'))) + '</span>';
+        var histText = isAr ? 'السجل' : 'History';
 
         tr.innerHTML =
-            '<td><strong>' + escapeHtml(st.name) + '</strong></td>' +
+            '<td><strong>' + escapeHtml(stNameTr) + '</strong></td>' +
             '<td>' + escapeHtml(st.email) + '</td>' +
-            '<td><span class="status-badge status-review" style="font-size:11px;">' + escapeHtml(formatGradeLevel(st.grade_level)) + '</span></td>' +
-            '<td>' + escapeHtml(st.enrolled_courses) + '</td>' +
-            '<td><span class="status-badge status-submitted" style="font-size:11px;">' + st.submission_count + (st.submission_count === 1 ? ' submission' : ' submissions') + '</span></td>' +
+            '<td><span class="status-badge status-review" style="font-size:11px;">' + escapeHtml(stGradeTr) + '</span></td>' +
+            '<td>' + escapeHtml(stCoursesTr) + '</td>' +
+            '<td>' + subBadge + '</td>' +
             '<td>' + markedBadge + '</td>' +
-            '<td><button type="button" class="action-btn action-review btn-student-history" data-id="' + st.id + '" data-name="' + escapeHtml(st.name) + '" data-email="' + escapeHtml(st.email) + '" data-grade="' + escapeHtml(st.grade_level) + '" style="border:none; cursor:pointer; font-size:12px; padding:5px 10px;">History</button></td>';
+            '<td><button type="button" class="action-btn action-review btn-student-history" data-id="' + st.id + '" data-name="' + escapeHtml(st.name) + '" data-email="' + escapeHtml(st.email) + '" data-grade="' + escapeHtml(st.grade_level) + '" style="border:none; cursor:pointer; font-size:12px; padding:5px 10px;">' + histText + '</button></td>';
         tbody.appendChild(tr);
     });
 
@@ -314,14 +342,15 @@ function openStudentHistoryModal(studentId, name, email, grade) {
     var modal = document.getElementById('student-history-modal');
     if (!modal) return;
 
+    var isAr = window.i18n && window.i18n.getCurrentLanguage() === 'ar';
     var nameEl = document.getElementById('modal-student-name');
     var emailEl = document.getElementById('modal-student-email');
     var gradeEl = document.getElementById('modal-student-grade');
     var subLink = document.getElementById('modal-full-queue-link');
 
-    if (nameEl) nameEl.textContent = name;
+    if (nameEl) nameEl.textContent = isAr && window.i18n ? window.i18n.translateName(name) : name;
     if (emailEl) emailEl.textContent = email;
-    if (gradeEl) gradeEl.textContent = formatGradeLevel(grade);
+    if (gradeEl) gradeEl.textContent = isAr && window.i18n ? window.i18n.translateGrade(grade) : formatGradeLevel(grade);
     if (subLink) subLink.href = 'submissions.html?student_id=' + studentId;
 
     var loadingEl = document.getElementById('modal-history-loading');
@@ -358,16 +387,16 @@ function openStudentHistoryModal(studentId, name, email, grade) {
                 }
             });
 
-            setElementText('modal-count-all', countAll);
-            setElementText('modal-count-marked', countMarked);
-            setElementText('modal-count-pending', countPending);
+            setElementText('modal-count-all', isAr && window.i18n ? window.i18n.toArabicDigits(countAll) : countAll);
+            setElementText('modal-count-marked', isAr && window.i18n ? window.i18n.toArabicDigits(countMarked) : countMarked);
+            setElementText('modal-count-pending', isAr && window.i18n ? window.i18n.toArabicDigits(countPending) : countPending);
 
             renderModalHistoryRows(currentModalFilter);
         })
         .catch(function (err) {
             if (loadingEl) loadingEl.style.display = 'none';
             if (emptyEl) {
-                emptyEl.innerHTML = '<p style="color:#ef4444;">Unable to load submissions for this student.</p>';
+                emptyEl.innerHTML = isAr ? '<p style="color:#ef4444;">تعذر تحميل تسليمات هذا الطالب.</p>' : '<p style="color:#ef4444;">Unable to load submissions for this student.</p>';
                 emptyEl.style.display = 'block';
             }
         });
@@ -378,6 +407,8 @@ function renderModalHistoryRows(filter) {
     var tableCont = document.getElementById('modal-history-table-container');
     var tableBody = document.getElementById('modal-history-table-body');
     if (!tableBody) return;
+
+    var isAr = window.i18n && window.i18n.getCurrentLanguage() === 'ar';
 
     var filtered = currentModalSubmissions.filter(function (sub) {
         if (filter === 'marked') return sub.status === 'graded';
@@ -391,7 +422,7 @@ function renderModalHistoryRows(filter) {
         if (tableCont) tableCont.style.display = 'none';
         if (emptyEl) {
             emptyEl.style.display = 'block';
-            emptyEl.innerHTML = '<h3 style="font-size: 16px; color: #334155; margin-bottom: 6px;">No Matching Submissions</h3><p style="font-size: 13px; color: #64748b; margin: 0;">No submissions match the selected filter.</p>';
+            emptyEl.innerHTML = isAr ? '<h3 style="font-size: 16px; color: #334155; margin-bottom: 6px;">لا توجد تسليمات مطابقة</h3><p style="font-size: 13px; color: #64748b; margin: 0;">لا توجد تسليمات تطابق التصفية المحددة.</p>' : '<h3 style="font-size: 16px; color: #334155; margin-bottom: 6px;">No Matching Submissions</h3><p style="font-size: 13px; color: #64748b; margin: 0;">No submissions match the selected filter.</p>';
         }
         return;
     }
@@ -403,37 +434,45 @@ function renderModalHistoryRows(filter) {
         var tr = document.createElement('tr');
         var statusInfo = getStatusInfo(sub.status);
         var dateObj = new Date(sub.submitted_at);
-        var dateStr = dateObj.toLocaleDateString('en-US', {
+        var dateStr = dateObj.toLocaleDateString(isAr ? 'ar-EG' : 'en-US', {
             month: 'short',
             day: 'numeric',
             hour: '2-digit',
             minute: '2-digit'
         });
+        if (isAr && window.i18n) dateStr = window.i18n.toArabicDigits(dateStr);
 
         var gradeText = '—';
         if (sub.grade !== null && sub.grade !== undefined && sub.grade !== '') {
-            gradeText = '<strong style="color:var(--success);">' + sub.grade + '</strong> / ' + sub.max_grade;
+            var gVal = isAr && window.i18n ? window.i18n.toArabicDigits(sub.grade) : sub.grade;
+            var mgVal = isAr && window.i18n ? window.i18n.toArabicDigits(sub.max_grade) : sub.max_grade;
+            gradeText = '<strong style="color:var(--success);">' + gVal + '</strong> / ' + mgVal;
         }
 
         // Evaluator Signature display
         var markedByHtml = '—';
         if (sub.status === 'graded') {
             if (sub.assistant_name) {
-                markedByHtml = '<span style="font-weight:600; color:var(--success); display:block;">' + escapeHtml(sub.assistant_name) + '</span>' +
-                               '<span style="font-size:11px; color:var(--text-muted);">' + escapeHtml(sub.assistant_email || 'Teaching Assistant') + '</span>';
+                var asstNameTr = isAr && window.i18n ? window.i18n.translateName(sub.assistant_name) : sub.assistant_name;
+                var asstRoleTr = sub.assistant_email || (isAr ? 'معيد' : 'Teaching Assistant');
+                markedByHtml = '<span style="font-weight:600; color:var(--success); display:block;">' + escapeHtml(asstNameTr) + '</span>' +
+                               '<span style="font-size:11px; color:var(--text-muted);">' + escapeHtml(asstRoleTr) + '</span>';
             } else {
-                markedByHtml = '<span style="font-weight:600; color:var(--role-teacher);">Teacher</span>';
+                markedByHtml = '<span style="font-weight:600; color:var(--role-teacher);">' + (isAr ? 'المعلم' : 'Teacher') + '</span>';
             }
         }
 
-        var actionBtnText = (sub.status === 'graded') ? 'Edit Grade' : 'Review & Grade';
+        var actionBtnText = (sub.status === 'graded') ? (isAr ? 'تعديل الدرجة' : 'Edit Grade') : (isAr ? 'مراجعة وتصحيح' : 'Review & Grade');
         var actionBtnClass = (sub.status === 'graded') ? 'action-btn action-result' : 'action-btn action-review';
+        var assignTitleTr = isAr && window.i18n ? window.i18n.translateAssignment(sub.assignment_title) : sub.assignment_title;
+        var courseNameTr = isAr && window.i18n ? window.i18n.translateCourse(sub.course_name) : sub.course_name;
+        var verDisp = isAr ? ('الإصدار ' + (window.i18n ? window.i18n.toArabicDigits(sub.version || 1) : (sub.version || 1))) : ('v' + (sub.version || 1));
 
         tr.innerHTML =
-            '<td><strong>' + escapeHtml(sub.assignment_title) + '</strong></td>' +
-            '<td>' + escapeHtml(sub.course_name) + '</td>' +
+            '<td><strong>' + escapeHtml(assignTitleTr) + '</strong></td>' +
+            '<td>' + escapeHtml(courseNameTr) + '</td>' +
             '<td>' + dateStr + '</td>' +
-            '<td><span class="status-badge" style="font-size:11px; background:var(--glass-bg-elevated); color:var(--text-secondary); border:1px solid var(--glass-border);">v' + (sub.version || 1) + '</span></td>' +
+            '<td><span class="status-badge" style="font-size:11px; background:var(--glass-bg-elevated); color:var(--text-secondary); border:1px solid var(--glass-border);">' + verDisp + '</span></td>' +
             '<td><span class="status-badge ' + statusInfo.className + '" style="font-size:11px;">' + statusInfo.label + '</span></td>' +
             '<td>' + gradeText + '</td>' +
             '<td>' + markedByHtml + '</td>' +
@@ -524,10 +563,11 @@ function openAssistantHistoryModal(assistantId, name, email) {
     var modal = document.getElementById('assistant-history-modal');
     if (!modal) return;
 
+    var isAr = window.i18n && window.i18n.getCurrentLanguage() === 'ar';
     var nameEl = document.getElementById('modal-asst-name');
     var emailEl = document.getElementById('modal-asst-email');
 
-    if (nameEl) nameEl.textContent = name;
+    if (nameEl) nameEl.textContent = isAr && window.i18n ? window.i18n.translateName(name) : name;
     if (emailEl) emailEl.textContent = email;
 
     var loadingEl = document.getElementById('modal-asst-history-loading');
@@ -565,16 +605,16 @@ function openAssistantHistoryModal(assistantId, name, email) {
                 }
             });
 
-            setElementText('modal-asst-count-all', countAll);
-            setElementText('modal-asst-count-graded', countGraded);
-            setElementText('modal-asst-count-pending', countPending);
+            setElementText('modal-asst-count-all', isAr && window.i18n ? window.i18n.toArabicDigits(countAll) : countAll);
+            setElementText('modal-asst-count-graded', isAr && window.i18n ? window.i18n.toArabicDigits(countGraded) : countGraded);
+            setElementText('modal-asst-count-pending', isAr && window.i18n ? window.i18n.toArabicDigits(countPending) : countPending);
 
             renderAsstModalHistoryRows(currentAsstModalFilter);
         })
         .catch(function (err) {
             if (loadingEl) loadingEl.style.display = 'none';
             if (emptyEl) {
-                emptyEl.innerHTML = '<p style="color:#ef4444;">Unable to load evaluations for this assistant.</p>';
+                emptyEl.innerHTML = isAr ? '<p style="color:#ef4444;">تعذر تحميل تقييمات هذا المعيد.</p>' : '<p style="color:#ef4444;">Unable to load evaluations for this assistant.</p>';
                 emptyEl.style.display = 'block';
             }
         });
@@ -588,6 +628,7 @@ function renderAsstModalHistoryRows(filter) {
     var searchQ = (searchInput ? searchInput.value.toLowerCase().trim() : '');
 
     if (!tableBody) return;
+    var isAr = window.i18n && window.i18n.getCurrentLanguage() === 'ar';
 
     var filtered = currentAsstModalSubmissions.filter(function (sub) {
         if (filter === 'graded' && sub.status !== 'graded') return false;
@@ -611,7 +652,7 @@ function renderAsstModalHistoryRows(filter) {
         if (tableCont) tableCont.style.display = 'none';
         if (emptyEl) {
             emptyEl.style.display = 'block';
-            emptyEl.innerHTML = '<h3 style="font-size: 16px; color: #334155; margin-bottom: 6px;">No Matching Submissions</h3><p style="font-size: 13px; color: #64748b; margin: 0;">No evaluations match the selected filter.</p>';
+            emptyEl.innerHTML = isAr ? '<h3 style="font-size: 16px; color: #334155; margin-bottom: 6px;">لا توجد تقييمات مطابقة</h3><p style="font-size: 13px; color: #64748b; margin: 0;">لا توجد تقييمات تطابق التصفية المحددة.</p>' : '<h3 style="font-size: 16px; color: #334155; margin-bottom: 6px;">No Matching Submissions</h3><p style="font-size: 13px; color: #64748b; margin: 0;">No evaluations match the selected filter.</p>';
         }
         return;
     }
@@ -623,25 +664,33 @@ function renderAsstModalHistoryRows(filter) {
         var tr = document.createElement('tr');
         var statusInfo = getStatusInfo(sub.status);
         var dateObj = new Date(sub.graded_at || sub.submitted_at);
-        var dateStr = dateObj.toLocaleDateString('en-US', {
+        var dateStr = dateObj.toLocaleDateString(isAr ? 'ar-EG' : 'en-US', {
             month: 'short',
             day: 'numeric',
             hour: '2-digit',
             minute: '2-digit'
         });
+        if (isAr && window.i18n) dateStr = window.i18n.toArabicDigits(dateStr);
 
         var gradeText = '—';
         if (sub.grade !== null && sub.grade !== undefined && sub.grade !== '') {
-            gradeText = '<strong style="color:#15803d; font-size:14px;">' + sub.grade + '</strong> / ' + sub.max_grade;
+            var gVal = isAr && window.i18n ? window.i18n.toArabicDigits(sub.grade) : sub.grade;
+            var mgVal = isAr && window.i18n ? window.i18n.toArabicDigits(sub.max_grade) : sub.max_grade;
+            gradeText = '<strong style="color:#15803d; font-size:14px;">' + gVal + '</strong> / ' + mgVal;
         }
 
+        var stNameTr = isAr && window.i18n ? window.i18n.translateName(sub.student_name) : sub.student_name;
+        var asTitleTr = isAr && window.i18n ? window.i18n.translateAssignment(sub.assignment_title) : sub.assignment_title;
+        var cNameTr = isAr && window.i18n ? window.i18n.translateCourse(sub.course_name) : sub.course_name;
+        var editGradeText = isAr ? 'تعديل الدرجة' : 'Edit Grade';
+
         tr.innerHTML =
-            '<td><strong style="color:var(--text-primary); display:block;">' + escapeHtml(sub.student_name) + '</strong><span style="font-size:11px; color:var(--text-muted);">' + escapeHtml(sub.student_email) + '</span></td>' +
-            '<td><strong style="color:var(--text-primary); display:block;">' + escapeHtml(sub.assignment_title) + '</strong><span style="font-size:11px; color:var(--text-muted);">' + escapeHtml(sub.course_name) + '</span></td>' +
+            '<td><strong style="color:var(--text-primary); display:block;">' + escapeHtml(stNameTr) + '</strong><span style="font-size:11px; color:var(--text-muted);">' + escapeHtml(sub.student_email) + '</span></td>' +
+            '<td><strong style="color:var(--text-primary); display:block;">' + escapeHtml(asTitleTr) + '</strong><span style="font-size:11px; color:var(--text-muted);">' + escapeHtml(cNameTr) + '</span></td>' +
             '<td>' + gradeText + '</td>' +
             '<td><span style="font-size:12px; color:var(--text-secondary);">' + dateStr + '</span></td>' +
             '<td><span class="status-badge ' + statusInfo.className + '" style="font-size:11px;">' + statusInfo.label + '</span></td>' +
-            '<td><a href="review.html?id=' + sub.id + '" class="action-btn action-review" style="font-size:11px; padding:5px 10px; display:inline-flex; align-items:center; gap:4px; text-decoration:none;">Edit Grade</a></td>';
+            '<td><a href="review.html?id=' + sub.id + '" class="action-btn action-review" style="font-size:11px; padding:5px 10px; display:inline-flex; align-items:center; gap:4px; text-decoration:none;">' + editGradeText + '</a></td>';
 
         tableBody.appendChild(tr);
     });

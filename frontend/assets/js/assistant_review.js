@@ -43,19 +43,21 @@ function renderDetails(data) {
     var grade = data.grade;
     var teacherReview = data.teacher_review;
 
+    var isAr = window.i18n && window.i18n.getCurrentLanguage() === 'ar';
     currentMaxGrade = assign.max_grade;
 
-    setElementText('assignment-title', assign.title);
+    setElementText('assignment-title', isAr && window.i18n ? window.i18n.translateAssignment(assign.title) : assign.title);
 
-    setElementText('student-name', sub.student_name);
+    setElementText('student-name', isAr && window.i18n ? window.i18n.translateName(sub.student_name) : sub.student_name);
     setElementText('student-email', sub.student_email);
-    setElementText('course-name', assign.course_name);
-    setElementText('max-grade-display', assign.max_grade);
+    setElementText('course-name', isAr && window.i18n ? window.i18n.translateCourse(assign.course_name) : assign.course_name);
+    var mgDisp = (isAr && window.i18n ? window.i18n.toArabicDigits(assign.max_grade) : assign.max_grade) + ' ' + (isAr ? 'درجة' : 'pts');
+    setElementText('max-grade-display', mgDisp);
     setElementText('submitted-at', formatDate(sub.submitted_at));
-    setElementText('file-version', 'v' + sub.version);
+    setElementText('file-version', isAr ? ('الإصدار ' + (window.i18n ? window.i18n.toArabicDigits(sub.version) : sub.version)) : ('v' + sub.version));
     setElementText('file-name', sub.file_name);
     setElementText('file-size', formatBytes(sub.file_size));
-    setElementText('assignment-description', assign.description);
+    setElementText('assignment-description', isAr && window.i18n ? window.i18n.translateDescription(assign.description) : assign.description);
 
     var downloadBtn = document.getElementById('download-file-btn');
     if (downloadBtn) {
@@ -79,7 +81,7 @@ function renderDetails(data) {
     // Late submission / 24-hour exception indicator
     var lateBanner = document.getElementById('late-exception-banner');
     if (parseInt(sub.is_late, 10) === 1 || sub.exception_id) {
-        var notesText = sub.exception_notes ? ('<div style="margin-top: 5px; font-style: italic; opacity: 0.95;">' + (window.i18n ? window.i18n.t('common.info') : 'Note') + ': "' + escapeHtml(sub.exception_notes) + '"</div>') : '';
+        var notesText = sub.exception_notes ? ('<div style="margin-top: 5px; font-style: italic; opacity: 0.95;">' + (isAr ? 'ملاحظة:' : 'Note:') + ' "' + escapeHtml(isAr && window.i18n ? window.i18n.translateDescription(sub.exception_notes) : sub.exception_notes) + '"</div>') : '';
         if (!lateBanner) {
             lateBanner = document.createElement('div');
             lateBanner.id = 'late-exception-banner';
@@ -97,8 +99,8 @@ function renderDetails(data) {
                 mainCard.insertBefore(lateBanner, mainCard.children[1] || null);
             }
         }
-        var bannerTitle = (window.i18n && window.i18n.getCurrentLanguage() === 'ar') ? '&#9888;&#65039; تسليم متأخر (استثناء 24 ساعة)' : '&#9888;&#65039; Late Submission (24-Hour Exception)';
-        var bannerDesc = (window.i18n && window.i18n.getCurrentLanguage() === 'ar') ? 'تم التسليم بموجب استثناء 24 ساعة بعد فوات الموعد النهائي.' : 'Submitted under a 24-hour exception for a missed deadline.';
+        var bannerTitle = isAr ? '&#9888;&#65039; تسليم متأخر (استثناء ٢٤ ساعة)' : '&#9888;&#65039; Late Submission (24-Hour Exception)';
+        var bannerDesc = isAr ? 'تم التسليم بموجب استثناء ٢٤ ساعة بعد فوات الموعد النهائي.' : 'Submitted under a 24-hour exception for a missed deadline.';
         lateBanner.innerHTML = '<strong style="display: block; font-size: 14px; margin-bottom: 3px;">' + bannerTitle + '</strong>' +
             '<span>' + bannerDesc + '</span>' + notesText;
 
@@ -109,7 +111,7 @@ function renderDetails(data) {
             lateBadge.style.background = '#ea580c';
             lateBadge.style.color = '#fff';
             lateBadge.style.marginLeft = '8px';
-            lateBadge.textContent = (window.i18n && window.i18n.getCurrentLanguage() === 'ar') ? 'متأخر (استثناء 24س)' : 'Late (24h Exception)';
+            lateBadge.textContent = isAr ? 'متأخر (استثناء ٢٤س)' : 'Late (24h Exception)';
             statusBadge.parentNode.insertBefore(lateBadge, statusBadge.nextSibling);
         }
     }
@@ -118,7 +120,7 @@ function renderDetails(data) {
     var gradeInput = document.getElementById('input-grade');
     if (gradeInput) {
         gradeInput.max = assign.max_grade;
-        document.getElementById('max-grade-hint').textContent = 'Maximum points: ' + assign.max_grade;
+        document.getElementById('max-grade-hint').textContent = isAr ? ('الدرجة القصوى: ' + (window.i18n ? window.i18n.toArabicDigits(assign.max_grade) : assign.max_grade)) : ('Maximum points: ' + assign.max_grade);
     }
 
     // populate existing grade if present
@@ -130,7 +132,9 @@ function renderDetails(data) {
         var existingGradeNotice = document.getElementById('existing-grade-notice');
         if (existingGradeNotice) {
             existingGradeNotice.style.display = 'block';
-            setElementText('previous-grade-val', grade.grade + ' / ' + assign.max_grade);
+            var prevGVal = isAr && window.i18n ? window.i18n.toArabicDigits(grade.grade) : grade.grade;
+            var prevMGVal = isAr && window.i18n ? window.i18n.toArabicDigits(assign.max_grade) : assign.max_grade;
+            setElementText('previous-grade-val', prevGVal + ' / ' + prevMGVal);
             setElementText('previous-graded-at', formatDate(grade.graded_at));
         }
     }
