@@ -23,20 +23,21 @@
 
 <div class="dashboard-page">
 
-    <a href="submissions.html" class="back-btn">
+    <a href="submissions.html" class="back-btn" data-i18n="nav.back_to_submissions">
         Back to Submissions
     </a>
 
     <header class="dashboard-header">
         <div>
-            <h1>Review Submission</h1>
-            <p>Reviewing submission for <span id="assignment-title">Loading...</span></p>
+            <h1 data-i18n="teacher.review_submission_heading">Review Submission</h1>
+            <p><span data-i18n="teacher.reviewing_submission_for">Reviewing submission for</span> <span id="assignment-title">Loading...</span></p>
         </div>
 
         <div class="header-actions">
-            <span class="user-role">Teacher</span>
-
-            <a href="../../backend/auth/logout.php" class="logout-btn">Logout</a>
+            <span class="user-role" data-i18n="educational.roles.teacher">Teacher</span>
+            <button id="lang-toggle-btn" class="theme-toggle" type="button" aria-label="Toggle Language" title="Toggle Language">🌐 العربية</button>
+            <button id="theme-toggle-btn" class="theme-toggle" type="button" aria-label="Toggle Theme" title="Toggle Dark/Light Mode">🌙</button>
+            <a href="../../backend/auth/logout.php" class="logout-btn" data-i18n="nav.logout">Logout</a>
         </div>
     </header>
 
@@ -48,56 +49,56 @@
 
             <section class="content-card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                    <h2>Submission Details</h2>
-                    <span id="status-badge" class="status-badge">Pending Review</span>
+                    <h2 data-i18n="teacher.submission_details_heading">Submission Details</h2>
+                    <span id="status-badge" class="status-badge" data-i18n="educational.statuses.pending_review">Pending Review</span>
                 </div>
 
                 <div class="meta-grid">
                     <div class="meta-item">
-                        <span>Student</span>
+                        <span data-i18n="common.student">Student</span>
                         <strong id="student-name">—</strong>
                     </div>
 
                     <div class="meta-item">
-                        <span>Email</span>
+                        <span data-i18n="common.email">Email</span>
                         <strong id="student-email">—</strong>
                     </div>
 
                     <div class="meta-item">
-                        <span>Course</span>
+                        <span data-i18n="common.course">Course</span>
                         <strong id="course-name">—</strong>
                     </div>
 
                     <div class="meta-item">
-                        <span>Max Points</span>
+                        <span data-i18n="common.max_points">Max Points</span>
                         <strong id="max-grade-display">—</strong>
                     </div>
 
                     <div class="meta-item">
-                        <span>Submitted</span>
+                        <span data-i18n="common.submitted">Submitted</span>
                         <strong id="submitted-at">—</strong>
                     </div>
 
                     <div class="meta-item">
-                        <span>Version</span>
+                        <span data-i18n="common.version">Version</span>
                         <strong id="file-version">v1</strong>
                     </div>
                 </div>
 
                 <div style="background: var(--glass-bg-elevated); border: 1px dashed var(--glass-border); border-radius: 8px; padding: 18px; margin: 20px 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
                     <div>
-                        <span style="font-size: 12px; color: var(--text-muted); text-transform: uppercase;">Submitted File</span>
+                        <span style="font-size: 12px; color: var(--text-muted); text-transform: uppercase;" data-i18n="student.submitted_file">Submitted File</span>
                         <strong id="file-name" style="display: block; font-size: 15px; margin-top: 4px; color: var(--text-primary);">—</strong>
                         <span id="file-size" style="font-size: 12px; color: var(--text-muted);">—</span>
                     </div>
 
-                    <a id="download-file-btn" href="#" class="action-btn action-submit" style="padding: 10px 18px;">
+                    <a id="download-file-btn" href="#" class="action-btn action-submit" style="padding: 10px 18px;" data-i18n="common.download_file">
                         &darr; Download File
                     </a>
                 </div>
 
-                <h3>Instructions</h3>
-                <div id="assignment-description" class="description-box">
+                <h3 data-i18n="common.instructions">Instructions</h3>
+                <div id="assignment-description" class="description-box" data-i18n="common.loading">
                     Loading description...
                 </div>
             </section>
@@ -107,8 +108,8 @@
         <div class="assignment-sidebar">
 
             <section class="content-card">
-                <h2>Review &amp; Grade</h2>
-                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">Approve assistant evaluation or request a recheck.</p>
+                <h2 data-i18n="teacher.review_grade_heading">Review &amp; Grade</h2>
+                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;" data-i18n="teacher.review_grade_desc">Approve assistant evaluation or request a recheck.</p>
 
                 <!-- Official Assistant Evaluation Signature & Grade Indicator -->
                 <div id="assistant-notes-box" style="display: none; background: var(--role-assistant-bg); border: 1.5px dashed var(--role-assistant-border); padding: 16px; margin-bottom: 20px; border-radius: 8px;">
@@ -116,15 +117,15 @@
                         <span style="display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:50%; background:var(--role-assistant-bg); color:var(--role-assistant-text); flex-shrink:0;">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"></path><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path></svg>
                         </span>
-                        <strong style="font-size: 14px; color: var(--role-assistant-text);">Assistant Evaluation</strong>
+                        <strong style="font-size: 14px; color: var(--role-assistant-text);" data-i18n="teacher.assistant_evaluation_heading">Assistant Evaluation</strong>
                     </div>
                     <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.5; margin-left: 36px;">
-                        <div>Evaluated by: <strong id="assistant-name">—</strong> (<span id="assistant-email">—</span>)</div>
-                        <div style="margin-top: 4px;">Proposed Grade: <strong id="assistant-proposed-grade" style="font-size:15px; color:var(--success);">—</strong></div>
-                        <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Date: <span id="assistant-signed-at">—</span></div>
+                        <div><span data-i18n="teacher.evaluated_by">Evaluated by:</span> <strong id="assistant-name">—</strong> (<span id="assistant-email">—</span>)</div>
+                        <div style="margin-top: 4px;"><span data-i18n="teacher.assistant_draft_score">Proposed Grade:</span> <strong id="assistant-proposed-grade" style="font-size:15px; color:var(--success);">—</strong></div>
+                        <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;"><span data-i18n="common.date">Date:</span> <span id="assistant-signed-at">—</span></div>
                     </div>
                     <div id="assistant-corr-box" style="display: none; margin-top: 12px; margin-left: 28px;">
-                        <a id="download-assistant-corr-btn" href="#" class="view-btn" style="background: var(--primary); font-size: 12px; padding: 6px 12px;">Download Correction File</a>
+                        <a id="download-assistant-corr-btn" href="#" class="view-btn" style="background: var(--primary); font-size: 12px; padding: 6px 12px;" data-i18n="teacher.download_correction_file">Download Correction File</a>
                     </div>
                 </div>
 
@@ -133,28 +134,28 @@
                     <input type="hidden" name="decision" id="review-decision" value="approved">
 
                     <div class="form-group" style="margin-bottom: 15px;">
-                        <label for="input-grade" style="display: block; font-weight: 600; margin-bottom: 6px;">Grade *</label>
-                        <input type="number" id="input-grade" name="grade" step="0.25" min="0" required placeholder="e.g. 18.5" style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 15px;">
-                        <p id="max-grade-hint" style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Maximum points allowed</p>
+                        <label for="input-grade" style="display: block; font-weight: 600; margin-bottom: 6px;" data-i18n="teacher.form_grade">Grade *</label>
+                        <input type="number" id="input-grade" name="grade" step="0.25" min="0" required placeholder="e.g. 18.5" data-i18n-placeholder="teacher.grade_placeholder" style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 15px;">
+                        <p id="max-grade-hint" style="font-size: 12px; color: var(--text-muted); margin-top: 4px;" data-i18n="teacher.max_points_allowed">Maximum points allowed</p>
                     </div>
 
                     <div class="form-group" style="margin-bottom: 15px;">
-                        <label for="input-feedback" style="display: block; font-weight: 600; margin-bottom: 6px;">Feedback for Student</label>
-                        <textarea id="input-feedback" name="feedback" rows="4" style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; font-family: inherit; font-size: 14px;" placeholder="Add feedback for the student..."></textarea>
+                        <label for="input-feedback" style="display: block; font-weight: 600; margin-bottom: 6px;" data-i18n="teacher.feedback_for_student">Feedback for Student</label>
+                        <textarea id="input-feedback" name="feedback" rows="4" style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; font-family: inherit; font-size: 14px;" placeholder="Add feedback for the student..." data-i18n-placeholder="teacher.feedback_student_placeholder"></textarea>
                     </div>
 
                     <!-- notes / recheck reason comments -->
                     <div class="form-group" style="margin-bottom: 20px;">
-                        <label for="input-comment" style="display: block; font-weight: 600; margin-bottom: 6px;">Note for Assistant (Required if requesting recheck)</label>
-                        <textarea id="input-comment" name="comment" rows="3" style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; font-family: inherit; font-size: 14px;" placeholder="Enter instructions for the assistant..."></textarea>
+                        <label for="input-comment" style="display: block; font-weight: 600; margin-bottom: 6px;" data-i18n="teacher.note_for_assistant">Note for Assistant (Required if requesting recheck)</label>
+                        <textarea id="input-comment" name="comment" rows="3" style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; font-family: inherit; font-size: 14px;" placeholder="Enter instructions for the assistant..." data-i18n-placeholder="teacher.note_for_assistant_placeholder"></textarea>
                     </div>
 
                     <div style="display: flex; flex-direction: column; gap: 10px;">
-                        <button type="button" id="btn-approve" class="btn-primary" style="width: 100%; padding: 12px; font-size: 15px; background: var(--primary);">
+                        <button type="button" id="btn-approve" class="btn-primary" style="width: 100%; padding: 12px; font-size: 15px; background: var(--primary);" data-i18n="teacher.btn_approve_publish">
                             Approve &amp; Publish Grade
                         </button>
 
-                        <button type="button" id="btn-recheck" class="action-btn action-submit" style="width: 100%; padding: 12px; font-size: 14px; background: var(--warning); color: #fff; border: none; cursor: pointer; text-align: center;">
+                        <button type="button" id="btn-recheck" class="action-btn action-submit" style="width: 100%; padding: 12px; font-size: 14px; background: var(--warning); color: #fff; border: none; cursor: pointer; text-align: center;" data-i18n="teacher.btn_request_recheck">
                             Request Recheck
                         </button>
                     </div>

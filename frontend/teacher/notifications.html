@@ -25,17 +25,19 @@
         <header class="dashboard-header">
             <div>
                 <div style="display:flex; align-items:center; gap:10px;">
-                    <h1>Notifications</h1>
+                    <h1 data-i18n="notifications.page_heading">Notifications</h1>
                     <span id="unreadBadge" class="status-badge" style="background:var(--danger); color:#fff; display:none;">0 New</span>
                 </div>
-                <p>Track student submissions, assistant grading updates, and course activities</p>
+                <p data-i18n="notifications.teacher_subheading">Track student submissions, assistant grading updates, and course activities</p>
             </div>
             <div class="header-actions">
-                <a href="dashboard.html" class="back-btn" style="margin-bottom:0;">Back to Dashboard</a>
-                <button id="markAllReadBtn" class="action-btn action-view" style="font-size:13px; cursor:pointer;">Mark All as Read</button>
-                <span class="user-role">Teacher</span>
+                <a href="dashboard.html" class="back-btn" style="margin-bottom:0;" data-i18n="nav.back_to_dashboard">Back to Dashboard</a>
+                <button id="markAllReadBtn" class="action-btn action-view" style="font-size:13px; cursor:pointer;" data-i18n="notifications.mark_all_read">Mark All as Read</button>
+                <span class="user-role" data-i18n="educational.roles.teacher">Teacher</span>
                 <span id="teacherName" style="font-weight: 600; color: var(--text-primary);">Loading...</span>
-                <a href="../../backend/auth/logout.php" class="logout-btn">Logout</a>
+                <button id="lang-toggle-btn" class="theme-toggle" type="button" aria-label="Toggle Language" title="Toggle Language">🌐 العربية</button>
+                <button id="theme-toggle-btn" class="theme-toggle" type="button" aria-label="Toggle Theme" title="Toggle Dark/Light Mode">🌙</button>
+                <a href="../../backend/auth/logout.php" class="logout-btn" data-i18n="nav.logout">Logout</a>
             </div>
         </header>
 
@@ -46,8 +48,8 @@
         </div>
 
         <div id="emptyState" class="empty-state content-card" style="display:none;">
-            <h3>No notifications yet</h3>
-            <p>You are all caught up! New updates regarding your courses and student submissions will appear here.</p>
+            <h3 data-i18n="notifications.no_notifications">No notifications yet</h3>
+            <p data-i18n="notifications.teacher_no_notifications_desc">You are all caught up! New updates regarding your courses and student submissions will appear here.</p>
         </div>
     </div>
     <script src="../assets/js/i18n.js"></script>

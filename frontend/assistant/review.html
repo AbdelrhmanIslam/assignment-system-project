@@ -22,23 +22,25 @@
 <body>
     <div class="dashboard-page">
 
-        <a href="submissions.html" class="back-btn">Back to Submissions</a>
+        <a href="submissions.html" class="back-btn" data-i18n="nav.back_to_submissions">Back to Submissions</a>
 
         <header class="dashboard-header">
             <div>
-                <h1>Evaluate Submission</h1>
-                <p>Evaluating submission for <span id="assignment-title" style="font-weight: 600;">Loading...</span></p>
+                <h1 data-i18n="assistant.evaluate_submission_heading">Evaluate Submission</h1>
+                <p><span data-i18n="assistant.evaluating_submission_for">Evaluating submission for</span> <span id="assignment-title" style="font-weight: 600;">Loading...</span></p>
             </div>
             <div class="header-actions">
-                <span class="user-role" style="background: #e0f2fe; color: #0369a1;">Assistant</span>
-                <a href="../../backend/auth/logout.php" class="logout-btn">Logout</a>
+                <span class="user-role" style="background: #e0f2fe; color: #0369a1;" data-i18n="educational.roles.assistant">Assistant</span>
+                <button id="lang-toggle-btn" class="theme-toggle" type="button" aria-label="Toggle Language" title="Toggle Language">🌐 العربية</button>
+                <button id="theme-toggle-btn" class="theme-toggle" type="button" aria-label="Toggle Theme" title="Toggle Dark/Light Mode">🌙</button>
+                <a href="../../backend/auth/logout.php" class="logout-btn" data-i18n="nav.logout">Logout</a>
             </div>
         </header>
 
         <div id="alert-box" style="display: none; margin-bottom: 20px;"></div>
 
         <div id="recheck-alert-box" style="display: none; background: #fef2f2; border: 1px solid #f87171; border-radius: 8px; padding: 16px; margin-bottom: 25px;">
-            <h4 style="margin: 0 0 6px; color: #991b1b; font-size: 15px;">Recheck Requested by Teacher</h4>
+            <h4 style="margin: 0 0 6px; color: #991b1b; font-size: 15px;" data-i18n="assistant.recheck_banner_title">Recheck Requested by Teacher</h4>
             <p style="margin: 0; color: #7f1d1d; font-size: 14px;">Note from <strong id="teacher-reviewer-name">Teacher</strong>: "<span id="teacher-comment">--</span>"</p>
         </div>
 
@@ -47,56 +49,56 @@
             <div class="assignment-main">
                 <section class="content-card">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                        <h2>Submission Details</h2>
-                        <span id="status-badge" class="status-badge">Submitted</span>
+                        <h2 data-i18n="assistant.submission_details_heading">Submission Details</h2>
+                        <span id="status-badge" class="status-badge" data-i18n="educational.statuses.submitted">Submitted</span>
                     </div>
 
                     <div class="meta-grid">
                         <div class="meta-item">
-                            <span>Student</span>
+                            <span data-i18n="admin.th_student">Student</span>
                             <strong id="student-name">—</strong>
                         </div>
 
                         <div class="meta-item">
-                            <span>Email</span>
+                            <span data-i18n="admin.th_email">Email</span>
                             <strong id="student-email">—</strong>
                         </div>
 
                         <div class="meta-item">
-                            <span>Course</span>
+                            <span data-i18n="admin.th_course">Course</span>
                             <strong id="course-name">—</strong>
                         </div>
 
                         <div class="meta-item">
-                            <span>Max Points</span>
+                            <span data-i18n="common.max_grade">Max Points</span>
                             <strong id="max-grade-display">—</strong>
                         </div>
 
                         <div class="meta-item">
-                            <span>Submitted</span>
+                            <span data-i18n="educational.statuses.submitted">Submitted</span>
                             <strong id="submitted-at">—</strong>
                         </div>
 
                         <div class="meta-item">
-                            <span>Version</span>
+                            <span data-i18n="common.version">Version</span>
                             <strong id="file-version">v1</strong>
                         </div>
                     </div>
 
                     <div style="background: var(--glass-bg-elevated); border: 1px dashed var(--glass-border); border-radius: 8px; padding: 18px; margin: 20px 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
                         <div>
-                            <span style="font-size: 12px; color: var(--text-muted); text-transform: uppercase;">Submitted File</span>
+                            <span style="font-size: 12px; color: var(--text-muted); text-transform: uppercase;" data-i18n="assistant.submitted_file">Submitted File</span>
                             <strong id="file-name" style="display: block; font-size: 15px; margin-top: 4px; color: var(--text-primary); word-break: break-all;">—</strong>
                             <span id="file-size" style="font-size: 12px; color: var(--text-muted);">—</span>
                         </div>
 
-                        <a id="download-file-btn" href="#" class="action-btn action-submit" style="padding: 10px 18px; text-decoration: none;">
+                        <a id="download-file-btn" href="#" class="action-btn action-submit" style="padding: 10px 18px; text-decoration: none;" data-i18n="common.download_file">
                             &darr; Download File
                         </a>
                     </div>
 
-                    <h3>Instructions</h3>
-                    <div id="assignment-description" class="description-box">
+                    <h3 data-i18n="common.instructions">Instructions</h3>
+                    <div id="assignment-description" class="description-box" data-i18n="common.loading">
                         Loading description...
                     </div>
                 </section>
@@ -104,44 +106,44 @@
 
             <div class="assignment-sidebar">
                 <section class="content-card">
-                    <h2>Evaluate &amp; Grade</h2>
-                    <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 18px;">Grade the submission and provide feedback.</p>
+                    <h2 data-i18n="assistant.evaluate_and_grade">Evaluate &amp; Grade</h2>
+                    <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 18px;" data-i18n="assistant.evaluate_desc">Grade the submission and provide feedback.</p>
 
                     <!-- previous grade notice if existing -->
                     <div id="existing-grade-notice" style="display: none; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 12px; margin-bottom: 18px; font-size: 13px; color: #166534;">
-                        <strong>Previously Graded:</strong> <span id="previous-grade-val">--</span> on <span id="previous-graded-at">--</span>
+                        <strong data-i18n="assistant.previously_graded">Previously Graded:</strong> <span id="previous-grade-val">--</span> on <span id="previous-graded-at">--</span>
                     </div>
 
                     <form id="grade-form" enctype="multipart/form-data">
 
                         <div class="form-group" style="margin-bottom: 16px;">
-                            <label for="input-grade" style="display: block; font-weight: 600; margin-bottom: 6px;">Grade *</label>
-                            <input type="number" id="input-grade" name="grade" step="0.25" min="0" required placeholder="e.g. 24.5" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 15px;">
-                            <p id="max-grade-hint" style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Maximum points</p>
+                            <label for="input-grade" style="display: block; font-weight: 600; margin-bottom: 6px;" data-i18n="assistant.score_label">Grade *</label>
+                            <input type="number" id="input-grade" name="grade" step="0.25" min="0" required data-i18n-placeholder="teacher.grade_placeholder" placeholder="e.g. 24.5" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 15px;">
+                            <p id="max-grade-hint" style="font-size: 12px; color: var(--text-muted); margin-top: 4px;" data-i18n="assistant.maximum_points">Maximum points</p>
                         </div>
 
                         <div class="form-group" style="margin-bottom: 16px;">
-                            <label for="input-feedback" style="display: block; font-weight: 600; margin-bottom: 6px;">Feedback for Student</label>
-                            <textarea id="input-feedback" name="feedback" rows="5" placeholder="Add feedback for the student..." style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-family: inherit; font-size: 14px;"></textarea>
+                            <label for="input-feedback" style="display: block; font-weight: 600; margin-bottom: 6px;" data-i18n="teacher.feedback_for_student">Feedback for Student</label>
+                            <textarea id="input-feedback" name="feedback" rows="5" data-i18n-placeholder="assistant.feedback_input_placeholder" placeholder="Add feedback for the student..." style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-family: inherit; font-size: 14px;"></textarea>
                         </div>
 
                         <!-- optional correction file upload -->
                         <div class="form-group" style="margin-bottom: 16px;">
-                            <label for="correction-file" style="display: block; font-weight: 600; margin-bottom: 6px;">Attach Correction File (optional)</label>
+                            <label for="correction-file" style="display: block; font-weight: 600; margin-bottom: 6px;" data-i18n="assistant.attach_correction_optional">Attach Correction File (optional)</label>
                             <input type="file" id="correction-file" name="correction_file" style="font-size: 13px;">
-                            <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Allowed: pdf, doc, docx, zip, txt</p>
+                            <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;" data-i18n="assistant.allowed_file_types_hint">Allowed: pdf, doc, docx, zip, txt</p>
                         </div>
 
                         <!-- workflow status choice -->
                         <div class="form-group" style="margin-bottom: 22px;">
-                            <label for="status-choice" style="display: block; font-weight: 600; margin-bottom: 6px;">Workflow Action</label>
+                            <label for="status-choice" style="display: block; font-weight: 600; margin-bottom: 6px;" data-i18n="assistant.workflow_action">Workflow Action</label>
                             <select id="status-choice" name="status_choice">
-                                <option value="pending_teacher" selected>Submit for Teacher Approval</option>
+                                <option value="pending_teacher" selected data-i18n="assistant.submit_for_teacher_approval">Submit for Teacher Approval</option>
                             </select>
-                            <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Evaluation will be forwarded to the teacher for final approval.</p>
+                            <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;" data-i18n="assistant.forward_to_teacher_note">Evaluation will be forwarded to the teacher for final approval.</p>
                         </div>
 
-                        <button type="submit" class="btn-primary" style="width: 100%; padding: 12px; font-size: 15px;">
+                        <button type="submit" class="btn-primary" style="width: 100%; padding: 12px; font-size: 15px;" data-i18n="assistant.submit_for_approval_btn">
                             Submit for Teacher Approval &rarr;
                         </button>
                     </form>

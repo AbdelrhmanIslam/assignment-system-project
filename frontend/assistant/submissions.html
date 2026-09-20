@@ -22,19 +22,21 @@
 <body>
     <div class="dashboard-page">
 
-        <a href="dashboard.html" class="back-btn">Back to Dashboard</a>
+        <a href="dashboard.html" class="back-btn" data-i18n="nav.back_to_dashboard">Back to Dashboard</a>
 
         <header class="dashboard-header">
             <div>
-                <h1>Submissions Queue</h1>
-                <p>Review and grade submissions for your assigned courses</p>
+                <h1 data-i18n="assistant.submissions_queue">Submissions Queue</h1>
+                <p data-i18n="assistant.submissions_queue_desc">Review and grade submissions for your assigned courses</p>
             </div>
             <div class="header-actions">
-                <a href="lateness.html" class="action-btn" style="background: rgba(234, 88, 12, 0.15); color: #c2410c; border: 1px solid rgba(234, 88, 12, 0.4); text-decoration: none; padding: 7px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">&#9888;&#65039; Missed &amp; Late Submissions</a>
-                <a href="notifications.html" class="view-btn" style="background:#4b5563; font-size:13px; text-decoration:none;">Notifications</a>
-                <span class="user-role" style="background: #e0f2fe; color: #0369a1;">Assistant</span>
-                <span id="assistant-name" style="font-weight: 600; color: #374151;">Loading...</span>
-                <a href="../../backend/auth/logout.php" class="logout-btn">Logout</a>
+                <a href="lateness.html" class="action-btn" style="background: rgba(234, 88, 12, 0.15); color: #c2410c; border: 1px solid rgba(234, 88, 12, 0.4); text-decoration: none; padding: 7px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;" data-i18n="teacher.missed_late_submissions">&#9888;&#65039; Missed &amp; Late Submissions</a>
+                <a href="notifications.html" class="view-btn" style="background:#4b5563; font-size:13px; text-decoration:none;" data-i18n="nav.notifications">Notifications</a>
+                <span class="user-role" style="background: #e0f2fe; color: #0369a1;" data-i18n="educational.roles.assistant">Assistant</span>
+                <span id="assistant-name" style="font-weight: 600; color: #374151;" data-i18n="common.loading">Loading...</span>
+                <button id="lang-toggle-btn" class="theme-toggle" type="button" aria-label="Toggle Language" title="Toggle Language">🌐 العربية</button>
+                <button id="theme-toggle-btn" class="theme-toggle" type="button" aria-label="Toggle Theme" title="Toggle Dark/Light Mode">🌙</button>
+                <a href="../../backend/auth/logout.php" class="logout-btn" data-i18n="nav.logout">Logout</a>
             </div>
         </header>
 
@@ -43,22 +45,22 @@
             <div class="filter-bar" style="display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
 
                 <div class="filter-tabs">
-                    <button class="filter-tab active" data-status="all">All</button>
-                    <button class="filter-tab" data-status="pending">Pending Review</button>
-                    <button class="filter-tab" data-status="graded">Graded</button>
-                    <button class="filter-tab" data-status="recheck">Recheck Requested</button>
+                    <button class="filter-tab active" data-status="all" data-i18n="common.all">All</button>
+                    <button class="filter-tab" data-status="pending" data-i18n="common.pending_review">Pending Review</button>
+                    <button class="filter-tab" data-status="graded" data-i18n="common.graded">Graded</button>
+                    <button class="filter-tab" data-status="recheck" data-i18n="teacher.recheck_requested_tab">Recheck Requested</button>
                 </div>
 
                 <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
                     <select id="course-filter-select">
-                        <option value="all">All Courses</option>
+                        <option value="all" data-i18n="common.all_courses">All Courses</option>
                     </select>
 
                     <select id="student-filter-select">
-                        <option value="all">All Students</option>
+                        <option value="all" data-i18n="common.all_students">All Students</option>
                     </select>
 
-                    <input type="text" id="search-input" placeholder="Search by student or assignment..." style="padding: 8px 14px; border-radius: 6px; font-size: 14px; width: 220px;">
+                    <input type="text" id="search-input" data-i18n-placeholder="assistant.search_student_or_assignment" placeholder="Search by student or assignment..." style="padding: 8px 14px; border-radius: 6px; font-size: 14px; width: 220px;">
                 </div>
             </div>
 
@@ -66,13 +68,13 @@
                 <table class="assignments-table">
                     <thead>
                         <tr>
-                            <th>Student</th>
-                            <th>Assignment</th>
-                            <th>Course</th>
-                            <th>Submitted</th>
-                            <th>Status</th>
-                            <th>Grade</th>
-                            <th>Actions</th>
+                            <th data-i18n="admin.th_student">Student</th>
+                            <th data-i18n="nav.assignments">Assignment</th>
+                            <th data-i18n="admin.th_course">Course</th>
+                            <th data-i18n="educational.statuses.submitted">Submitted</th>
+                            <th data-i18n="common.status">Status</th>
+                            <th data-i18n="common.grade">Grade</th>
+                            <th data-i18n="common.actions">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="submissions-table-body">
@@ -82,8 +84,8 @@
             </div>
 
             <div id="empty-state" class="empty-state" style="display: none;">
-                <h3>No submissions found</h3>
-                <p>No submissions match your current filters.</p>
+                <h3 data-i18n="teacher.no_submissions_found">No submissions found</h3>
+                <p data-i18n="teacher.no_submissions_desc">No submissions match your current filters.</p>
             </div>
         </section>
     </div>

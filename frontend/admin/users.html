@@ -226,18 +226,18 @@
                                 <button class="filter-tab" data-role="admin" data-i18n="admin.tab_admins">Admins</button>
                             </div>
                             <div style="display: flex; gap: 6px;">
-                                <button type="button" id="btn-expand-all" class="btn-accordion-control" title="Expand all category sections">
+                                <button type="button" id="btn-expand-all" class="btn-accordion-control" title="Expand all category sections" data-i18n="common.expand_all">
                                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg> Expand All
                                 </button>
-                                <button type="button" id="btn-collapse-all" class="btn-accordion-control" title="Collapse all category sections">
+                                <button type="button" id="btn-collapse-all" class="btn-accordion-control" title="Collapse all category sections" data-i18n="common.collapse_all">
                                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"></polyline></svg> Collapse All
                                 </button>
                             </div>
                         </div>
 
                         <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-                            <input type="text" id="search-input" class="search-input" placeholder="Search name or email...">
-                            <a href="#add-user-section" class="btn-add-user" id="btn-add-user" title="Jump to Add User form">
+                            <input type="text" id="search-input" class="search-input" placeholder="Search name or email..." data-i18n-placeholder="admin.search_user_placeholder">
+                            <a href="#add-user-section" class="btn-add-user" id="btn-add-user" title="Jump to Add User form" data-i18n="admin.add_user_btn">
                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg> Add User
                             </a>
                         </div>
@@ -249,114 +249,114 @@
                     </div>
 
                     <div id="empty-state" class="empty-state" style="display: none;">
-                        <h3>No Users Found</h3>
-                        <p>No user accounts match your current filter.</p>
+                        <h3 data-i18n="admin.no_users_found">No Users Found</h3>
+                        <p data-i18n="admin.no_users_desc">No user accounts match your current filter.</p>
                     </div>
                 </section>
             </div>
 
             <div class="assignment-sidebar" id="add-user-section">
                 <section class="content-card">
-                    <h2>Add User</h2>
-                    <p style="color: #6b7280; font-size: 13px; margin-bottom: 20px;">Create a new user account with specific privileges</p>
+                    <h2 data-i18n="admin.modal_add_user">Add User</h2>
+                    <p style="color: #6b7280; font-size: 13px; margin-bottom: 20px;" data-i18n="admin.users_subtitle">Create a new user account with specific privileges</p>
 
                     <form id="create-user-form">
                         <div class="form-group" style="margin-bottom: 15px;">
-                            <label for="input-name" style="display: block; font-weight: 600; margin-bottom: 5px;">Full Name *</label>
-                            <input type="text" id="input-name" name="name" required placeholder="e.g. Sara Mohamed" style="width: 100%; padding: 9px; border-radius: 6px; font-size: 14px;">
+                            <label for="input-name" style="display: block; font-weight: 600; margin-bottom: 5px;" data-i18n="admin.form_full_name">Full Name *</label>
+                            <input type="text" id="input-name" name="name" required placeholder="e.g. Sara Mohamed" data-i18n-placeholder="admin.form_name_placeholder" style="width: 100%; padding: 9px; border-radius: 6px; font-size: 14px;">
                         </div>
 
                         <div class="form-group" style="margin-bottom: 15px;">
-                            <label for="input-email" style="display: block; font-weight: 600; margin-bottom: 5px;">Email Address *</label>
-                            <input type="email" id="input-email" name="email" required placeholder="name@domain.com" style="width: 100%; padding: 9px; border-radius: 6px; font-size: 14px;">
+                            <label for="input-email" style="display: block; font-weight: 600; margin-bottom: 5px;" data-i18n="admin.form_email_address">Email Address *</label>
+                            <input type="email" id="input-email" name="email" required placeholder="name@domain.com" data-i18n-placeholder="admin.form_email_placeholder" style="width: 100%; padding: 9px; border-radius: 6px; font-size: 14px;">
                         </div>
 
                         <div class="form-group" style="margin-bottom: 15px;">
-                            <label for="input-role" style="display: block; font-weight: 600; margin-bottom: 5px;">System Role *</label>
+                            <label for="input-role" style="display: block; font-weight: 600; margin-bottom: 5px;" data-i18n="admin.form_system_role">System Role *</label>
                             <select id="input-role" name="role" required>
-                                <option value="student">Student</option>
-                                <option value="teacher">Teacher</option>
-                                <option value="assistant">Teaching Assistant</option>
-                                <option value="admin">Administrator</option>
+                                <option value="student" data-i18n="educational.roles.student">Student</option>
+                                <option value="teacher" data-i18n="educational.roles.teacher">Teacher</option>
+                                <option value="assistant" data-i18n="educational.roles.assistant">Teaching Assistant</option>
+                                <option value="admin" data-i18n="educational.roles.admin">Administrator</option>
                             </select>
                         </div>
 
                         <div id="create-student-grade-group" class="form-group" style="margin-bottom: 15px;">
-                            <label for="input-student-grade" style="display: block; font-weight: 600; margin-bottom: 5px;">Grade Level *</label>
+                            <label for="input-student-grade" style="display: block; font-weight: 600; margin-bottom: 5px;" data-i18n="admin.form_grade_level">Grade Level *</label>
                             <select id="input-student-grade" name="grade_level">
-                                <option value="First Year of Middle School">1st Preparatory</option>
-                                <option value="Second Year of Middle School">2nd Preparatory</option>
-                                <option value="Third Year of Middle School">3rd Preparatory</option>
-                                <option value="First Year of High School">1st Secondary</option>
+                                <option value="First Year of Middle School" data-i18n="educational.grades.First Year of Middle School">1st Preparatory</option>
+                                <option value="Second Year of Middle School" data-i18n="educational.grades.Second Year of Middle School">2nd Preparatory</option>
+                                <option value="Third Year of Middle School" data-i18n="educational.grades.Third Year of Middle School">3rd Preparatory</option>
+                                <option value="First Year of High School" data-i18n="educational.grades.First Year of High School">1st Secondary</option>
                             </select>
                         </div>
 
                         <div id="create-student-teacher-group" class="form-group" style="margin-bottom: 15px; display: none;">
                             <label style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                                <span style="font-weight: 600;">Assigned Teachers</span>
+                                <span style="font-weight: 600;" data-i18n="student.my_teachers">Assigned Teachers</span>
                                 <span style="font-size: 11px; color: var(--text-muted);">Multiple allowed</span>
                             </label>
                             <div id="create-student-teachers-list" style="display: flex; flex-direction: column; gap: 6px; max-height: 150px; overflow-y: auto; padding: 8px; border: 1px solid var(--glass-border); background: var(--glass-bg); border-radius: 6px;">
-                                <span style="font-size: 12px; color: var(--text-muted);">Select a grade level to load teachers</span>
+                                <span style="font-size: 12px; color: var(--text-muted);" data-i18n="auth.select_grade_placeholder">Select a grade level to load teachers</span>
                             </div>
                         </div>
 
                         <div id="create-teacher-subject-group" class="form-group" style="margin-bottom: 15px; display: none;">
-                            <label for="input-teacher-subject" style="display: block; font-weight: 600; margin-bottom: 5px;">Subject *</label>
+                            <label for="input-teacher-subject" style="display: block; font-weight: 600; margin-bottom: 5px;" data-i18n="admin.form_subject">Subject *</label>
                             <select id="input-teacher-subject" name="subject" style="width: 100%; padding: 9px; border-radius: 6px; font-size: 14px;">
-                                <option value="">Select Subject</option>
-                                <optgroup label="Preparatory Subjects">
-                                    <option value="Arabic">Arabic</option>
-                                    <option value="English">English</option>
-                                    <option value="Mathematics">Mathematics</option>
-                                    <option value="Science">Science</option>
-                                    <option value="Social Studies">Social Studies</option>
+                                <option value="" data-i18n="admin.form_select_subject">Select Subject</option>
+                                <optgroup label="Preparatory Subjects" data-i18n-label="educational.stages.Preparatory">
+                                    <option value="Arabic" data-i18n="educational.subjects.Arabic">Arabic</option>
+                                    <option value="English" data-i18n="educational.subjects.English">English</option>
+                                    <option value="Mathematics" data-i18n="educational.subjects.Mathematics">Mathematics</option>
+                                    <option value="Science" data-i18n="educational.subjects.Science">Science</option>
+                                    <option value="Social Studies" data-i18n="educational.subjects.Social Studies">Social Studies</option>
                                 </optgroup>
-                                <optgroup label="Secondary Subjects">
-                                    <option value="Arabic">Arabic</option>
-                                    <option value="First Foreign Language">First Foreign Language</option>
-                                    <option value="History">History</option>
-                                    <option value="Mathematics">Mathematics</option>
-                                    <option value="Integrated Sciences">Integrated Sciences</option>
-                                    <option value="Philosophy & Logic">Philosophy & Logic</option>
+                                <optgroup label="Secondary Subjects" data-i18n-label="educational.stages.Secondary">
+                                    <option value="Arabic" data-i18n="educational.subjects.Arabic">Arabic</option>
+                                    <option value="First Foreign Language" data-i18n="educational.subjects.First Foreign Language">First Foreign Language</option>
+                                    <option value="History" data-i18n="educational.subjects.History">History</option>
+                                    <option value="Mathematics" data-i18n="educational.subjects.Mathematics">Mathematics</option>
+                                    <option value="Integrated Sciences" data-i18n="educational.subjects.Integrated Sciences">Integrated Sciences</option>
+                                    <option value="Philosophy & Logic" data-i18n="educational.subjects.Philosophy & Logic">Philosophy & Logic</option>
                                 </optgroup>
                             </select>
                         </div>
 
                         <div id="create-teacher-grade-group" class="form-group" style="margin-bottom: 15px; display: none;">
-                            <label style="display: block; font-weight: 600; margin-bottom: 5px;">Assigned Grade Levels *</label>
-                            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">Select grade levels this teacher instructs (All Preparatory or 1st Secondary)</p>
+                            <label style="display: block; font-weight: 600; margin-bottom: 5px;" data-i18n="admin.form_grade_levels">Assigned Grade Levels *</label>
+                            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">Select grade levels this teacher instructs</p>
                             <div style="display: flex; flex-direction: column; gap: 6px;">
                                 <label style="font-size: 13px; font-weight: normal; cursor: pointer; display: flex; align-items: center; gap: 8px;">
-                                    <input type="checkbox" name="teacher_grade_levels[]" value="First Year of Middle School" checked> 1st Preparatory
+                                    <input type="checkbox" name="teacher_grade_levels[]" value="First Year of Middle School" checked> <span data-i18n="educational.grades.First Year of Middle School">1st Preparatory</span>
                                 </label>
                                 <label style="font-size: 13px; font-weight: normal; cursor: pointer; display: flex; align-items: center; gap: 8px;">
-                                    <input type="checkbox" name="teacher_grade_levels[]" value="Second Year of Middle School"> 2nd Preparatory
+                                    <input type="checkbox" name="teacher_grade_levels[]" value="Second Year of Middle School"> <span data-i18n="educational.grades.Second Year of Middle School">2nd Preparatory</span>
                                 </label>
                                 <label style="font-size: 13px; font-weight: normal; cursor: pointer; display: flex; align-items: center; gap: 8px;">
-                                    <input type="checkbox" name="teacher_grade_levels[]" value="Third Year of Middle School"> 3rd Preparatory
+                                    <input type="checkbox" name="teacher_grade_levels[]" value="Third Year of Middle School"> <span data-i18n="educational.grades.Third Year of Middle School">3rd Preparatory</span>
                                 </label>
                                 <label style="font-size: 13px; font-weight: normal; cursor: pointer; display: flex; align-items: center; gap: 8px;">
-                                    <input type="checkbox" name="teacher_grade_levels[]" value="First Year of High School"> 1st Secondary
+                                    <input type="checkbox" name="teacher_grade_levels[]" value="First Year of High School"> <span data-i18n="educational.grades.First Year of High School">1st Secondary</span>
                                 </label>
                             </div>
                         </div>
 
                         <div id="create-assistant-teacher-group" class="form-group" style="margin-bottom: 15px; display: none;">
-                            <label for="create-assistant-teacher" style="display: block; font-weight: 600; margin-bottom: 5px;">Assigned Lead Teacher *</label>
+                            <label for="create-assistant-teacher" style="display: block; font-weight: 600; margin-bottom: 5px;" data-i18n="admin.form_assigned_lead_teacher">Assigned Lead Teacher *</label>
                             <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">Select the single teacher this assistant is assigned to</p>
                             <select id="create-assistant-teacher" name="teacher_id" style="width: 100%; padding: 9px; border-radius: 6px; font-size: 14px;">
-                                <option value="">Select Lead Teacher...</option>
+                                <option value="" data-i18n="admin.form_select_lead_teacher">Select Lead Teacher...</option>
                             </select>
                         </div>
 
                         <div class="form-group" style="margin-bottom: 20px;">
-                            <label for="input-password" style="display: block; font-weight: 600; margin-bottom: 5px;">Password *</label>
-                            <input type="password" id="input-password" name="password" required minlength="8" placeholder="Minimum 8 characters" style="width: 100%; padding: 9px; border-radius: 6px; font-size: 14px;">
-                            <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Must be at least 8 characters long</p>
+                            <label for="input-password" style="display: block; font-weight: 600; margin-bottom: 5px;" data-i18n="admin.form_password">Password *</label>
+                            <input type="password" id="input-password" name="password" required minlength="8" placeholder="Minimum 8 characters" data-i18n-placeholder="admin.form_password_placeholder" style="width: 100%; padding: 9px; border-radius: 6px; font-size: 14px;">
+                            <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;" data-i18n="validation.password_min">Must be at least 8 characters long</p>
                         </div>
 
-                        <button type="submit" class="btn-primary" style="height: 38px; width: auto; min-width: 170px; padding: 0 18px; font-size: 13.5px;">
+                        <button type="submit" class="btn-primary" style="height: 38px; width: auto; min-width: 170px; padding: 0 18px; font-size: 13.5px;" data-i18n="admin.modal_add_user">
                             Add User
                         </button>
                     </form>
@@ -369,22 +369,22 @@
     <div id="edit-user-modal" class="modal-overlay" style="display: none; position: fixed; inset: 0; z-index: 999; align-items: center; justify-content: center; padding: 16px; background: rgba(0,0,0,0.45); backdrop-filter: blur(4px);">
         <div class="content-card modal-content" style="max-width: 620px; width: 100%; max-height: 88vh; display: flex; flex-direction: column; border-radius: 14px; padding: 22px 26px; position: relative; overflow: hidden; box-shadow: var(--shadow-xl); border: 1.5px solid var(--glass-border-strong); background: var(--glass-bg);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-shrink: 0;">
-                <h2 style="margin: 0; font-size: 19px; font-weight: 700; color: var(--text-heading);">Edit User</h2>
+                <h2 style="margin: 0; font-size: 19px; font-weight: 700; color: var(--text-heading);" data-i18n="admin.modal_edit_user">Edit User</h2>
                 <button type="button" onclick="closeEditUserModal()" style="background: none; border: none; font-size: 22px; line-height: 1; cursor: pointer; color: var(--text-muted); transition: color 0.2s;" title="Close modal">&times;</button>
             </div>
-            <p style="color: var(--text-muted); font-size: 12.5px; margin: 0 0 14px 0; flex-shrink: 0;">Update account settings, role assignments, or passwords.</p>
+            <p style="color: var(--text-muted); font-size: 12.5px; margin: 0 0 14px 0; flex-shrink: 0;" data-i18n="admin.users_subtitle">Update account settings, role assignments, or passwords.</p>
 
             <form id="edit-user-form" style="display: flex; flex-direction: column; overflow-y: auto; flex: 1; padding-right: 6px; gap: 13px;">
                 <input type="hidden" id="edit-user-id" name="user_id">
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                     <div class="form-group" style="margin-bottom: 0;">
-                        <label for="edit-name" style="display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px;">Full Name *</label>
+                        <label for="edit-name" style="display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px;" data-i18n="admin.form_full_name">Full Name *</label>
                         <input type="text" id="edit-name" name="name" required style="width: 100%; padding: 8px 12px; border-radius: var(--radius-pill); font-size: 13.5px;">
                     </div>
 
                     <div class="form-group" style="margin-bottom: 0;">
-                        <label for="edit-email" style="display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px;">Email Address *</label>
+                        <label for="edit-email" style="display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px;" data-i18n="admin.form_email_address">Email Address *</label>
                         <input type="email" id="edit-email" name="email" required style="width: 100%; padding: 8px 12px; border-radius: var(--radius-pill); font-size: 13.5px;">
                     </div>
                 </div>
@@ -392,21 +392,21 @@
                 <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 12px; align-items: start;">
                     <div class="form-group" style="margin-bottom: 0;">
                         <label for="edit-password" style="display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 13px; margin-bottom: 4px;">
-                            <span>New Password <span style="font-size: 11px; font-weight: normal; color: var(--text-muted);">(optional)</span></span>
+                            <span data-i18n="admin.form_password">New Password</span>
                             <span style="font-size: 11px; font-weight: normal; color: var(--text-muted);">Min. 8 chars</span>
                         </label>
                         <div style="position: relative; display: flex; align-items: center;">
-                            <input type="password" id="edit-password" name="password" minlength="8" placeholder="Leave blank to keep current" style="width: 100%; padding: 8px 38px 8px 12px; border-radius: var(--radius-pill); font-size: 13px; border: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-primary);">
+                            <input type="password" id="edit-password" name="password" minlength="8" placeholder="Leave blank to keep current" data-i18n-placeholder="common.password_optional_help" style="width: 100%; padding: 8px 38px 8px 12px; border-radius: var(--radius-pill); font-size: 13px; border: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-primary);">
                             <button type="button" id="btn-toggle-edit-pass" onclick="toggleEditPasswordVisibility()" style="position: absolute; right: 10px; background: none; border: none; cursor: pointer; color: var(--text-muted); padding: 4px; display: flex; align-items: center;" title="Toggle password visibility">
                                 <svg id="edit-eye-icon-open" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                                 <svg id="edit-eye-icon-closed" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
                             </button>
                         </div>
-                        <p style="font-size: 11.5px; color: var(--text-muted); margin: 3px 0 0 4px; line-height: 1.3;">Enter a new password to change it for this user.</p>
+                        <p style="font-size: 11.5px; color: var(--text-muted); margin: 3px 0 0 4px; line-height: 1.3;" data-i18n="common.password_optional_help">Enter a new password to change it for this user.</p>
                     </div>
 
                     <div class="form-group" style="margin-bottom: 0;">
-                        <label style="display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px;">System Role</label>
+                        <label style="display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px;" data-i18n="admin.form_system_role">System Role</label>
                         <div style="padding-top: 4px;">
                             <span id="edit-role-badge" class="status-badge" style="display: inline-block; padding: 5px 12px; font-size: 12px; border-radius: var(--radius-pill);"></span>
                         </div>
@@ -414,80 +414,80 @@
                 </div>
 
                 <div id="edit-student-grade-group" class="form-group" style="margin-bottom: 0; display: none;">
-                    <label for="edit-student-grade" style="display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px;">Grade Level</label>
+                    <label for="edit-student-grade" style="display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px;" data-i18n="admin.form_grade_level">Grade Level</label>
                     <select id="edit-student-grade" name="grade_level" style="border-radius: var(--radius-pill);">
-                        <option value="First Year of Middle School">1st Preparatory</option>
-                        <option value="Second Year of Middle School">2nd Preparatory</option>
-                        <option value="Third Year of Middle School">3rd Preparatory</option>
-                        <option value="First Year of High School">1st Secondary</option>
+                        <option value="First Year of Middle School" data-i18n="educational.grades.First Year of Middle School">1st Preparatory</option>
+                        <option value="Second Year of Middle School" data-i18n="educational.grades.Second Year of Middle School">2nd Preparatory</option>
+                        <option value="Third Year of Middle School" data-i18n="educational.grades.Third Year of Middle School">3rd Preparatory</option>
+                        <option value="First Year of High School" data-i18n="educational.grades.First Year of High School">1st Secondary</option>
                     </select>
                 </div>
 
                 <div id="edit-student-teacher-group" class="form-group" style="margin-bottom: 0; display: none;">
                     <label style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                        <span style="font-weight: 600; font-size: 13px;">Assigned Teachers</span>
+                        <span style="font-weight: 600; font-size: 13px;" data-i18n="student.my_teachers">Assigned Teachers</span>
                         <span style="font-size: 11px; color: var(--text-muted);">Multiple allowed</span>
                     </label>
                     <div id="edit-student-teachers-list" style="display: flex; flex-direction: column; gap: 5px; max-height: 120px; overflow-y: auto; padding: 8px 10px; border: 1px solid var(--glass-border); background: var(--glass-bg); border-radius: 8px;">
-                        <span style="font-size: 12px; color: var(--text-muted);">Select a grade level to load teachers</span>
+                        <span style="font-size: 12px; color: var(--text-muted);" data-i18n="auth.select_grade_placeholder">Select a grade level to load teachers</span>
                     </div>
                 </div>
 
                 <!-- student courses add / delete group -->
                 <div id="edit-student-courses-group" class="form-group" style="margin-bottom: 0; display: none;">
                     <label style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                        <span style="font-weight: 700; font-size: 13px; color: var(--text-primary);">Enrolled Courses</span>
+                        <span style="font-weight: 700; font-size: 13px; color: var(--text-primary);" data-i18n="admin.th_enrolled_courses">Enrolled Courses</span>
                         <span id="edit-student-course-count" class="sub-count-badge">0 Courses</span>
                     </label>
                     <div id="edit-student-courses-container" style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; max-height: 110px; overflow-y: auto; padding: 8px 10px; border: 1.5px solid var(--glass-border-strong); background: var(--glass-bg); border-radius: 8px;">
-                        <span style="font-size: 12px; color: var(--text-muted);">No enrolled courses</span>
+                        <span style="font-size: 12px; color: var(--text-muted);" data-i18n="admin.no_courses_desc">No enrolled courses</span>
                     </div>
                     <div style="display: flex; gap: 8px; align-items: center;">
                         <select id="edit-student-add-course-select" style="flex: 1; border-radius: var(--radius-pill); font-size: 13px; height: 38px; line-height: 34px;">
-                            <option value="">Choose course to enroll...</option>
+                            <option value="" data-i18n="common.choose_course">Choose course to enroll...</option>
                         </select>
-                        <button type="button" id="btn-add-student-course" class="btn-primary" style="height: 38px; padding: 0 16px; font-size: 13px; white-space: nowrap; border-radius: var(--radius-pill); display: inline-flex; align-items: center; justify-content: center;">
+                        <button type="button" id="btn-add-student-course" class="btn-primary" style="height: 38px; padding: 0 16px; font-size: 13px; white-space: nowrap; border-radius: var(--radius-pill); display: inline-flex; align-items: center; justify-content: center;" data-i18n="admin.form_assign_btn">
                             Enroll
                         </button>
                     </div>
                 </div>
 
                 <div id="edit-teacher-subject-group" class="form-group" style="margin-bottom: 0; display: none;">
-                    <label for="edit-teacher-subject" style="display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px;">Assigned Subject</label>
+                    <label for="edit-teacher-subject" style="display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px;" data-i18n="admin.form_subject">Assigned Subject</label>
                     <select id="edit-teacher-subject" name="subject" style="border-radius: var(--radius-pill); width: 100%; padding: 8px 12px; font-size: 13px;">
-                        <option value="">Select Subject</option>
-                        <optgroup label="Preparatory Stage">
-                            <option value="Arabic">Arabic</option>
-                            <option value="English">English</option>
-                            <option value="Mathematics">Mathematics</option>
-                            <option value="Science">Science</option>
-                            <option value="Social Studies">Social Studies</option>
+                        <option value="" data-i18n="admin.form_select_subject">Select Subject</option>
+                        <optgroup label="Preparatory Stage" data-i18n-label="educational.stages.Preparatory">
+                            <option value="Arabic" data-i18n="educational.subjects.Arabic">Arabic</option>
+                            <option value="English" data-i18n="educational.subjects.English">English</option>
+                            <option value="Mathematics" data-i18n="educational.subjects.Mathematics">Mathematics</option>
+                            <option value="Science" data-i18n="educational.subjects.Science">Science</option>
+                            <option value="Social Studies" data-i18n="educational.subjects.Social Studies">Social Studies</option>
                         </optgroup>
-                        <optgroup label="Secondary Stage">
-                            <option value="Arabic">Arabic</option>
-                            <option value="First Foreign Language">First Foreign Language</option>
-                            <option value="History">History</option>
-                            <option value="Mathematics">Mathematics</option>
-                            <option value="Integrated Sciences">Integrated Sciences</option>
-                            <option value="Philosophy & Logic">Philosophy & Logic</option>
+                        <optgroup label="Secondary Stage" data-i18n-label="educational.stages.Secondary">
+                            <option value="Arabic" data-i18n="educational.subjects.Arabic">Arabic</option>
+                            <option value="First Foreign Language" data-i18n="educational.subjects.First Foreign Language">First Foreign Language</option>
+                            <option value="History" data-i18n="educational.subjects.History">History</option>
+                            <option value="Mathematics" data-i18n="educational.subjects.Mathematics">Mathematics</option>
+                            <option value="Integrated Sciences" data-i18n="educational.subjects.Integrated Sciences">Integrated Sciences</option>
+                            <option value="Philosophy & Logic" data-i18n="educational.subjects.Philosophy & Logic">Philosophy & Logic</option>
                         </optgroup>
                     </select>
                 </div>
 
                 <div id="edit-teacher-grade-group" class="form-group" style="margin-bottom: 0; display: none;">
-                    <label style="display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px;">Assigned Grade Levels</label>
+                    <label style="display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px;" data-i18n="admin.form_grade_levels">Assigned Grade Levels</label>
                     <div style="display: flex; flex-direction: column; gap: 5px; max-height: 120px; overflow-y: auto; padding: 6px 10px; border: 1px solid var(--glass-border); background: var(--glass-bg); border-radius: 8px;">
                         <label style="font-size: 13px; font-weight: normal; cursor: pointer; display: flex; align-items: center; gap: 8px;">
-                            <input type="checkbox" class="edit-t-grade" name="teacher_grade_levels[]" value="First Year of Middle School"> 1st Preparatory
+                            <input type="checkbox" class="edit-t-grade" name="teacher_grade_levels[]" value="First Year of Middle School"> <span data-i18n="educational.grades.First Year of Middle School">1st Preparatory</span>
                         </label>
                         <label style="font-size: 13px; font-weight: normal; cursor: pointer; display: flex; align-items: center; gap: 8px;">
-                            <input type="checkbox" class="edit-t-grade" name="teacher_grade_levels[]" value="Second Year of Middle School"> 2nd Preparatory
+                            <input type="checkbox" class="edit-t-grade" name="teacher_grade_levels[]" value="Second Year of Middle School"> <span data-i18n="educational.grades.Second Year of Middle School">2nd Preparatory</span>
                         </label>
                         <label style="font-size: 13px; font-weight: normal; cursor: pointer; display: flex; align-items: center; gap: 8px;">
-                            <input type="checkbox" class="edit-t-grade" name="teacher_grade_levels[]" value="Third Year of Middle School"> 3rd Preparatory
+                            <input type="checkbox" class="edit-t-grade" name="teacher_grade_levels[]" value="Third Year of Middle School"> <span data-i18n="educational.grades.Third Year of Middle School">3rd Preparatory</span>
                         </label>
                         <label style="font-size: 13px; font-weight: normal; cursor: pointer; display: flex; align-items: center; gap: 8px;">
-                            <input type="checkbox" class="edit-t-grade" name="teacher_grade_levels[]" value="First Year of High School"> 1st Secondary
+                            <input type="checkbox" class="edit-t-grade" name="teacher_grade_levels[]" value="First Year of High School"> <span data-i18n="educational.grades.First Year of High School">1st Secondary</span>
                         </label>
                     </div>
                 </div>
@@ -495,26 +495,26 @@
                 <!-- teacher courses add / delete group -->
                 <div id="edit-teacher-courses-group" class="form-group" style="margin-bottom: 0; display: none;">
                     <label style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                        <span style="font-weight: 700; font-size: 13px; color: var(--text-primary);">Assigned Courses</span>
+                        <span style="font-weight: 700; font-size: 13px; color: var(--text-primary);" data-i18n="admin.form_assigned_courses">Assigned Courses</span>
                         <span id="edit-teacher-course-count" class="sub-count-badge">0 Courses</span>
                     </label>
                     <div id="edit-teacher-courses-container" style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; max-height: 110px; overflow-y: auto; padding: 8px 10px; border: 1.5px solid var(--glass-border-strong); background: var(--glass-bg); border-radius: 8px;">
-                        <span style="font-size: 12px; color: var(--text-muted);">No assigned courses</span>
+                        <span style="font-size: 12px; color: var(--text-muted);" data-i18n="admin.form_no_assigned_courses">No assigned courses</span>
                     </div>
                     <div style="display: flex; gap: 8px; align-items: center;">
                         <select id="edit-teacher-add-course-select" style="flex: 1; border-radius: var(--radius-pill); font-size: 13px; height: 38px; line-height: 34px;">
-                            <option value="">Choose unassigned course...</option>
+                            <option value="" data-i18n="common.choose_course">Choose unassigned course...</option>
                         </select>
-                        <button type="button" id="btn-add-teacher-course" class="btn-primary" style="height: 38px; padding: 0 16px; font-size: 13px; white-space: nowrap; border-radius: var(--radius-pill); display: inline-flex; align-items: center; justify-content: center;">
+                        <button type="button" id="btn-add-teacher-course" class="btn-primary" style="height: 38px; padding: 0 16px; font-size: 13px; white-space: nowrap; border-radius: var(--radius-pill); display: inline-flex; align-items: center; justify-content: center;" data-i18n="admin.form_assign_btn">
                             Assign
                         </button>
                     </div>
                 </div>
 
                 <div id="edit-assistant-teacher-group" class="form-group" style="margin-bottom: 0; display: none;">
-                    <label for="edit-assistant-teacher" style="display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px;">Assigned Lead Teacher *</label>
+                    <label for="edit-assistant-teacher" style="display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px;" data-i18n="admin.form_assigned_lead_teacher">Assigned Lead Teacher *</label>
                     <select id="edit-assistant-teacher" name="teacher_id" style="border-radius: var(--radius-pill); width: 100%; padding: 8px 12px; font-size: 13px;">
-                        <option value="">Select Lead Teacher...</option>
+                        <option value="" data-i18n="admin.form_select_lead_teacher">Select Lead Teacher...</option>
                     </select>
                 </div>
 

@@ -161,19 +161,21 @@
 
 <div class="dashboard-page">
 
-    <a href="dashboard.html" class="back-btn">
+    <a href="dashboard.html" class="back-btn" data-i18n="nav.back_to_dashboard">
         &larr; Back to Dashboard
     </a>
 
     <header class="dashboard-header">
         <div>
-            <h1>Missed &amp; Late Submissions</h1>
-            <p>Monitor students with missed deadlines and grant 24-hour reopen exceptions.</p>
+            <h1 data-i18n="teacher.missed_and_late">Missed &amp; Late Submissions</h1>
+            <p data-i18n="teacher.missed_late_desc">Monitor students with missed deadlines and grant 24-hour reopen exceptions.</p>
         </div>
 
         <div class="header-actions">
-            <span class="user-role" id="user-role-badge">Teacher</span>
-            <a href="../../backend/auth/logout.php" class="logout-btn">Logout</a>
+            <span class="user-role" id="user-role-badge" data-i18n="educational.roles.teacher">Teacher</span>
+            <button id="lang-toggle-btn" class="theme-toggle" type="button" aria-label="Toggle Language" title="Toggle Language">🌐 العربية</button>
+            <button id="theme-toggle-btn" class="theme-toggle" type="button" aria-label="Toggle Theme" title="Toggle Dark/Light Mode">🌙</button>
+            <a href="../../backend/auth/logout.php" class="logout-btn" data-i18n="nav.logout">Logout</a>
         </div>
     </header>
 
@@ -182,22 +184,22 @@
     <!-- statistics overview -->
     <section class="stats-grid" style="margin-bottom: 25px;">
         <div class="stat-card">
-            <span class="stat-label">Missed Submissions</span>
+            <span class="stat-label" data-i18n="teacher.stat_missed_submissions">Missed Submissions</span>
             <strong class="stat-number" id="stat-total-missed" style="color: var(--danger);">0</strong>
         </div>
 
         <div class="stat-card">
-            <span class="stat-label">Students with Missed Deadlines</span>
+            <span class="stat-label" data-i18n="teacher.stat_students_missed_deadlines">Students with Missed Deadlines</span>
             <strong class="stat-number" id="stat-students-count" style="color: #ea580c;">0</strong>
         </div>
 
         <div class="stat-card">
-            <span class="stat-label">Active Exceptions</span>
+            <span class="stat-label" data-i18n="teacher.stat_active_exceptions">Active Exceptions</span>
             <strong class="stat-number" id="stat-active-exceptions" style="color: #d97706;">0</strong>
         </div>
 
         <div class="stat-card">
-            <span class="stat-label">Late Submissions</span>
+            <span class="stat-label" data-i18n="teacher.stat_late_submissions">Late Submissions</span>
             <strong class="stat-number" id="stat-submitted-late" style="color: var(--success);">0</strong>
         </div>
     </section>
@@ -206,13 +208,13 @@
     <section class="lateness-card">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
             <div>
-                <h2 style="margin: 0 0 4px; font-size: 18px;">Classes &amp; Grade Levels</h2>
-                <p style="margin: 0; font-size: 13px; color: var(--text-muted);">
+                <h2 style="margin: 0 0 4px; font-size: 18px;" data-i18n="teacher.classes_and_grades">Classes &amp; Grade Levels</h2>
+                <p style="margin: 0; font-size: 13px; color: var(--text-muted);" data-i18n="teacher.classes_and_grades_desc">
                     Showing grade levels registered to your teaching profile. Select a class to filter missed work.
                 </p>
             </div>
             <div id="teacher-selector-container" style="display: none;">
-                <label for="teacher-select" style="font-size: 13px; font-weight: 600; margin-right: 6px;">Teacher:</label>
+                <label for="teacher-select" style="font-size: 13px; font-weight: 600; margin-right: 6px;" data-i18n="admin.th_teacher">Teacher:</label>
                 <select id="teacher-select" style="padding: 6px 12px; border-radius: var(--radius-pill); font-size: 13px; border: 1px solid var(--border-color);"></select>
             </div>
         </div>
@@ -220,7 +222,7 @@
         <!-- Grade level pills (populated dynamically with ONLY teacher registered grades) -->
         <div class="filter-bar" style="border: none; padding: 0; margin-bottom: 18px;">
             <div class="filter-tabs" id="grade-level-tabs">
-                <button class="filter-tab active" data-grade="all" id="tab-all-grades">All Classes</button>
+                <button class="filter-tab active" data-grade="all" id="tab-all-grades" data-i18n="common.all_classes">All Classes</button>
                 <!-- Dynamic tabs injected by lateness.js -->
             </div>
 
@@ -230,6 +232,7 @@
                     id="search-input"
                     class="search-input"
                     placeholder="Search by student, assignment, course..."
+                    data-i18n-placeholder="teacher.search_missed_placeholder"
                     style="max-width: 320px;"
                 >
             </div>
@@ -237,8 +240,8 @@
 
         <!-- Empty state -->
         <div id="missed-empty" class="empty-state" style="display: none;">
-            <h3>No missed submissions</h3>
-            <p>No students have unsubmitted past-deadline assignments for this class.</p>
+            <h3 data-i18n="teacher.no_missed_submissions">No missed submissions</h3>
+            <p data-i18n="teacher.no_missed_desc">No students have unsubmitted past-deadline assignments for this class.</p>
         </div>
 
         <!-- Table container -->
@@ -246,15 +249,15 @@
             <table class="assignments-table">
                 <thead>
                     <tr>
-                        <th>Student</th>
-                        <th>Grade Level</th>
-                        <th>Course</th>
-                        <th>Assignment</th>
-                        <th>Deadline</th>
-                        <th>Missed Count</th>
-                        <th>Resubmission Policy</th>
-                        <th>Status</th>
-                        <th style="text-align: right; white-space: nowrap; min-width: 220px;">Actions</th>
+                        <th data-i18n="common.student">Student</th>
+                        <th data-i18n="common.grade_level">Grade Level</th>
+                        <th data-i18n="common.course">Course</th>
+                        <th data-i18n="common.assignment">Assignment</th>
+                        <th data-i18n="common.deadline">Deadline</th>
+                        <th data-i18n="teacher.th_missed_count">Missed Count</th>
+                        <th data-i18n="teacher.th_resub_policy">Resubmission Policy</th>
+                        <th data-i18n="common.status">Status</th>
+                        <th style="text-align: right; white-space: nowrap; min-width: 220px;" data-i18n="common.actions">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="missed-table-body">
@@ -274,8 +277,8 @@
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
             </div>
             <div>
-                <h3 style="margin: 0; font-size: 18px; color: var(--text-primary);">Reopen Assignments</h3>
-                <p style="margin: 2px 0 0; font-size: 13px; color: var(--text-muted);">Grant a 24-hour single-submission exception</p>
+                <h3 style="margin: 0; font-size: 18px; color: var(--text-primary);" data-i18n="teacher.reopen_assignments_heading">Reopen Assignments</h3>
+                <p style="margin: 2px 0 0; font-size: 13px; color: var(--text-muted);" data-i18n="teacher.reopen_assignments_sub">Grant a 24-hour single-submission exception</p>
             </div>
         </div>
 
@@ -283,25 +286,25 @@
         <div style="background: var(--glass-bg, rgba(0,0,0,0.03)); border: 1px solid var(--glass-border, var(--border-color)); border-radius: var(--radius-md, 10px); padding: 12px 16px; margin-bottom: 16px; font-size: 13.5px; line-height: 1.6; color: var(--text-primary);">
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
                 <div>
-                    <strong>Student:</strong> <span id="modal-student-name">—</span> (<span id="modal-student-email">—</span>)
+                    <strong><span data-i18n="common.student">Student:</span></strong> <span id="modal-student-name">—</span> (<span id="modal-student-email">—</span>)
                 </div>
                 <div>
                     <span id="modal-missed-count" class="missed-count-pill">—</span>
                 </div>
             </div>
             <div style="margin-top: 2px; font-size: 13px; color: var(--text-muted);">
-                <strong>Course:</strong> <span id="modal-course-name">—</span>
+                <strong><span data-i18n="common.course">Course:</span></strong> <span id="modal-course-name">—</span>
             </div>
         </div>
 
         <!-- Interactive Assignment Selection (Pick 1st, 2nd, 3rd, or All) -->
         <div style="background: var(--glass-bg, rgba(0,0,0,0.02)); border: 1px solid var(--border-color); border-radius: var(--radius-md, 10px); padding: 14px 16px; margin-bottom: 16px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 6px;">
-                <strong style="font-size: 13.5px; color: var(--text-primary);">Select Overdue Assignments to Reopen:</strong>
+                <strong style="font-size: 13.5px; color: var(--text-primary);" data-i18n="teacher.select_overdue_assignments">Select Overdue Assignments to Reopen:</strong>
                 <div style="font-size: 12px; display: flex; gap: 8px;">
-                    <button type="button" id="modal-select-all-btn" style="background: none; border: none; color: var(--primary, #007979); font-weight: 600; cursor: pointer; text-decoration: underline; padding: 0;">Select All</button>
+                    <button type="button" id="modal-select-all-btn" style="background: none; border: none; color: var(--primary, #007979); font-weight: 600; cursor: pointer; text-decoration: underline; padding: 0;" data-i18n="common.select_all">Select All</button>
                     <span style="color: var(--border-color);">|</span>
-                    <button type="button" id="modal-deselect-all-btn" style="background: none; border: none; color: var(--text-muted); cursor: pointer; text-decoration: underline; padding: 0;">Deselect All</button>
+                    <button type="button" id="modal-deselect-all-btn" style="background: none; border: none; color: var(--text-muted); cursor: pointer; text-decoration: underline; padding: 0;" data-i18n="common.deselect_all">Deselect All</button>
                 </div>
             </div>
 
@@ -309,26 +312,26 @@
                 <!-- Populated dynamically by lateness.js with interactive checkboxes -->
             </div>
 
-            <p style="font-size: 11.5px; color: var(--text-muted); margin: 8px 0 0; line-height: 1.4;">
+            <p style="font-size: 11.5px; color: var(--text-muted); margin: 8px 0 0; line-height: 1.4;" data-i18n="teacher.reopen_checklist_hint">
                 Select overdue assignments to reopen. Reopening is only available for assignments where resubmissions are allowed.
             </p>
         </div>
 
         <div class="modal-constraints-box">
-            <strong>Exception Terms:</strong>
+            <strong data-i18n="teacher.exception_terms_heading">Exception Terms:</strong>
             <ul style="margin: 6px 0 0 18px; padding: 0;">
-                <li>The student receives a <strong>strict 24-hour window</strong> starting immediately.</li>
-                <li>Valid for a <strong>single submission attempt</strong> per reopened assignment.</li>
-                <li>Submissions will be labeled as <strong>Late</strong> during grading.</li>
-                <li><strong>Automatic notifications</strong> will be sent to the student and instructors.</li>
+                <li data-i18n="teacher.exception_term_1">The student receives a <strong>strict 24-hour window</strong> starting immediately.</li>
+                <li data-i18n="teacher.exception_term_2">Valid for a <strong>single submission attempt</strong> per reopened assignment.</li>
+                <li data-i18n="teacher.exception_term_3">Submissions will be labeled as <strong>Late</strong> during grading.</li>
+                <li data-i18n="teacher.exception_term_4"><strong>Automatic notifications</strong> will be sent to the student and instructors.</li>
             </ul>
         </div>
 
         <div style="display: flex; justify-content: flex-end; gap: 10px;">
-            <button type="button" id="modal-cancel-btn" class="modal-cancel-btn">
+            <button type="button" id="modal-cancel-btn" class="modal-cancel-btn" data-i18n="common.cancel">
                 Cancel
             </button>
-            <button type="button" id="modal-confirm-btn" class="reopen-btn" style="padding: 9px 22px; font-size: 13px;">
+            <button type="button" id="modal-confirm-btn" class="reopen-btn" style="padding: 9px 22px; font-size: 13px;" data-i18n="teacher.btn_reopen_24h">
                 Reopen for 24h
             </button>
         </div>

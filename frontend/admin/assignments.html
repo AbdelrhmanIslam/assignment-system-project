@@ -41,17 +41,17 @@
         <section class="assignments-section">
             <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 16px;">
                 <div>
-                    <h2>Assignments by Teacher</h2>
-                    <p>Browse assignments organized by teacher</p>
+                    <h2 data-i18n="admin.assignments_by_teacher">Assignments by Teacher</h2>
+                    <p data-i18n="admin.assignments_by_teacher_desc">Browse assignments organized by teacher</p>
                 </div>
 
-                <input type="text" id="search-input" placeholder="Search title, course, or teacher..." style="padding: 8px 14px; border-radius: 6px; font-size: 14px; width: 280px;">
+                <input type="text" id="search-input" placeholder="Search title, course, or teacher..." data-i18n-placeholder="admin.search_assignment_placeholder" style="padding: 8px 14px; border-radius: 6px; font-size: 14px; width: 280px;">
             </div>
 
             <!-- Teacher Category Filter Tabs -->
             <div class="filter-bar" style="margin-bottom: 16px;">
                 <div class="filter-tabs" id="teacher-category-tabs">
-                    <button type="button" class="filter-tab active" data-teacher-id="all">All Teachers</button>
+                    <button type="button" class="filter-tab active" data-teacher-id="all" data-i18n="common.all_teachers">All Teachers</button>
                     <!-- Dynamically populated from backend teachers -->
                 </div>
             </div>

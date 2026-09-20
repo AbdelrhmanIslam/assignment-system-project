@@ -111,14 +111,15 @@ document.addEventListener('DOMContentLoaded', function () {
             var glBadge = document.createElement('span');
             glBadge.className = 'status-badge status-review';
             glBadge.style.fontSize = '11px';
-            glBadge.textContent = window.formatGradeLevel ? formatGradeLevel(item.grade_level) : (item.grade_level || 'Preparatory');
+            glBadge.textContent = window.i18n ? window.i18n.translateGrade(item.grade_level) : (window.formatGradeLevel ? formatGradeLevel(item.grade_level) : (item.grade_level || 'Preparatory'));
             tdGradeLevel.appendChild(glBadge);
             tr.appendChild(tdGradeLevel);
 
             var tdDeadline = document.createElement('td');
             if (item.deadline) {
                 var deadlineDate = new Date(item.deadline);
-                tdDeadline.textContent = deadlineDate.toLocaleString('en-US', {
+                var lang = (window.i18n && window.i18n.getCurrentLanguage() === 'ar') ? 'ar-EG' : 'en-US';
+                tdDeadline.textContent = deadlineDate.toLocaleString(lang, {
                     month: 'short',
                     day: '2-digit',
                     year: 'numeric',
@@ -127,14 +128,15 @@ document.addEventListener('DOMContentLoaded', function () {
                     hour12: true
                 });
             } else {
-                tdDeadline.innerHTML = '<span class="status-badge status-open" style="font-size: 11px;">No deadline</span>';
+                var noDeadlineText = window.i18n ? window.i18n.t('teacher.no_deadline') : 'No deadline';
+                tdDeadline.innerHTML = '<span class="status-badge status-open" style="font-size: 11px;">' + noDeadlineText + '</span>';
             }
             tr.appendChild(tdDeadline);
 
             var tdStatus = document.createElement('td');
             var badge = document.createElement('span');
             badge.className = 'status-badge ' + item.status_class;
-            badge.textContent = item.status_label;
+            badge.textContent = window.i18n ? window.i18n.translateStatus(item.status_key) : item.status_label;
             tdStatus.appendChild(badge);
             tr.appendChild(tdStatus);
 
@@ -159,7 +161,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 actionLink.href = 'assignment.html?id=' + item.id;
             }
             actionLink.className = 'action-btn ' + item.action_class;
-            actionLink.textContent = (item.status_key === 'graded') ? 'View Result' : ((item.status_key === 'not_submitted') ? 'Submit' : 'View');
+            var actionText = window.i18n ?
+                (item.status_key === 'graded' ? window.i18n.t('common.view_result') : (item.status_key === 'not_submitted' ? window.i18n.t('common.submit') : window.i18n.t('common.view'))) :
+                ((item.status_key === 'graded') ? 'View Result' : ((item.status_key === 'not_submitted') ? 'Submit' : 'View'));
+            actionLink.textContent = actionText;
             tdAction.appendChild(actionLink);
             tr.appendChild(tdAction);
 
@@ -183,10 +188,15 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
 
-        setTabText('tab-all', 'All (' + counts.all + ')');
-        setTabText('tab-not-submitted', 'Not Submitted (' + counts.not_submitted + ')');
-        setTabText('tab-under-review', 'Under Review (' + counts.under_review + ')');
-        setTabText('tab-graded', 'Graded (' + counts.graded + ')');
+        var allLabel = window.i18n ? window.i18n.t('common.all') : 'All';
+        var notSubmittedLabel = window.i18n ? window.i18n.t('student.stat_not_submitted') : 'Not Submitted';
+        var underReviewLabel = window.i18n ? window.i18n.t('educational.statuses.under_review') : 'Under Review';
+        var gradedLabel = window.i18n ? window.i18n.t('common.graded') : 'Graded';
+
+        setTabText('tab-all', allLabel + ' (' + counts.all + ')');
+        setTabText('tab-not-submitted', notSubmittedLabel + ' (' + counts.not_submitted + ')');
+        setTabText('tab-under-review', underReviewLabel + ' (' + counts.under_review + ')');
+        setTabText('tab-graded', gradedLabel + ' (' + counts.graded + ')');
     }
 
     // helper to update text content of an element
@@ -196,4 +206,9 @@ document.addEventListener('DOMContentLoaded', function () {
             elem.textContent = text;
         }
     }
+
+    window.addEventListener('languageChanged', function () {
+        updateTabCounts();
+        renderTable();
+    });
 });

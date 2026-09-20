@@ -64,12 +64,13 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!teacherButtonsContainer) return;
 
         teacherButtonsContainer.innerHTML = '';
+        var isAr = window.i18n && window.i18n.getCurrentLanguage() === 'ar';
 
         // All Teachers button
         var allBtn = document.createElement('button');
         allBtn.className = 'teacher-filter-btn' + (selectedTeacherId === 'all' ? ' active' : '');
         allBtn.setAttribute('data-teacher-id', 'all');
-        allBtn.innerHTML = 'All Teachers <span class="teacher-count-tag">' + allMissedAssignments.length + '</span>';
+        allBtn.innerHTML = (isAr ? 'جميع المعلمين' : 'All Teachers') + ' <span class="teacher-count-tag">' + allMissedAssignments.length + '</span>';
         allBtn.addEventListener('click', function () {
             setActiveTeacherButton(this, 'all');
         });
@@ -83,7 +84,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
             var activeBadge = '';
             if (teacher.active_permissions_count > 0) {
-                activeBadge = ' <span style="background:#f59e0b; color:#fff; border-radius:9999px; padding:1px 6px; font-size:10.5px; font-weight:700;">&#9889; ' + teacher.active_permissions_count + ' Reopened</span>';
+                var reopenedTag = isAr ? 'مُعاد فتحه' : 'Reopened';
+                activeBadge = ' <span style="background:#f59e0b; color:#fff; border-radius:9999px; padding:1px 6px; font-size:10.5px; font-weight:700;">&#9889; ' + teacher.active_permissions_count + ' ' + reopenedTag + '</span>';
             }
 
             btn.innerHTML = escapeHtml(teacher.name) + activeBadge + ' <span class="teacher-count-tag">' + teacher.missed_count + '</span>';
@@ -117,6 +119,8 @@ document.addEventListener('DOMContentLoaded', function () {
     // render missed assignments table
     function renderTable() {
         if (!tbody) return;
+
+        var isAr = window.i18n && window.i18n.getCurrentLanguage() === 'ar';
 
         var filtered = allMissedAssignments.filter(function (item) {
             if (selectedTeacherId !== 'all') {
@@ -166,10 +170,11 @@ document.addEventListener('DOMContentLoaded', function () {
             // 3. Assignment Title & Max Grade & Resubmission Policy
             var tdAssign = document.createElement('td');
             var policyTag = (parseInt(item.allow_resubmission, 10) === 1)
-                ? '<div style="margin-top:4px;"><span style="font-size:11px; font-weight:600; padding:2px 7px; border-radius:4px; background:rgba(16,185,129,0.12); color:#10b981; border:1px solid rgba(16,185,129,0.25);">Resubmission: Allowed</span></div>'
-                : '<div style="margin-top:4px;"><span style="font-size:11px; font-weight:600; padding:2px 7px; border-radius:4px; background:rgba(239,68,68,0.12); color:#ef4444; border:1px solid rgba(239,68,68,0.25);">Resubmission: Not Allowed</span></div>';
+                ? '<div style="margin-top:4px;"><span style="font-size:11px; font-weight:600; padding:2px 7px; border-radius:4px; background:rgba(16,185,129,0.12); color:#10b981; border:1px solid rgba(16,185,129,0.25);">' + (isAr ? 'إعادة التسليم: مسموح بها' : 'Resubmission: Allowed') + '</span></div>'
+                : '<div style="margin-top:4px;"><span style="font-size:11px; font-weight:600; padding:2px 7px; border-radius:4px; background:rgba(239,68,68,0.12); color:#ef4444; border:1px solid rgba(239,68,68,0.25);">' + (isAr ? 'إعادة التسليم: غير مسموح بها' : 'Resubmission: Not Allowed') + '</span></div>';
+            var ptsLabel = isAr ? 'درجة كحد أقصى' : 'pts max';
             tdAssign.innerHTML = '<strong>' + escapeHtml(item.assignment_title) + '</strong><br>' +
-                                 '<small style="color: var(--text-muted);">' + item.max_grade + ' pts max</small>' +
+                                 '<small style="color: var(--text-muted);">' + item.max_grade + ' ' + ptsLabel + '</small>' +
                                  policyTag;
             tr.appendChild(tdAssign);
 
@@ -177,16 +182,15 @@ document.addEventListener('DOMContentLoaded', function () {
             var tdDeadline = document.createElement('td');
             if (item.deadline) {
                 var dDate = new Date(item.deadline);
-                tdDeadline.textContent = dDate.toLocaleString('en-US', {
+                tdDeadline.textContent = dDate.toLocaleString(isAr ? 'ar-EG' : 'en-US', {
                     month: 'short',
                     day: '2-digit',
                     year: 'numeric',
                     hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: true
+                    minute: '2-digit'
                 });
             } else {
-                tdDeadline.textContent = 'No Deadline';
+                tdDeadline.textContent = isAr ? 'بدون موعد نهائي' : 'No Deadline';
             }
             tr.appendChild(tdDeadline);
 
@@ -194,47 +198,59 @@ document.addEventListener('DOMContentLoaded', function () {
             var tdStatus = document.createElement('td');
             if (item.status === 'reopened') {
                 var notesText = item.exception_notes ? ('<div style="font-size:12px; color:var(--text-muted); font-style:italic; margin-top:3px;">"' + escapeHtml(item.exception_notes) + '"</div>') : '';
-                tdStatus.innerHTML = '<span class="status-reopened-badge">&#9888;&#65039; Reopened (24h Window)</span>' +
-                                     '<div style="margin-top:4px; font-size:12px; color:#d97706; font-weight:700;">&#9203; ' + (item.human_remaining || 'Active 24h Window') + '</div>' +
+                var reopenedBadgeText = isAr ? '&#9888;&#65039; مُعاد فتحه (نافذة 24 ساعة)' : '&#9888;&#65039; Reopened (24h Window)';
+                var windowText = item.human_remaining || (isAr ? 'نافذة 24 ساعة نشطة' : 'Active 24h Window');
+                tdStatus.innerHTML = '<span class="status-reopened-badge">' + reopenedBadgeText + '</span>' +
+                                     '<div style="margin-top:4px; font-size:12px; color:#d97706; font-weight:700;">&#9203; ' + windowText + '</div>' +
                                      notesText;
             } else if (item.status === 'submitted_late') {
-                var gradeInfo = item.latest_grade !== null ? (item.latest_grade + ' / ' + item.max_grade + ' pts') : 'Under Review';
-                tdStatus.innerHTML = '<span class="status-badge status-graded">Submitted Late</span>' +
-                                     '<div style="margin-top:4px; font-size:12px; color:var(--text-muted);">Grade: <strong>' + gradeInfo + '</strong></div>';
+                var underReviewText = isAr ? 'قيد المراجعة' : 'Under Review';
+                var ptsText = isAr ? 'درجة' : 'pts';
+                var gradeInfo = item.latest_grade !== null ? (item.latest_grade + ' / ' + item.max_grade + ' ' + ptsText) : underReviewText;
+                var submittedLateText = isAr ? 'تم التسليم متأخراً' : 'Submitted Late';
+                var gradeLabel = isAr ? 'الدرجة:' : 'Grade:';
+                tdStatus.innerHTML = '<span class="status-badge status-graded">' + submittedLateText + '</span>' +
+                                     '<div style="margin-top:4px; font-size:12px; color:var(--text-muted);">' + gradeLabel + ' <strong>' + gradeInfo + '</strong></div>';
             } else if (item.status === 'expired') {
-                tdStatus.innerHTML = '<span class="status-badge status-closed">Window Expired</span>' +
-                                     '<div style="margin-top:4px; font-size:11.5px; color:var(--text-muted);">Window closed without submission</div>';
+                var expiredBadgeText = isAr ? 'انتهت صلاحية النافذة' : 'Window Expired';
+                var expiredNoticeText = isAr ? 'أغلقت النافذة دون تسليم' : 'Window closed without submission';
+                tdStatus.innerHTML = '<span class="status-badge status-closed">' + expiredBadgeText + '</span>' +
+                                     '<div style="margin-top:4px; font-size:11.5px; color:var(--text-muted);">' + expiredNoticeText + '</div>';
             } else {
                 var closedPolicyNotice = (parseInt(item.allow_resubmission, 10) === 0)
-                    ? '<div style="margin-top:4px; font-size:11.5px; color:#ef4444; font-weight:600;">Resubmission Not Allowed</div>'
-                    : '<div style="margin-top:4px; font-size:11.5px; color:var(--text-muted);">Requires teacher permission to reopen</div>';
-                tdStatus.innerHTML = '<span class="status-badge status-closed">Deadline Passed</span>' + closedPolicyNotice;
+                    ? ('<div style="margin-top:4px; font-size:11.5px; color:#ef4444; font-weight:600;">' + (isAr ? 'إعادة التسليم غير مسموح بها' : 'Resubmission Not Allowed') + '</div>')
+                    : ('<div style="margin-top:4px; font-size:11.5px; color:var(--text-muted);">' + (isAr ? 'يتطلب إذن المعلم لإعادة الفتح' : 'Requires teacher permission to reopen') + '</div>');
+                var deadlinePassedText = isAr ? 'انتهى الموعد النهائي' : 'Deadline Passed';
+                tdStatus.innerHTML = '<span class="status-badge status-closed">' + deadlinePassedText + '</span>' + closedPolicyNotice;
             }
             tr.appendChild(tdStatus);
 
             // 6. Action Column (A specific button for each assignment)
             var tdAction = document.createElement('td');
             tdAction.style.textAlign = 'right';
+            var arrow = isAr ? '&larr;' : '&rarr;';
+            var arrowChar = isAr ? '\u2190' : '\u2192';
 
             if (item.status === 'reopened') {
                 var submitBtn = document.createElement('a');
                 submitBtn.href = 'assignment.html?id=' + item.assignment_id;
                 submitBtn.className = 'reopen-action-btn';
-                submitBtn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg> Submit Assignment &rarr;';
+                var submitLabel = isAr ? 'تسليم الواجب ' + arrow : 'Submit Assignment ' + arrow;
+                submitBtn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg> ' + submitLabel;
                 tdAction.appendChild(submitBtn);
             } else if (item.status === 'submitted_late') {
                 var viewSubBtn = document.createElement('a');
                 viewSubBtn.href = 'assignment.html?id=' + item.assignment_id;
                 viewSubBtn.className = 'action-btn action-view';
                 viewSubBtn.style.cssText = 'font-size:12px; padding:6px 14px; text-decoration:none; display:inline-flex; align-items:center; gap:5px;';
-                viewSubBtn.textContent = 'View Submission \u2192';
+                viewSubBtn.textContent = (isAr ? 'عرض التسليم ' : 'View Submission ') + arrowChar;
                 tdAction.appendChild(viewSubBtn);
             } else {
                 var viewDetailsBtn = document.createElement('a');
                 viewDetailsBtn.href = 'assignment.html?id=' + item.assignment_id;
                 viewDetailsBtn.className = 'action-btn action-review';
                 viewDetailsBtn.style.cssText = 'font-size:12px; padding:6px 14px; text-decoration:none; opacity:0.85;';
-                viewDetailsBtn.textContent = 'View Assignment';
+                viewDetailsBtn.textContent = isAr ? 'عرض الواجب' : 'View Assignment';
                 tdAction.appendChild(viewDetailsBtn);
             }
 
@@ -261,4 +277,9 @@ document.addEventListener('DOMContentLoaded', function () {
         div.textContent = str;
         return div.innerHTML;
     }
+
+    window.addEventListener('languageChanged', function () {
+        renderTeacherButtons();
+        renderTable();
+    });
 });

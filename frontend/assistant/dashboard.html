@@ -24,51 +24,53 @@
 
         <header class="dashboard-header">
             <div>
-                <h1>Assistant Dashboard</h1>
-                <p>Welcome, <span id="assistant-name">Loading...</span> (<span id="assistant-email">...</span>)</p>
+                <h1 data-i18n="assistant.dashboard_title">Assistant Dashboard</h1>
+                <p><span data-i18n="assistant.welcome_assistant">Welcome</span>, <span id="assistant-name">Loading...</span> (<span id="assistant-email">...</span>)</p>
             </div>
             <div class="header-actions">
-                <span class="user-role" style="background: #e0f2fe; color: #0369a1;">Assistant</span>
-                <a href="../../backend/auth/logout.php" class="logout-btn">Logout</a>
+                <span class="user-role" style="background: #e0f2fe; color: #0369a1;" data-i18n="educational.roles.assistant">Assistant</span>
+                <button id="lang-toggle-btn" class="theme-toggle" type="button" aria-label="Toggle Language" title="Toggle Language">🌐 العربية</button>
+                <button id="theme-toggle-btn" class="theme-toggle" type="button" aria-label="Toggle Theme" title="Toggle Dark/Light Mode">🌙</button>
+                <a href="../../backend/auth/logout.php" class="logout-btn" data-i18n="nav.logout">Logout</a>
             </div>
         </header>
 
         <div style="display: flex; gap: 12px; margin-bottom: 25px; flex-wrap: wrap;">
-            <a href="submissions.html" class="action-btn action-review" style="padding: 10px 18px; font-size: 14px; text-decoration: none;">
+            <a href="submissions.html" class="action-btn action-review" style="padding: 10px 18px; font-size: 14px; text-decoration: none;" data-i18n="teacher.submissions_queue">
                 Submissions Queue
             </a>
             <a href="lateness.html" class="action-btn action-warning" style="padding: 10px 18px; font-size: 14px; border-radius: var(--radius-pill); text-decoration: none; display: inline-flex; align-items: center; gap: 7px; background: #d97706; color: #fff; font-weight: 600;">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                Missed &amp; Late Submissions
+                <span data-i18n="teacher.missed_late_submissions">Missed &amp; Late Submissions</span>
             </a>
-            <a href="notifications.html" class="action-btn" style="background: #4b5563; color: #fff; padding: 10px 18px; font-size: 14px; text-decoration: none;">
+            <a href="notifications.html" class="action-btn" style="background: #4b5563; color: #fff; padding: 10px 18px; font-size: 14px; text-decoration: none;" data-i18n="nav.notifications">
                 Notifications
             </a>
         </div>
 
         <section class="stats-grid">
             <div class="stat-card">
-                <span class="stat-label">Assigned Courses</span>
+                <span class="stat-label" data-i18n="assistant.stat_assigned_courses">Assigned Courses</span>
                 <strong class="stat-number" id="stat-courses">0</strong>
             </div>
 
             <div class="stat-card">
-                <span class="stat-label">Assigned Students</span>
+                <span class="stat-label" data-i18n="assistant.stat_assigned_students">Assigned Students</span>
                 <strong class="stat-number" id="stat-students" style="color: #0284c7;">0</strong>
             </div>
 
             <div class="stat-card">
-                <span class="stat-label">Pending Review</span>
+                <span class="stat-label" data-i18n="assistant.stat_pending_review">Pending Review</span>
                 <strong class="stat-number" id="stat-pending" style="color: #d97706;">0</strong>
             </div>
 
             <div class="stat-card">
-                <span class="stat-label">Graded Submissions</span>
+                <span class="stat-label" data-i18n="assistant.stat_graded_submissions">Graded Submissions</span>
                 <strong class="stat-number" id="stat-graded" style="color: #166534;">0</strong>
             </div>
 
             <div class="stat-card">
-                <span class="stat-label">Total Submissions</span>
+                <span class="stat-label" data-i18n="assistant.stat_total_submissions">Total Submissions</span>
                 <strong class="stat-number" id="stat-total">0</strong>
             </div>
         </section>
@@ -76,27 +78,27 @@
         <section class="assignments-section" style="margin-bottom: 30px;">
             <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
                 <div>
-                    <h2>Assigned Students</h2>
-                    <p>Students enrolled in your assigned courses</p>
+                    <h2 data-i18n="assistant.assigned_students_heading">Assigned Students</h2>
+                    <p data-i18n="assistant.assigned_students_desc">Students enrolled in your assigned courses</p>
                 </div>
-                <input type="text" id="assistant-students-search" placeholder="Search by student or course..." style="padding: 8px 14px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; width: 240px;">
+                <input type="text" id="assistant-students-search" placeholder="Search by student or course..." data-i18n-placeholder="assistant.search_student_course_placeholder" style="padding: 8px 14px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; width: 240px;">
             </div>
 
             <div id="students-empty" class="empty-state" style="display: none;">
-                <h3>No students assigned</h3>
-                <p>No students are enrolled in your assigned courses.</p>
+                <h3 data-i18n="assistant.no_students_assigned">No students assigned</h3>
+                <p data-i18n="assistant.no_students_desc">No students are enrolled in your assigned courses.</p>
             </div>
 
             <div id="students-table-container" class="table-container" style="display: none;">
                 <table class="assignments-table">
                     <thead>
                         <tr>
-                            <th>Student</th>
-                            <th>Email</th>
-                            <th>Grade Level</th>
-                            <th>Courses</th>
-                            <th>Submissions</th>
-                            <th>Actions</th>
+                            <th data-i18n="common.student">Student</th>
+                            <th data-i18n="common.email">Email</th>
+                            <th data-i18n="common.grade_level">Grade Level</th>
+                            <th data-i18n="common.courses">Courses</th>
+                            <th data-i18n="common.submissions">Submissions</th>
+                            <th data-i18n="common.actions">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="assistant-students-body">
@@ -109,23 +111,23 @@
         <section class="assignments-section">
             <div class="section-header" style="display: flex; justify-content: space-between; align-items: center;">
                 <div>
-                    <h2>Recent Submissions</h2>
-                    <p>Submissions awaiting your evaluation</p>
+                    <h2 data-i18n="assistant.recent_submissions_heading">Recent Submissions</h2>
+                    <p data-i18n="assistant.recent_submissions_desc">Submissions awaiting your evaluation</p>
                 </div>
-                <a href="submissions.html" class="view-btn" style="background: #374151;">View All &rarr;</a>
+                <a href="submissions.html" class="view-btn" style="background: #374151;" data-i18n="teacher.view_all_submissions">View All &rarr;</a>
             </div>
 
             <div class="table-container" id="recent-table-container">
                 <table class="assignments-table">
                     <thead>
                         <tr>
-                            <th>Student</th>
-                            <th>Assignment</th>
-                            <th>Course</th>
-                            <th>Submitted</th>
-                            <th>Status</th>
-                            <th>Grade</th>
-                            <th>Actions</th>
+                            <th data-i18n="common.student">Student</th>
+                            <th data-i18n="common.assignment">Assignment</th>
+                            <th data-i18n="common.course">Course</th>
+                            <th data-i18n="common.submitted">Submitted</th>
+                            <th data-i18n="common.status">Status</th>
+                            <th data-i18n="common.grade">Grade</th>
+                            <th data-i18n="common.actions">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="recent-submissions-body">
@@ -135,8 +137,8 @@
             </div>
 
             <div id="empty-recent-state" class="empty-state" style="display: none;">
-                <h3>No submissions found</h3>
-                <p>No student submissions found in your assigned courses.</p>
+                <h3 data-i18n="teacher.no_submissions_found">No submissions found</h3>
+                <p data-i18n="assistant.no_submissions_desc">No student submissions found in your assigned courses.</p>
             </div>
         </section>
 
@@ -145,38 +147,38 @@
             <div class="modal-content" style="width: 100%; max-width: 860px; max-height: 90vh; border-radius: 12px; box-shadow: var(--shadow-modal); overflow: hidden; display: flex; flex-direction: column;">
                 <div style="padding: 18px 24px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; background: var(--glass-bg-elevated);">
                     <div>
-                        <h2 style="font-size: 18px; color: var(--text-heading); margin: 0 0 4px 0;">Submission History</h2>
-                        <p id="modal-student-subtitle" style="font-size: 13px; color: var(--text-muted); margin: 0;">Submission history for this student</p>
+                        <h2 style="font-size: 18px; color: var(--text-heading); margin: 0 0 4px 0;" data-i18n="assistant.submission_history_heading">Submission History</h2>
+                        <p id="modal-student-subtitle" style="font-size: 13px; color: var(--text-muted); margin: 0;" data-i18n="assistant.submission_history_subtitle">Submission history for this student</p>
                     </div>
                     <button type="button" id="close-history-modal-btn" style="background: none; border: none; font-size: 24px; color: var(--text-muted); cursor: pointer; line-height: 1;">&times;</button>
                 </div>
                 <div style="padding: 18px 24px; overflow-y: auto; flex: 1;">
                     <div id="modal-student-info" style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 18px; padding: 12px 16px; background: var(--glass-bg-elevated); border: 1px solid var(--glass-border); border-radius: 8px; font-size: 13px;">
-                        <div><span style="color: var(--text-muted);">Student:</span> <strong id="modal-student-name" style="color: var(--text-primary);">—</strong></div>
-                        <div><span style="color: var(--text-muted);">Email:</span> <span id="modal-student-email" style="color: var(--text-secondary);">—</span></div>
-                        <div><span style="color: var(--text-muted);">Grade Level:</span> <span id="modal-student-grade" style="color: var(--text-secondary);">—</span></div>
+                        <div><span style="color: var(--text-muted);" data-i18n="common.student">Student:</span> <strong id="modal-student-name" style="color: var(--text-primary);">—</strong></div>
+                        <div><span style="color: var(--text-muted);" data-i18n="common.email">Email:</span> <span id="modal-student-email" style="color: var(--text-secondary);">—</span></div>
+                        <div><span style="color: var(--text-muted);" data-i18n="common.grade_level">Grade Level:</span> <span id="modal-student-grade" style="color: var(--text-secondary);">—</span></div>
                     </div>
 
-                    <div id="modal-history-loading" style="display: none; text-align: center; padding: 30px; color: var(--text-muted);">
+                    <div id="modal-history-loading" style="display: none; text-align: center; padding: 30px; color: var(--text-muted);" data-i18n="teacher.loading_history">
                         Loading submission history...
                     </div>
 
                     <div id="modal-history-empty" style="display: none; text-align: center; padding: 40px 20px; background: var(--glass-bg-subtle); border-radius: 8px; border: 1px dashed var(--glass-border);">
-                        <h3 style="font-size: 16px; color: var(--text-primary); margin-bottom: 6px;">No submissions found</h3>
-                        <p style="font-size: 13px; color: var(--text-muted); margin: 0;">This student has not submitted any assignments yet.</p>
+                        <h3 style="font-size: 16px; color: var(--text-primary); margin-bottom: 6px;" data-i18n="teacher.no_submissions_found">No submissions found</h3>
+                        <p style="font-size: 13px; color: var(--text-muted); margin: 0;" data-i18n="assistant.student_no_submissions_yet">This student has not submitted any assignments yet.</p>
                     </div>
 
                     <div id="modal-history-table-container" style="display: none; overflow-x: auto;">
                         <table class="assignments-table" style="width: 100%; font-size: 13px;">
                             <thead>
                                 <tr>
-                                    <th>Assignment</th>
-                                    <th>Course</th>
-                                    <th>Submitted</th>
-                                    <th>Version</th>
-                                    <th>Status</th>
-                                    <th>Grade</th>
-                                    <th>Actions</th>
+                                    <th data-i18n="common.assignment">Assignment</th>
+                                    <th data-i18n="common.course">Course</th>
+                                    <th data-i18n="common.submitted">Submitted</th>
+                                    <th data-i18n="common.version">Version</th>
+                                    <th data-i18n="common.status">Status</th>
+                                    <th data-i18n="common.grade">Grade</th>
+                                    <th data-i18n="common.actions">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="modal-history-table-body">
@@ -185,8 +187,8 @@
                     </div>
                 </div>
                 <div style="padding: 14px 24px; border-top: 1px solid var(--glass-border); background: var(--glass-bg-elevated); display: flex; justify-content: space-between; align-items: center;">
-                    <a id="modal-full-queue-link" href="submissions.html" class="view-btn" style="background: var(--primary); font-size: 13px; text-decoration: none;">View in Submissions Queue &rarr;</a>
-                    <button type="button" id="btn-close-modal" class="view-btn" style="background: var(--text-muted); font-size: 13px;">Close</button>
+                    <a id="modal-full-queue-link" href="submissions.html" class="view-btn" style="background: var(--primary); font-size: 13px; text-decoration: none;" data-i18n="assistant.view_in_submissions_queue">View in Submissions Queue &rarr;</a>
+                    <button type="button" id="btn-close-modal" class="view-btn" style="background: var(--text-muted); font-size: 13px;" data-i18n="common.close">Close</button>
                 </div>
             </div>
         </div>

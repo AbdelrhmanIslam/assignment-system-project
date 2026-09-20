@@ -56,7 +56,9 @@ function updateTeachers(teachers) {
   if (!teachers || teachers.length === 0) {
     var emptyDiv = document.createElement("div");
     emptyDiv.style.cssText = "grid-column: 1 / -1; padding: 1.5rem; background: var(--glass-bg); border: 1px dashed var(--glass-border); border-radius: var(--radius-md); color: var(--text-muted); text-align: center;";
-    emptyDiv.innerHTML = "<strong>No teachers assigned yet.</strong><p style='margin: 4px 0 0; font-size: 0.9rem;'>Assignments will appear once you are enrolled with your teachers.</p>";
+    var noTeachersTitle = window.i18n ? window.i18n.t("student.no_teachers_assigned") : "No teachers assigned yet.";
+    var noTeachersDesc = window.i18n ? window.i18n.t("student.no_teachers_desc") : "Assignments will appear once you are enrolled with your teachers.";
+    emptyDiv.innerHTML = "<strong>" + escapeHtml(noTeachersTitle) + "</strong><p style='margin: 4px 0 0; font-size: 0.9rem;'>" + escapeHtml(noTeachersDesc) + "</p>";
     container.appendChild(emptyDiv);
     return;
   }
@@ -88,14 +90,14 @@ function updateTeachers(teachers) {
     if (t.subject) {
       var subjectBadge = document.createElement("span");
       subjectBadge.style.cssText = "font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 600; background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3);";
-      subjectBadge.textContent = t.subject;
+      subjectBadge.textContent = window.i18n ? window.i18n.translateSubject(t.subject) : t.subject;
       badgeContainer.appendChild(subjectBadge);
     }
 
     var roleBadge = document.createElement("span");
     roleBadge.className = "status-badge status-graded";
     roleBadge.style.cssText = "font-size: 11px; padding: 2px 8px;";
-    roleBadge.textContent = "Teacher";
+    roleBadge.textContent = window.i18n ? window.i18n.translateRole("teacher") : "Teacher";
     badgeContainer.appendChild(roleBadge);
 
     info.appendChild(name);
@@ -122,7 +124,7 @@ function updateStudentInfo(student) {
   }
 
   if (studentGradeBadge && student.grade_level) {
-    studentGradeBadge.textContent = window.formatGradeLevel ? formatGradeLevel(student.grade_level) : student.grade_level;
+    studentGradeBadge.textContent = window.i18n ? window.i18n.translateGrade(student.grade_level) : (window.formatGradeLevel ? formatGradeLevel(student.grade_level) : student.grade_level);
     studentGradeBadge.style.display = "inline-block";
   }
 }
@@ -261,7 +263,7 @@ function getActionLabel(status) {
       case "not_submitted":
         return window.i18n.t("common.submit");
       case "graded":
-        return window.i18n.t("common.view");
+        return window.i18n.t("common.view_result");
       default:
         return window.i18n.t("common.view");
     }
@@ -342,7 +344,7 @@ function getStatusClass(status) {
 
 function formatDate(dateString) {
   if (!dateString) {
-    return "No deadline";
+    return window.i18n ? window.i18n.t("teacher.no_deadline") : "No deadline";
   }
   var date = new Date(dateString.replace(" ", "T"));
 
@@ -350,7 +352,8 @@ function formatDate(dateString) {
     return dateString;
   }
 
-  return date.toLocaleString("en-US", {
+  var lang = (window.i18n && window.i18n.getCurrentLanguage() === 'ar') ? 'ar-EG' : 'en-US';
+  return date.toLocaleString(lang, {
     year: "numeric",
     month: "short",
     day: "numeric",

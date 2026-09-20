@@ -23,20 +23,21 @@
 
 <div class="dashboard-page">
 
-    <a href="dashboard.html" class="back-btn">
+    <a href="dashboard.html" class="back-btn" data-i18n="nav.back_to_dashboard">
         Back to Dashboard
     </a>
 
     <header class="dashboard-header">
         <div>
-            <h1 id="assignment-title">Loading assignment...</h1>
+            <h1 id="assignment-title" data-i18n="common.loading_assignment">Loading assignment...</h1>
             <p>Course: <span id="course-name">—</span> | Teacher: <span id="teacher-name">—</span></p>
         </div>
 
         <div class="header-actions">
-            <span class="user-role">Student</span>
-
-            <a href="../../backend/auth/logout.php" class="logout-btn">Logout</a>
+            <span class="user-role" data-i18n="educational.roles.student">Student</span>
+            <button id="lang-toggle-btn" class="theme-toggle" type="button" aria-label="Toggle Language" title="Toggle Language">🌐 العربية</button>
+            <button id="theme-toggle-btn" class="theme-toggle" type="button" aria-label="Toggle Theme" title="Toggle Dark/Light Mode">🌙</button>
+            <a href="../../backend/auth/logout.php" class="logout-btn" data-i18n="nav.logout">Logout</a>
         </div>
     </header>
 
@@ -47,59 +48,59 @@
         <div class="assignment-main">
             <section class="content-card">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <h2>Assignment Details</h2>
+                    <h2 data-i18n="student.assignment_details_heading">Assignment Details</h2>
                     <span id="deadline-badge" class="status-badge" style="display: none;"></span>
                 </div>
 
                 <div class="meta-grid">
                     <div class="meta-item">
-                        <span>Teacher</span>
+                        <span data-i18n="admin.th_teacher">Teacher</span>
                         <strong id="lead-teacher-name" style="color: var(--primary);">—</strong>
                     </div>
 
                     <div class="meta-item">
-                        <span>Max Points</span>
+                        <span data-i18n="common.max_grade">Max Points</span>
                         <strong id="max-grade">—</strong>
                     </div>
 
                     <div class="meta-item">
-                        <span>Grade Level</span>
+                        <span data-i18n="admin.th_grade">Grade Level</span>
                         <strong id="target-grade-level">—</strong>
                     </div>
 
                     <div class="meta-item">
-                        <span>Deadline</span>
+                        <span data-i18n="common.deadline">Deadline</span>
                         <strong id="deadline">—</strong>
                     </div>
 
                     <div class="meta-item">
-                        <span>Allowed File Types</span>
+                        <span data-i18n="student.allowed_file_types">Allowed File Types</span>
                         <strong id="allowed-extensions">—</strong>
                     </div>
 
                     <div class="meta-item">
-                        <span>Max File Size</span>
+                        <span data-i18n="student.max_file_size">Max File Size</span>
                         <strong id="max-file-size">—</strong>
                     </div>
 
                     <div class="meta-item">
-                        <span>Resubmission Policy</span>
+                        <span data-i18n="teacher.th_resub_policy">Resubmission Policy</span>
                         <strong id="allow-resubmission">—</strong>
                     </div>
 
                     <div class="meta-item">
-                        <span>Allowed Attempts</span>
+                        <span data-i18n="student.allowed_attempts">Allowed Attempts</span>
                         <strong id="permitted-attempts">—</strong>
                     </div>
 
                     <div class="meta-item">
-                        <span>Attempts Used</span>
+                        <span data-i18n="student.attempts_used">Attempts Used</span>
                         <strong id="attempts-used">—</strong>
                     </div>
                 </div>
 
-                <h3>Instructions</h3>
-                <div id="description-text" class="description-box">
+                <h3 data-i18n="common.instructions">Instructions</h3>
+                <div id="description-text" class="description-box" data-i18n="common.loading">
                     Loading description...
                 </div>
             </section>
@@ -110,53 +111,53 @@
             <!-- previous submission details card -->
             <section id="submission-details-card" class="content-card" style="display: none;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                    <h2>Your Submission</h2>
+                    <h2 data-i18n="student.your_submission_heading">Your Submission</h2>
                     <span id="submission-status-badge" class="status-badge"></span>
                 </div>
 
                 <div class="submission-box">
                     <div class="submission-item">
-                        <span>File:</span>
+                        <span data-i18n="student.file_colon">File:</span>
                         <strong id="submission-file-name">—</strong>
                     </div>
 
                     <div class="submission-item">
-                        <span>Version:</span>
+                        <span data-i18n="student.version_colon">Version:</span>
                         <strong id="submission-version">—</strong>
                     </div>
 
                     <div class="submission-item">
-                        <span>Size:</span>
+                        <span data-i18n="student.size_colon">Size:</span>
                         <strong id="submission-file-size">—</strong>
                     </div>
 
                     <div class="submission-item">
-                        <span>Submitted:</span>
+                        <span data-i18n="student.submitted_colon">Submitted:</span>
                         <strong id="submission-date">—</strong>
                     </div>
                 </div>
 
                 <div style="margin-top: 12px; display: flex; gap: 10px; flex-wrap: wrap;">
-                    <a id="download-submission-link" href="#" class="view-btn" style="display: none;">Download File</a>
-                    <a id="view-result-report-link" href="#" class="view-btn" style="display: none; background: #059669;">View Result &rarr;</a>
+                    <a id="download-submission-link" href="#" class="view-btn" style="display: none;" data-i18n="common.download_file">Download File</a>
+                    <a id="view-result-report-link" href="#" class="view-btn" style="display: none; background: #059669;" data-i18n="common.view_result">View Result &rarr;</a>
                 </div>
 
                 <!-- grade and feedback box -->
                 <div id="grade-card" class="grade-box" style="display: none;">
-                    <h3>Grade &amp; Feedback</h3>
+                    <h3 data-i18n="student.grade_and_feedback">Grade &amp; Feedback</h3>
                     <div class="submission-item">
-                        <span>Grade:</span>
+                        <span data-i18n="student.grade_colon">Grade:</span>
                         <strong id="grade-score">—</strong>
                     </div>
-                    <p style="margin: 8px 0 4px; font-size: 13px; color: #166534; font-weight: 600;">Feedback:</p>
+                    <p style="margin: 8px 0 4px; font-size: 13px; color: #166534; font-weight: 600;" data-i18n="common.feedback">Feedback:</p>
                     <p id="grade-feedback" style="margin: 0; font-size: 14px; color: #374151;">—</p>
 
                     <!-- correction file download section if available -->
                     <div id="correction-file-box" style="display: none; margin-top: 10px; font-size: 13px;">
-                        <span>Correction File:</span>
+                        <span data-i18n="student.correction_file_colon">Correction File:</span>
                         <strong id="correction-file-name">—</strong>
                         <div style="margin-top: 8px;">
-                            <a id="download-correction-link" href="#" class="view-btn" style="background: #059669; font-size: 12px;">Download Correction File</a>
+                            <a id="download-correction-link" href="#" class="view-btn" style="background: #059669; font-size: 12px;" data-i18n="teacher.download_correction_file">Download Correction File</a>
                         </div>
                     </div>
                 </div>
@@ -164,7 +165,7 @@
 
             <!-- file upload form card -->
             <section id="upload-card" class="content-card" style="display: none;">
-                <h2 id="upload-card-title">Submit Assignment</h2>
+                <h2 id="upload-card-title" data-i18n="student.submit_assignment_heading">Submit Assignment</h2>
 
                 <!-- notice box for deadline/attempt limits or remaining attempts -->
                 <div id="submission-notice" class="notice-box" style="display: none; margin-bottom: 16px;"></div>
@@ -174,19 +175,19 @@
                     <input type="hidden" name="assignment_id" id="form-assignment-id" value="">
 
                     <div class="upload-form-group">
-                        <label for="submission-file-input" id="submission-file-label">Upload File</label>
+                        <label for="submission-file-input" id="submission-file-label" data-i18n="common.upload_file">Upload File</label>
                         <input
                             type="file"
                             id="submission-file-input"
                             name="submission_file"
                             required
                         >
-                        <p class="upload-help" id="submission-upload-help">
+                        <p class="upload-help" id="submission-upload-help" data-i18n="student.upload_help_text">
                             Ensure your file meets the allowed format and size requirements.
                         </p>
                     </div>
 
-                    <button type="submit" id="submit-assignment-btn" class="btn-primary" style="width: 100%; border-radius: var(--radius-pill); font-size: 14px; padding: 11px 20px; transition: var(--transition-all);">
+                    <button type="submit" id="submit-assignment-btn" class="btn-primary" style="width: 100%; border-radius: var(--radius-pill); font-size: 14px; padding: 11px 20px; transition: var(--transition-all);" data-i18n="student.submit_homework_btn">
                         Submit Assignment
                     </button>
                 </form>

@@ -215,6 +215,32 @@
             }
         }
 
+        // Values (for input type="submit", etc.)
+        var values = context.querySelectorAll('[data-i18n-value]');
+        for (var m = 0; m < values.length; m++) {
+            var vEl = values[m];
+            var vKey = vEl.getAttribute('data-i18n-value');
+            if (vKey) {
+                var vTrans = t(vKey);
+                if (vTrans) {
+                    vEl.setAttribute('value', vTrans);
+                }
+            }
+        }
+
+        // Aria Labels
+        var ariaEls = context.querySelectorAll('[data-i18n-aria-label]');
+        for (var n = 0; n < ariaEls.length; n++) {
+            var aEl = ariaEls[n];
+            var aKey = aEl.getAttribute('data-i18n-aria-label');
+            if (aKey) {
+                var aTrans = t(aKey);
+                if (aTrans) {
+                    aEl.setAttribute('aria-label', aTrans);
+                }
+            }
+        }
+
         // Update all Language Toggle buttons on page
         updateAllLanguageButtons();
     }

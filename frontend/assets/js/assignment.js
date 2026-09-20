@@ -42,17 +42,20 @@ document.addEventListener('DOMContentLoaded', function () {
             setElementText('course-name', assignment.course_name);
             setElementText('teacher-name', assignment.teacher_name ? assignment.teacher_name : 'Teacher');
             setElementText('lead-teacher-name', assignment.teacher_name ? assignment.teacher_name : 'Teacher');
-            setElementText('max-grade', assignment.max_grade + ' pts');
-            setElementText('target-grade-level', window.formatGradeLevel ? formatGradeLevel(assignment.grade_level) : (assignment.grade_level || 'Preparatory'));
+            var ptsLabel = window.i18n ? window.i18n.t('common.pts') : 'pts';
+            setElementText('max-grade', assignment.max_grade + ' ' + ptsLabel);
+            setElementText('target-grade-level', window.i18n ? window.i18n.translateGrade(assignment.grade_level) : (window.formatGradeLevel ? formatGradeLevel(assignment.grade_level) : (assignment.grade_level || 'Preparatory')));
             setElementText('description-text', assignment.description);
             setElementText('allowed-extensions', assignment.allowed_extensions);
             setElementText('max-file-size', assignment.max_file_size_mb + ' MB');
 
             // format deadline date
-            var deadlineFormatted = 'No deadline';
+            var isAr = (window.i18n && window.i18n.getCurrentLanguage() === 'ar');
+            var deadlineFormatted = window.i18n ? window.i18n.t('teacher.no_deadline') : 'No deadline';
             if (assignment.deadline) {
                 var deadlineDate = new Date(assignment.deadline);
-                deadlineFormatted = deadlineDate.toLocaleString('en-US', {
+                var lang = isAr ? 'ar-EG' : 'en-US';
+                deadlineFormatted = deadlineDate.toLocaleString(lang, {
                     month: 'short',
                     day: '2-digit',
                     year: 'numeric',
@@ -71,21 +74,25 @@ document.addEventListener('DOMContentLoaded', function () {
             var policyElem = document.getElementById('allow-resubmission');
             if (policyElem) {
                 if (resubmissionAllowed) {
-                    policyElem.innerHTML = '<span style="color: var(--success, #10b981);">Allowed</span> <small style="display:block; font-size:11.5px; font-weight:normal; color:var(--text-muted); margin-top:2px;">(Multiple attempts and 24h exceptions allowed)</small>';
+                    var allowedText = isAr ? 'مسموح به' : 'Allowed';
+                    var allowedSub = isAr ? '(يسمح بمحاولات متعددة واستثناءات 24 ساعة)' : '(Multiple attempts and 24h exceptions allowed)';
+                    policyElem.innerHTML = '<span style="color: var(--success, #10b981);">' + allowedText + '</span> <small style="display:block; font-size:11.5px; font-weight:normal; color:var(--text-muted); margin-top:2px;">' + allowedSub + '</small>';
                 } else {
-                    policyElem.innerHTML = '<span style="color: var(--danger, #ef4444);">Not Allowed</span> <small style="display:block; font-size:11.5px; font-weight:normal; color:var(--text-muted); margin-top:2px;">(Single submission only)</small>';
+                    var notAllowedText = isAr ? 'غير مسموح به' : 'Not Allowed';
+                    var notAllowedSub = isAr ? '(تسليم لمرة واحدة فقط)' : '(Single submission only)';
+                    policyElem.innerHTML = '<span style="color: var(--danger, #ef4444);">' + notAllowedText + '</span> <small style="display:block; font-size:11.5px; font-weight:normal; color:var(--text-muted); margin-top:2px;">' + notAllowedSub + '</small>';
                 }
             }
 
-            var permittedAttemptsText = '1 attempt';
+            var permittedAttemptsText = isAr ? 'محاولة واحدة' : '1 attempt';
             if (resubmissionAllowed) {
-                permittedAttemptsText = (maxAttempts === 0) ? 'Unlimited attempts' : (maxAttempts + (maxAttempts === 1 ? ' attempt' : ' attempts'));
+                permittedAttemptsText = (maxAttempts === 0) ? (isAr ? 'محاولات غير محدودة' : 'Unlimited attempts') : (maxAttempts + ' ' + (isAr ? 'محاولات' : (maxAttempts === 1 ? 'attempt' : 'attempts')));
             }
             setElementText('permitted-attempts', permittedAttemptsText);
 
-            var attemptsUsedText = attemptsCount + ' of ' + (maxAttempts === 0 ? 'Unlimited' : maxAttempts);
+            var attemptsUsedText = attemptsCount + ' ' + (isAr ? 'من' : 'of') + ' ' + (maxAttempts === 0 ? (isAr ? 'غير محدود' : 'Unlimited') : maxAttempts);
             if (attemptsCount > 0 && maxAttempts > 0 && attemptsCount >= maxAttempts) {
-                attemptsUsedText += ' (Maximum reached)';
+                attemptsUsedText += isAr ? ' (تم بلوغ الحد الأقصى)' : ' (Maximum reached)';
             }
             setElementText('attempts-used', attemptsUsedText);
 
@@ -96,23 +103,23 @@ document.addEventListener('DOMContentLoaded', function () {
                     deadlineBadge.className = 'status-badge';
                     deadlineBadge.style.background = '#f59e0b';
                     deadlineBadge.style.color = '#ffffff';
-                    deadlineBadge.textContent = 'Reopened (24h Exception Active)';
+                    deadlineBadge.textContent = isAr ? 'معاد فتحه (استثناء 24 ساعة نشط)' : 'Reopened (24h Exception Active)';
                     deadlineBadge.style.display = 'inline-block';
                 } else if (data.is_past_deadline) {
                     deadlineBadge.className = 'status-badge status-closed';
-                    deadlineBadge.textContent = 'Deadline Passed';
+                    deadlineBadge.textContent = isAr ? 'انتهى الموعد النهائي' : 'Deadline Passed';
                     deadlineBadge.style.display = 'inline-block';
                 } else if (data.has_reached_max_attempts) {
                     deadlineBadge.className = 'status-badge status-closed';
-                    deadlineBadge.textContent = 'Maximum Attempts Reached';
+                    deadlineBadge.textContent = isAr ? 'تم استنفاد الحد الأقصى للمحاولات' : 'Maximum Attempts Reached';
                     deadlineBadge.style.display = 'inline-block';
                 } else if (!assignment.deadline) {
                     deadlineBadge.className = 'status-badge status-open';
-                    deadlineBadge.textContent = 'No Deadline';
+                    deadlineBadge.textContent = isAr ? 'بدون موعد نهائي' : 'No Deadline';
                     deadlineBadge.style.display = 'inline-block';
                 } else {
                     deadlineBadge.className = 'status-badge status-open';
-                    deadlineBadge.textContent = 'Open for Submission';
+                    deadlineBadge.textContent = isAr ? 'مفتوح للتسليم' : 'Open for Submission';
                     deadlineBadge.style.display = 'inline-block';
                 }
             }

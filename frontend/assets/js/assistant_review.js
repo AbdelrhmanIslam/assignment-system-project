@@ -64,17 +64,14 @@ function renderDetails(data) {
 
     var statusBadge = document.getElementById('status-badge');
     if (statusBadge) {
+        statusBadge.textContent = window.i18n ? window.i18n.translateStatus(sub.status) : (sub.status === 'graded' ? 'Graded' : (sub.status === 'recheck' ? 'Recheck Requested' : (sub.status === 'pending_teacher' ? 'Pending Approval' : 'Submitted')));
         if (sub.status === 'graded') {
-            statusBadge.textContent = 'Graded';
             statusBadge.className = 'status-badge status-graded';
         } else if (sub.status === 'recheck') {
-            statusBadge.textContent = 'Recheck Requested';
             statusBadge.className = 'status-badge status-closed';
         } else if (sub.status === 'pending_teacher') {
-            statusBadge.textContent = 'Pending Approval';
             statusBadge.className = 'status-badge status-review';
         } else {
-            statusBadge.textContent = 'Submitted';
             statusBadge.className = 'status-badge status-review';
         }
     }
@@ -82,7 +79,7 @@ function renderDetails(data) {
     // Late submission / 24-hour exception indicator
     var lateBanner = document.getElementById('late-exception-banner');
     if (parseInt(sub.is_late, 10) === 1 || sub.exception_id) {
-        var notesText = sub.exception_notes ? ('<div style="margin-top: 5px; font-style: italic; opacity: 0.95;">Note: "' + escapeHtml(sub.exception_notes) + '"</div>') : '';
+        var notesText = sub.exception_notes ? ('<div style="margin-top: 5px; font-style: italic; opacity: 0.95;">' + (window.i18n ? window.i18n.t('common.info') : 'Note') + ': "' + escapeHtml(sub.exception_notes) + '"</div>') : '';
         if (!lateBanner) {
             lateBanner = document.createElement('div');
             lateBanner.id = 'late-exception-banner';
@@ -100,8 +97,10 @@ function renderDetails(data) {
                 mainCard.insertBefore(lateBanner, mainCard.children[1] || null);
             }
         }
-        lateBanner.innerHTML = '<strong style="display: block; font-size: 14px; margin-bottom: 3px;">&#9888;&#65039; Late Submission (24-Hour Exception)</strong>' +
-            '<span>Submitted under a 24-hour exception for a missed deadline.</span>' + notesText;
+        var bannerTitle = (window.i18n && window.i18n.getCurrentLanguage() === 'ar') ? '&#9888;&#65039; تسليم متأخر (استثناء 24 ساعة)' : '&#9888;&#65039; Late Submission (24-Hour Exception)';
+        var bannerDesc = (window.i18n && window.i18n.getCurrentLanguage() === 'ar') ? 'تم التسليم بموجب استثناء 24 ساعة بعد فوات الموعد النهائي.' : 'Submitted under a 24-hour exception for a missed deadline.';
+        lateBanner.innerHTML = '<strong style="display: block; font-size: 14px; margin-bottom: 3px;">' + bannerTitle + '</strong>' +
+            '<span>' + bannerDesc + '</span>' + notesText;
 
         if (statusBadge && !document.getElementById('late-badge')) {
             var lateBadge = document.createElement('span');
@@ -110,7 +109,7 @@ function renderDetails(data) {
             lateBadge.style.background = '#ea580c';
             lateBadge.style.color = '#fff';
             lateBadge.style.marginLeft = '8px';
-            lateBadge.textContent = 'Late (24h Exception)';
+            lateBadge.textContent = (window.i18n && window.i18n.getCurrentLanguage() === 'ar') ? 'متأخر (استثناء 24س)' : 'Late (24h Exception)';
             statusBadge.parentNode.insertBefore(lateBadge, statusBadge.nextSibling);
         }
     }
@@ -219,7 +218,8 @@ function formatBytes(bytes) {
 function formatDate(dateStr) {
     if (!dateStr) return '—';
     var d = new Date(dateStr);
-    return d.toLocaleDateString('en-US', {
+    var lang = (window.i18n && window.i18n.getCurrentLanguage() === 'ar') ? 'ar-EG' : 'en-US';
+    return d.toLocaleDateString(lang, {
         month: 'short',
         day: 'numeric',
         year: 'numeric',
@@ -252,3 +252,9 @@ function escapeHtml(str) {
     div.textContent = str;
     return div.innerHTML;
 }
+
+window.addEventListener('languageChanged', function () {
+    var urlParams = new URLSearchParams(window.location.search);
+    var submissionId = urlParams.get('id');
+    if (submissionId) loadSubmissionDetails(submissionId);
+});

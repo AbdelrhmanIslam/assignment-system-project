@@ -44,19 +44,20 @@ function renderResult(data) {
     var assign = data.assignment;
     var sub = data.submission;
     var grade = data.grade;
+    var isAr = window.i18n && window.i18n.getCurrentLanguage() === 'ar';
 
     document.getElementById('assignmentTitle').textContent = assign.title;
     document.getElementById('courseName').textContent = assign.course_name;
     var teacherEl = document.getElementById('teacherName');
     if (teacherEl) {
-        teacherEl.textContent = 'Teacher: ' + (assign.teacher_name || 'Teacher');
+        teacherEl.textContent = (isAr ? 'المعلم: ' : 'Teacher: ') + (assign.teacher_name || (isAr ? 'معلم' : 'Teacher'));
     }
     document.getElementById('maxGrade').textContent = assign.max_grade;
 
     document.getElementById('subFileName').textContent = sub.file_name;
     document.getElementById('subFileSize').textContent = formatBytes(sub.file_size);
     document.getElementById('subDate').textContent = formatDate(sub.submitted_at);
-    document.getElementById('subVersion').textContent = 'Version ' + sub.version;
+    document.getElementById('subVersion').textContent = (isAr ? 'الإصدار ' : 'Version ') + sub.version;
 
     var downloadSubBtn = document.getElementById('downloadSubBtn');
     if (downloadSubBtn) {
@@ -72,8 +73,19 @@ function renderResult(data) {
 
         document.getElementById('gradeScore').textContent = grade.grade + ' / ' + assign.max_grade;
         document.getElementById('gradePercent').textContent = grade.percentage + '%';
-        document.getElementById('gradeBadge').textContent = grade.badge;
-        document.getElementById('gradeFeedback').textContent = grade.feedback || 'No written feedback provided.';
+
+        var badgeMap = {
+            'Excellent': isAr ? 'ممتاز' : 'Excellent',
+            'Very Good': isAr ? 'جيد جداً' : 'Very Good',
+            'Good': isAr ? 'جيد' : 'Good',
+            'Pass': isAr ? 'مقبول' : 'Pass',
+            'Needs Improvement': isAr ? 'يحتاج إلى تحسين' : 'Needs Improvement',
+            'Needs Review': isAr ? 'يحتاج إلى مراجعة' : 'Needs Review'
+        };
+        document.getElementById('gradeBadge').textContent = badgeMap[grade.badge] || grade.badge;
+
+        var defaultFeedback = isAr ? 'لا توجد ملاحظات مكتوبة.' : 'No written feedback provided.';
+        document.getElementById('gradeFeedback').textContent = grade.feedback || defaultFeedback;
         document.getElementById('gradedBy').textContent = grade.graded_by;
         document.getElementById('gradedAt').textContent = formatDate(grade.graded_at);
 
@@ -83,7 +95,7 @@ function renderResult(data) {
             if (grade.assistant_signature) {
                 assistantBox.style.display = 'block';
                 document.getElementById('assistantSignName').textContent = grade.assistant_signature.name;
-                document.getElementById('assistantSignEmail').textContent = grade.assistant_signature.email || 'Teaching Assistant';
+                document.getElementById('assistantSignEmail').textContent = grade.assistant_signature.email || (isAr ? 'معيد' : 'Teaching Assistant');
                 document.getElementById('assistantSignDate').textContent = formatDate(grade.assistant_signature.signed_at);
             } else {
                 assistantBox.style.display = 'none';
@@ -105,13 +117,13 @@ function renderResult(data) {
         if (resultCard) resultCard.style.display = 'none';
         if (pendingCard) pendingCard.style.display = 'block';
         var statusMap = {
-            'submitted': 'Submitted',
-            'under_review': 'Under Review',
-            'pending_approval': 'Pending Approval',
-            'graded': 'Graded',
-            'recheck_requested': 'Recheck Requested'
+            'submitted': isAr ? 'تم التسليم' : 'Submitted',
+            'under_review': isAr ? 'قيد المراجعة' : 'Under Review',
+            'pending_approval': isAr ? 'في انتظار الاعتماد' : 'Pending Approval',
+            'graded': isAr ? 'تم التصحيح' : 'Graded',
+            'recheck_requested': isAr ? 'طلب إعادة تدقيق' : 'Recheck Requested'
         };
-        var displayStatus = statusMap[sub.status] || (sub.status ? sub.status.replace(/_/g, ' ') : 'Under Review');
+        var displayStatus = statusMap[sub.status] || (sub.status ? sub.status.replace(/_/g, ' ') : (isAr ? 'قيد المراجعة' : 'Under Review'));
         document.getElementById('subStatusBadge').textContent = displayStatus;
     }
 
@@ -123,9 +135,10 @@ function renderResult(data) {
 }
 
 function formatBytes(bytes) {
-    if (bytes === 0) return '0 Bytes';
+    var isAr = window.i18n && window.i18n.getCurrentLanguage() === 'ar';
+    if (bytes === 0) return isAr ? '0 بايت' : '0 Bytes';
     var k = 1024;
-    var sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    var sizes = isAr ? ['بايت', 'كيلوبايت', 'ميجابايت', 'جيجابايت'] : ['Bytes', 'KB', 'MB', 'GB'];
     var i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }

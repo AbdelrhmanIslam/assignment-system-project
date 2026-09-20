@@ -48,27 +48,29 @@
 
             <div class="dashboard-welcome">
 
-                <p class="dashboard-label">
+                <p class="dashboard-label" data-i18n="student.dashboard_title">
                     Student Dashboard
                 </p>
 
                 <h1>
-                    Welcome, <span id="student-name">Student</span>
+                    <span data-i18n="student.welcome_student">Welcome</span>, <span id="student-name">Student</span>
                 </h1>
 
-                <p id="student-email">
+                <p id="student-email" data-i18n="common.loading">
                     Loading...
                 </p>
 
             </div>
 
             <div class="header-actions">
-                <a href="assignments.html" class="action-btn action-view">Assignments</a>
-                <a href="lateness.html" class="action-btn" style="background: rgba(234, 88, 12, 0.15); color: #c2410c; border: 1px solid rgba(234, 88, 12, 0.4); text-decoration: none; padding: 8px 15px; border-radius: var(--radius-pill); font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">&#9888;&#65039; Missed &amp; Late Submissions</a>
-                <a href="notifications.html" class="action-btn action-view">Notifications</a>
+                <a href="assignments.html" class="action-btn action-view" data-i18n="nav.assignments">Assignments</a>
+                <a href="lateness.html" class="action-btn" style="background: rgba(234, 88, 12, 0.15); color: #c2410c; border: 1px solid rgba(234, 88, 12, 0.4); text-decoration: none; padding: 8px 15px; border-radius: var(--radius-pill); font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;" data-i18n="teacher.missed_late_submissions">&#9888;&#65039; Missed &amp; Late Submissions</a>
+                <a href="notifications.html" class="action-btn action-view" data-i18n="nav.notifications">Notifications</a>
                 <span id="student-grade-badge" class="user-role" style="display:none;">Grade Level</span>
-                <span class="user-role">Student</span>
-                <a href="../../backend/auth/logout.php" class="logout-btn">Logout</a>
+                <span class="user-role" data-i18n="educational.roles.student">Student</span>
+                <button id="lang-toggle-btn" class="theme-toggle" type="button" aria-label="Toggle Language" title="Toggle Language">🌐 العربية</button>
+                <button id="theme-toggle-btn" class="theme-toggle" type="button" aria-label="Toggle Theme" title="Toggle Dark/Light Mode">🌙</button>
+                <a href="../../backend/auth/logout.php" class="logout-btn" data-i18n="nav.logout">Logout</a>
             </div>
 
         </header>
@@ -79,7 +81,7 @@
 
                 <div class="stat-card">
 
-                    <span class="stat-label">
+                    <span class="stat-label" data-i18n="teacher.stat_total_assignments">
                         Total Assignments
                     </span>
 
@@ -94,7 +96,7 @@
 
                 <div class="stat-card">
 
-                    <span class="stat-label">
+                    <span class="stat-label" data-i18n="student.stat_not_submitted">
                         Not Submitted
                     </span>
 
@@ -109,7 +111,7 @@
 
                 <div class="stat-card">
 
-                    <span class="stat-label">
+                    <span class="stat-label" data-i18n="educational.statuses.under_review">
                         Under Review
                     </span>
 
@@ -124,7 +126,7 @@
 
                 <div class="stat-card">
 
-                    <span class="stat-label">
+                    <span class="stat-label" data-i18n="common.graded">
                         Graded
                     </span>
 
@@ -143,8 +145,8 @@
             <section class="teachers-section" style="margin-bottom: 2rem;">
                 <div class="section-header" style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
-                        <h2>My Teachers</h2>
-                        <p>Teachers for your grade level</p>
+                        <h2 data-i18n="student.my_teachers">My Teachers</h2>
+                        <p data-i18n="student.teachers_for_grade_level">Teachers for your grade level</p>
                     </div>
                 </div>
 
@@ -159,17 +161,17 @@
 
                     <div>
 
-                        <h2>
+                        <h2 data-i18n="student.recent_assignments">
                             Recent Assignments
                         </h2>
 
-                        <p>
+                        <p data-i18n="student.assignments_from_courses">
                             Assignments from your courses
                         </p>
 
                     </div>
 
-                    <a href="assignments.html" class="view-btn">
+                    <a href="assignments.html" class="view-btn" data-i18n="teacher.view_all_submissions">
                         View All &rarr;
                     </a>
 
@@ -178,6 +180,7 @@
                 <div
                     id="assignments-loading"
                     class="loading-state"
+                    data-i18n="common.loading_assignment"
                 >
                     Loading assignments...
                 </div>
@@ -188,11 +191,11 @@
                     style="display: none;"
                 >
 
-                    <h3>
+                    <h3 data-i18n="student.no_assignments">
                         No assignments
                     </h3>
 
-                    <p>
+                    <p data-i18n="student.no_assignments_available_desc">
                         No assignments available from your teachers.
                     </p>
 
@@ -210,31 +213,31 @@
 
                             <tr>
 
-                                <th>
+                                <th data-i18n="nav.assignments">
                                     Assignment
                                 </th>
 
-                                <th>
+                                <th data-i18n="admin.th_course">
                                     Course
                                 </th>
 
-                                <th>
+                                <th data-i18n="admin.th_teacher">
                                     Teacher
                                 </th>
 
-                                <th>
+                                <th data-i18n="common.deadline">
                                     Deadline
                                 </th>
 
-                                <th>
+                                <th data-i18n="common.status">
                                     Status
                                 </th>
 
-                                <th>
+                                <th data-i18n="common.grade">
                                     Grade
                                 </th>
 
-                                <th>
+                                <th data-i18n="common.actions">
                                     Actions
                                 </th>
 

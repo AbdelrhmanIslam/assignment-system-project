@@ -24,19 +24,21 @@
 
         <header class="dashboard-header">
             <div>
-                <h1>Assignment Result</h1>
-                <p>Detailed performance report and instructor feedback</p>
+                <h1 data-i18n="student.result_page_title">Assignment Result</h1>
+                <p data-i18n="student.result_subtitle">Detailed performance report and instructor feedback</p>
             </div>
             <div class="header-actions">
-                <a href="assignments.html" class="back-btn" style="margin-bottom:0;">Back to Assignments</a>
-                <span class="user-role">Student</span>
-                <span id="userName" style="font-weight: 600; color: #374151;">Loading...</span>
-                <a href="../../backend/auth/logout.php" class="logout-btn">Logout</a>
+                <a href="assignments.html" class="back-btn" style="margin-bottom:0;" data-i18n="nav.back_to_assignments">Back to Assignments</a>
+                <span class="user-role" data-i18n="educational.roles.student">Student</span>
+                <span id="userName" style="font-weight: 600; color: #374151;" data-i18n="common.loading">Loading...</span>
+                <button id="lang-toggle-btn" class="theme-toggle" type="button" aria-label="Toggle Language" title="Toggle Language">🌐 العربية</button>
+                <button id="theme-toggle-btn" class="theme-toggle" type="button" aria-label="Toggle Theme" title="Toggle Dark/Light Mode">🌙</button>
+                <a href="../../backend/auth/logout.php" class="logout-btn" data-i18n="nav.logout">Logout</a>
             </div>
         </header>
 
         <div id="errorMessage" class="alert-banner alert-error" style="display:none; margin-bottom: 20px;"></div>
-        <div id="loadingState" style="text-align:center; padding: 40px; color: #6b7280;">Loading assignment result...</div>
+        <div id="loadingState" style="text-align:center; padding: 40px; color: #6b7280;" data-i18n="common.loading">Loading assignment result...</div>
 
         <div id="mainContent" style="display:none;">
 
@@ -47,10 +49,10 @@
                             <span id="courseName" class="status-badge status-review">Course</span>
                             <span id="teacherName" class="status-badge status-submitted">Teacher</span>
                         </div>
-                        <h2 id="assignmentTitle" style="margin: 6px 0 0; font-size: 22px;">Assignment Title</h2>
+                        <h2 id="assignmentTitle" style="margin: 6px 0 0; font-size: 22px;" data-i18n="student.assignment_title_default">Assignment Title</h2>
                     </div>
                     <div style="text-align:right;">
-                        <span style="font-size:13px; color:#6b7280; display:block;">Max Points</span>
+                        <span style="font-size:13px; color:#6b7280; display:block;" data-i18n="common.max_grade">Max Points</span>
                         <strong id="maxGrade" style="font-size:22px; color:#111827;">0</strong>
                     </div>
                 </div>
@@ -63,7 +65,7 @@
                     <div id="resultDetails" class="content-card" style="display:none; border-top: 4px solid var(--success);">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px; flex-wrap:wrap; gap:10px;">
                             <div>
-                                <span style="font-size: 13px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Final Score</span>
+                                <span style="font-size: 13px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;" data-i18n="student.final_score">Final Score</span>
                                 <div style="display:flex; align-items:baseline; gap:10px; margin-top:4px;">
                                     <span id="gradeScore" style="font-size: 32px; font-weight: 800; color: var(--primary);">-- / --</span>
                                     <span id="gradePercent" style="font-size: 18px; font-weight: 600; color: var(--text-muted);">--%</span>
@@ -75,13 +77,13 @@
                         </div>
 
                         <div style="background: var(--glass-bg-elevated); border: 1px solid var(--glass-border); border-radius: 8px; padding: 18px; margin-bottom: 20px;">
-                            <h4 style="margin: 0 0 10px; font-size: 15px; color: var(--text-heading);">Teacher Feedback</h4>
+                            <h4 style="margin: 0 0 10px; font-size: 15px; color: var(--text-heading);" data-i18n="student.teacher_feedback_heading">Teacher Feedback</h4>
                             <p id="gradeFeedback" style="margin: 0; line-height: 1.6; color: var(--text-body); white-space: pre-line;">No feedback provided.</p>
                         </div>
 
                         <div style="display:flex; justify-content:space-between; font-size: 13px; color: var(--text-muted); border-top: 1px solid var(--glass-border); padding-top: 14px;">
-                            <span>Evaluated by: <strong id="gradedBy" style="color:var(--text-primary);">--</strong></span>
-                            <span>Graded on: <strong id="gradedAt" style="color:var(--text-primary);">--</strong></span>
+                            <span><span data-i18n="student.evaluated_by_colon">Evaluated by:</span> <strong id="gradedBy" style="color:var(--text-primary);">--</strong></span>
+                            <span><span data-i18n="student.graded_on_colon">Graded on:</span> <strong id="gradedAt" style="color:var(--text-primary);">--</strong></span>
                         </div>
 
                         <!-- Official Assistant Evaluation Signature Box -->
@@ -91,57 +93,57 @@
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"></path><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path></svg>
                                 </span>
                                 <div>
-                                    <h4 style="margin: 0; font-size: 15px; color: var(--role-assistant-text);">Teaching Assistant Evaluation</h4>
-                                    <span style="font-size: 12px; color: var(--text-muted);">Officially evaluated and graded by Teaching Assistant</span>
+                                    <h4 style="margin: 0; font-size: 15px; color: var(--role-assistant-text);" data-i18n="student.assistant_evaluation_heading">Teaching Assistant Evaluation</h4>
+                                    <span style="font-size: 12px; color: var(--text-muted);" data-i18n="student.assistant_evaluated_badge">Officially evaluated and graded by Teaching Assistant</span>
                                 </div>
                             </div>
                             <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.5; margin-left: 44px;">
-                                <div>Signed by: <strong id="assistantSignName">--</strong> (<span id="assistantSignEmail">--</span>)</div>
-                                <div style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">Evaluation Date: <span id="assistantSignDate">--</span></div>
+                                <div><span data-i18n="student.signed_by_colon">Signed by:</span> <strong id="assistantSignName">--</strong> (<span id="assistantSignEmail">--</span>)</div>
+                                <div style="font-size: 12px; color: var(--text-muted); margin-top: 3px;"><span data-i18n="student.evaluation_date_colon">Evaluation Date:</span> <span id="assistantSignDate">--</span></div>
                             </div>
                         </div>
 
                         <div id="correctionBox" style="display:none; margin-top: 20px; padding: 14px; background: var(--success-bg); border: 1px solid var(--success-border); border-radius: 8px;">
-                            <h4 style="margin: 0 0 8px; font-size: 14px; color: var(--success-text);">Annotated Correction File Attached</h4>
+                            <h4 style="margin: 0 0 8px; font-size: 14px; color: var(--success-text);" data-i18n="student.correction_attached_heading">Annotated Correction File Attached</h4>
                             <p style="margin: 0 0 10px; font-size: 13px; color: var(--text-primary);" id="correctionFileName">correction.pdf</p>
-                            <a id="downloadCorrectionBtn" href="#" class="view-btn" style="background:var(--primary);">Download Correction File</a>
+                            <a id="downloadCorrectionBtn" href="#" class="view-btn" style="background:var(--primary);" data-i18n="teacher.download_correction_file">Download Correction File</a>
                         </div>
                     </div>
 
                     <!-- pending review card (if not yet graded) -->
                     <div id="pendingCard" class="content-card" style="display:none; border-top: 4px solid #f59e0b;">
-                        <h3 style="margin: 0 0 10px; color: #b45309;">Submission Under Review</h3>
-                        <p style="color: #4b5563; line-height: 1.5; margin-bottom: 15px;">
+                        <h3 style="margin: 0 0 10px; color: #b45309;" data-i18n="student.submission_under_review">Submission Under Review</h3>
+                        <p style="color: #4b5563; line-height: 1.5; margin-bottom: 15px;" data-i18n="student.submission_under_review_desc">
                             Your submission has been received and is currently being evaluated. Your grade and feedback will appear here once evaluation is complete.
                         </p>
-                        <span id="subStatusBadge" class="status-badge status-review">Under Review</span>
+                        <span id="subStatusBadge" class="status-badge status-review" data-i18n="educational.statuses.under_review">Under Review</span>
                     </div>
                 </div>
 
                 <div>
                     <div class="content-card">
-                        <h2>Your Submission</h2>
+                        <h2 data-i18n="student.your_submission_heading">Your Submission</h2>
                         <div class="submission-box">
                             <div class="submission-item">
-                                <span>Submitted File:</span>
+                                <span data-i18n="student.submitted_file_colon">Submitted File:</span>
                                 <strong id="subFileName" style="word-break: break-all;">--</strong>
                             </div>
                             <div class="submission-item">
-                                <span>File Size:</span>
+                                <span data-i18n="student.file_size_colon">File Size:</span>
                                 <strong id="subFileSize">--</strong>
                             </div>
                             <div class="submission-item">
-                                <span>Submitted On:</span>
+                                <span data-i18n="student.submitted_on_colon">Submitted On:</span>
                                 <strong id="subDate">--</strong>
                             </div>
                             <div class="submission-item">
-                                <span>Submission Version:</span>
+                                <span data-i18n="student.submission_version_colon">Submission Version:</span>
                                 <strong id="subVersion">Version 1</strong>
                             </div>
                         </div>
 
                         <div style="margin-top: 15px;">
-                            <a id="downloadSubBtn" href="#" class="view-btn" style="display:block; text-align:center; padding: 10px;">Download Submitted File</a>
+                            <a id="downloadSubBtn" href="#" class="view-btn" style="display:block; text-align:center; padding: 10px;" data-i18n="student.download_submitted_file">Download Submitted File</a>
                         </div>
                     </div>
                 </div>

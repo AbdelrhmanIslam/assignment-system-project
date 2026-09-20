@@ -146,20 +146,22 @@
 
 <div class="dashboard-page">
 
-    <a href="dashboard.html" class="back-btn">
+    <a href="dashboard.html" class="back-btn" data-i18n="nav.back_to_dashboard">
         &larr; Back to Dashboard
     </a>
 
     <header class="dashboard-header">
         <div>
-            <h1>Missed &amp; Late Submissions</h1>
-            <p>Track missed deadlines and submit assignments reopened by your teachers.</p>
+            <h1 data-i18n="teacher.missed_and_late">Missed &amp; Late Submissions</h1>
+            <p data-i18n="student.lateness_subtitle">Track missed deadlines and submit assignments reopened by your teachers.</p>
         </div>
 
         <div class="header-actions">
-            <a href="notifications.html" class="view-btn" style="background: var(--glass-bg-hover); color: var(--text-primary); border: 1px solid var(--glass-border); font-size: 13px; text-decoration: none; padding: 7px 14px;">Notifications</a>
-            <span class="user-role" id="user-role-badge">Student</span>
-            <a href="../../backend/auth/logout.php" class="logout-btn">Logout</a>
+            <a href="notifications.html" class="view-btn" style="background: var(--glass-bg-hover); color: var(--text-primary); border: 1px solid var(--glass-border); font-size: 13px; text-decoration: none; padding: 7px 14px;" data-i18n="nav.notifications">Notifications</a>
+            <span class="user-role" id="user-role-badge" data-i18n="educational.roles.student">Student</span>
+            <button id="lang-toggle-btn" class="theme-toggle" type="button" aria-label="Toggle Language" title="Toggle Language">🌐 العربية</button>
+            <button id="theme-toggle-btn" class="theme-toggle" type="button" aria-label="Toggle Theme" title="Toggle Dark/Light Mode">🌙</button>
+            <a href="../../backend/auth/logout.php" class="logout-btn" data-i18n="nav.logout">Logout</a>
         </div>
     </header>
 
@@ -169,30 +171,30 @@
     <div id="active-permission-banner" class="reopen-banner-hint" style="display: none;">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="flex-shrink: 0;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
         <div>
-            <strong style="font-size: 14px; display: block; margin-bottom: 2px;">Late Submission Window Active</strong>
-            <span id="active-permission-banner-text">A teacher has granted you a 24-hour window to submit your work. Submit your assignment before the window closes.</span>
+            <strong style="font-size: 14px; display: block; margin-bottom: 2px;" data-i18n="student.late_window_active_title">Late Submission Window Active</strong>
+            <span id="active-permission-banner-text" data-i18n="student.late_window_active_desc">A teacher has granted you a 24-hour window to submit your work. Submit your assignment before the window closes.</span>
         </div>
     </div>
 
     <!-- statistics overview -->
     <section class="stats-grid" style="margin-bottom: 25px;">
         <div class="stat-card">
-            <span class="stat-label">Missed Deadlines</span>
+            <span class="stat-label" data-i18n="student.stat_missed_deadlines">Missed Deadlines</span>
             <strong class="stat-number" id="stat-total-missed" style="color: var(--danger);">0</strong>
         </div>
 
         <div class="stat-card">
-            <span class="stat-label">Reopened (24h Window)</span>
+            <span class="stat-label" data-i18n="student.stat_reopened_24h">Reopened (24h Window)</span>
             <strong class="stat-number" id="stat-active-exceptions" style="color: #d97706;">0</strong>
         </div>
 
         <div class="stat-card">
-            <span class="stat-label">Submitted Late</span>
+            <span class="stat-label" data-i18n="teacher.stat_late_submissions">Submitted Late</span>
             <strong class="stat-number" id="stat-submitted-late" style="color: var(--success);">0</strong>
         </div>
 
         <div class="stat-card">
-            <span class="stat-label">Teachers</span>
+            <span class="stat-label" data-i18n="admin.tab_teachers">Teachers</span>
             <strong class="stat-number" id="stat-teachers-count" style="color: var(--primary);">0</strong>
         </div>
     </section>
@@ -201,8 +203,8 @@
     <section class="lateness-card">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
             <div>
-                <h2 style="margin: 0 0 4px; font-size: 18px;">Missed Assignments by Teacher</h2>
-                <p style="margin: 0; font-size: 13px; color: var(--text-muted);">
+                <h2 style="margin: 0 0 4px; font-size: 18px;" data-i18n="student.missed_assignments_by_teacher">Missed Assignments by Teacher</h2>
+                <p style="margin: 0; font-size: 13px; color: var(--text-muted);" data-i18n="student.filter_missed_by_teacher_desc">
                     Filter missed assignments and reopen permissions by teacher.
                 </p>
             </div>
@@ -211,6 +213,7 @@
                     type="text"
                     id="search-input"
                     class="search-input"
+                    data-i18n-placeholder="student.search_assignment_or_course"
                     placeholder="Search assignment or course..."
                     style="max-width: 260px;"
                 >
@@ -220,15 +223,15 @@
         <!-- Teacher Filter Buttons (populated dynamically for each teacher student is enrolled with) -->
         <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 20px;" id="teacher-filter-buttons">
             <button class="teacher-filter-btn active" data-teacher-id="all">
-                All Teachers <span class="teacher-count-tag" id="tag-all-count">0</span>
+                <span data-i18n="common.all_teachers">All Teachers</span> <span class="teacher-count-tag" id="tag-all-count">0</span>
             </button>
         </div>
 
         <!-- empty state -->
         <div id="missed-empty" class="empty-state" style="display: none; padding: 45px 20px; text-align: center;">
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-bottom: 12px; opacity: 0.5; color: var(--success);"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-            <h3 style="margin-bottom: 6px;">No Missed Submissions</h3>
-            <p style="color: var(--text-muted); font-size: 14px; margin: 0;">You have no missed assignments for this selection.</p>
+            <h3 style="margin-bottom: 6px;" data-i18n="student.no_missed_assignments">No Missed Submissions</h3>
+            <p style="color: var(--text-muted); font-size: 14px; margin: 0;" data-i18n="student.no_missed_for_selection">You have no missed assignments for this selection.</p>
         </div>
 
         <!-- missed assignments table -->
@@ -236,12 +239,12 @@
             <table class="assignments-table">
                 <thead>
                     <tr>
-                        <th>Teacher</th>
-                        <th>Course</th>
-                        <th>Assignment</th>
-                        <th>Deadline</th>
-                        <th>Status</th>
-                        <th style="text-align: right;">Action</th>
+                        <th data-i18n="admin.th_teacher">Teacher</th>
+                        <th data-i18n="admin.th_course">Course</th>
+                        <th data-i18n="nav.assignments">Assignment</th>
+                        <th data-i18n="common.deadline">Deadline</th>
+                        <th data-i18n="common.status">Status</th>
+                        <th style="text-align: right;" data-i18n="common.actions">Action</th>
                     </tr>
                 </thead>
                 <tbody id="missed-table-body"></tbody>

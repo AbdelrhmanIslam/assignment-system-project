@@ -165,20 +165,24 @@ function renderTable(submissions) {
 
         var badgeClass = 'status-not-submitted';
         var badgeLabel = window.i18n ? window.i18n.translateStatus(sub.status) : 'Submitted';
-        var actionLabel = window.i18n ? window.i18n.t('common.view') : 'Review';
+        var actionLabel = window.i18n ? window.i18n.t('common.review') : 'Review';
         var actionClass = 'action-submit';
 
         if (sub.status === 'graded') {
             badgeClass = 'status-graded';
+            actionLabel = window.i18n ? window.i18n.t('common.view') : 'View';
             actionClass = 'action-result';
         } else if (sub.status === 'under_review') {
             badgeClass = 'status-review';
+            actionLabel = window.i18n ? window.i18n.t('common.review') : 'Review';
             actionClass = 'action-review';
         } else if (sub.status === 'recheck') {
             badgeClass = 'status-closed';
+            actionLabel = window.i18n ? window.i18n.t('common.recheck') : 'Recheck';
             actionClass = 'action-submit';
         } else if (sub.status === 'pending_teacher') {
             badgeClass = 'status-review';
+            actionLabel = window.i18n ? window.i18n.t('common.view') : 'View';
             actionClass = 'action-view';
         }
 

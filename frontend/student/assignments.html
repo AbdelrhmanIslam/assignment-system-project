@@ -23,22 +23,23 @@
 
 <div class="dashboard-page">
 
-    <a href="dashboard.html" class="back-btn">
+    <a href="dashboard.html" class="back-btn" data-i18n="nav.back_to_dashboard">
         Back to Dashboard
     </a>
 
     <header class="dashboard-header">
         <div>
-            <h1>Assignments</h1>
-            <p>View, submit, and track your course assignments</p>
+            <h1 data-i18n="nav.assignments">Assignments</h1>
+            <p data-i18n="student.assignments_page_subtitle">View, submit, and track your course assignments</p>
         </div>
 
         <div class="header-actions">
-            <a href="lateness.html" class="action-btn" style="background: rgba(234, 88, 12, 0.15); color: #c2410c; border: 1px solid rgba(234, 88, 12, 0.4); text-decoration: none; padding: 7px 14px; border-radius: var(--radius-pill); font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">&#9888;&#65039; Missed &amp; Late Submissions</a>
-            <a href="notifications.html" class="view-btn" style="background:#4b5563; text-decoration:none;">Notifications</a>
-            <span class="user-role">Student</span>
-
-            <a href="../../backend/auth/logout.php" class="logout-btn">Logout</a>
+            <a href="lateness.html" class="action-btn" style="background: rgba(234, 88, 12, 0.15); color: #c2410c; border: 1px solid rgba(234, 88, 12, 0.4); text-decoration: none; padding: 7px 14px; border-radius: var(--radius-pill); font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;" data-i18n="teacher.missed_late_submissions">&#9888;&#65039; Missed &amp; Late Submissions</a>
+            <a href="notifications.html" class="view-btn" style="background:#4b5563; text-decoration:none;" data-i18n="nav.notifications">Notifications</a>
+            <span class="user-role" data-i18n="educational.roles.student">Student</span>
+            <button id="lang-toggle-btn" class="theme-toggle" type="button" aria-label="Toggle Language" title="Toggle Language">🌐 العربية</button>
+            <button id="theme-toggle-btn" class="theme-toggle" type="button" aria-label="Toggle Theme" title="Toggle Dark/Light Mode">🌙</button>
+            <a href="../../backend/auth/logout.php" class="logout-btn" data-i18n="nav.logout">Logout</a>
         </div>
     </header>
 
@@ -46,37 +47,38 @@
 
         <div class="filter-bar">
             <div class="filter-tabs">
-                <button class="filter-tab active" data-filter="all" id="tab-all">All</button>
-                <button class="filter-tab" data-filter="not_submitted" id="tab-not-submitted">Not Submitted</button>
-                <button class="filter-tab" data-filter="under_review" id="tab-under-review">Under Review</button>
-                <button class="filter-tab" data-filter="graded" id="tab-graded">Graded</button>
+                <button class="filter-tab active" data-filter="all" id="tab-all" data-i18n="common.all">All</button>
+                <button class="filter-tab" data-filter="not_submitted" id="tab-not-submitted" data-i18n="student.stat_not_submitted">Not Submitted</button>
+                <button class="filter-tab" data-filter="under_review" id="tab-under-review" data-i18n="educational.statuses.under_review">Under Review</button>
+                <button class="filter-tab" data-filter="graded" id="tab-graded" data-i18n="common.graded">Graded</button>
             </div>
 
             <input
                 type="text"
                 id="search-input"
                 class="search-input"
+                data-i18n-placeholder="student.search_title_or_course"
                 placeholder="Search by title or course..."
             >
         </div>
 
         <div id="empty-state" class="empty-state" style="display: none;">
-            <h3>No assignments found</h3>
-            <p>No assignments match your current filters.</p>
+            <h3 data-i18n="student.no_assignments_found">No assignments found</h3>
+            <p data-i18n="student.no_assignments_match_filter">No assignments match your current filters.</p>
         </div>
 
         <div id="table-container" class="table-container" style="display: none;">
             <table class="assignments-table">
                 <thead>
                     <tr>
-                        <th>Assignment</th>
-                        <th>Course</th>
-                        <th>Teacher</th>
-                        <th>Grade Level</th>
-                        <th>Deadline</th>
-                        <th>Status</th>
-                        <th>Grade</th>
-                        <th>Actions</th>
+                        <th data-i18n="nav.assignments">Assignment</th>
+                        <th data-i18n="admin.th_course">Course</th>
+                        <th data-i18n="admin.th_teacher">Teacher</th>
+                        <th data-i18n="admin.th_grade">Grade Level</th>
+                        <th data-i18n="common.deadline">Deadline</th>
+                        <th data-i18n="common.status">Status</th>
+                        <th data-i18n="common.grade">Grade</th>
+                        <th data-i18n="common.actions">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="assignments-body">

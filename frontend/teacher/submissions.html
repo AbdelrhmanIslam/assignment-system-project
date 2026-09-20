@@ -23,21 +23,22 @@
 
 <div class="dashboard-page">
 
-    <a href="dashboard.html" class="back-btn">
+    <a href="dashboard.html" class="back-btn" data-i18n="nav.back_to_dashboard">
         Back to Dashboard
     </a>
 
     <header class="dashboard-header">
         <div>
-            <h1>Submissions Queue</h1>
-            <p>Review student submissions and grades</p>
+            <h1 data-i18n="teacher.submissions_queue_title">Submissions Queue</h1>
+            <p data-i18n="teacher.submissions_queue_subtitle">Review student submissions and grades</p>
         </div>
 
         <div class="header-actions">
-            <a href="lateness.html" class="action-btn" style="background: rgba(234, 88, 12, 0.15); color: #c2410c; border: 1px solid rgba(234, 88, 12, 0.4); text-decoration: none; padding: 7px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">&#9888;&#65039; Missed &amp; Late Submissions</a>
-            <span class="user-role">Teacher</span>
-
-            <a href="../../backend/auth/logout.php" class="logout-btn">Logout</a>
+            <a href="lateness.html" class="action-btn" style="background: rgba(234, 88, 12, 0.15); color: #c2410c; border: 1px solid rgba(234, 88, 12, 0.4); text-decoration: none; padding: 7px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;" data-i18n="teacher.missed_late_submissions">&#9888;&#65039; Missed &amp; Late Submissions</a>
+            <span class="user-role" data-i18n="educational.roles.teacher">Teacher</span>
+            <button id="lang-toggle-btn" class="theme-toggle" type="button" aria-label="Toggle Language" title="Toggle Language">🌐 العربية</button>
+            <button id="theme-toggle-btn" class="theme-toggle" type="button" aria-label="Toggle Theme" title="Toggle Dark/Light Mode">🌙</button>
+            <a href="../../backend/auth/logout.php" class="logout-btn" data-i18n="nav.logout">Logout</a>
         </div>
     </header>
 
@@ -45,14 +46,14 @@
 
         <div class="filter-bar">
             <div class="filter-tabs">
-                <button class="filter-tab active" data-filter="all" id="tab-all">All</button>
-                <button class="filter-tab" data-filter="pending" id="tab-pending">Pending Review</button>
-                <button class="filter-tab" data-filter="graded" id="tab-graded">Graded</button>
+                <button class="filter-tab active" data-filter="all" id="tab-all" data-i18n="common.all">All</button>
+                <button class="filter-tab" data-filter="pending" id="tab-pending" data-i18n="common.pending_review">Pending Review</button>
+                <button class="filter-tab" data-filter="graded" id="tab-graded" data-i18n="common.graded">Graded</button>
             </div>
 
             <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
                 <select id="student-filter-select">
-                    <option value="all">All Students</option>
+                    <option value="all" data-i18n="common.all_students">All Students</option>
                 </select>
 
                 <input
@@ -60,26 +61,27 @@
                     id="search-input"
                     class="search-input"
                     placeholder="Search by student, assignment, or course..."
+                    data-i18n-placeholder="teacher.search_submissions_placeholder"
                 >
             </div>
         </div>
 
         <div id="submissions-empty" class="empty-state" style="display: none;">
-            <h3>No submissions found</h3>
-            <p>No submissions match your current filters.</p>
+            <h3 data-i18n="teacher.no_submissions_found">No submissions found</h3>
+            <p data-i18n="teacher.no_submissions_desc">No submissions match your current filters.</p>
         </div>
 
         <div id="submissions-table-container" class="table-container" style="display: none;">
             <table class="assignments-table">
                 <thead>
                     <tr>
-                        <th>Student</th>
-                        <th>Assignment</th>
-                        <th>Course</th>
-                        <th>Submitted</th>
-                        <th>Status</th>
-                        <th>Grade</th>
-                        <th>Actions</th>
+                        <th data-i18n="common.student">Student</th>
+                        <th data-i18n="common.assignment">Assignment</th>
+                        <th data-i18n="common.course">Course</th>
+                        <th data-i18n="common.submitted">Submitted</th>
+                        <th data-i18n="common.status">Status</th>
+                        <th data-i18n="common.grade">Grade</th>
+                        <th data-i18n="common.actions">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="submissions-table-body">
