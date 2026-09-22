@@ -789,14 +789,14 @@
             }
         }
 
-        // Dynamically translate document.title if it contains System / النظام / Assignment System
+        // Dynamically translate document.title if it contains Assignment Management System / System / نظام إدارة الواجبات / النظام / Assignment System
         if (document.title) {
             var isAr = (currentLang === 'ar');
-            var appName = isAr ? 'النظام' : 'System';
+            var appName = isAr ? 'نظام إدارة الواجبات' : 'Assignment Management System';
             // Replace suffix if present
-            if (/ - (Assignment System|System|نظام الواجبات المدرسية|نظام الواجبات|النظام)$/i.test(document.title)) {
-                document.title = document.title.replace(/ - (Assignment System|System|نظام الواجبات المدرسية|نظام الواجبات|النظام)$/i, ' - ' + appName);
-            } else if (/^(Assignment System|System|نظام الواجبات المدرسية|نظام الواجبات|النظام)$/i.test(document.title.trim())) {
+            if (/ - (Assignment Management System|Assignment System|System|نظام إدارة الواجبات|نظام الواجبات المدرسية|نظام الواجبات|النظام)$/i.test(document.title)) {
+                document.title = document.title.replace(/ - (Assignment Management System|Assignment System|System|نظام إدارة الواجبات|نظام الواجبات المدرسية|نظام الواجبات|النظام)$/i, ' - ' + appName);
+            } else if (/^(Assignment Management System|Assignment System|System|نظام إدارة الواجبات|نظام الواجبات المدرسية|نظام الواجبات|النظام)$/i.test(document.title.trim())) {
                 document.title = appName;
             }
         }

@@ -3,7 +3,7 @@
 
 define('BASE_URL', '/nti_intern_full/assignment-system-project');
 
-define('SITE_NAME', 'System');
+define('SITE_NAME', 'Assignment Management System');
 
 // upload directory paths
 define('UPLOAD_SUBMISSIONS', dirname(dirname(__DIR__)) . '/uploads/submissions/');
