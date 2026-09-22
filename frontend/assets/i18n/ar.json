@@ -180,6 +180,7 @@
   "admin": {
     "dashboard_title": "لوحة تحكم المشرف",
     "dashboard_subtitle": "نظرة عامة ومباشرة على أداء النظام، المقاييس الأكاديمية، والنشاط العام",
+    "welcome_admin": "مرحباً",
     "stat_total_users": "إجمالي المستخدمين",
     "stat_teachers": "المعلمون الأساسيون",
     "stat_assistants": "مساعدو المعلمين",

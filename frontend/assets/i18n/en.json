@@ -1,6 +1,6 @@
 {
   "common": {
-    "app_name": "Assignment System",
+    "app_name": "System",
     "save": "Save Changes",
     "cancel": "Cancel",
     "delete": "Delete",
@@ -180,6 +180,7 @@
   "admin": {
     "dashboard_title": "Admin Dashboard",
     "dashboard_subtitle": "Real-time system health, academic metrics, and activity",
+    "welcome_admin": "Hello",
     "stat_total_users": "Total Users",
     "stat_teachers": "Lead Teachers",
     "stat_assistants": "Teaching Assistants",

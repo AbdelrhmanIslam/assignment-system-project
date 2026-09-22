@@ -18,16 +18,17 @@ function loadAdminDashboard() {
             return;
         }
 
+        var isAr = (window.i18n && window.i18n.getCurrentLanguage() === 'ar');
+
         // set admin details
         if (data.user) {
-            setElementText('admin-name', data.user.name);
+            setElementText('admin-name', isAr && window.i18n ? window.i18n.translateName(data.user.name) : data.user.name);
             setElementText('admin-email', data.user.email);
         }
 
         // set metrics cards
         if (data.metrics) {
             var m = data.metrics;
-            var isAr = (window.i18n && window.i18n.getCurrentLanguage() === 'ar');
             var tStu = window.i18n ? window.i18n.t('admin.tab_students') : 'Students';
             var tTea = window.i18n ? window.i18n.t('admin.tab_teachers') : 'Teachers';
             var tAss = window.i18n ? window.i18n.t('admin.tab_assistants') : 'Assistants';
