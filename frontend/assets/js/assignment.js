@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // render assignment header and general details
             var isAr = (window.i18n && window.i18n.getCurrentLanguage() === 'ar');
             var translatedTitle = isAr && window.i18n ? window.i18n.translateAssignment(assignment.title) : assignment.title;
-            document.title = translatedTitle + (isAr ? ' - نظام الواجبات' : ' - Assignment System');
+            document.title = translatedTitle + (isAr ? ' - النظام' : ' - Assignment System');
 
             setElementText('assignment-title', translatedTitle);
             setElementText('course-name', isAr && window.i18n ? window.i18n.translateCourse(assignment.course_name) : assignment.course_name);
