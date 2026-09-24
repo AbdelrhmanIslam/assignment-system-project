@@ -1,73 +1,182 @@
-# Academic Assignment Management System
+# 🎓 Academic Assignment Management System
 
-A multi-role academic assignment and grading workflow management platform designed for universities, schools, training academies, and educational institutions following the Egyptian National Curriculum and international academic standards.
-
-The system streamlines the entire coursework cycle: from course configuration and assignment publishing by teachers, to student submissions, assistant grading, teacher approval, late exception handling, and full English/Arabic bilingual accessibility with native RTL support.
-
----
-
-## Table of Contents
-
-1. [System Overview](#system-overview)
-2. [Key Architecture & Design Principles](#key-architecture--design-principles)
-3. [Folder & File Structure](#folder--file-structure)
-4. [User Roles & Default Test Accounts](#user-roles--default-test-accounts)
-5. [Database Schema & Setup](#database-schema--setup)
-6. [End-to-End Assignment Lifecycle](#end-to-end-assignment-lifecycle)
-7. [Late Submissions & Extension Management](#late-submissions--extension-management)
-8. [Bilingual Internationalization (i18n) & RTL Engine](#bilingual-internationalization-i18n--rtl-engine)
-9. [Egyptian Educational Model & Business Rules](#egyptian-educational-model--business-rules)
-10. [Automated Testing Suite & Quality Assurance](#automated-testing-suite--quality-assurance)
-11. [Scenario Dataset Generator & Verification Engine](#scenario-dataset-generator--verification-engine)
-12. [How This Project Helps Teachers & Core Benefits](#how-this-project-helps-teachers--core-benefits)
-13. [Installation & Setup Guide](#installation--setup-guide)
-14. [Developer Standards & Coding Rules](#developer-standards--coding-rules)
+<p align="center">
+  <img src="https://img.shields.io/badge/PHP-7.4%2B%20%7C%208.x-777BB4?style=for-the-badge&logo=php&logoColor=white" alt="PHP Version" />
+  <img src="https://img.shields.io/badge/MySQL-5.7%2B%20%7C%208.x-4479A1?style=for-the-badge&logo=mysql&logoColor=white" alt="MySQL" />
+  <img src="https://img.shields.io/badge/JavaScript-Vanilla%20ES6%2B-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript" />
+  <img src="https://img.shields.io/badge/CSS3-Glassmorphism%20%26%20RTL-1572B6?style=for-the-badge&logo=css3&logoColor=white" alt="CSS3" />
+  <img src="https://img.shields.io/badge/Languages-English%20%7C%20العربية-blueviolet?style=for-the-badge&logo=google-translate&logoColor=white" alt="Bilingual i18n" />
+  <img src="https://img.shields.io/badge/Layout-Native%20RTL%20%26%20LTR-success?style=for-the-badge" alt="RTL Support" />
+  <img src="https://img.shields.io/badge/Tests-Unit%20%7C%20Integration%20%7C%20API%20%7C%20Playwright%20E2E-brightgreen?style=for-the-badge&logo=playwright&logoColor=white" alt="Testing" />
+  <img src="https://img.shields.io/badge/Architecture-Decoupled%20REST%20API-orange?style=for-the-badge" alt="Architecture" />
+  <img src="https://img.shields.io/badge/License-MIT-lightgrey?style=for-the-badge" alt="License" />
+</p>
 
 ---
 
-## System Overview
+A multi-role academic coursework and two-tier grading workflow management platform built for schools, universities, and educational academies following the **Egyptian National Curriculum** and international academic standards.
 
-In traditional educational settings, managing assignments across large cohorts of students is time-consuming and prone to human error. Teachers face heavy grading workloads, inconsistent evaluation criteria among teaching assistants, lost student files, missed deadlines without valid excuse tracking, and frequent grade disputes.
-
-This platform introduces an automated, two-tier evaluation workflow connecting four distinct roles:
-* **Administrator**: Oversees educational stages, courses, assistant mappings, user accounts, system health, and cross-department assignments.
-* **Teacher (Instructor)**: Publishes coursework, defines guidelines and deadlines, reviews student late exception requests, monitors submissions, and performs final quality review (Approve & Publish or Request Recheck).
-* **Teaching Assistant (Evaluator)**: Evaluates student work, assigns draft scores, writes constructive feedback, uploads annotated correction files, and monitors late flags.
-* **Student**: Accesses published course assignments, submits work within deadline constraints, tracks late exception requests, monitors evaluation progress, and reviews official published results with correction files.
+The platform streamlines the full academic cycle: assignment creation, student submissions, assistant draft evaluations, teacher quality review and grade publishing, late exception handling, and full bilingual accessibility (**English & Arabic**) with native Right-to-Left (RTL) layout mirroring.
 
 ---
 
-## Key Architecture & Design Principles
+## 📑 Table of Contents
 
-1. **Separation of Frontend and Backend**:
-   * **Frontend (`frontend/`)**: Pure HTML, CSS, and Vanilla JavaScript. Zero PHP files or server-side script tags exist in the frontend layer.
+- [✨ Key Features Overview](#-key-features-overview)
+- [🌐 Bilingual Internationalization (i18n) & RTL Engine](#-bilingual-internationalization-i18n--rtl-engine)
+- [⏱️ Late Submissions & Extension Management](#️-late-submissions--extension-management)
+- [🏛️ Key Architecture & Design Principles](#️-key-architecture--design-principles)
+- [📂 Folder & File Structure](#-folder--file-structure)
+- [👥 User Roles & Default Test Accounts](#-user-roles--default-test-accounts)
+- [🗄️ Database Schema & Relational Structure](#️-database-schema--relational-structure)
+- [🔄 End-to-End Assignment Lifecycle](#-end-to-end-assignment-lifecycle)
+- [🇪🇬 Egyptian Educational Model & Business Rules](#-egyptian-educational-model--business-rules)
+- [🧪 Automated Testing Suite & Quality Assurance](#-automated-testing-suite--quality-assurance)
+- [📊 Scenario Dataset Generator & Verification Engine](#-scenario-dataset-generator--verification-engine)
+- [💡 How This Project Helps Teachers & Core Benefits](#-how-this-project-helps-teachers--core-benefits)
+- [🚀 Installation & Setup Guide](#-installation--setup-guide)
+- [📏 Developer Standards & Coding Rules](#-developer-standards--coding-rules)
+
+---
+
+## ✨ Key Features Overview
+
+- [x] **🌐 Complete Bilingual Support (English & العربية)**: Instant zero-reload language switching with persistent storage and localized terminology.
+- [x] **📐 Native RTL Layout Engine**: Complete bidirectional design with mirrored grids, flexboxes, tables, and Arabic typography (Cairo & Tajawal).
+- [x] **🛡️ Two-Tier Evaluation Workflow**: Teaching assistants grade first-pass; course lead teachers review, approve, or request rechecks.
+- [x] **🔒 Strict Draft Grade Confidentiality**: Draft scores and assistant comments are cryptographically withheld from students until approved by the teacher.
+- [x] **⏱️ Late Submission & Extension Request System**: Students submit deadline extension requests with excuses; teachers review, accept with new deadlines, or reject.
+- [x] **🏫 Egyptian Educational Hierarchy**: Native support for Preparatory (1st, 2nd, 3rd Prep) and Secondary (1st, 2nd, 3rd Secondary) stages with strict stage isolation.
+- [x] **🔗 Strict Academic Integrity Constraints**: Assistants are bound to a single lead teacher; students are bound to at most one teacher per subject.
+- [x] **🧪 Production-Grade Automated Testing**: Master test runner executing Unit tests, DB Integration tests, REST API security tests, and Playwright E2E browser tests.
+- [x] **🎲 Realistic Scenario Dataset Generator**: One-command generator creating 23+ realistic teachers, student cohorts, submissions, late requests, and real upload files.
+- [x] **🔑 Administrator Security & Account Overrides**: In-portal user management, stage-based filtering, instant activation toggling, and direct password resets.
+- [x] **🔔 Real-Time Notification System**: Automatic notifications for assignment announcements, submissions, reviews, rechecks, and published grades.
+
+---
+
+## 🌐 Bilingual Internationalization (i18n) & RTL Engine
+
+The platform features an internationalization and bidirectional layout engine engineered with zero external dependencies:
+
+```text
+┌────────────────────────────────────────────────────────┐
+│                   Language Switcher                    │
+│                 [ EN / English | العربية ]              │
+└───────────────┬────────────────────────┬───────────────┘
+                │                        │
+       Cookie & localStorage     HTML dir="rtl" / "ltr"
+                │                        │
+    ┌───────────▼───────────┐    ┌───────▼────────────┐
+    │  i18n Translation     │    │  frontend/assets/  │
+    │  Controller (i18n.js) │    │  css/rtl.css       │
+    └───────────┬───────────┘    └────────────────────┘
+                │
+     ┌──────────┴──────────┐
+     ▼                     ▼
+┌──────────────┐     ┌──────────────┐
+│  ar.json     │     │  en.json     │
+│  (650+ keys) │     │  (650+ keys) │
+└──────────────┘     └──────────────┘
+```
+
+### 1. Client-Side Translation Engine (`frontend/assets/js/i18n.js`)
+* **Dynamic DOM Binding**: Translates text and attributes dynamically using standard declarative data attributes:
+  * `data-i18n="key"`: Replaces element inner text.
+  * `data-i18n-placeholder="key"`: Translates form input placeholders.
+  * `data-i18n-title="key"`: Updates tooltip/title attributes.
+* **Variable Interpolation**: Supports dynamic string interpolation (e.g., `Hello, {name}!`, `Grade: {score}/{max}`).
+* **State Persistence**: Persists user choice in both `localStorage.getItem('lang')` and an HTTP cookie (`assignment_system_lang`).
+* **Instant Switching**: Toggling language updates all UI text, dates, statuses, and layout direction immediately without requiring page reloads.
+
+### 2. Comprehensive Catalogs (`frontend/assets/i18n/`)
+* **`en.json`**: 650+ comprehensive English keys covering navigation, metric cards, tables, forms, validation errors, and notifications.
+* **`ar.json`**: 650+ authentic Arabic strings tailored specifically to the Egyptian educational system (e.g. *الصف الأول الإعدادي*, *مساعد المدرس*, *طلب تمديد مهلة التسليم*, *معتمد ومكتمل*).
+
+### 3. Native RTL Layout Engine (`frontend/assets/css/rtl.css`)
+* Sets `dir="rtl"` on `<html>` when Arabic is active.
+* Automatically mirrors card alignments, flex directions, margin/padding offsets, table headers, and directional icons (back/forward arrows).
+* Applies modern typography stacks optimized for Arabic readability (**Cairo**, **Tajawal**, and clean sans-serif fallbacks).
+
+### 4. Server-Side Localization Helpers (`backend/includes/i18n.php`)
+* Procedural helper function `__($key, $params = [], $default = '')` resolves dot-notation keys from PHP.
+* Canonical database enum translators:
+  * `translateSubject($subject)`: Resolves localized subject names.
+  * `translateGrade($grade)`: Translates full grade levels.
+  * `translateRole($role)`: Localizes user roles.
+  * `translateStatus($status)`: Localizes assignment and submission states.
+
+---
+
+## ⏱️ Late Submissions & Extension Management
+
+To address real-world student emergencies while preserving fairness and discipline, the system includes a dedicated **Late Submission & Exception Request Portal**:
+
+```text
+┌──────────────────────────────┐
+│  Deadline Passed for Student │
+└──────────────┬───────────────┘
+               │
+               ▼
+┌──────────────────────────────┐
+│ Student Submits Late Request │ ──▶ Reason, justification & requested date
+└──────────────┬───────────────┘
+               │
+               ▼
+┌──────────────────────────────┐
+│  Teacher Receives Alert &    │
+│  Opens Lateness Portal       │
+└──────────────┬───────────────┘
+               │
+       ┌───────┴───────┐
+       ▼               ▼
+┌──────────────┐ ┌──────────────┐
+│   APPROVE    │ │    REJECT    │
+│ Set extended │ │ Keep penalty │
+│ deadline     │ │ or refuse    │
+└──────┬───────┘ └──────┬───────┘
+       │                │
+       ▼                ▼
+ Student submits   Status: Rejected;
+ without penalty   marked as 'Late'
+```
+
+### 1. Student Portal (`frontend/student/lateness.html`)
+* Students view overdue coursework and request formal deadline extensions.
+* Provides fields for detailed justification and desired submission extension date.
+* Displays live status badges: `Pending Review`, `Approved` (with new deadline timestamp), or `Rejected` (with teacher reason).
+
+### 2. Teacher Review Portal (`frontend/teacher/lateness.html`)
+* Displays incoming student requests with assignment details, original deadline, student reason, and timestamp.
+* Teachers can **Approve** with an individualized extension deadline saved to `assignment_exceptions`, or **Reject** with written feedback.
+
+### 3. Evaluator Late Tags (`frontend/assistant/lateness.html`)
+* Evaluators and assistants see visual `Late` badges on submissions uploaded after deadline without an approved exception, ensuring transparent grading.
+
+---
+
+## 🏛️ Key Architecture & Design Principles
+
+1. **Decoupled Frontend and Backend**:
+   * **Frontend (`frontend/`)**: Pure HTML5, CSS3, and modern Vanilla JavaScript. Zero PHP script tags or backend processing inside HTML files.
    * **Backend (`backend/`)**: RESTful JSON API endpoints and request handlers written in clean procedural PHP.
-2. **Pure Procedural PHP**:
-   * Standard, easy-to-maintain procedural code using `mysqli_*` functions, strict input sanitization, and structured transactional safety.
-3. **Clean Vanilla JavaScript**:
-   * Universal DOM manipulation, promise-based `fetch()`, zero external runtime frameworks or heavy dependencies.
-4. **Strict Confidentiality of Draft Grades**:
-   * Draft grades and assistant feedback remain strictly hidden from students while a submission is in `pending_teacher` review or `recheck` status.
-   * Grades and correction files are only revealed when the course lead teacher explicitly approves and publishes the grade.
-5. **Full Bilingual Support & Native RTL Styling**:
-   * Complete English and Arabic localization across all four roles, authentication pages, modals, dynamic tables, and notifications.
-   * Dedicated bidirectional stylesheet (`frontend/assets/css/rtl.css`) with mirrored alignments, layouts, and typography.
-6. **Lateness & Deadline Extension Request System**:
-   * Built-in lifecycle for late assignments: automated late detection, student excuse submission, teacher approval/rejection, and extended deadlines.
-7. **Egyptian Educational Stage & Subject Isolation**:
-   * Strict boundary separation between Preparatory (1st, 2nd, 3rd Prep) and Secondary (1st, 2nd, 3rd Secondary) stages.
-   * Teaching assistants are bound to exactly one lead teacher, and students can enroll with at most one teacher per subject within their grade.
-8. **Automated Multi-Tier Test Suite**:
-   * Comprehensive Unit, Integration, REST API, and Playwright E2E browser test suites guaranteeing platform stability and regression prevention.
+2. **Pure Procedural PHP with `mysqli`**:
+   * Standard procedural code using parameterized queries, transactional blocks, and clean function modularity.
+3. **Vanilla JavaScript Framework-Free Client**:
+   * Standard DOM manipulation, promise-based `fetch()`, zero NPM bundle requirements or heavy client runtimes.
+4. **Two-Tier Evaluation Workflow**:
+   * Draft scores and assistant comments are strictly hidden from students while under review or in recheck. Grades only publish when approved by the lead teacher.
+5. **Egyptian Educational Stage Isolation**:
+   * Enforces stage boundaries: Prep teachers cannot teach Secondary courses; assistants are tied to exactly one lead teacher.
 
 ---
 
-## Folder & File Structure
+## 📂 Folder & File Structure
 
 ```text
 assignment-system-project/
-├── index.php                              # Root router (redirects users by role or to login)
-├── README.md                              # Complete project documentation
+├── index.php                              # Root router (redirects by role or to login)
+├── README.md                              # Complete system documentation
 ├── database/
 │   └── assignment_system.sql              # Full 14-table MySQL schema & seed data
 │
@@ -89,7 +198,7 @@ assignment-system-project/
 │   │       ├── assignment.js              # Student assignment details & upload logic
 │   │       ├── assignments.js             # Student assignment list & filter tabs
 │   │       ├── result.js                  # Student graded result report loader
-│   │       ├── student_lateness.js        # Student late exception requests controller
+│   │       ├── student_lateness.js        # Student late extension requests controller
 │   │       ├── student_notifications.js   # Student notifications manager
 │   │       ├── teacher_dashboard.js       # Teacher statistics & recent items loader
 │   │       ├── teacher_assignments.js     # Teacher assignment creation & table loader
@@ -211,7 +320,7 @@ assignment-system-project/
 
 ---
 
-## User Roles & Default Test Accounts
+## 👥 User Roles & Default Test Accounts
 
 The system includes pre-configured and verified accounts across all four system roles (password for seeded test accounts is `Pass@123456`):
 
@@ -253,9 +362,9 @@ The system includes pre-configured and verified accounts across all four system 
 
 ---
 
-## Database Schema & Setup
+## 🗄️ Database Schema & Relational Structure
 
-The system database name is `assignment_system`. The schema comprises **14 relational tables** providing data integrity, stage isolation, audit logging, and workflow tracking:
+The database name is `assignment_system`. The schema comprises **14 relational tables** providing integrity, stage isolation, audit logging, and workflow tracking:
 
 ```text
                ┌───────────────────────┐
@@ -320,7 +429,7 @@ The system database name is `assignment_system`. The schema comprises **14 relat
 
 ---
 
-## End-to-End Assignment Lifecycle
+## 🔄 End-to-End Assignment Lifecycle
 
 ```text
 ┌─────────────────────────────────────────────────────────────┐
@@ -365,63 +474,7 @@ The system database name is `assignment_system`. The schema comprises **14 relat
 
 ---
 
-## Late Submissions & Extension Management
-
-To accommodate authentic academic scenarios where students encounter emergencies or technical issues, the system includes a dedicated **Late Submission & Exception Request Workflow**:
-
-### 1. Student Exception Request Portal (`frontend/student/lateness.html`)
-* When an assignment deadline passes, students can submit an official **Late Submission Request**.
-* Students specify the assignment, the requested new deadline date, and an explanatory reason/justification.
-* Real-time status cards display past requests categorized by:
-  * **Pending Review**: Awaiting teacher evaluation.
-  * **Approved**: Shows new authorized deadline timestamp and teacher comments.
-  * **Rejected**: Displays refusal reason and preserves original deadline constraints.
-
-### 2. Teacher Late Request Management Portal (`frontend/teacher/lateness.html`)
-* Teachers receive an alert when a student submits a late exception request.
-* The portal displays the student's name, assignment, original deadline, requested extension date, and submitted reason.
-* The teacher can:
-  * **Approve**: Sets a custom extended deadline specifically for that student in `assignment_exceptions`. The student can then submit without late penalty until the new deadline.
-  * **Reject**: Closes the request with teacher explanation notes.
-
-### 3. Assistant Late Tracking (`frontend/assistant/lateness.html`)
-* Teaching assistants view late tags (`Late` badge) alongside submissions so they are aware of submission timing during evaluation.
-
----
-
-## Bilingual Internationalization (i18n) & RTL Engine
-
-The platform features a complete native English (`en`) and Arabic (`ar`) internationalization engine built from scratch with zero third-party dependencies:
-
-### 1. Client-Side Translation Controller (`frontend/assets/js/i18n.js`)
-* Dynamically translates HTML elements using standard data attributes:
-  * `data-i18n="nav.dashboard"`: Inner text translation.
-  * `data-i18n-placeholder="common.search"`: Form placeholder translation.
-  * `data-i18n-title="common.edit"`: Tooltip/title attribute translation.
-* Dynamic parameter replacement: supports `{name}`, `{count}`, `{grade}` placeholders.
-* Language persistence: Stores selected locale in `localStorage.getItem('lang')` and synchronizes with an HTTP cookie (`assignment_system_lang`).
-* Top navigation language toggle with instant locale switching without page refresh.
-
-### 2. Comprehensive Dictionaries (`frontend/assets/i18n/`)
-* **`en.json`**: 650+ English key-value strings covering navigation, metric cards, table headers, modals, forms, validation messages, and system alerts.
-* **`ar.json`**: 650+ authentic Arabic strings customized for the Egyptian educational context (e.g., الصف الأول الإعدادي, مدرس المادة, مراجعة الواجبات).
-
-### 3. Server-Side Localization Helpers (`backend/includes/i18n.php`)
-* Procedural helper function `__($key, $params = [], $default = '')` resolves dot-notation keys from backend PHP.
-* Specialized enum translators:
-  * `translateSubject($subject)`: Resolves localized subject names.
-  * `translateGrade($grade)`: Translates full grade levels.
-  * `translateRole($role)`: Localizes user roles.
-  * `translateStatus($status)`: Localizes assignment and submission states.
-
-### 4. Native RTL Stylesheet (`frontend/assets/css/rtl.css`)
-* Activated dynamically whenever `lang === 'ar'`, setting `dir="rtl"` on `<html>`.
-* Automatically mirrors grid layouts, flex directions, margins, paddings, modal alignments, table columns, and directional icons.
-* Typography is optimized for Arabic script using modern, readable Cairo and Tajawal font stacks.
-
----
-
-## Egyptian Educational Model & Business Rules
+## 🇪🇬 Egyptian Educational Model & Business Rules
 
 The system is configured around the Egyptian school structure:
 * **Preparatory Stage (الإعدادية)**:
@@ -441,11 +494,11 @@ The system is configured around the Egyptian school structure:
 3. **One Teacher per Subject per Student**:
    * A student can only have at most one teacher per subject within their grade level via `student_teachers`.
 4. **Dynamic Registration Filtering**:
-   * In `frontend/auth/register.html`, when a student selects their grade level, the teacher selection dropdowns dynamically query `backend/auth/get_teachers_by_grade.php` to display only authorized teachers for that grade.
+   * In `frontend/auth/register.html`, when a student selects their grade level, teacher options dynamically populate via `backend/auth/get_teachers_by_grade.php` to display only authorized teachers for that grade.
 
 ---
 
-## Automated Testing Suite & Quality Assurance
+## 🧪 Automated Testing Suite & Quality Assurance
 
 The system includes a production-grade automated testing suite in `tests/`:
 
@@ -465,23 +518,26 @@ tests/
 ```
 
 ### Running the Test Suite
-Ensure Apache and MySQL are running in XAMPP, then open a terminal and run:
+Ensure your web server and MySQL service are running, then run:
 
 ```bash
 # Run all unit, integration, and API tests
-e:\xammp\php\php.exe tests/run_all_tests.php
+php tests/run_all_tests.php
 ```
+
+> [!TIP]
+> If `php` is not in your global system `PATH`, specify the full binary path (e.g. `C:\xammp\php\php.exe` on Windows or `/usr/bin/php` on Linux/macOS).
 
 Or run individual suites directly:
 ```bash
 # Run Unit Tests
-e:\xammp\php\php.exe -r "define('IN_APP', true); require 'tests/bootstrap.php'; require 'tests/unit/HelperFunctionsUnitTest.php'; TestRunner::printSuiteReport('unit');"
+php -r "define('IN_APP', true); require 'tests/bootstrap.php'; require 'tests/unit/HelperFunctionsUnitTest.php'; TestRunner::printSuiteReport('unit');"
 
 # Run Integration Tests
-e:\xammp\php\php.exe -r "define('IN_APP', true); require 'tests/bootstrap.php'; require 'tests/integration/DatabaseIntegrationTest.php'; TestRunner::printSuiteReport('integration');"
+php -r "define('IN_APP', true); require 'tests/bootstrap.php'; require 'tests/integration/DatabaseIntegrationTest.php'; TestRunner::printSuiteReport('integration');"
 
 # Run API Tests
-e:\xammp\php\php.exe -r "define('IN_APP', true); require 'tests/bootstrap.php'; require 'tests/api/ApiEndpointsTest.php'; TestRunner::printSuiteReport('api');"
+php -r "define('IN_APP', true); require 'tests/bootstrap.php'; require 'tests/api/ApiEndpointsTest.php'; TestRunner::printSuiteReport('api');"
 
 # Run Playwright End-to-End Browser Tests
 npx playwright test tests/e2e/playwright.spec.js
@@ -495,34 +551,34 @@ npx playwright test tests/e2e/playwright.spec.js
 
 ---
 
-## Scenario Dataset Generator & Verification Engine
+## 📊 Scenario Dataset Generator & Verification Engine
 
 To test and demonstrate the system under realistic educational conditions, automated generation and verification scripts are provided:
 
 ### 1. Generate Realistic Scenario Dataset
-Populates realistic Egyptian school scenarios with 23+ teachers, dozens of students, multiple assignments, on-time submissions, late submissions, recheck cycles, and real files in `uploads/submissions/`:
+Populates realistic Egyptian school scenarios with 23+ teachers, student cohorts, multiple assignments, on-time submissions, late submissions, recheck cycles, and real files in `uploads/submissions/`:
 
 ```bash
-e:\xammp\php\php.exe backend/database/generate_scenario_dataset.php
+php backend/database/generate_scenario_dataset.php
 ```
 
 ### 2. Verify Scenario Dataset & Data Integrity
 Audits all relational constraints, foreign keys, submission status transitions, and grade boundaries:
 
 ```bash
-e:\xammp\php\php.exe backend/database/verify_scenario_dataset.php
+php backend/database/verify_scenario_dataset.php
 ```
 
 ### 3. Verify Educational Stage Model
 Checks that stage isolation and teacher-student subject rules are strictly satisfied:
 
 ```bash
-e:\xammp\php\php.exe backend/database/verify_educational_model.php
+php backend/database/verify_educational_model.php
 ```
 
 ---
 
-## How This Project Helps Teachers & Core Benefits
+## 💡 How This Project Helps Teachers & Core Benefits
 
 ### 1. Significant Reduction in Grading Workload
 * **The Problem**: Teachers teaching cohorts of 50 to 300+ students spend dozens of hours every week downloading files, grading repetitive tasks, and writing feedback, diverting time away from lecture preparation and student mentoring.
@@ -559,65 +615,67 @@ e:\xammp\php\php.exe backend/database/verify_educational_model.php
 
 ---
 
-## Installation & Setup Guide
+## 🚀 Installation & Setup Guide
 
 ### Requirements
-* **XAMPP**, **WAMP**, or any standard Apache + MySQL + PHP 7.4+ stack.
-* Web browser (Google Chrome, Mozilla Firefox, Microsoft Edge).
+* Apache Web Server + MySQL (MariaDB) + PHP 7.4+ (e.g., XAMPP, WAMP, LAMP, or Docker stack).
+* Modern web browser (Chrome, Firefox, Edge, Safari).
 
 ### Step 1: Place Project in Web Root
-Ensure the project folder is located inside your local web server root directory:
-```text
-e:/xammp/htdocs/nti_intern_full/assignment-system-project/
+Clone or place the project directory inside your local web server's document root:
+```bash
+# Example web server document root paths:
+# Windows (XAMPP):  C:/xammp/htdocs/assignment-system-project/
+# Linux (Apache):    /var/www/html/assignment-system-project/
+# macOS (MAMP):      /Applications/MAMP/htdocs/assignment-system-project/
 ```
 
-### Step 2: Start Apache and MySQL
-Open the **XAMPP Control Panel** and click **Start** for both **Apache** and **MySQL**.
+### Step 2: Start Web Server and MySQL
+Start both your **Apache** (or Nginx) and **MySQL** services from your control panel or terminal.
 
 ### Step 3: Import the Database
-1. Open phpMyAdmin in your browser at `http://localhost/phpmyadmin/`.
-2. Create a new database named:
+1. Open your database administration tool (e.g., phpMyAdmin at `http://localhost/phpmyadmin/` or MySQL CLI).
+2. Create a new database:
    ```sql
-   assignment_system
+   CREATE DATABASE assignment_system CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
    ```
-3. Click the **Import** tab.
-4. Choose the file located at:
+3. Import the schema file located at:
    ```text
    database/assignment_system.sql
    ```
-5. Click **Import**. All 14 tables and initial records will be populated.
+4. All 14 tables and baseline verification records will be created.
 
 ### Step 4: Verify Database Connection
-Ensure `backend/config/database.php` matches your local MySQL configuration:
+Ensure `backend/config/database.php` matches your local database credentials:
 ```php
-$host = 'localhost';
-$dbname = 'assignment_system';
+$host     = 'localhost';
+$dbname   = 'assignment_system';
 $username = 'root';
 $password = '';
 ```
 
-### Step 5: (Optional) Seed Egyptian Educational Data & Scenarios
+### Step 5: (Optional) Seed Scenario Dataset
 To populate realistic test data with Egyptian teachers, assistants, students, coursework, and submissions:
 ```bash
-e:\xammp\php\php.exe backend/database/seed_egyptian_data.php
-e:\xammp\php\php.exe backend/database/generate_scenario_dataset.php
+php backend/database/seed_egyptian_data.php
+php backend/database/generate_scenario_dataset.php
 ```
 
 ### Step 6: Launch the Application
 Open your browser and navigate to:
 ```text
-http://localhost/nti_intern_full/assignment-system-project/
+http://localhost/assignment-system-project/
 ```
-You will be automatically routed to the login page. Use any of the test credentials listed in the [User Roles & Default Test Accounts](#user-roles--default-test-accounts) section. Use the language switcher in the top navigation bar to toggle between English and Arabic at any time.
+You will be routed to the sign-in portal. Use any of the test credentials listed in the [User Roles & Default Test Accounts](#-user-roles--default-test-accounts) section. Use the language switcher in the top navigation bar to toggle between **English** and **العربية** at any time.
 
 ---
 
-## Developer Standards & Coding Rules
+## 📏 Developer Standards & Coding Rules
 
 1. **Frontend Architecture**:
-   * Strictly Vanilla JavaScript, HTML5, and CSS3.
-   * No client-side frameworks (no React, Vue, Angular, or jQuery).
-   * All dynamic text must include `data-i18n` attributes for bilingual compatibility.
+   * Strictly Vanilla JavaScript (ES6+), HTML5, and CSS3.
+   * Zero third-party client frameworks (no React, Vue, Angular, or jQuery).
+   * All dynamic text elements must include `data-i18n` attributes for full bilingual compatibility.
 2. **Backend Architecture**:
    * Procedural PHP using `mysqli_*` functions.
    * Every request handler must enforce session authentication and role validation via `backend/includes/auth.php`.
@@ -626,5 +684,5 @@ You will be automatically routed to the login page. Use any of the test credenti
 3. **Database Transactions**:
    * Multi-table operations (e.g., student course enrollment, grade approvals, recheck dispatching) must use `mysqli_begin_transaction()`, `mysqli_commit()`, and `mysqli_rollback()`.
 4. **File Upload Security**:
-   * File types must be strictly validated against MIME types and permissible extensions.
+   * File types must be strictly validated against MIME types and permissible extensions (`pdf,doc,docx,zip`).
    * Uploaded files must be saved with unique sanitized hashes to prevent path traversal or file overwrites.
