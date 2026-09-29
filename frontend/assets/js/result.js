@@ -57,14 +57,24 @@ function renderResult(data) {
     }
     document.getElementById('maxGrade').textContent = isAr && window.i18n ? window.i18n.toArabicDigits(assign.max_grade) : assign.max_grade;
 
-    document.getElementById('subFileName').textContent = sub.file_name;
-    document.getElementById('subFileSize').textContent = formatBytes(sub.file_size);
-    document.getElementById('subDate').textContent = formatDate(sub.submitted_at);
-    document.getElementById('subVersion').textContent = isAr && window.i18n ? ('الإصدار ' + window.i18n.toArabicDigits(sub.version)) : ('Version ' + sub.version);
+    if (sub) {
+        document.getElementById('subFileName').textContent = sub.file_name;
+        document.getElementById('subFileSize').textContent = formatBytes(sub.file_size);
+        document.getElementById('subDate').textContent = formatDate(sub.submitted_at);
+        document.getElementById('subVersion').textContent = isAr && window.i18n ? ('الإصدار ' + window.i18n.toArabicDigits(sub.version)) : ('Version ' + sub.version);
 
-    var downloadSubBtn = document.getElementById('downloadSubBtn');
-    if (downloadSubBtn) {
-        downloadSubBtn.href = '../../backend/student/download.php?type=submission&id=' + sub.id;
+        var downloadSubBtn = document.getElementById('downloadSubBtn');
+        if (downloadSubBtn) {
+            downloadSubBtn.href = '../../backend/student/download.php?type=submission&id=' + sub.id;
+        }
+    } else {
+        var subSection = document.getElementById('submissionCard') || document.querySelector('.submission-details-card');
+        if (subSection) {
+            document.getElementById('subFileName').textContent = isAr ? 'لم يتم تقديم أي تسليم بعد' : 'No submission uploaded yet';
+            document.getElementById('subFileSize').textContent = '—';
+            document.getElementById('subDate').textContent = '—';
+            document.getElementById('subVersion').textContent = '—';
+        }
     }
 
     var resultCard = document.getElementById('resultDetails');
@@ -121,14 +131,16 @@ function renderResult(data) {
     } else {
         if (resultCard) resultCard.style.display = 'none';
         if (pendingCard) pendingCard.style.display = 'block';
+        var subStatus = sub ? sub.status : 'not_submitted';
         var statusMap = {
+            'not_submitted': isAr ? 'لم يتم التسليم' : 'Not Submitted',
             'submitted': isAr ? 'تم التسليم' : 'Submitted',
             'under_review': isAr ? 'قيد المراجعة' : 'Under Review',
             'pending_approval': isAr ? 'في انتظار الاعتماد' : 'Pending Approval',
             'graded': isAr ? 'تم التصحيح' : 'Graded',
             'recheck_requested': isAr ? 'طلب إعادة تدقيق' : 'Recheck Requested'
         };
-        var displayStatus = statusMap[sub.status] || (sub.status ? sub.status.replace(/_/g, ' ') : (isAr ? 'قيد المراجعة' : 'Under Review'));
+        var displayStatus = statusMap[subStatus] || (subStatus ? subStatus.replace(/_/g, ' ') : (isAr ? 'قيد المراجعة' : 'Under Review'));
         document.getElementById('subStatusBadge').textContent = displayStatus;
     }
 

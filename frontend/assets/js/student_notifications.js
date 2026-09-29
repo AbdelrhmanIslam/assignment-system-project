@@ -88,8 +88,13 @@ function renderNotifications(notifications, unreadCount) {
 
             var actionHtml = '';
             if (n.reference_id) {
-                var viewResultLabel = isAr ? 'عرض النتيجة' : 'View Result';
-                actionHtml = '<a href="result.html?id=' + n.reference_id + '" class="view-btn" style="font-size:12px; padding:6px 12px;">' + viewResultLabel + '</a>';
+                if (n.type === 'assignment') {
+                    var viewAssignmentLabel = isAr ? 'عرض الواجب' : 'View Assignment';
+                    actionHtml = '<a href="assignment.html?id=' + n.reference_id + '" class="view-btn" style="font-size:12px; padding:6px 12px;">' + viewAssignmentLabel + '</a>';
+                } else {
+                    var viewResultLabel = isAr ? 'عرض النتيجة' : 'View Result';
+                    actionHtml = '<a href="result.html?id=' + n.reference_id + '" class="view-btn" style="font-size:12px; padding:6px 12px;">' + viewResultLabel + '</a>';
+                }
             }
 
             var markBtnHtml = '';
