@@ -16,12 +16,11 @@ if (!isLoggedIn() || currentUserRole() !== 'assistant') {
 
 $assistantId = (int) currentUserId();
 
-// fetch assistant's assigned courses (either assigned directly to course or through assisted lead teacher)
+// fetch assistant's assigned courses (strictly assigned to course setup)
 $coursesSql = "SELECT DISTINCT c.id, c.name
                FROM courses c
-               LEFT JOIN course_assistants ca ON ca.course_id = c.id AND ca.assistant_id = $assistantId
-               LEFT JOIN teacher_assistants ta ON ta.teacher_id = c.teacher_id AND ta.assistant_id = $assistantId
-               WHERE (ca.id IS NOT NULL OR ta.id IS NOT NULL) AND c.is_active = 1";
+               INNER JOIN course_assistants ca ON ca.course_id = c.id AND ca.assistant_id = $assistantId
+               WHERE c.is_active = 1";
 $coursesResult = mysqli_query($conn, $coursesSql);
 
 $assignedCourseIds = [];
@@ -78,6 +77,7 @@ if ($filterStatus === 'pending') {
 $whereSql = implode(' AND ', $whereClauses);
 
 // query submissions
+// query only the latest version submitted per student per assignment
 $sql = "SELECT
             s.id,
             s.file_name,
@@ -97,6 +97,11 @@ $sql = "SELECT
             g.feedback,
             g.graded_at
         FROM submissions s
+        INNER JOIN (
+            SELECT assignment_id, student_id, MAX(version) AS max_ver
+            FROM submissions
+            GROUP BY assignment_id, student_id
+        ) latest ON s.assignment_id = latest.assignment_id AND s.student_id = latest.student_id AND s.version = latest.max_ver
         INNER JOIN assignments a ON a.id = s.assignment_id
         INNER JOIN courses c ON c.id = a.course_id
         INNER JOIN users u ON u.id = s.student_id

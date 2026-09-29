@@ -88,6 +88,67 @@ function setupRoleChangeListeners() {
             loadTeachersForStudentModal(this.value, 'edit-student-teachers-list', 'student_teacher_ids[]', []);
         });
     }
+
+    // Dynamic filtering of teacher subjects based on selected grade levels
+    setupTeacherGradeStageSync('create-t-grade', 'create-optgroup-prep', 'create-optgroup-sec', 'input-teacher-subject');
+    setupTeacherGradeStageSync('edit-t-grade', 'edit-optgroup-prep', 'edit-optgroup-sec', 'edit-teacher-subject');
+}
+
+function setupTeacherGradeStageSync(checkboxClass, prepOptId, secOptId, subjectSelectId) {
+    var checkboxes = document.querySelectorAll('.' + checkboxClass);
+    var prepOpt = document.getElementById(prepOptId);
+    var secOpt = document.getElementById(secOptId);
+    var select = document.getElementById(subjectSelectId);
+
+    if (!checkboxes || checkboxes.length === 0 || !select) return;
+
+    function sync() {
+        var selectedPrep = false;
+        var selectedSec = false;
+
+        checkboxes.forEach(function (cb) {
+            if (cb.checked) {
+                if (cb.value === 'First Year of High School') {
+                    selectedSec = true;
+                } else {
+                    selectedPrep = true;
+                }
+            }
+        });
+
+        // Enforce single-stage selection
+        if (selectedSec && selectedPrep) {
+            // Uncheck the other checkboxes to maintain strict stage isolation
+            checkboxes.forEach(function (cb) {
+                if (cb.value === 'First Year of High School') {
+                    selectedSec = true;
+                } else {
+                    cb.checked = false;
+                }
+            });
+            selectedPrep = false;
+        }
+
+        if (prepOpt) prepOpt.style.display = (selectedSec ? 'none' : 'block');
+        if (secOpt) secOpt.style.display = (selectedPrep ? 'none' : 'block');
+
+        // Reset selected subject if it's no longer valid for the stage
+        if (select.value) {
+            var selectedOpt = select.options[select.selectedIndex];
+            if (selectedOpt && selectedOpt.parentElement) {
+                if (selectedSec && selectedOpt.parentElement.id === prepOptId) {
+                    select.value = '';
+                } else if (selectedPrep && selectedOpt.parentElement.id === secOptId) {
+                    select.value = '';
+                }
+            }
+        }
+    }
+
+    checkboxes.forEach(function (cb) {
+        cb.addEventListener('change', sync);
+    });
+    sync();
 }
 
 function renderAssistantTeacherDropdown(selectId, selectedTeacherId) {

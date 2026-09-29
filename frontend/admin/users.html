@@ -305,14 +305,14 @@
                             <label for="input-teacher-subject" style="display: block; font-weight: 600; margin-bottom: 5px;" data-i18n="admin.form_subject">Subject *</label>
                             <select id="input-teacher-subject" name="subject" style="width: 100%; padding: 9px; border-radius: 6px; font-size: 14px;">
                                 <option value="" data-i18n="admin.form_select_subject">Select Subject</option>
-                                <optgroup label="Preparatory Subjects" data-i18n-label="educational.stages.Preparatory">
+                                <optgroup id="create-optgroup-prep" label="Preparatory Subjects" data-i18n-label="educational.stages.Preparatory">
                                     <option value="Arabic" data-i18n="educational.subjects.Arabic">Arabic</option>
                                     <option value="English" data-i18n="educational.subjects.English">English</option>
                                     <option value="Mathematics" data-i18n="educational.subjects.Mathematics">Mathematics</option>
                                     <option value="Science" data-i18n="educational.subjects.Science">Science</option>
                                     <option value="Social Studies" data-i18n="educational.subjects.Social Studies">Social Studies</option>
                                 </optgroup>
-                                <optgroup label="Secondary Subjects" data-i18n-label="educational.stages.Secondary">
+                                <optgroup id="create-optgroup-sec" label="Secondary Subjects" data-i18n-label="educational.stages.Secondary">
                                     <option value="Arabic" data-i18n="educational.subjects.Arabic">Arabic</option>
                                     <option value="First Foreign Language" data-i18n="educational.subjects.First Foreign Language">First Foreign Language</option>
                                     <option value="History" data-i18n="educational.subjects.History">History</option>
@@ -328,16 +328,16 @@
                             <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">Select grade levels this teacher instructs</p>
                             <div style="display: flex; flex-direction: column; gap: 6px;">
                                 <label style="font-size: 13px; font-weight: normal; cursor: pointer; display: flex; align-items: center; gap: 8px;">
-                                    <input type="checkbox" name="teacher_grade_levels[]" value="First Year of Middle School" checked> <span data-i18n="educational.grades.First Year of Middle School">1st Preparatory</span>
+                                    <input type="checkbox" class="create-t-grade" name="teacher_grade_levels[]" value="First Year of Middle School" checked> <span data-i18n="educational.grades.First Year of Middle School">1st Preparatory</span>
                                 </label>
                                 <label style="font-size: 13px; font-weight: normal; cursor: pointer; display: flex; align-items: center; gap: 8px;">
-                                    <input type="checkbox" name="teacher_grade_levels[]" value="Second Year of Middle School"> <span data-i18n="educational.grades.Second Year of Middle School">2nd Preparatory</span>
+                                    <input type="checkbox" class="create-t-grade" name="teacher_grade_levels[]" value="Second Year of Middle School"> <span data-i18n="educational.grades.Second Year of Middle School">2nd Preparatory</span>
                                 </label>
                                 <label style="font-size: 13px; font-weight: normal; cursor: pointer; display: flex; align-items: center; gap: 8px;">
-                                    <input type="checkbox" name="teacher_grade_levels[]" value="Third Year of Middle School"> <span data-i18n="educational.grades.Third Year of Middle School">3rd Preparatory</span>
+                                    <input type="checkbox" class="create-t-grade" name="teacher_grade_levels[]" value="Third Year of Middle School"> <span data-i18n="educational.grades.Third Year of Middle School">3rd Preparatory</span>
                                 </label>
                                 <label style="font-size: 13px; font-weight: normal; cursor: pointer; display: flex; align-items: center; gap: 8px;">
-                                    <input type="checkbox" name="teacher_grade_levels[]" value="First Year of High School"> <span data-i18n="educational.grades.First Year of High School">1st Secondary</span>
+                                    <input type="checkbox" class="create-t-grade" name="teacher_grade_levels[]" value="First Year of High School"> <span data-i18n="educational.grades.First Year of High School">1st Secondary</span>
                                 </label>
                             </div>
                         </div>
@@ -456,14 +456,14 @@
                     <label for="edit-teacher-subject" style="display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px;" data-i18n="admin.form_subject">Assigned Subject</label>
                     <select id="edit-teacher-subject" name="subject" style="border-radius: var(--radius-pill); width: 100%; padding: 8px 12px; font-size: 13px;">
                         <option value="" data-i18n="admin.form_select_subject">Select Subject</option>
-                        <optgroup label="Preparatory Stage" data-i18n-label="educational.stages.Preparatory">
+                        <optgroup id="edit-optgroup-prep" label="Preparatory Stage" data-i18n-label="educational.stages.Preparatory">
                             <option value="Arabic" data-i18n="educational.subjects.Arabic">Arabic</option>
                             <option value="English" data-i18n="educational.subjects.English">English</option>
                             <option value="Mathematics" data-i18n="educational.subjects.Mathematics">Mathematics</option>
                             <option value="Science" data-i18n="educational.subjects.Science">Science</option>
                             <option value="Social Studies" data-i18n="educational.subjects.Social Studies">Social Studies</option>
                         </optgroup>
-                        <optgroup label="Secondary Stage" data-i18n-label="educational.stages.Secondary">
+                        <optgroup id="edit-optgroup-sec" label="Secondary Stage" data-i18n-label="educational.stages.Secondary">
                             <option value="Arabic" data-i18n="educational.subjects.Arabic">Arabic</option>
                             <option value="First Foreign Language" data-i18n="educational.subjects.First Foreign Language">First Foreign Language</option>
                             <option value="History" data-i18n="educational.subjects.History">History</option>

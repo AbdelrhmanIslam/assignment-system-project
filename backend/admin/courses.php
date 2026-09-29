@@ -45,16 +45,27 @@ if (isPost()) {
             exit;
         }
 
-        // teaching assistant is mandatory and must belong to the selected lead teacher
-        if ($assistantId <= 0) {
-            echo json_encode(['success' => false, 'message' => 'A teaching assistant is required for this course.']);
+        // parse teaching assistants (multiple allowed)
+        $assistantIds = [];
+        if (isset($_POST['assistant_ids']) && is_array($_POST['assistant_ids'])) {
+            $assistantIds = array_map('intval', $_POST['assistant_ids']);
+        } else if (isset($_POST['assistant_id']) && (int)$_POST['assistant_id'] > 0) {
+            $assistantIds = [(int)$_POST['assistant_id']];
+        }
+
+        $assistantIds = array_unique(array_filter($assistantIds, function($id) { return $id > 0; }));
+
+        if (empty($assistantIds)) {
+            echo json_encode(['success' => false, 'message' => 'At least one teaching assistant is required for this course.']);
             exit;
         }
 
-        $teacherAssists = getAssistantTeacherIds($conn, $assistantId);
-        if (!in_array($teacherId, $teacherAssists)) {
-            echo json_encode(['success' => false, 'message' => 'The selected teaching assistant is not assigned to this lead teacher.']);
-            exit;
+        foreach ($assistantIds as $aId) {
+            $teacherAssists = getAssistantTeacherIds($conn, $aId);
+            if (!in_array($teacherId, $teacherAssists)) {
+                echo json_encode(['success' => false, 'message' => 'One or more selected teaching assistants are not assigned to this lead teacher.']);
+                exit;
+            }
         }
 
         // fetch teacher subject
@@ -73,9 +84,11 @@ if (isPost()) {
             // auto-enroll active students of this grade who have selected this teacher
             enrollGradeLevelStudentsInCourse($conn, $newCourseId, $gradeLevel, $teacherId);
 
-            // assign isolated assistant to course
-            mysqli_query($conn, "INSERT INTO course_assistants (course_id, assistant_id, assigned_at)
-                                 VALUES ($newCourseId, $assistantId, NOW())");
+            // assign isolated assistants to course
+            foreach ($assistantIds as $aId) {
+                mysqli_query($conn, "INSERT IGNORE INTO course_assistants (course_id, assistant_id, assigned_at)
+                                     VALUES ($newCourseId, $aId, NOW())");
+            }
 
             echo json_encode(['success' => true, 'message' => 'Course created successfully!']);
         } else {

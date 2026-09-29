@@ -138,21 +138,15 @@ function loadCourses() {
 var allAssistants = [];
 
 function updateAssistantDropdown(teacherId) {
-    var assistantSelect = document.getElementById('select-assistant');
+    var container = document.getElementById('assistants-checkboxes-container');
     var helpText = document.getElementById('assistant-help-text');
-    if (!assistantSelect) return;
-    assistantSelect.innerHTML = '';
+    if (!container) return;
+    container.innerHTML = '';
 
     var isAr = (window.i18n && window.i18n.getCurrentLanguage() === 'ar');
 
     if (!teacherId) {
-        var opt = document.createElement('option');
-        opt.value = '';
-        opt.disabled = true;
-        opt.selected = true;
-        opt.textContent = isAr ? 'اختر المعلم أولاً...' : 'Select a teacher first...';
-        assistantSelect.appendChild(opt);
-        assistantSelect.disabled = true;
+        container.innerHTML = '<span style="font-size:12px; color:var(--text-muted);">' + (isAr ? 'اختر المعلم أولاً...' : 'Select a teacher first...') + '</span>';
         if (helpText) {
             helpText.textContent = isAr ? 'المساعدون المسندون للمعلم المختار.' : 'Assistants assigned to the selected teacher.';
             helpText.style.color = 'var(--text-muted)';
@@ -169,44 +163,24 @@ function updateAssistantDropdown(teacherId) {
     });
 
     if (filtered.length === 0) {
-        var optEmpty = document.createElement('option');
-        optEmpty.value = '';
-        optEmpty.disabled = true;
-        optEmpty.selected = true;
-        optEmpty.textContent = isAr ? 'لا يوجد مساعدون مسندون لهذا المعلم' : 'No assistants assigned to this teacher';
-        assistantSelect.appendChild(optEmpty);
-        assistantSelect.disabled = true;
+        container.innerHTML = '<span style="font-size:12px; color:var(--danger);">' + (isAr ? 'لا يوجد مساعدون مسندون لهذا المعلم' : 'No assistants assigned to this teacher') + '</span>';
         if (helpText) {
             helpText.textContent = isAr ? 'هذا المعلم ليس لديه مساعدون مسندون حالياً.' : 'This teacher has no assigned assistants. Assign an assistant in Manage Users first.';
             helpText.style.color = 'var(--danger)';
         }
     } else {
-        assistantSelect.disabled = false;
         if (helpText) {
-            helpText.textContent = isAr ? ('المساعدون المسندون لهذا المعلم (' + (window.i18n ? window.i18n.toArabicDigits(filtered.length) : filtered.length) + ' متاح).') : ('Assistants assigned to this teacher (' + filtered.length + ' available).');
+            helpText.textContent = isAr ? ('المساعدون المسندون لهذا المعلم (' + (window.i18n ? window.i18n.toArabicDigits(filtered.length) : filtered.length) + ' متاح). اختر مساعداً واحداً أو أكثر.') : ('Assistants assigned to this teacher (' + filtered.length + ' available). Select one or more.');
             helpText.style.color = 'var(--success)';
         }
 
-        var placeholderOpt = document.createElement('option');
-        placeholderOpt.value = '';
-        placeholderOpt.disabled = true;
-        placeholderOpt.textContent = isAr ? 'اختر مساعد المعلم...' : 'Choose assistant...';
-        assistantSelect.appendChild(placeholderOpt);
-
-        filtered.forEach(function (a, idx) {
-            var opt = document.createElement('option');
-            opt.value = a.id;
-            opt.textContent = window.i18n ? window.i18n.translateName(a.name) : a.name;
-            if (filtered.length === 1 && idx === 0) {
-                opt.selected = true;
-                placeholderOpt.selected = false;
-            }
-            assistantSelect.appendChild(opt);
+        filtered.forEach(function (a) {
+            var lbl = document.createElement('label');
+            lbl.style.cssText = 'font-size: 13px; font-weight: normal; cursor: pointer; display: flex; align-items: center; gap: 8px; color: var(--text-primary);';
+            var aName = window.i18n ? window.i18n.translateName(a.name) : a.name;
+            lbl.innerHTML = '<input type="checkbox" name="assistant_ids[]" value="' + a.id + '" checked> ' + escapeHtml(aName);
+            container.appendChild(lbl);
         });
-
-        if (filtered.length > 1) {
-            placeholderOpt.selected = true;
-        }
     }
 }
 

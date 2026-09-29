@@ -57,12 +57,24 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 }
 
+                // populate grade level dropdown strictly matching teacher's registered grade levels
+                var glSelect = document.getElementById('assignment-grade-level');
+                if (glSelect && data.teacher_grade_levels && Array.isArray(data.teacher_grade_levels)) {
+                    glSelect.innerHTML = '';
+                    data.teacher_grade_levels.forEach(function (gl) {
+                        var glOpt = document.createElement('option');
+                        glOpt.value = gl;
+                        var glText = isAr && window.i18n ? window.i18n.translateGrade(gl) : formatGradeLevel(gl);
+                        glOpt.textContent = glText;
+                        glSelect.appendChild(glOpt);
+                    });
+                }
+
                 if (courseSelect && !courseSelect.dataset.hasListener) {
                     courseSelect.dataset.hasListener = 'true';
                     courseSelect.addEventListener('change', function () {
                         var selOpt = courseSelect.options[courseSelect.selectedIndex];
                         var cGrade = selOpt ? selOpt.getAttribute('data-grade-level') : '';
-                        var glSelect = document.getElementById('assignment-grade-level');
                         if (glSelect && cGrade) {
                             glSelect.value = cGrade;
                         }
