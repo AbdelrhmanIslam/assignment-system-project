@@ -313,6 +313,8 @@
     "th_grading_history": "Grading History",
     "my_courses_heading": "My Courses",
     "my_courses_desc": "Courses you instruct",
+    "no_courses_heading": "No courses assigned",
+    "no_courses_desc": "You currently have no active courses assigned.",
     "recent_submissions_heading": "Recent Submissions",
     "recent_submissions_desc": "Latest submissions across your courses",
     "view_all_submissions": "View All →",

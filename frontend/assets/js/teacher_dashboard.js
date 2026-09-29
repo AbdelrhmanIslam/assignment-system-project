@@ -133,24 +133,30 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // populate courses cards
             var coursesContainer = document.getElementById('courses-cards-container');
-            if (coursesContainer && data.courses) {
+            var coursesEmpty = document.getElementById('courses-empty');
+            if (coursesContainer) {
                 coursesContainer.innerHTML = '';
-                for (var j = 0; j < data.courses.length; j++) {
-                    var c = data.courses[j];
-                    var cCard = document.createElement('div');
-                    cCard.className = 'stat-card';
-                    var cNameTr = isAr && window.i18n ? window.i18n.translateCourse(c.name) : c.name;
-                    var cDescTr = c.description ? (isAr && window.i18n ? window.i18n.translateDescription(c.description) : c.description) : (isAr ? 'لا يوجد وصف' : 'No description');
-                    var cStudTr = (isAr && window.i18n ? window.i18n.toArabicDigits(c.student_count) : c.student_count) + ' ' + (isAr ? 'طالب' : 'Students');
-                    var cAssignTr = (isAr && window.i18n ? window.i18n.toArabicDigits(c.assignment_count) : c.assignment_count) + ' ' + (isAr ? 'واجب' : 'Assignments');
+                if (!data.courses || data.courses.length === 0) {
+                    if (coursesEmpty) coursesEmpty.style.display = 'block';
+                } else {
+                    if (coursesEmpty) coursesEmpty.style.display = 'none';
+                    for (var j = 0; j < data.courses.length; j++) {
+                        var c = data.courses[j];
+                        var cCard = document.createElement('div');
+                        cCard.className = 'stat-card';
+                        var cNameTr = isAr && window.i18n ? window.i18n.translateCourse(c.name) : c.name;
+                        var cDescTr = c.description ? (isAr && window.i18n ? window.i18n.translateDescription(c.description) : c.description) : (isAr ? 'لا يوجد وصف' : 'No description');
+                        var cStudTr = (isAr && window.i18n ? window.i18n.toArabicDigits(c.student_count) : c.student_count) + ' ' + (isAr ? 'طالب' : 'Students');
+                        var cAssignTr = (isAr && window.i18n ? window.i18n.toArabicDigits(c.assignment_count) : c.assignment_count) + ' ' + (isAr ? 'واجب' : 'Assignments');
 
-                    cCard.innerHTML = '<strong style="font-size: 16px; color: var(--text-primary); display: block; margin-bottom: 6px;">' + escapeHtml(cNameTr) + '</strong>' +
-                                      '<span class="stat-label">' + escapeHtml(cDescTr) + '</span>' +
-                                      '<div style="display: flex; gap: 15px; margin-top: 12px; font-size: 13px; color: var(--text-muted);">' +
-                                      '<span><strong>' + cStudTr + '</strong></span>' +
-                                      '<span><strong>' + cAssignTr + '</strong></span>' +
-                                      '</div>';
-                    coursesContainer.appendChild(cCard);
+                        cCard.innerHTML = '<strong style="font-size: 16px; color: var(--text-primary); display: block; margin-bottom: 6px;">' + escapeHtml(cNameTr) + '</strong>' +
+                                          '<span class="stat-label">' + escapeHtml(cDescTr) + '</span>' +
+                                          '<div style="display: flex; gap: 15px; margin-top: 12px; font-size: 13px; color: var(--text-muted);">' +
+                                          '<span><strong>' + cStudTr + '</strong></span>' +
+                                          '<span><strong>' + cAssignTr + '</strong></span>' +
+                                          '</div>';
+                        coursesContainer.appendChild(cCard);
+                    }
                 }
             }
 
@@ -174,6 +180,7 @@ function renderTeachingAssistants(assistants) {
         return;
     }
     if (emptyEl) emptyEl.style.display = 'none';
+    var isAr = window.i18n && window.i18n.getCurrentLanguage() === 'ar';
 
     assistants.forEach(function (ast) {
         var card = document.createElement('div');

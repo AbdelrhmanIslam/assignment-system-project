@@ -20,6 +20,11 @@ document.addEventListener('DOMContentLoaded', function () {
     var createForm = document.getElementById('create-assignment-form');
     var alertBox = document.getElementById('alert-box');
 
+    var noDeadlineToggle = document.getElementById('no-deadline-toggle');
+    var deadlineInput = document.getElementById('assignment-deadline');
+    var deadlineReqMark = document.getElementById('deadline-required-mark');
+    var noDeadlineHelp = document.getElementById('no-deadline-help');
+
     // load assignments and courses
     loadAssignments();
 
@@ -89,11 +94,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         }
                     });
                 }
-
-                var noDeadlineToggle = document.getElementById('no-deadline-toggle');
-                var deadlineInput = document.getElementById('assignment-deadline');
-                var deadlineReqMark = document.getElementById('deadline-required-mark');
-                var noDeadlineHelp = document.getElementById('no-deadline-help');
 
                 if (noDeadlineToggle && deadlineInput && !noDeadlineToggle.dataset.hasListener) {
                     noDeadlineToggle.dataset.hasListener = 'true';
@@ -223,10 +223,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 body: formData
             })
                 .then(function (response) {
-                    return response.json();
+                    return response.json().then(function (data) {
+                        return { ok: response.ok, data: data };
+                    });
                 })
-                .then(function (res) {
-                    if (res && res.success) {
+                .then(function (result) {
+                    var res = result.data;
+                    if (result.ok && res && res.success) {
                         showAlert('success', res.message);
                         createForm.reset();
                         if (deadlineInput) {
@@ -240,11 +243,11 @@ document.addEventListener('DOMContentLoaded', function () {
                         loadAssignments();
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                     } else {
-                        showAlert('error', res.message || 'Failed to create assignment.');
+                        showAlert('error', (res && res.message) ? res.message : 'Failed to create assignment.');
                     }
                 })
                 .catch(function (err) {
-                    showAlert('error', 'An error occurred while creating assignment.');
+                    showAlert('error', (err && err.message) ? err.message : 'An error occurred while creating assignment.');
                     console.error('Error:', err);
                 });
         });

@@ -313,6 +313,8 @@
     "th_grading_history": "سجل التقييم",
     "my_courses_heading": "موادي الدراسية",
     "my_courses_desc": "المواد التي تقوم بتدريسها",
+    "no_courses_heading": "لا توجد مواد دراسية مسندة",
+    "no_courses_desc": "ليس لديك حالياً أي مواد دراسية نشطة مسندة إليك.",
     "recent_submissions_heading": "أحدث التسليمات",
     "recent_submissions_desc": "أحدث تسليمات الطلاب لموادك الدراسية",
     "view_all_submissions": "عرض الكل ←",
