@@ -49,7 +49,25 @@ $subResult = mysqli_query($conn, $subSql);
 $submission = mysqli_fetch_assoc($subResult);
 
 if (!$submission) {
-    echo json_encode(['success' => false, 'message' => 'No submission found for this assignment.']);
+    echo json_encode([
+        'success' => true,
+        'user' => [
+            'name' => currentUserName(),
+            'role' => currentUserRole()
+        ],
+        'assignment' => [
+            'id' => (int) $assignment['id'],
+            'title' => $assignment['title'],
+            'description' => $assignment['description'],
+            'course_name' => $assignment['course_name'],
+            'teacher_name' => $assignment['teacher_name'] ? $assignment['teacher_name'] : 'Lead Teacher',
+            'max_grade' => (float) $assignment['max_grade'],
+            'deadline' => $assignment['deadline']
+        ],
+        'submission' => null,
+        'grade' => null,
+        'message' => 'No submission found for this assignment.'
+    ]);
     exit;
 }
 

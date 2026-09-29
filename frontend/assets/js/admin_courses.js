@@ -77,8 +77,11 @@ function updateCategoryBanner(filteredCourses) {
 
     banner.style.display = 'block';
 
+    var isAr = (window.i18n && window.i18n.getCurrentLanguage() === 'ar');
     if (catDisplay) {
-        catDisplay.textContent = (currentGradeFilter === 'all') ? 'All Grade Levels' : formatGradeLevel(currentGradeFilter);
+        catDisplay.textContent = (currentGradeFilter === 'all')
+            ? (isAr ? 'جميع المراحل الدراسية' : 'All Grade Levels')
+            : (window.i18n ? window.i18n.translateGrade(currentGradeFilter) : formatGradeLevel(currentGradeFilter));
     }
 
     if (teachersDisplay) {
@@ -91,10 +94,12 @@ function updateCategoryBanner(filteredCourses) {
 
         if (distinctTeachers.length > 0) {
             teachersDisplay.innerHTML = distinctTeachers.map(function (t) {
-                return '<span class="status-badge status-review" style="font-size:11px; margin-right:4px;">' + escapeHtml(t) + '</span>';
+                var dispT = window.i18n ? window.i18n.translateName(t) : t;
+                return '<span class="status-badge status-review" style="font-size:11px; margin-right:4px;">' + escapeHtml(dispT) + '</span>';
             }).join(' ');
         } else {
-            teachersDisplay.innerHTML = '<span style="color:#9ca3af; font-weight:normal;">None assigned</span>';
+            var noneText = isAr ? 'لا يوجد' : 'None assigned';
+            teachersDisplay.innerHTML = '<span style="color:#9ca3af; font-weight:normal;">' + noneText + '</span>';
         }
     }
 }
@@ -133,21 +138,17 @@ function loadCourses() {
 var allAssistants = [];
 
 function updateAssistantDropdown(teacherId) {
-    var assistantSelect = document.getElementById('select-assistant');
+    var container = document.getElementById('assistants-checkboxes-container');
     var helpText = document.getElementById('assistant-help-text');
-    if (!assistantSelect) return;
-    assistantSelect.innerHTML = '';
+    if (!container) return;
+    container.innerHTML = '';
+
+    var isAr = (window.i18n && window.i18n.getCurrentLanguage() === 'ar');
 
     if (!teacherId) {
-        var opt = document.createElement('option');
-        opt.value = '';
-        opt.disabled = true;
-        opt.selected = true;
-        opt.textContent = 'Select a teacher first...';
-        assistantSelect.appendChild(opt);
-        assistantSelect.disabled = true;
+        container.innerHTML = '<span style="font-size:12px; color:var(--text-muted);">' + (isAr ? 'اختر المعلم أولاً...' : 'Select a teacher first...') + '</span>';
         if (helpText) {
-            helpText.textContent = 'Assistants assigned to the selected teacher.';
+            helpText.textContent = isAr ? 'المساعدون المسندون للمعلم المختار.' : 'Assistants assigned to the selected teacher.';
             helpText.style.color = 'var(--text-muted)';
         }
         return;
@@ -162,44 +163,24 @@ function updateAssistantDropdown(teacherId) {
     });
 
     if (filtered.length === 0) {
-        var optEmpty = document.createElement('option');
-        optEmpty.value = '';
-        optEmpty.disabled = true;
-        optEmpty.selected = true;
-        optEmpty.textContent = 'No assistants assigned to this teacher';
-        assistantSelect.appendChild(optEmpty);
-        assistantSelect.disabled = true;
+        container.innerHTML = '<span style="font-size:12px; color:var(--danger);">' + (isAr ? 'لا يوجد مساعدون مسندون لهذا المعلم' : 'No assistants assigned to this teacher') + '</span>';
         if (helpText) {
-            helpText.textContent = 'This teacher has no assigned assistants. Assign an assistant in Manage Users first.';
+            helpText.textContent = isAr ? 'هذا المعلم ليس لديه مساعدون مسندون حالياً.' : 'This teacher has no assigned assistants. Assign an assistant in Manage Users first.';
             helpText.style.color = 'var(--danger)';
         }
     } else {
-        assistantSelect.disabled = false;
         if (helpText) {
-            helpText.textContent = 'Assistants assigned to this teacher (' + filtered.length + ' available).';
+            helpText.textContent = isAr ? ('المساعدون المسندون لهذا المعلم (' + (window.i18n ? window.i18n.toArabicDigits(filtered.length) : filtered.length) + ' متاح). اختر مساعداً واحداً أو أكثر.') : ('Assistants assigned to this teacher (' + filtered.length + ' available). Select one or more.');
             helpText.style.color = 'var(--success)';
         }
 
-        var placeholderOpt = document.createElement('option');
-        placeholderOpt.value = '';
-        placeholderOpt.disabled = true;
-        placeholderOpt.textContent = 'Choose assistant...';
-        assistantSelect.appendChild(placeholderOpt);
-
-        filtered.forEach(function (a, idx) {
-            var opt = document.createElement('option');
-            opt.value = a.id;
-            opt.textContent = a.name;
-            if (filtered.length === 1 && idx === 0) {
-                opt.selected = true;
-                placeholderOpt.selected = false;
-            }
-            assistantSelect.appendChild(opt);
+        filtered.forEach(function (a) {
+            var lbl = document.createElement('label');
+            lbl.style.cssText = 'font-size: 13px; font-weight: normal; cursor: pointer; display: flex; align-items: center; gap: 8px; color: var(--text-primary);';
+            var aName = window.i18n ? window.i18n.translateName(a.name) : a.name;
+            lbl.innerHTML = '<input type="checkbox" name="assistant_ids[]" value="' + a.id + '" checked> ' + escapeHtml(aName);
+            container.appendChild(lbl);
         });
-
-        if (filtered.length > 1) {
-            placeholderOpt.selected = true;
-        }
     }
 }
 
@@ -212,8 +193,9 @@ function populateDropdowns(teachers, assistants) {
 
     function updateTeacherOptions() {
         if (!teacherSelect) return;
+        var isAr = (window.i18n && window.i18n.getCurrentLanguage() === 'ar');
         var selectedGrade = gradeSelect ? gradeSelect.value : '';
-        teacherSelect.innerHTML = '<option value="">Select Teacher...</option>';
+        teacherSelect.innerHTML = '<option value="">' + (isAr ? 'اختر المعلم...' : 'Select Teacher...') + '</option>';
 
         var eligibleTeachers = allTeachers.filter(function (t) {
             if (!selectedGrade) return true;
@@ -225,14 +207,15 @@ function populateDropdowns(teachers, assistants) {
             var opt = document.createElement('option');
             opt.value = '';
             opt.disabled = true;
-            opt.textContent = 'No teachers assigned to ' + formatGradeLevel(selectedGrade);
+            opt.textContent = isAr ? 'لا يوجد معلمون مسندون لهذه المرحلة' : ('No teachers assigned to ' + formatGradeLevel(selectedGrade));
             teacherSelect.appendChild(opt);
         } else {
             eligibleTeachers.forEach(function (t) {
                 var opt = document.createElement('option');
                 opt.value = t.id;
-                var levelsText = (t.grade_levels && t.grade_levels.length > 0) ? ' (' + t.grade_levels.map(formatGradeLevel).join(', ') + ')' : '';
-                opt.textContent = t.name + levelsText;
+                var trName = window.i18n ? window.i18n.translateName(t.name) : t.name;
+                var levelsText = (t.grade_levels && t.grade_levels.length > 0) ? ' (' + t.grade_levels.map(function(g) { return window.i18n ? window.i18n.translateGrade(g) : formatGradeLevel(g); }).join(', ') + ')' : '';
+                opt.textContent = trName + levelsText;
                 teacherSelect.appendChild(opt);
             });
         }
@@ -273,25 +256,37 @@ function renderCoursesTable(courses) {
     if (!tbody) return;
     tbody.innerHTML = '';
 
+    var isAr = (window.i18n && window.i18n.getCurrentLanguage() === 'ar');
     courses.forEach(function (c) {
         var row = document.createElement('tr');
 
+        var activeText = isAr ? 'نشط' : 'Active';
+        var archivedText = isAr ? 'مؤرشف' : 'Archived';
         var statusBadge = c.is_active ?
-            '<span class="status-badge status-graded">Active</span>' :
-            '<span class="status-badge status-closed">Archived</span>';
+            '<span class="status-badge status-graded">' + activeText + '</span>' :
+            '<span class="status-badge status-closed">' + archivedText + '</span>';
 
-        var toggleLabel = c.is_active ? 'Archive' : 'Activate';
+        var toggleLabel = c.is_active ? (isAr ? 'أرشفة' : 'Archive') : (isAr ? 'تفعيل' : 'Activate');
         var toggleClass = c.is_active ? 'background:var(--danger);' : 'background:var(--success);';
+        var deleteLabel = isAr ? 'حذف' : 'Delete';
 
-        var gradeLevelBadge = '<span class="status-badge status-review" style="font-size:11px;">' + escapeHtml(formatGradeLevel(c.grade_level || 'First Year of Middle School')) + '</span>';
+        var gradeLevelBadge = '<span class="status-badge status-review" style="font-size:11px;">' + escapeHtml(window.i18n ? window.i18n.translateGrade(c.grade_level || 'First Year of Middle School') : formatGradeLevel(c.grade_level || 'First Year of Middle School')) + '</span>';
+
+        var courseNameDisplay = window.i18n ? window.i18n.translateCourse(c.name) : c.name;
+        var descDisplay = window.i18n ? window.i18n.translateDescription(c.description || 'No description') : (c.description || 'No description');
+        var teacherDisplay = window.i18n ? window.i18n.translateName(c.teacher_name) : c.teacher_name;
+        var asstDisplay = (c.assistants && c.assistants !== 'None') ? (window.i18n ? window.i18n.translateName(c.assistants) : c.assistants) : (isAr ? 'لا يوجد' : 'None');
+
+        var numStudents = (window.i18n && isAr) ? (window.i18n.toArabicDigits(c.student_count) + ' طلاب') : (c.student_count + ' Students');
+        var numAssigns = (window.i18n && isAr) ? (window.i18n.toArabicDigits(c.assignment_count) + ' واجبات') : (c.assignment_count + ' Assignments');
 
         row.innerHTML =
-            '<td><strong style="color:var(--text-primary);">' + escapeHtml(c.name) + '</strong><br><small style="color:var(--text-muted);">' + escapeHtml(c.description || 'No description') + '</small></td>' +
+            '<td><strong style="color:var(--text-primary);">' + escapeHtml(courseNameDisplay) + '</strong><br><small style="color:var(--text-muted);">' + escapeHtml(descDisplay) + '</small></td>' +
             '<td>' + gradeLevelBadge + '</td>' +
-            '<td><strong style="color:var(--text-primary); display:inline-flex; align-items:center; gap:4px;">' + escapeHtml(c.teacher_name) + '</strong></td>' +
-            '<td>' + (c.assistants && c.assistants !== 'None' ? '<span class="status-badge status-review" style="font-size:11px;">' + escapeHtml(c.assistants) + '</span>' : '<span style="color:var(--text-muted);">None</span>') + '</td>' +
-            '<td>' + c.student_count + ' Students</td>' +
-            '<td>' + c.assignment_count + ' Assignments</td>' +
+            '<td><strong style="color:var(--text-primary); display:inline-flex; align-items:center; gap:4px;">' + escapeHtml(teacherDisplay) + '</strong></td>' +
+            '<td>' + (asstDisplay !== 'None' && asstDisplay !== 'لا يوجد' ? '<span class="status-badge status-review" style="font-size:11px;">' + escapeHtml(asstDisplay) + '</span>' : '<span style="color:var(--text-muted);">' + asstDisplay + '</span>') + '</td>' +
+            '<td>' + numStudents + '</td>' +
+            '<td>' + numAssigns + '</td>' +
             '<td>' + statusBadge + '</td>' +
             '<td>' +
                 '<div style="display:inline-flex; gap:6px; align-items:center;">' +
@@ -299,7 +294,7 @@ function renderCoursesTable(courses) {
                         toggleLabel +
                     '</button>' +
                     '<button onclick="deleteCourse(' + c.id + ', this)" class="view-btn" style="background:var(--danger); font-size:12px; padding:6px 10px; border:none; cursor:pointer; border-radius:4px;">' +
-                        'Delete' +
+                        deleteLabel +
                     '</button>' +
                 '</div>' +
             '</td>';
@@ -491,3 +486,8 @@ function showAlert(msg, type) {
         if (box) box.style.display = 'none';
     }, 4500);
 }
+
+window.addEventListener('languageChanged', function () {
+    if (typeof applyCourseFilters === 'function') applyCourseFilters();
+});
+

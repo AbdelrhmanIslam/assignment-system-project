@@ -56,7 +56,9 @@ function updateTeachers(teachers) {
   if (!teachers || teachers.length === 0) {
     var emptyDiv = document.createElement("div");
     emptyDiv.style.cssText = "grid-column: 1 / -1; padding: 1.5rem; background: var(--glass-bg); border: 1px dashed var(--glass-border); border-radius: var(--radius-md); color: var(--text-muted); text-align: center;";
-    emptyDiv.innerHTML = "<strong>No teachers assigned yet.</strong><p style='margin: 4px 0 0; font-size: 0.9rem;'>Assignments will appear once you are enrolled with your teachers.</p>";
+    var noTeachersTitle = window.i18n ? window.i18n.t("student.no_teachers_assigned") : "No teachers assigned yet.";
+    var noTeachersDesc = window.i18n ? window.i18n.t("student.no_teachers_desc") : "Assignments will appear once you are enrolled with your teachers.";
+    emptyDiv.innerHTML = "<strong>" + escapeHtml(noTeachersTitle) + "</strong><p style='margin: 4px 0 0; font-size: 0.9rem;'>" + escapeHtml(noTeachersDesc) + "</p>";
     container.appendChild(emptyDiv);
     return;
   }
@@ -76,7 +78,7 @@ function updateTeachers(teachers) {
 
     var name = document.createElement("strong");
     name.style.cssText = "display: block; font-size: 15px; color: var(--text-primary); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;";
-    name.textContent = t.name;
+    name.textContent = window.i18n ? window.i18n.translateName(t.name) : t.name;
 
     var email = document.createElement("span");
     email.style.cssText = "display: block; font-size: 13px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;";
@@ -88,14 +90,14 @@ function updateTeachers(teachers) {
     if (t.subject) {
       var subjectBadge = document.createElement("span");
       subjectBadge.style.cssText = "font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 600; background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3);";
-      subjectBadge.textContent = t.subject;
+      subjectBadge.textContent = window.i18n ? window.i18n.translateSubject(t.subject) : t.subject;
       badgeContainer.appendChild(subjectBadge);
     }
 
     var roleBadge = document.createElement("span");
     roleBadge.className = "status-badge status-graded";
     roleBadge.style.cssText = "font-size: 11px; padding: 2px 8px;";
-    roleBadge.textContent = "Teacher";
+    roleBadge.textContent = window.i18n ? window.i18n.translateRole("teacher") : "Teacher";
     badgeContainer.appendChild(roleBadge);
 
     info.appendChild(name);
@@ -114,7 +116,7 @@ function updateStudentInfo(student) {
   var studentGradeBadge = document.getElementById("student-grade-badge");
 
   if (studentName) {
-    studentName.textContent = student.name;
+    studentName.textContent = window.i18n ? window.i18n.translateName(student.name) : student.name;
   }
 
   if (studentEmail) {
@@ -122,31 +124,32 @@ function updateStudentInfo(student) {
   }
 
   if (studentGradeBadge && student.grade_level) {
-    studentGradeBadge.textContent = window.formatGradeLevel ? formatGradeLevel(student.grade_level) : student.grade_level;
+    studentGradeBadge.textContent = window.i18n ? window.i18n.translateGrade(student.grade_level) : (window.formatGradeLevel ? formatGradeLevel(student.grade_level) : student.grade_level);
     studentGradeBadge.style.display = "inline-block";
   }
 }
 
 function updateStatistics(stats) {
+  var isAr = (window.i18n && window.i18n.getCurrentLanguage() === 'ar');
   var totalAssignments = document.getElementById("total-assignments");
   var notSubmitted = document.getElementById("not-submitted");
   var underReview = document.getElementById("under-review");
   var graded = document.getElementById("graded");
 
   if (totalAssignments) {
-    totalAssignments.textContent = stats.total;
+    totalAssignments.textContent = (window.i18n && isAr) ? window.i18n.toArabicDigits(stats.total) : stats.total;
   }
 
   if (notSubmitted) {
-    notSubmitted.textContent = stats.not_submitted;
+    notSubmitted.textContent = (window.i18n && isAr) ? window.i18n.toArabicDigits(stats.not_submitted) : stats.not_submitted;
   }
 
   if (underReview) {
-    underReview.textContent = stats.under_review;
+    underReview.textContent = (window.i18n && isAr) ? window.i18n.toArabicDigits(stats.under_review) : stats.under_review;
   }
 
   if (graded) {
-    graded.textContent = stats.graded;
+    graded.textContent = (window.i18n && isAr) ? window.i18n.toArabicDigits(stats.graded) : stats.graded;
   }
 }
 
@@ -186,23 +189,25 @@ function updateAssignments(assignments) {
 
   tableBody.innerHTML = "";
 
+  var isAr = (window.i18n && window.i18n.getCurrentLanguage() === 'ar');
   assignments.forEach(function (assignment) {
     var row = document.createElement("tr");
 
     var assignmentCell = document.createElement("td");
     var assignmentTitle = document.createElement("strong");
 
-    assignmentTitle.textContent = assignment.title;
+    assignmentTitle.textContent = window.i18n ? window.i18n.translateAssignment(assignment.title) : assignment.title;
 
     assignmentCell.appendChild(assignmentTitle);
 
     var courseCell = document.createElement("td");
-    courseCell.textContent = assignment.course_name;
+    courseCell.textContent = window.i18n ? window.i18n.translateCourse(assignment.course_name) : assignment.course_name;
 
     var teacherCell = document.createElement("td");
     var teacherBadge = document.createElement("span");
     teacherBadge.style.cssText = "font-weight: 600; color: var(--text-primary); display: inline-flex; align-items: center; gap: 4px;";
-    teacherBadge.textContent = assignment.teacher_name || "Teacher";
+    var trTeacher = assignment.teacher_name ? (window.i18n ? window.i18n.translateName(assignment.teacher_name) : assignment.teacher_name) : (isAr ? "معلم" : "Teacher");
+    teacherBadge.textContent = trTeacher;
     teacherCell.appendChild(teacherBadge);
 
     var deadlineCell = document.createElement("td");
@@ -222,7 +227,9 @@ function updateAssignments(assignments) {
     var gradeCell = document.createElement("td");
 
     if (assignment.display_status === "graded" && assignment.grade !== null) {
-      gradeCell.textContent = assignment.grade + " / " + assignment.max_grade;
+      var gVal = (window.i18n && isAr) ? window.i18n.toArabicDigits(assignment.grade) : assignment.grade;
+      var gMax = (window.i18n && isAr) ? window.i18n.toArabicDigits(assignment.max_grade) : assignment.max_grade;
+      gradeCell.textContent = gVal + " / " + gMax;
     } else {
       gradeCell.textContent = "—";
     }
@@ -256,6 +263,16 @@ function updateAssignments(assignments) {
 }
 
 function getActionLabel(status) {
+  if (window.i18n) {
+    switch (status) {
+      case "not_submitted":
+        return window.i18n.t("common.submit");
+      case "graded":
+        return window.i18n.t("common.view_result");
+      default:
+        return window.i18n.t("common.view");
+    }
+  }
   switch (status) {
     case "not_submitted":
       return "Submit";
@@ -284,6 +301,9 @@ function getActionClass(status) {
 }
 
 function getStatusLabel(status) {
+  if (window.i18n) {
+    return window.i18n.translateStatus(status);
+  }
   switch (status) {
     case "not_submitted":
       return "Not Submitted";
@@ -329,7 +349,7 @@ function getStatusClass(status) {
 
 function formatDate(dateString) {
   if (!dateString) {
-    return "No deadline";
+    return window.i18n ? window.i18n.t("teacher.no_deadline") : "No deadline";
   }
   var date = new Date(dateString.replace(" ", "T"));
 
@@ -337,13 +357,16 @@ function formatDate(dateString) {
     return dateString;
   }
 
-  return date.toLocaleString("en-US", {
+  var isAr = (window.i18n && window.i18n.getCurrentLanguage() === 'ar');
+  var lang = isAr ? 'ar-EG' : 'en-US';
+  var res = date.toLocaleString(lang, {
     year: "numeric",
     month: "short",
     day: "numeric",
     hour: "numeric",
     minute: "2-digit",
   });
+  return (window.i18n && isAr) ? window.i18n.toArabicDigits(res) : res;
 }
 
 function showDashboardError(message) {
@@ -377,3 +400,8 @@ function escapeHtml(value) {
 
   return div.innerHTML;
 }
+
+window.addEventListener("languageChanged", function () {
+  if (typeof loadDashboard === "function") loadDashboard();
+});
+

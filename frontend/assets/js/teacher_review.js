@@ -33,24 +33,28 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             var sub = data.submission;
+            var isAr = window.i18n && window.i18n.getCurrentLanguage() === 'ar';
 
-            setElementText('student-name', sub.student_name);
+            setElementText('student-name', isAr && window.i18n ? window.i18n.translateName(sub.student_name) : sub.student_name);
             setElementText('student-email', sub.student_email);
-            setElementText('assignment-title', sub.assignment_title);
-            setElementText('course-name', sub.course_name);
-            setElementText('max-grade-display', sub.max_grade + ' pts');
+            setElementText('assignment-title', isAr && window.i18n ? window.i18n.translateAssignment(sub.assignment_title) : sub.assignment_title);
+            setElementText('course-name', isAr && window.i18n ? window.i18n.translateCourse(sub.course_name) : sub.course_name);
+            var maxGText = (isAr && window.i18n ? window.i18n.toArabicDigits(sub.max_grade) : sub.max_grade) + ' ' + (isAr ? 'درجة' : 'pts');
+            setElementText('max-grade-display', maxGText);
             setElementText('file-name', sub.file_name);
-            setElementText('file-version', 'v' + sub.version);
+            setElementText('file-version', isAr ? ('الإصدار ' + (window.i18n ? window.i18n.toArabicDigits(sub.version) : sub.version)) : ('v' + sub.version));
             setElementText('file-size', formatBytes(sub.file_size));
 
             var sDate = new Date(sub.submitted_at);
-            setElementText('submitted-at', sDate.toLocaleString('en-US', {
+            var subDateStr = sDate.toLocaleString(isAr ? 'ar-EG' : 'en-US', {
                 month: 'short',
                 day: '2-digit',
                 year: 'numeric',
                 hour: '2-digit',
                 minute: '2-digit'
-            }));
+            });
+            if (isAr && window.i18n) subDateStr = window.i18n.toArabicDigits(subDateStr);
+            setElementText('submitted-at', subDateStr);
 
             // file download link
             var downloadLink = document.getElementById('download-file-btn');
@@ -61,14 +65,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
             var statusBadge = document.getElementById('status-badge');
             if (statusBadge) {
-                statusBadge.textContent = (sub.status === 'graded') ? 'Graded' : 'Pending Review';
+                statusBadge.textContent = (sub.status === 'graded') ? (isAr ? 'تم التصحيح' : 'Graded') : (isAr ? 'قيد المراجعة' : 'Pending Review');
                 statusBadge.className = 'status-badge ' + (sub.status === 'graded' ? 'status-graded' : 'status-review');
             }
 
             // Late submission / 24-hour exception indicator
             var lateBanner = document.getElementById('late-exception-banner');
             if (parseInt(sub.is_late, 10) === 1 || sub.exception_id) {
-                var notesText = sub.exception_notes ? ('<div style="margin-top: 5px; font-style: italic; opacity: 0.95;">Note: "' + escapeHtml(sub.exception_notes) + '"</div>') : '';
+                var notesText = sub.exception_notes ? ('<div style="margin-top: 5px; font-style: italic; opacity: 0.95;">' + (isAr ? 'ملاحظة:' : 'Note:') + ' "' + escapeHtml(isAr && window.i18n ? window.i18n.translateDescription(sub.exception_notes) : sub.exception_notes) + '"</div>') : '';
                 if (!lateBanner) {
                     lateBanner = document.createElement('div');
                     lateBanner.id = 'late-exception-banner';
@@ -86,8 +90,10 @@ document.addEventListener('DOMContentLoaded', function () {
                         mainCard.insertBefore(lateBanner, mainCard.children[1] || null);
                     }
                 }
-                lateBanner.innerHTML = '<strong style="display: block; font-size: 14px; margin-bottom: 3px;">&#9888;&#65039; Late Submission (24-Hour Exception)</strong>' +
-                    '<span>Submitted under a 24-hour exception for a missed deadline.</span>' + notesText;
+                var bannerTitle = isAr ? '&#9888;&#65039; تسليم متأخر (استثناء ٢٤ ساعة)' : '&#9888;&#65039; Late Submission (24-Hour Exception)';
+                var bannerDesc = isAr ? 'تم التسليم بموجب استثناء ٢٤ ساعة بعد فوات الموعد النهائي.' : 'Submitted under a 24-hour exception for a missed deadline.';
+                lateBanner.innerHTML = '<strong style="display: block; font-size: 14px; margin-bottom: 3px;">' + bannerTitle + '</strong>' +
+                    '<span>' + bannerDesc + '</span>' + notesText;
 
                 if (statusBadge && !document.getElementById('late-badge')) {
                     var lateBadge = document.createElement('span');
@@ -96,14 +102,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     lateBadge.style.background = '#ea580c';
                     lateBadge.style.color = '#fff';
                     lateBadge.style.marginLeft = '8px';
-                    lateBadge.textContent = 'Late (24h Exception)';
+                    lateBadge.textContent = isAr ? 'متأخر (استثناء ٢٤س)' : 'Late (24h Exception)';
                     statusBadge.parentNode.insertBefore(lateBadge, statusBadge.nextSibling);
                 }
             }
 
             var descBox = document.getElementById('assignment-description');
             if (descBox && sub.assignment_description) {
-                descBox.textContent = sub.assignment_description;
+                descBox.textContent = isAr && window.i18n ? window.i18n.translateDescription(sub.assignment_description) : sub.assignment_description;
             }
 
             // existing grade pre-fill
@@ -116,30 +122,34 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
             if (maxGradeHint) {
-                maxGradeHint.textContent = 'Maximum points: ' + sub.max_grade;
+                maxGradeHint.textContent = isAr ? ('الدرجة القصوى: ' + (window.i18n ? window.i18n.toArabicDigits(sub.max_grade) : sub.max_grade)) : ('Maximum points: ' + sub.max_grade);
             }
 
             var feedbackInput = document.getElementById('input-feedback');
             if (feedbackInput && sub.feedback) {
-                feedbackInput.value = sub.feedback;
+                feedbackInput.value = isAr && window.i18n ? window.i18n.translateDescription(sub.feedback) : sub.feedback;
             }
 
             // assistant signature display
             var assistantBox = document.getElementById('assistant-notes-box');
             if (sub.assistant_name && assistantBox) {
                 assistantBox.style.display = 'block';
-                setElementText('assistant-name', sub.assistant_name);
-                setElementText('assistant-email', sub.assistant_email || 'Teaching Assistant');
-                setElementText('assistant-proposed-grade', (sub.grade !== null ? sub.grade : '—') + ' / ' + sub.max_grade);
+                setElementText('assistant-name', isAr && window.i18n ? window.i18n.translateName(sub.assistant_name) : sub.assistant_name);
+                setElementText('assistant-email', sub.assistant_email || (isAr ? 'معيد' : 'Teaching Assistant'));
+                var propG = sub.grade !== null ? (isAr && window.i18n ? window.i18n.toArabicDigits(sub.grade) : sub.grade) : '—';
+                var maxG = isAr && window.i18n ? window.i18n.toArabicDigits(sub.max_grade) : sub.max_grade;
+                setElementText('assistant-proposed-grade', propG + ' / ' + maxG);
                 if (sub.graded_at) {
                     var gDate = new Date(sub.graded_at);
-                    setElementText('assistant-signed-at', gDate.toLocaleString('en-US', {
+                    var gDateStr = gDate.toLocaleString(isAr ? 'ar-EG' : 'en-US', {
                         month: 'short',
                         day: '2-digit',
                         year: 'numeric',
                         hour: '2-digit',
                         minute: '2-digit'
-                    }));
+                    });
+                    if (isAr && window.i18n) gDateStr = window.i18n.toArabicDigits(gDateStr);
+                    setElementText('assistant-signed-at', gDateStr);
                 } else {
                     setElementText('assistant-signed-at', '—');
                 }
@@ -149,7 +159,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (sub.correction_file_name && corrBox && downloadCorrBtn) {
                     corrBox.style.display = 'block';
                     downloadCorrBtn.href = '../../backend/student/download.php?type=correction&id=' + sub.id;
-                    downloadCorrBtn.textContent = 'Download Correction File (' + sub.correction_file_name + ')';
+                    downloadCorrBtn.textContent = isAr ? ('تحميل ملف التصحيح (' + sub.correction_file_name + ')') : ('Download Correction File (' + sub.correction_file_name + ')');
                 }
             }
         })

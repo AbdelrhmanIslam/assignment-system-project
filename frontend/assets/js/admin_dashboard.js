@@ -18,26 +18,48 @@ function loadAdminDashboard() {
             return;
         }
 
+        var isAr = (window.i18n && window.i18n.getCurrentLanguage() === 'ar');
+
         // set admin details
         if (data.user) {
-            setElementText('admin-name', data.user.name);
+            setElementText('admin-name', isAr && window.i18n ? window.i18n.translateName(data.user.name) : data.user.name);
             setElementText('admin-email', data.user.email);
         }
 
         // set metrics cards
         if (data.metrics) {
             var m = data.metrics;
-            setElementText('stat-users', m.total_users);
-            setElementText('stat-users-sub', m.students + ' Students, ' + m.teachers + ' Teachers, ' + m.assistants + ' Assistants');
+            var tStu = window.i18n ? window.i18n.t('admin.tab_students') : 'Students';
+            var tTea = window.i18n ? window.i18n.t('admin.tab_teachers') : 'Teachers';
+            var tAss = window.i18n ? window.i18n.t('admin.tab_assistants') : 'Assistants';
+            var tAct = window.i18n ? window.i18n.t('common.active') : 'active';
+            var tGrad = window.i18n ? window.i18n.translateStatus('graded') : 'graded';
+            var tPend = window.i18n ? window.i18n.translateStatus('under_review') : 'pending';
 
-            setElementText('stat-courses', m.total_courses);
-            setElementText('stat-courses-sub', m.active_courses + ' active');
+            var nUsers = (window.i18n && isAr) ? window.i18n.toArabicDigits(m.total_users) : m.total_users;
+            var nCourses = (window.i18n && isAr) ? window.i18n.toArabicDigits(m.total_courses) : m.total_courses;
+            var nAssigns = (window.i18n && isAr) ? window.i18n.toArabicDigits(m.total_assignments) : m.total_assignments;
+            var nSubs = (window.i18n && isAr) ? window.i18n.toArabicDigits(m.total_submissions) : m.total_submissions;
 
-            setElementText('stat-assignments', m.total_assignments);
-            setElementText('stat-assignments-sub', m.active_assignments + ' active');
+            var nStu = (window.i18n && isAr) ? window.i18n.toArabicDigits(m.students) : m.students;
+            var nTea = (window.i18n && isAr) ? window.i18n.toArabicDigits(m.teachers) : m.teachers;
+            var nAss = (window.i18n && isAr) ? window.i18n.toArabicDigits(m.assistants) : m.assistants;
+            var nActC = (window.i18n && isAr) ? window.i18n.toArabicDigits(m.active_courses) : m.active_courses;
+            var nActA = (window.i18n && isAr) ? window.i18n.toArabicDigits(m.active_assignments) : m.active_assignments;
+            var nGradS = (window.i18n && isAr) ? window.i18n.toArabicDigits(m.graded_submissions) : m.graded_submissions;
+            var nPendS = (window.i18n && isAr) ? window.i18n.toArabicDigits(m.pending_submissions) : m.pending_submissions;
 
-            setElementText('stat-submissions', m.total_submissions);
-            setElementText('stat-submissions-sub', m.graded_submissions + ' graded, ' + m.pending_submissions + ' pending');
+            setElementText('stat-users', nUsers);
+            setElementText('stat-users-sub', nStu + ' ' + tStu + '، ' + nTea + ' ' + tTea + '، ' + nAss + ' ' + tAss);
+
+            setElementText('stat-courses', nCourses);
+            setElementText('stat-courses-sub', nActC + ' ' + tAct);
+
+            setElementText('stat-assignments', nAssigns);
+            setElementText('stat-assignments-sub', nActA + ' ' + tAct);
+
+            setElementText('stat-submissions', nSubs);
+            setElementText('stat-submissions-sub', nGradS + ' ' + tGrad + '، ' + nPendS + ' ' + tPend);
         }
 
         // render recent users
@@ -57,7 +79,8 @@ function renderRecentUsers(users) {
     tbody.innerHTML = '';
 
     if (!users || users.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">No users registered yet.</td></tr>';
+        var emptyMsg = window.i18n ? window.i18n.t('common.no_data') : 'No users registered yet.';
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">' + emptyMsg + '</td></tr>';
         return;
     }
 
@@ -70,12 +93,15 @@ function renderRecentUsers(users) {
         else if (u.role === 'assistant') roleBadge = 'status-submitted';
         else if (u.role === 'student') roleBadge = 'status-graded';
 
-        var statusLabel = u.is_active ? '<span style="color:var(--success); font-weight:600;">Active</span>' : '<span style="color:var(--danger); font-weight:600;">Inactive</span>';
+        var roleDisplay = window.i18n ? window.i18n.translateRole(u.role) : u.role.toUpperCase();
+        var activeText = window.i18n ? window.i18n.t(u.is_active ? 'common.active' : 'common.inactive') : (u.is_active ? 'Active' : 'Inactive');
+        var statusLabel = u.is_active ? '<span style="color:var(--success); font-weight:600;">' + activeText + '</span>' : '<span style="color:var(--danger); font-weight:600;">' + activeText + '</span>';
+        var uName = window.i18n ? window.i18n.translateName(u.name) : u.name;
 
         row.innerHTML =
-            '<td><strong>' + escapeHtml(u.name) + '</strong></td>' +
+            '<td><strong>' + escapeHtml(uName) + '</strong></td>' +
             '<td>' + escapeHtml(u.email) + '</td>' +
-            '<td><span class="status-badge ' + roleBadge + '">' + u.role.toUpperCase() + '</span></td>' +
+            '<td><span class="status-badge ' + roleBadge + '">' + escapeHtml(roleDisplay) + '</span></td>' +
             '<td>' + statusLabel + '</td>' +
             '<td>' + formatDate(u.created_at) + '</td>';
 
@@ -89,7 +115,8 @@ function renderRecentSubmissions(submissions) {
     tbody.innerHTML = '';
 
     if (!submissions || submissions.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">No submissions yet.</td></tr>';
+        var emptyMsg = window.i18n ? window.i18n.t('common.no_data') : 'No submissions yet.';
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">' + emptyMsg + '</td></tr>';
         return;
     }
 
@@ -97,27 +124,27 @@ function renderRecentSubmissions(submissions) {
         var row = document.createElement('tr');
 
         var badgeClass = 'status-not-submitted';
-        var badgeLabel = 'Submitted';
+        var badgeLabel = window.i18n ? window.i18n.translateStatus(s.status) : s.status;
 
         if (s.status === 'graded') {
             badgeClass = 'status-graded';
-            badgeLabel = 'Graded';
         } else if (s.status === 'under_review') {
             badgeClass = 'status-review';
-            badgeLabel = 'Under Review';
         } else if (s.status === 'recheck') {
             badgeClass = 'status-closed';
-            badgeLabel = 'Recheck Requested';
         } else if (s.status === 'pending_approval') {
             badgeClass = 'status-submitted';
-            badgeLabel = 'Pending Approval';
         }
 
+        var sStudent = window.i18n ? window.i18n.translateName(s.student_name) : s.student_name;
+        var sAssign = window.i18n ? window.i18n.translateAssignment(s.assignment_title) : s.assignment_title;
+        var sCourse = window.i18n ? window.i18n.translateCourse(s.course_name) : s.course_name;
+
         row.innerHTML =
-            '<td><strong>' + escapeHtml(s.student_name) + '</strong></td>' +
-            '<td>' + escapeHtml(s.assignment_title) + '</td>' +
-            '<td>' + escapeHtml(s.course_name) + '</td>' +
-            '<td><span class="status-badge ' + badgeClass + '">' + badgeLabel + '</span></td>' +
+            '<td><strong>' + escapeHtml(sStudent) + '</strong></td>' +
+            '<td>' + escapeHtml(sAssign) + '</td>' +
+            '<td>' + escapeHtml(sCourse) + '</td>' +
+            '<td><span class="status-badge ' + badgeClass + '">' + escapeHtml(badgeLabel) + '</span></td>' +
             '<td>' + formatDate(s.submitted_at) + '</td>';
 
         tbody.appendChild(row);
@@ -131,17 +158,25 @@ function setElementText(id, text) {
 
 function formatDate(dateStr) {
     if (!dateStr) return '—';
+    var isAr = (window.i18n && window.i18n.getCurrentLanguage() === 'ar');
     var d = new Date(dateStr);
-    return d.toLocaleDateString('en-US', {
+    var lang = isAr ? 'ar-EG' : 'en-US';
+    var res = d.toLocaleDateString(lang, {
         month: 'short',
         day: 'numeric',
         year: 'numeric',
         hour: '2-digit',
         minute: '2-digit'
     });
+    return (window.i18n && isAr) ? window.i18n.toArabicDigits(res) : res;
 }
 
 function escapeHtml(str) {
     if (!str) return '';
     return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
+
+window.addEventListener('languageChanged', function () {
+    if (typeof loadAdminDashboard === 'function') loadAdminDashboard();
+});
+

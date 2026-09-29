@@ -20,6 +20,11 @@ document.addEventListener('DOMContentLoaded', function () {
     var createForm = document.getElementById('create-assignment-form');
     var alertBox = document.getElementById('alert-box');
 
+    var noDeadlineToggle = document.getElementById('no-deadline-toggle');
+    var deadlineInput = document.getElementById('assignment-deadline');
+    var deadlineReqMark = document.getElementById('deadline-required-mark');
+    var noDeadlineHelp = document.getElementById('no-deadline-help');
+
     // load assignments and courses
     loadAssignments();
 
@@ -35,17 +40,34 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(function (data) {
                 if (!data || !data.success) return;
 
+                var isAr = window.i18n && window.i18n.getCurrentLanguage() === 'ar';
+
                 // populate course dropdown options
                 if (courseSelect && data.courses) {
-                    courseSelect.innerHTML = '<option value="">Choose course...</option>';
+                    courseSelect.innerHTML = isAr ? '<option value="">اختر المقرر...</option>' : '<option value="">Choose course...</option>';
                     for (var i = 0; i < data.courses.length; i++) {
                         var opt = document.createElement('option');
                         opt.value = data.courses[i].id;
                         var cgl = data.courses[i].grade_level || '';
-                        opt.textContent = data.courses[i].name + (cgl ? ' (' + formatGradeLevel(cgl) + ')' : '');
+                        var cNameTr = isAr && window.i18n ? window.i18n.translateCourse(data.courses[i].name) : data.courses[i].name;
+                        var cglTr = cgl ? (isAr && window.i18n ? window.i18n.translateGrade(cgl) : formatGradeLevel(cgl)) : '';
+                        opt.textContent = cNameTr + (cglTr ? ' (' + cglTr + ')' : '');
                         opt.setAttribute('data-grade-level', cgl);
                         courseSelect.appendChild(opt);
                     }
+                }
+
+                // populate grade level dropdown strictly matching teacher's registered grade levels
+                var glSelect = document.getElementById('assignment-grade-level');
+                if (glSelect && data.teacher_grade_levels && Array.isArray(data.teacher_grade_levels)) {
+                    glSelect.innerHTML = '';
+                    data.teacher_grade_levels.forEach(function (gl) {
+                        var glOpt = document.createElement('option');
+                        glOpt.value = gl;
+                        var glText = isAr && window.i18n ? window.i18n.translateGrade(gl) : formatGradeLevel(gl);
+                        glOpt.textContent = glText;
+                        glSelect.appendChild(glOpt);
+                    });
                 }
 
                 if (courseSelect && !courseSelect.dataset.hasListener) {
@@ -53,7 +75,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     courseSelect.addEventListener('change', function () {
                         var selOpt = courseSelect.options[courseSelect.selectedIndex];
                         var cGrade = selOpt ? selOpt.getAttribute('data-grade-level') : '';
-                        var glSelect = document.getElementById('assignment-grade-level');
                         if (glSelect && cGrade) {
                             glSelect.value = cGrade;
                         }
@@ -70,7 +91,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             maxAttemptsSelect.value = '1';
                             maxAttemptsSelect.disabled = true;
                             if (hint) {
-                                hint.textContent = 'Resubmission not allowed: Students have 1 attempt only, and late reopening is disabled.';
+                                hint.textContent = isAr ? 'إعادة التسليم غير مسموح بها: للطالب محاولة واحدة فقط، ويتم تعطيل إعادة الفتح بعد الموعد.' : 'Resubmission not allowed: Students have 1 attempt only, and late reopening is disabled.';
                                 hint.style.color = '#ef4444';
                             }
                         } else {
@@ -79,17 +100,12 @@ document.addEventListener('DOMContentLoaded', function () {
                                 maxAttemptsSelect.value = '3';
                             }
                             if (hint) {
-                                hint.textContent = 'When allowed, students can submit multiple attempts and teachers can reopen missed assignments for 24 hours.';
+                                hint.textContent = isAr ? 'عند السماح، يمكن للطلاب تقديم عدة محاولات ويمكن للمعلم إعادة فتح الواجب لمدة ٢٤ ساعة.' : 'When allowed, students can submit multiple attempts and teachers can reopen missed assignments for 24 hours.';
                                 hint.style.color = 'var(--text-muted)';
                             }
                         }
                     });
                 }
-
-                var noDeadlineToggle = document.getElementById('no-deadline-toggle');
-                var deadlineInput = document.getElementById('assignment-deadline');
-                var deadlineReqMark = document.getElementById('deadline-required-mark');
-                var noDeadlineHelp = document.getElementById('no-deadline-help');
 
                 if (noDeadlineToggle && deadlineInput && !noDeadlineToggle.dataset.hasListener) {
                     noDeadlineToggle.dataset.hasListener = 'true';
@@ -124,50 +140,61 @@ document.addEventListener('DOMContentLoaded', function () {
                             var a = data.assignments[j];
                             var tr = document.createElement('tr');
 
+                            var aTitleTr = isAr && window.i18n ? window.i18n.translateAssignment(a.title) : a.title;
                             var tdTitle = document.createElement('td');
-                            tdTitle.innerHTML = '<strong>' + escapeHtml(a.title) + '</strong>';
+                            tdTitle.innerHTML = '<strong>' + escapeHtml(aTitleTr) + '</strong>';
                             tr.appendChild(tdTitle);
 
+                            var aCourseTr = isAr && window.i18n ? window.i18n.translateCourse(a.course_name) : a.course_name;
                             var tdCourse = document.createElement('td');
-                            tdCourse.textContent = a.course_name;
+                            tdCourse.textContent = aCourseTr;
                             tr.appendChild(tdCourse);
 
                             var tdGradeLevel = document.createElement('td');
                             var glBadge = document.createElement('span');
                             glBadge.className = 'status-badge status-review';
                             glBadge.style.fontSize = '11px';
-                            glBadge.textContent = formatGradeLevel(a.grade_level || 'First Year of Middle School');
+                            var aGradeTr = isAr && window.i18n ? window.i18n.translateGrade(a.grade_level || 'First Year of Middle School') : formatGradeLevel(a.grade_level || 'First Year of Middle School');
+                            glBadge.textContent = aGradeTr;
                             tdGradeLevel.appendChild(glBadge);
                             tr.appendChild(tdGradeLevel);
 
                             var tdDeadline = document.createElement('td');
                             if (a.deadline) {
                                 var dDate = new Date(a.deadline);
-                                tdDeadline.textContent = dDate.toLocaleString('en-US', {
+                                var dStr = dDate.toLocaleString(isAr ? 'ar-EG' : 'en-US', {
                                     month: 'short',
                                     day: '2-digit',
                                     year: 'numeric',
                                     hour: '2-digit',
                                     minute: '2-digit'
                                 });
+                                if (isAr && window.i18n) dStr = window.i18n.toArabicDigits(dStr);
+                                tdDeadline.textContent = dStr;
                             } else {
-                                tdDeadline.innerHTML = '<span class="status-badge status-open" style="font-size: 11px;">No Deadline</span>';
+                                var noDlText = isAr ? 'بدون موعد نهائي' : 'No Deadline';
+                                tdDeadline.innerHTML = '<span class="status-badge status-open" style="font-size: 11px;">' + noDlText + '</span>';
                             }
                             tr.appendChild(tdDeadline);
 
                             var tdGrade = document.createElement('td');
-                            tdGrade.textContent = a.max_grade + ' pts';
+                            var mgText = (isAr && window.i18n ? window.i18n.toArabicDigits(a.max_grade) : a.max_grade) + ' ' + (isAr ? 'درجة' : 'pts');
+                            tdGrade.textContent = mgText;
                             tr.appendChild(tdGrade);
 
                             var tdSubs = document.createElement('td');
-                            tdSubs.innerHTML = '<strong>' + (a.submission_count || 0) + '</strong> (' + (a.graded_count || 0) + ' graded)';
+                            var subCountDisp = isAr && window.i18n ? window.i18n.toArabicDigits(a.submission_count || 0) : (a.submission_count || 0);
+                            var grCountDisp = isAr && window.i18n ? window.i18n.toArabicDigits(a.graded_count || 0) : (a.graded_count || 0);
+                            tdSubs.innerHTML = '<strong>' + subCountDisp + '</strong> (' + grCountDisp + (isAr ? ' تم تصحيحه)' : ' graded)');
                             tr.appendChild(tdSubs);
 
                             var tdResub = document.createElement('td');
                             if (parseInt(a.allow_resubmission, 10) === 1) {
-                                tdResub.innerHTML = '<span class="status-badge status-open" style="font-size: 11px;">Allowed</span>';
+                                var allowText = isAr ? 'مسموح' : 'Allowed';
+                                tdResub.innerHTML = '<span class="status-badge status-open" style="font-size: 11px;">' + allowText + '</span>';
                             } else {
-                                tdResub.innerHTML = '<span class="status-badge" style="font-size: 11px; background: rgba(239, 68, 68, 0.12); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3);">Not Allowed</span>';
+                                var notAllowText = isAr ? 'غير مسموح' : 'Not Allowed';
+                                tdResub.innerHTML = '<span class="status-badge" style="font-size: 11px; background: rgba(239, 68, 68, 0.12); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3);">' + notAllowText + '</span>';
                             }
                             tr.appendChild(tdResub);
 
@@ -175,7 +202,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             var subBtn = document.createElement('a');
                             subBtn.href = 'submissions.html?assignment_id=' + a.id;
                             subBtn.className = 'action-btn action-review';
-                            subBtn.textContent = 'View Submissions';
+                            subBtn.textContent = isAr ? 'عرض التسليمات' : 'View Submissions';
                             tdAction.appendChild(subBtn);
                             tr.appendChild(tdAction);
 
@@ -208,10 +235,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 body: formData
             })
                 .then(function (response) {
-                    return response.json();
+                    return response.json().then(function (data) {
+                        return { ok: response.ok, data: data };
+                    });
                 })
-                .then(function (res) {
-                    if (res && res.success) {
+                .then(function (result) {
+                    var res = result.data;
+                    if (result.ok && res && res.success) {
                         showAlert('success', res.message);
                         createForm.reset();
                         if (deadlineInput) {
@@ -225,11 +255,11 @@ document.addEventListener('DOMContentLoaded', function () {
                         loadAssignments();
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                     } else {
-                        showAlert('error', res.message || 'Failed to create assignment.');
+                        showAlert('error', (res && res.message) ? res.message : 'Failed to create assignment.');
                     }
                 })
                 .catch(function (err) {
-                    showAlert('error', 'An error occurred while creating assignment.');
+                    showAlert('error', (err && err.message) ? err.message : 'An error occurred while creating assignment.');
                     console.error('Error:', err);
                 });
         });
@@ -248,4 +278,8 @@ document.addEventListener('DOMContentLoaded', function () {
         div.textContent = str;
         return div.innerHTML;
     }
+
+    window.addEventListener('languageChanged', function () {
+        loadAssignments();
+    });
 });

@@ -91,7 +91,7 @@ $totalSubResult = mysqli_query($conn, $totalSubSql);
 $totalSubRow = mysqli_fetch_assoc($totalSubResult);
 $totalSubmissionsCount = $totalSubRow ? (int) $totalSubRow['total'] : 0;
 
-// query 5 recent submissions across assistant's courses
+// query 5 recent submissions across assistant's courses (latest version per student per assignment)
 $recentSql = "SELECT
                 s.id,
                 s.file_name,
@@ -103,6 +103,11 @@ $recentSql = "SELECT
                 c.name AS course_name,
                 g.grade
               FROM submissions s
+              INNER JOIN (
+                  SELECT assignment_id, student_id, MAX(version) AS max_ver
+                  FROM submissions
+                  GROUP BY assignment_id, student_id
+              ) latest ON s.assignment_id = latest.assignment_id AND s.student_id = latest.student_id AND s.version = latest.max_ver
               INNER JOIN assignments a ON a.id = s.assignment_id
               INNER JOIN courses c ON c.id = a.course_id
               INNER JOIN users u ON u.id = s.student_id
