@@ -333,7 +333,7 @@ The system includes pre-configured and verified accounts across all four system 
 ### 1. System Administrator
 
 ### 2. Representative Teachers 
-| Role | Name | Email | Password |
+| Role | Name | Email | Password | |
 | :--- | :--- | :--- | :--- | :--- |
 | **Teacher** | Mr. Hesham | `hesham@example.com` | `12345678` |
 
