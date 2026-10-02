@@ -331,37 +331,25 @@ assignment-system-project/
 The system includes pre-configured and verified accounts across all four system roles (password for seeded test accounts is `Pass@123456`):
 
 ### 1. System Administrator
-| Role | Name | Email | Password | Primary Functions |
-| :--- | :--- | :--- | :--- | :--- |
-| **Admin** | System Administrator | `admin@test.com` | `Pass@123456` | System configuration, courses, user management & password overrides |
 
 ### 2. Representative Teachers 
 | Role | Name | Email | Password | Subject & Scope |
 | :--- | :--- | :--- | :--- | :--- |
-| **Teacher** | Mr. Mohamed Reda | `mohamed.reda@school.eg` | `Pass@123456` | Arabic (1st, 2nd, 3rd Prep) |
-| **Teacher** | Mr. Tarek Shawky | `tarek.shawky@school.eg` | `Pass@123456` | English (1st, 2nd, 3rd Prep) |
-| **Teacher** | Mr. Hisham Barakat | `hisham.barakat@school.eg` | `Pass@123456` | Mathematics (1st, 2nd, 3rd Prep) |
-| **Teacher** | Mr. Mostafa Mahmoud | `mostafa.mahmoud@school.eg` | `Pass@123456` | Science (1st, 2nd, 3rd Prep) |
-| **Teacher** | Mr. Zaki Naguib | `zaki.naguib@school.eg` | `Pass@123456` | Arabic (1st Secondary) |
-| **Teacher** | Mr. Ahmed Zewail | `ahmed.zewail@school.eg` | `Pass@123456` | Integrated Sciences (1st Secondary) |
+| **Teacher** | Mr. Hesham | `hesham@example.com` | `12345678` |
+
 
 ### 3. Representative Teaching Assistants 
 | Role | Name | Email | Password | Assigned Lead Teacher |
 | :--- | :--- | :--- | :--- | :--- |
-| **Assistant** | Asst. Karim Adel | `karim.adel@school.eg` | `Pass@123456` | Mr. Mohamed Reda (Arabic) |
-| **Assistant** | Asst. Tamer Hosny | `tamer.hosny@school.eg` | `Pass@123456` | Mr. Mohamed Reda (Arabic) |
-| **Assistant** | Asst. Nourhan Sherif | `nourhan.sherif@school.eg` | `Pass@123456` | Mr. Tarek Shawky (English) |
-| **Assistant** | Asst. Omar Farouk | `omar.farouk@school.eg` | `Pass@123456` | Mr. Hisham Barakat (Mathematics) |
-| **Assistant** | Asst. Dina Anwar | `dina.anwar@school.eg` | `Pass@123456` | Mr. Zaki Naguib (Arabic - Secondary) |
+| **Assistant** | Asst. Karim | `karimhesh@test.com` | `12345678` |
+| **Assistant** | Asst. Sarah | `sarahesh@test.com` | `12345678` |
+
 
 ### 4. Representative Students 
 | Role | Name | Email | Password | Grade Level |
 | :--- | :--- | :--- | :--- | :--- |
-| **Student** | Youssef Mohamed | `youssef.mohamed@student.eg` | `Pass@123456` | 1st Prep (Full 5 Subjects) |
-| **Student** | Nour El-Din | `nour.eldin@student.eg` | `Pass@123456` | 1st Prep (Overlapping Prep Teachers) |
-| **Student** | Ziad Tarek | `ziad.tarek@student.eg` | `Pass@123456` | 2nd Prep (Full 5 Subjects) |
-| **Student** | Malak Sherif | `malak.sherif@student.eg` | `Pass@123456` | 3rd Prep (Full 5 Subjects) |
-| **Student** | Kareem Mostafa | `kareem.mostafa@student.eg` | `Pass@123456` | 1st Secondary (Full 6 Subjects) |
+| **Student** | Youssef | `you@test.com` | `123As56mn#h91` |
+
 
 > [!NOTE]
 > **Admin Password Overrides**: Administrators can write and set a new password for **any user** or **themselves** at any time via the Admin Users Management portal (`frontend/admin/users.html`) directly inside the **Edit** modal (minimum 8 characters; leave blank to keep current password).
