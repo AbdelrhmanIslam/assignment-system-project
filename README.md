@@ -333,20 +333,20 @@ The system includes pre-configured and verified accounts across all four system 
 ### 1. System Administrator
 
 ### 2. Representative Teachers 
-| Role | Name | Email | Password | Subject & Scope |
+| Role | Name | Email | Password |
 | :--- | :--- | :--- | :--- | :--- |
 | **Teacher** | Mr. Hesham | `hesham@example.com` | `12345678` |
 
 
 ### 3. Representative Teaching Assistants 
-| Role | Name | Email | Password | Assigned Lead Teacher |
+| Role | Name | Email | Password |
 | :--- | :--- | :--- | :--- | :--- |
 | **Assistant** | Asst. Karim | `karimhesh@test.com` | `12345678` |
 | **Assistant** | Asst. Sarah | `sarahesh@test.com` | `12345678` |
 
 
 ### 4. Representative Students 
-| Role | Name | Email | Password | Grade Level |
+| Role | Name | Email | Password |
 | :--- | :--- | :--- | :--- | :--- |
 | **Student** | Youssef | `you@test.com` | `123As56mn#h91` |
 
@@ -661,22 +661,3 @@ Open your browser and navigate to:
 http://localhost/assignment-system-project/
 ```
 You will be routed to the sign-in portal. Use any of the test credentials listed in the [User Roles & Default Test Accounts](#user-roles--default-test-accounts) section. Use the language switcher in the top navigation bar to toggle between English and Arabic at any time.
-
----
-
-## Developer Standards & Coding Rules
-
-1. **Frontend Architecture**:
-   * Strictly Vanilla JavaScript (ES6+), HTML5, and CSS3.
-   * Zero third-party client frameworks (no React, Vue, Angular, or jQuery).
-   * All dynamic text elements must include `data-i18n` attributes for full bilingual compatibility.
-2. **Backend Architecture**:
-   * Procedural PHP using `mysqli_*` functions.
-   * Every request handler must enforce session authentication and role validation via `backend/includes/auth.php`.
-   * All inputs must be sanitized using `cleanInput()` from `backend/includes/functions.php`.
-   * Return structured JSON responses with `status` (`success` or `error`) and `message`.
-3. **Database Transactions**:
-   * Multi-table operations (e.g., student course enrollment, grade approvals, recheck dispatching) must use `mysqli_begin_transaction()`, `mysqli_commit()`, and `mysqli_rollback()`.
-4. **File Upload Security**:
-   * File types must be strictly validated against MIME types and permissible extensions (`pdf,doc,docx,zip`).
-   * Uploaded files must be saved with unique sanitized hashes to prevent path traversal or file overwrites.
