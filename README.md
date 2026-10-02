@@ -339,14 +339,14 @@ The system includes pre-configured and verified accounts across all four system 
 
 
 ### 3. Representative Teaching Assistants 
-| Role | Name | Email | Password |
+| Role | Name | Email | Password | |
 | :--- | :--- | :--- | :--- | :--- |
 | **Assistant** | Asst. Karim | `karimhesh@test.com` | `12345678` |
 | **Assistant** | Asst. Sarah | `sarahesh@test.com` | `12345678` |
 
 
 ### 4. Representative Students 
-| Role | Name | Email | Password |
+| Role | Name | Email | Password | |
 | :--- | :--- | :--- | :--- | :--- |
 | **Student** | Youssef | `you@test.com` | `123As56mn#h91` |
 
